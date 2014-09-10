@@ -1,0 +1,46 @@
+***************************
+Last modified on 08/29/2014
+***************************
+10Sep2014  Changed all reading into byte buffer as fully read where appropriate
+29Aug2014  Changed removeAPP1() in JPEGTweaker to removeAPPn()
+13Aug2014  Added support for YCCK JPEG image to JPEGWriter
+13Aug2014  Added RGB2YCCK_Inverted() to IMGUtils
+06Aug2014  Added writeAdobeApp14() to JPEGWriter to support CMYK image
+26Jun2014  Added TiffFieldEnum
+20Jun2014  Added IFDField
+16Jun2014  Added ProfileTag and ProfileTagTable
+07Jun2014  Added extractExifThumbnail() to JPEGTweaker to extract thumbnail
+07Jun2014  Added insertICCProfile() to JPEGTweaker to insert ICC_Profile
+06Jun2014  Added extractICCProfile() to JPEGTweaker to extract ICC_Profile
+05Jun2014  Added support for CMYK image and ICC_Profile to TIFFWriter
+04Jun2014  Added support for CMYK image and ICC_Profile to JPEGWriter
+28May2014  Added multiple strip and separate JPEG tables support to TIFFWriter
+21May2014  Added BytePacker to pack image byte array
+12May2014  Changed ImageReader and it's subclasses to return a BufferedImage
+08May2014  Added insertExif() to TIFFTweaker to insert EXIF data to TIFF page
+05May2014  Added getRGB() and getRGB2() to IMGUtils to replace BufferedImage.getRGB()
+26Apr2014  Rewrite TIFFTweaker insertPage() to insert multiple pages one at a time
+22Apr2014  Added splitFramesEx() to GIFTweaker to split animated GIFs into separate GIFs
+20Apr2014  Added splitFrames() to GIFTweaker to split animated GIFs into frames
+16Apr2014  Added writeFrame() to GIFWriter to support animated GIFs
+11Apr2014  Added writeMultipageTIFF() to TIFFTweaker to support creating multiple page TIFFs
+09Apr2014  Added splitPages() to TIFFTweaker to split multiple page TIFFs into single page TIFFs
+09Apr2014  Added insertPages() to TIFFTweaker to insert pages to multiple page TIFFs
+08Apr2014  Added insertPage() to TIFFTweaker to insert a single page to multiple page TIFFs
+07Apr2014  Added getPageCount() to TIFFTweaker to get the total pages for a TIFF image
+06Apr2014  Added retainPages() to TIFFTweaker to keep pages from multiple page TIFFs
+04Apr2014  Added removePages() to TIFFTweaker to remove pages from multiple page TIFFs
+02Apr2014  Added setNextIFDOffset() to IFD; rewrote TIFFTweaker for multiple pages
+30Mar2014  Added children map to IFD and changed write() method to write child nodes
+28Mar2014  Added TIFFTweaker and Tag interface for all TIFF related tag enumerations
+25Mar2014  Added AAN DCT support to JPEGWriter
+24Mar2014  Added JPEG compression for GrayScale image to TIFFWriter
+22Mar2014  Added support for grayScale image to JPEGWriter
+19Mar2014: Added JPEG compression for RGB image to TIFFWriter
+12Mar2014: First working JPEGWriter
+10Mar2014: Added DeflateEncoder
+07Mar2014: Added HuffmanEncoder
+05Mar2014: Added FileUtils
+04Mar2014: Added predictor control to TIFFOptions
+03Mar2014: Added predictor to TIFFWriter for 8 bit gray-scale image
+01Mar2014: Added adaptive filter to PNGWriter
