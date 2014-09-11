@@ -32,4 +32,4 @@ JPEG EXIF data manipulation (inserting, extracting, deleting exif data)
 
 JPEG ICC Profile support (inserting, extracting ICC profile)
 
-You can find examples showcasing the usage of this library on the wiki page!
+Go to the wiki page to see this library in action!
