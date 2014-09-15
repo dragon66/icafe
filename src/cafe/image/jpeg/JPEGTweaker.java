@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    14Sep2014  Added removeExif() to remove EXIF data
  * WY    14Sep2014  Changed insertICCProfile() to remove old profile
  * WY    29Aug2014  Changed removeAPP1() to more general removeAPPn()
  * WY    07Jun2014  Added extractExifThumbnail() to extract thumbnail
@@ -1159,10 +1160,6 @@ public class JPEGTweaker {
 				    	//copyToEnd(is, os);
 						//finished = true; 
 						break;
-				    case APP1:
-				    	readAPP1(is);
-						marker = IOUtils.readShortMM(is);
-						break;
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
@@ -1174,6 +1171,95 @@ public class JPEGTweaker {
 					    	IOUtils.write(os, buf);
 					    }
 					    
+					    marker = IOUtils.readShortMM(is);
+				}
+			}
+	    }
+	}
+	
+	// Remove EXIF segment
+	public static void removeExif(InputStream is, OutputStream os) throws IOException {
+		// Flag when we are done
+		boolean finished = false;
+		int length = 0;	
+		short marker;
+		Marker emarker;
+				
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+		{
+			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+			return;
+		}
+		
+		System.out.println(Marker.SOI);
+		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished)
+	    {	        
+			if (Marker.fromShort(marker) == Marker.EOI)
+			{
+				IOUtils.writeShortMM(os, Marker.EOI.getValue());
+				System.out.println(Marker.EOI);
+				finished = true;
+			}
+		   	else // Read markers
+			{
+		   		emarker = Marker.fromShort(marker);
+				System.out.println(emarker); 
+	
+				switch (emarker) {
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
+						IOUtils.writeShortMM(os, marker);
+				    	marker = IOUtils.readShortMM(is);
+						break;
+				    case PADDING:	
+				    	IOUtils.writeShortMM(os, marker);
+				    	int nextByte = 0;
+				    	while((nextByte = IOUtils.read(is)) == 0xff) {
+				    		IOUtils.write(os, nextByte);
+				    	}
+				    	marker = (short)((0xff<<8)|nextByte);
+				    	break;				
+				    case SOS:	
+				    	IOUtils.writeShortMM(os, marker);
+						// use copyToEnd instead for multiple SOS
+				    	marker = copySOS(is, os);
+				    	//copyToEnd(is, os);
+						//finished = true; 
+						break;
+				    case APP1:
+				    	// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
+						byte[] exif = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
+						byte[] exif2 = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
+						byte[] exif_buf = new byte[6];
+						length = IOUtils.readUnsignedShortMM(is);						
+						IOUtils.readFully(is, exif_buf);		
+						// EXIF segment.
+						if (Arrays.equals(exif_buf, exif)||Arrays.equals(exif_buf, exif2)) {
+						    IOUtils.skipFully(is, length-8);
+						} else { // Might be XMP
+							byte[] tmp = new byte[length-2];
+							IOUtils.readFully(is, tmp, 6, length-8);
+							System.arraycopy(exif_buf, 0, tmp, 0, 6);
+							IOUtils.writeShortMM(os, marker);
+						   	IOUtils.writeShortMM(os, (short)length);
+						   	IOUtils.write(os, tmp);		
+				  		}
+						marker = IOUtils.readShortMM(is);
+						break;
+				    default:
+					    length = IOUtils.readUnsignedShortMM(is);					
+					    byte[] buf = new byte[length - 2];
+					    IOUtils.readFully(is, buf);
+					   	IOUtils.writeShortMM(os, marker);
+					   	IOUtils.writeShortMM(os, (short)length);
+					   	IOUtils.write(os, buf);
 					    marker = IOUtils.readShortMM(is);
 				}
 			}

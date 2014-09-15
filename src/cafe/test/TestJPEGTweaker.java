@@ -24,7 +24,7 @@ public class TestJPEGTweaker {
 		JPEGTweaker.showICCProfile(fin);
 		fin.close();
 		fin = new FileInputStream(args[1]);
-		FileOutputStream fout = new FileOutputStream("NEW.jpg");
+		FileOutputStream fout = new FileOutputStream("ICCProfileInserted.jpg");
 		ICC_Profile icc_profile = IMGUtils.getICCProfile("/lib/CMYK Profiles/USWebCoatedSWOP.icc");
 		JPEGTweaker.insertICCProfile(fin, fout, icc_profile);
 		fin.close();
@@ -32,6 +32,11 @@ public class TestJPEGTweaker {
 		fin = new FileInputStream(args[2]);
 		JPEGTweaker.extractExifThumbnail(fin, "thumbnail");
 		fin.close();
+		fin = new FileInputStream(args[2]);
+		fout = new FileOutputStream("ThumbnailRemoved.jpg");
+		JPEGTweaker.removeExif(fin, fout);
+		fin.close();
+		fout.close();
 	}
 	
 	// This method is for testing only
