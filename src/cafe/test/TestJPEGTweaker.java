@@ -33,7 +33,7 @@ public class TestJPEGTweaker {
 		JPEGTweaker.extractExifThumbnail(fin, "thumbnail");
 		fin.close();
 		fin = new FileInputStream(args[2]);
-		fout = new FileOutputStream("ThumbnailRemoved.jpg");
+		fout = new FileOutputStream("ExifRemoved.jpg");
 		JPEGTweaker.removeExif(fin, fout);
 		fin.close();
 		fout.close();
