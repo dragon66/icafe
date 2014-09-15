@@ -1,5 +1,5 @@
 ***************************
-Last modified on 08/29/2014
+Last modified on 09/14/2014
 ***************************
 14Sep2014  Added removeExif() to JPEGTweaker to remove EXIF data
 14Sep2014  Changed insertICCProfile() in JPEGTweaker to remove old profile
