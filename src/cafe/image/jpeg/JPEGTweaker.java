@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    14Sep2014  Changed insertICCProfile() to remove old profile
  * WY    29Aug2014  Changed removeAPP1() to more general removeAPPn()
  * WY    07Jun2014  Added extractExifThumbnail() to extract thumbnail
  * WY    07Jun2014  Added insertICCProfile() to insert ICC_Profile
@@ -423,6 +424,7 @@ public class JPEGTweaker {
 	
 	public static void insertICCProfile(InputStream is, OutputStream os, ICC_Profile icc_profile) throws Exception {
 		// Copy the original image and insert ICC_Profile data
+		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
 		boolean finished = false;
 		int length = 0;	
 		short marker;
@@ -476,8 +478,28 @@ public class JPEGTweaker {
 						copyToEnd(is, os);
 						finished = true; // No more marker to read, we are done. 
 						break;
-				    case APP1:
-				    	readAPP1(is);
+				    case APP2: // Remove old ICC_Profile
+				    	byte[] icc_profile_buf = new byte[12];
+						length = IOUtils.readUnsignedShortMM(is);						
+						if(length < 14) { // This is not an ICC_Profile segment, copy it
+							IOUtils.writeShortMM(os, marker);
+							IOUtils.writeShortMM(os, (short)length);
+							IOUtils.readFully(is, icc_profile_buf, 0, length-2);
+							IOUtils.write(os, icc_profile_buf, 0, length-2);
+						} else {
+							IOUtils.readFully(is, icc_profile_buf);		
+							// ICC_PROFILE segment.
+							if (Arrays.equals(icc_profile_buf, icc_profile_id)) {
+								IOUtils.skipFully(is, length-14);
+							} else {// Not an ICC_Profile segment, copy it
+								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, (short)length);
+								IOUtils.write(os, icc_profile_buf);
+								icc_profile_buf = new byte[length-14];
+								IOUtils.readFully(is, icc_profile_buf);
+								IOUtils.write(os, icc_profile_buf);
+							}
+						}						
 						marker = IOUtils.readShortMM(is);
 						break;
 				    default:
