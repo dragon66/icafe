@@ -61,7 +61,19 @@ public enum ExifTag implements Tag {
 	SUB_SEC_TIME_DIGITIZED("SubSecTimeDigitized", (short)0x9292),
 	
 	FLASH_PIX_VERSION("FlashPixVersion", (short)0xa000),
-	COLOR_SPACE("ColorSpace", (short)0xa001),
+	COLOR_SPACE("ColorSpace", (short)0xa001) {
+		public String getFieldDescription(int value) {
+			//
+			String description = "Warning: unknown color space value: " + value;
+			
+			switch(value) {
+				case 1:	description = "sRGB"; break;
+				case 2: description = "Uncalibrated";	break;
+			}
+			
+			return description;
+		}
+	},
 	EXIF_IMAGE_WIDTH("ExifImageWidth", (short)0xa002),
 	EXIF_IMAGE_HEIGHT("ExifImageHeight", (short)0xa003),
 	RELATED_SOUND_FILE("RelatedSoundFile", (short)0xa004),
