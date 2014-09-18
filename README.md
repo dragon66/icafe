@@ -1,7 +1,7 @@
-icafe
+ICAFE
 =====
 
-Icafe is a Java library for reading, writing, converting and managing images.
+ICAFE is a Java library for reading, writing, converting and managing images.
 
 Reading format support:
 ----------------------
