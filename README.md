@@ -6,10 +6,10 @@ ICAFE is a Java library for reading, writing, converting and managing images.
 Reading format support:
 ----------------------
 - Windows BITMAP
-- CompuServe GIF
+- CompuServe GIF - In-house tree-based LZW decoder
 - ZSoft's PCX
 - Truevision TGA
-- Portable Network Graphics - PNG
+- Portable Network Graphics (PNG) - support both 8 bit and 16 bit, all color depth
 
 Writing format support:
 -----------------------
@@ -17,7 +17,7 @@ Writing format support:
 - CompuServe GIF - In-house tree-based LZW encoder; color quantization; inverse color map to map colors to indexes
 - JPEG - support both YCbCr and YCCK (CMYK) color space and embedded ICC_Profile, EXIF thumbnail
 - Adobe TIFF - compress type supported: LZW, Deflate, CCITTRLE, CCITTGROUP3, CCITTGROUP4, JPEG, PACKBITS
-- Portable Network Graphics - PNG - support indexed, grayscale, and RGB colors
+- Portable Network Graphics (PNG) - support indexed, grayscale, and RGB colors
 
 Image convertion and management support:
 ----------------------------------------
