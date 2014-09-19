@@ -34,6 +34,7 @@ Image convertion and management support:
    * Remove thumbnails from JPEG image
    * Extract thumbnails from JPEG (the extracted thumbnail is either in JPEG or TIFF format depending on whether or not it is in JPEG or Raw format and the inserted thumbnail could be completely different from the original image)
    * Insert thumbnail to TIFF image
+   * Extract thumbnail from TIFF image
 - JPEG and TIFF EXIF data manipulation
    * Inserte EXIF data into JPEG
    * Extract EXIF data from JPEG
