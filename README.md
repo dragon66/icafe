@@ -19,7 +19,7 @@ Write format support:
 - Adobe TIFF - compression types supported: LZW, Deflate, CCITTRLE, CCITTGROUP3, CCITTGROUP4, JPEG, PACKBITS; extra sample suport for CMYK and transparent RGB; Horizontal differencing predictor support to reduce image size; optional ICC_Profile support for CMYK color space 
 - Portable Network Graphics (PNG) - support indexed, grayscale, and RGB colors; support configurable adaptive filter
 
-Image convertion and management support:
+Image convertion and management:
 ----------------------------------------
 - Image conversion to any of the supported format
 - Multipage TIFF support
