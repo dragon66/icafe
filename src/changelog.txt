@@ -1,6 +1,7 @@
 ***************************
-Last modified on 09/14/2014
+Last modified on 09/19/2014
 ***************************
+19Sep2014  Reset pointer to the stream head in getPageCount() of TIFFTweaker
 14Sep2014  Added removeExif() to JPEGTweaker to remove EXIF data
 14Sep2014  Changed insertICCProfile() in JPEGTweaker to remove old profile
 10Sep2014  Changed all reading into byte buffer as fully read where appropriate

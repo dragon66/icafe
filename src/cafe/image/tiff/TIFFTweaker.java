@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    19Sep2014  Reset pointer to the stream head in getPageCount()
  * WY    08May2014  Added insertExif() to insert EXIF data to TIFF page
  * WY    26Apr2014  Rewrite insertPage() to insert multiple pages one at a time
  * WY    11Apr2014  Added writeMultipageTIFF() to support creating multiple page TIFFs
@@ -514,7 +515,8 @@ public class TIFFTweaker {
 	public static int getPageCount(RandomAccessInputStream rin) throws IOException {
 		List<IFD> list = new ArrayList<IFD>();
 		readIFDs(list, rin);
-			
+		rin.seek(STREAM_HEAD); // Reset pointer to the stream head
+		
 		return list.size();
 	}
 	
