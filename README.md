@@ -33,10 +33,13 @@ Image convertion and management support:
    * Insert thumbnails into JPEG image
    * Remove thumbnails from JPEG image
    * Extract thumbnails from JPEG (the extracted thumbnail is either in JPEG or TIFF format depending on whether or not it is in JPEG or Raw format and the inserted thumbnail could be completely different from the original image)
-- JPEG EXIF data manipulation
+   * Insert thumbnail to TIFF image
+- JPEG and TIFF EXIF data manipulation
    * Inserte EXIF data into JPEG
    * Extract EXIF data from JPEG
-   * Remove EXIF data and other an significant APPn segments from JPEG
+   * Remove EXIF data and other insignificant APPn segments from 
+   * Insert EXIF data into TIFF
+   * Read EXIF data embedded in TIFF
 - JPEG ICC Profile support
    * Inserte ICC profile to JPEG
    * Extract ICC profile from JPEG
