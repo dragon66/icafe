@@ -13,8 +13,8 @@ Read format support:
 
 Write format support:
 -----------------------
-- Windows BITMAP - Non-compressed 256 color with the help color quantization utility or RGB
-- CompuServe GIF - In-house tree-based LZW encoder; color quantization; inverse color map to map colors to indexes; transparency support
+- Windows BITMAP - Non-compressed RGB or 256 color image with the help of "icafe" color quantization utility
+- CompuServe GIF - In-house tree-based LZW encoder; color quantization and diffusion dithering; inverse color map for colors to indexes mapping; transparency support
 - JPEG - support 8 bit grayscale and full color; support both YCbCr and YCCK (CMYK) color spaces and embedded ICC_Profile, EXIF thumbnail; ANN fast forward DCT
 - Adobe TIFF - compression types supported: LZW, Deflate, CCITTRLE, CCITTGROUP3, CCITTGROUP4, JPEG, PACKBITS; extra sample suport for CMYK and transparent RGB; Horizontal differencing predictor support to reduce image size; optional ICC_Profile support for CMYK color space 
 - Portable Network Graphics (PNG) - support indexed, grayscale, and RGB colors; support configurable adaptive filter
