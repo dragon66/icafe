@@ -40,6 +40,11 @@ Image convertion and management support:
 - JPEG ICC Profile support
    * Inserte ICC profile to JPEG
    * Extract ICC profile from JPEG
+- PNG chunk manipulation
+   * Remove chunks from or add chunks to existing PNG
+   * Extract text chunk from PNG
+   * Merge or split IDAT chunks
+
 
 Go to the [wiki] page to see this library in action!
 
