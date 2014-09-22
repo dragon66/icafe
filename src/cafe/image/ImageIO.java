@@ -59,11 +59,7 @@ public final class ImageIO {
 	 * @throws Exception
 	 */
 	public static BufferedImage read(File file) throws Exception {
-		FileInputStream fi = new FileInputStream(file);
-		BufferedImage bi = read(fi);
-		fi.close();
-		
-		return bi;
+		return read(new FileInputStream(file));
 	}
 	
 	/**
@@ -75,12 +71,15 @@ public final class ImageIO {
 		// 4 byte as image magic number
 		PushbackInputStream pushBackStream = new PushbackInputStream(is, 4); 
 		ImageType imageType = IMGUtils.guessImageType(pushBackStream);
+		BufferedImage bi = null;		
 		
 		if(imageType != null) {
-			return getReader(imageType).read(pushBackStream);
+			bi = getReader(imageType).read(pushBackStream);
 		}
 		
-		return null;
+		pushBackStream.close();
+		
+		return bi;
 	}
 	
 	/**
@@ -89,11 +88,7 @@ public final class ImageIO {
 	 * @throws Exception
 	 */	
 	public static BufferedImage read(String path) throws Exception {
-		FileInputStream is = new FileInputStream(path);
-		BufferedImage bi =  read(is);
-		is.close();
-		
-		return bi;
+		return read(new File(path));
 	}
 	
 	private ImageIO() {}
