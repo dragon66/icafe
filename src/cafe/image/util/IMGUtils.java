@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    22Sep2014  Added guessImageType() to auto detect image type
  * WY    13Aug2014  Added RGB2YCCK_Inverted() to support YCCK JPEG
  * WY    05May2014  Added getRGB() and getRGB2() to replace BufferedImage.getRGB()
  */
@@ -35,8 +36,10 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
+import java.io.PushbackInputStream;
 import java.util.Arrays;
 
+import cafe.image.core.ImageType;
 import cafe.util.IntHashtable;
 
 /** 
@@ -48,11 +51,18 @@ import cafe.util.IntHashtable;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.1.2 04/02/2012
  */
-public class IMGUtils
-{
+public class IMGUtils {
+	// Image magic number constants
+	private static byte[] BM = {0x42, 0x4d}; // BM
+	private static byte[] GIF = {0x47, 0x49, 0x46, 0x38}; // GIF8
+	private static byte[] PNG = {(byte)0x89, 0x50, 0x4e, 0x47}; //.PNG
+	private static byte[] TIFF_II = {0x49, 0x49, 0x2a, 0x00}; // II*.
+	private static byte[] TIFF_MM = {0x4d, 0x4d, 0x00, 0x2a}; //MM.*
+	private static byte[] JPG = {(byte)0xff, (byte)0xd8, (byte)0xff};
+	private static byte[] PCX = {0x0a};
+		
 	// Bit reverse table to work with TIFF FillOrder field.
-	private static final byte[] BIT_REVERSE_TABLE =
-	{
+	private static final byte[] BIT_REVERSE_TABLE =	{
 	   (byte)0x00, (byte)0x80, (byte)0x40, (byte)0xc0, (byte)0x20, (byte)0xa0, (byte)0x60, (byte)0xe0,
 	   (byte)0x10, (byte)0x90, (byte)0x50, (byte)0xd0, (byte)0x30, (byte)0xb0, (byte)0x70, (byte)0xf0,
 	   (byte)0x08, (byte)0x88, (byte)0x48, (byte)0xc8, (byte)0x28, (byte)0xa8, (byte)0x68, (byte)0xe8,
@@ -741,7 +751,46 @@ public class IMGUtils
 			default:
 				throw new UnsupportedOperationException("Unsupported DataBuffer transfer type: " + type);
 		}
-	}	
+	}
+	
+	public static ImageType guessImageType(PushbackInputStream is) throws IOException {
+		// Read the first 4 bytes
+		byte[] magicNumber = new byte[4];
+		is.read(magicNumber);
+		ImageType imageType = null;
+		// Check image type
+		if(Arrays.equals(magicNumber, TIFF_II) || Arrays.equals(magicNumber, TIFF_MM))
+			imageType = ImageType.TIFF;
+		else if(Arrays.equals(magicNumber, PNG))
+			imageType = ImageType.PNG;
+		else if(Arrays.equals(magicNumber, GIF))
+			imageType = ImageType.GIF;
+		else if(magicNumber[0] == JPG[0] && magicNumber[1] == JPG[1] && magicNumber[2] == JPG[2])
+			imageType = ImageType.JPG;
+		else if(magicNumber[0] == BM[0] && magicNumber[1] == BM[1])
+			imageType = ImageType.BMP;
+		else if(magicNumber[0] == PCX[0])
+			imageType = ImageType.PCX;
+		else if(magicNumber[1] == 0 || magicNumber[1] == 1) {
+			switch(magicNumber[2]) {
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+				case 9:
+				case 10:
+				case 11:
+				case 32:
+				case 33:
+					imageType = ImageType.TGA;					
+			}
+		} else
+			System.out.println("Unknown format!");
+		
+		is.unread(magicNumber);// reset stream pointer
+		
+		return imageType;
+	}
 	
 	// Change the bit color sex of a byte array
 	public static void invertBits(byte[] input) {

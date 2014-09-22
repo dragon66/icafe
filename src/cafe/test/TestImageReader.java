@@ -3,7 +3,6 @@ package cafe.test;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import javax.swing.ImageIcon;
@@ -18,7 +17,6 @@ import cafe.image.options.JPEGOptions;
 import cafe.image.options.PNGOptions;
 import cafe.image.options.TIFFOptions;
 import cafe.image.png.Filter;
-import cafe.image.reader.ImageReader;
 import cafe.image.tiff.TiffFieldEnum.PhotoMetric;
 import cafe.image.tiff.TiffFieldEnum.Compression;
 import cafe.image.writer.ImageWriter;
@@ -30,18 +28,13 @@ public class TestImageReader {
 
 	 public static void main(String args[]) throws Exception
 	 {
-		  FileInputStream fi = new FileInputStream(args[0]);
-		  ImageType imageType = ImageType.PNG;
-		  ImageReader reader = ImageIO.getReader(imageType);
-                
 		  long t1 = System.currentTimeMillis();
-		  BufferedImage img = reader.read(fi);
+		  BufferedImage img = ImageIO.read(args[0]);
 		  long t2 = System.currentTimeMillis();
 		
-		  System.out.println(imageType + " reader ("+ "decoding time "+(t2-t1)+"ms)");
-		  fi.close();
-		
-		  final JFrame jframe = new JFrame(imageType+" Image Reader");
+		  System.out.println("decoding time "+(t2-t1)+"ms");
+			
+		  final JFrame jframe = new JFrame("Image Reader");
 
 		  jframe.addWindowListener(new WindowAdapter(){
 			  public void windowClosing(WindowEvent evt)
@@ -51,7 +44,7 @@ public class TestImageReader {
 			  }
 		  });
 		  
-		  imageType = ImageType.JPG;
+		  ImageType imageType = ImageType.JPG;
 		  
 		  FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
 				
