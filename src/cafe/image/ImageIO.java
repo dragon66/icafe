@@ -14,6 +14,7 @@
  * Who   Date       Description
  * ====  =========  =================================================
  * WY    22Sep2014  Added read() to detect image type and read image
+ * WY    24Sep2014  Added write() to write Image
  */
 
 package cafe.image;
@@ -22,8 +23,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PushbackInputStream;
 
+import cafe.image.core.ImageMeta;
 import cafe.image.core.ImageType;
 import cafe.image.reader.ImageReader;
 import cafe.image.writer.ImageWriter;
@@ -89,6 +92,18 @@ public final class ImageIO {
 	 */	
 	public static BufferedImage read(String path) throws Exception {
 		return read(new File(path));
+	}
+	
+	public static void write(BufferedImage img, OutputStream os, ImageType imageType) throws Exception {
+		write(img, os, imageType, ImageMeta.DEFAULT_IMAGE_META);
+	}
+	
+	public static void write(BufferedImage img, OutputStream os, ImageType imageType, ImageMeta imageMeta) throws Exception {
+		ImageWriter imageWriter = getWriter(imageType);
+		if(imageWriter != null) {
+			imageWriter.setImageMeta(imageMeta);
+			imageWriter.write(img, os);
+		}		
 	}
 	
 	private ImageIO() {}

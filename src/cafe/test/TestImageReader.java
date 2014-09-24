@@ -19,7 +19,6 @@ import cafe.image.options.TIFFOptions;
 import cafe.image.png.Filter;
 import cafe.image.tiff.TiffFieldEnum.PhotoMetric;
 import cafe.image.tiff.TiffFieldEnum.Compression;
-import cafe.image.writer.ImageWriter;
 
 /**
  * Temporary class for testing image readers
@@ -48,8 +47,6 @@ public class TestImageReader {
 		  
 		  FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
 				
-		  ImageWriter writer = ImageIO.getWriter(imageType);
-		
 		  ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
 		  
 		  switch(imageType) {
@@ -80,10 +77,8 @@ public class TestImageReader {
 		  	default:
 		  }
 		  
-		  writer.setImageMeta(builder.indexedColor(false).grayscale(false).bilevel(false).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
-		  
 		  t1 = System.currentTimeMillis();
-		  writer.write(img, fo);
+		  ImageIO.write(img, fo, imageType, builder.indexedColor(false).grayscale(false).bilevel(false).applyDither(true).ditherThreshold(18).hasAlpha(true).build());			
 		  t2 = System.currentTimeMillis();
 		
 		  fo.close();

@@ -1,6 +1,8 @@
 ***************************
 Last modified on 09/22/2014
 ***************************
+24Sep2014  Added write() method to ImageIO
+22Sep2014  Added read() method to ImageIO
 22Sep2014  Added guessImageType() to IMGUtisl to auto detect image type
 19Sep2014  Reset pointer to the stream head in getPageCount() of TIFFTweaker
 14Sep2014  Added removeExif() to JPEGTweaker to remove EXIF data
