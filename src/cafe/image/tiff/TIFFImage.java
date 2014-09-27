@@ -60,6 +60,10 @@ public class TIFFImage {
 		return rout;
 	}
 	
+	public TiffField<?> getField(short tag) {
+		return ifds.get(workingPage).getField(tag);
+	}
+	
 	public TiffField<?> removeField(short tag) {
 		return ifds.get(workingPage).removeField(tag);
 	}
