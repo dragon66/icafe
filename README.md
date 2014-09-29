@@ -50,7 +50,7 @@ Image convertion and management:
    * Merge or split IDAT chunks
 
 
-Suggestions? custom requirements? send me email: yuwen_66@yahoo.com
+Suggestions? custom requirements? email me: yuwen_66@yahoo.com
 
 Go to the [wiki] page to see this library in action!
 
