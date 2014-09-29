@@ -50,6 +50,8 @@ Image convertion and management:
    * Merge or split IDAT chunks
 
 
+Suggestions? custom requirements? send me email: yuwen_66@yahoo.com
+
 Go to the [wiki] page to see this library in action!
 
 [wiki]:https://github.com/dragon66/icafe/wiki
