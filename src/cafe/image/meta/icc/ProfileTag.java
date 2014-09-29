@@ -33,6 +33,7 @@ public enum ProfileTag {
 	B2D1(TagType.PUBLIC, 0x42324431, "BToD1Tag"), // Multi-dimensional transformation structure
 	B2D2(TagType.PUBLIC, 0x42324432, "BToD2Tag"), // Multi-dimensional transformation structure
 	B2D3(TagType.PUBLIC, 0x42324433, "BToD3Tag"), // Multi-dimensional transformation structure
+	BKPT(TagType.PUBLIC, 0x626b7074, "mediaBlackPointTag"), // nCIEXYZ of media black point
 	calt(TagType.PUBLIC, 0x63616C74, "calibrationDateTimeTag"), // Profile calibration date and time
 	targ(TagType.PUBLIC, 0x74617267, "charTargetTag"), //	Characterization target such as IT8/7.2
 	chad(TagType.PUBLIC, 0x63686164, "chromaticAdaptationTag"), // Converts an nCIEXYZ colour relative to the actual adopted white to the nCIEXYZ colour relative to the PCS adopted white. Required only if the chromaticity of the actual adopted white is different from that of the PCS adopted white.
@@ -104,8 +105,10 @@ public enum ProfileTag {
 	
     public static ProfileTag fromInt(int value) {
        	ProfileTag tag = typeMap.get(value);
-    	if (tag == null)
-    	   return UNKNOWN;
+    	if (tag == null) {
+    	 System.out.println("tag value " + Integer.toHexString(value) + " unknown");
+    		return UNKNOWN;
+    	}
    		return tag;
     }
     
