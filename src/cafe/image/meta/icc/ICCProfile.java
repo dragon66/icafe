@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    29Sep2014  Added getData()
  * WY    29Sep2014  Added new constructor ICCProfile(byte[])
  */
 
@@ -56,15 +57,19 @@ public class ICCProfile {
 		private byte[] profileID = new byte[16];
 		private byte[] bytesReserved = new byte[28];
 	}
-	private ICCProfileHeader header;
 	
+	private ICCProfileHeader header;
 	private ProfileTagTable tagTable;
+	private byte[] data;
+	private InputStream is;
 	
 	public ICCProfile(byte[] profile) throws IOException {
 		this(new ByteArrayInputStream(profile));
+		this.data = profile;
 	}
 	
 	public ICCProfile(InputStream is) throws IOException {
+		this.is = is;
 		// Wrap the input stream with a RandomAccessInputStream
 		RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(is);
 		randIS.setReadStrategy(ReadStrategyMM.getInstance());
@@ -85,6 +90,11 @@ public class ICCProfile {
 	
 	public String getColorSpace() {
 		return new String(header.colorSpace);
+	}
+	
+	public byte[] getData() throws IOException {
+		if(data != null) return data;
+		return IOUtils.inputStreamToByteArray(is);
 	}
 	
 	public String getDateTimeCreated() {
