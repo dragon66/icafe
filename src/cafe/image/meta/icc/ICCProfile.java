@@ -6,12 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * ICCProfile.java
+ *
+ * Who   Date       Description
+ * ====  =========  =====================================================
+ * WY    29Sep2014  Added new constructor ICCProfile(byte[])
  */
 
 package cafe.image.meta.icc;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -25,9 +35,6 @@ import cafe.string.StringUtils;
  * @version 1.0 07/02/2013
  */
 public class ICCProfile {
-	private ICCProfileHeader header;
-	private ProfileTagTable tagTable;
-	
 	// Profile header - 128 bytes in length and contains 18 fields
 	private static class ICCProfileHeader {
 		private long profileSize;
@@ -49,6 +56,13 @@ public class ICCProfile {
 		private byte[] profileID = new byte[16];
 		private byte[] bytesReserved = new byte[28];
 	}
+	private ICCProfileHeader header;
+	
+	private ProfileTagTable tagTable;
+	
+	public ICCProfile(byte[] profile) throws IOException {
+		this(new ByteArrayInputStream(profile));
+	}
 	
 	public ICCProfile(InputStream is) throws IOException {
 		// Wrap the input stream with a RandomAccessInputStream
@@ -61,25 +75,12 @@ public class ICCProfile {
 		randIS.close();
 	}
 	
-	private void readHeader(RandomAccessInputStream is) throws IOException {
-		header.profileSize = is.readUnsignedInt();
-		is.read(header.preferredCMMType);
-		is.read(header.profileVersionNumber);
-		header.profileClass = is.readInt();
-		is.read(header.colorSpace);
-		is.read(header.PCS);
-		is.read(header.dateTimeCreated);
-		is.read(header.profileFileSignature);
-		is.read(header.primaryPlatformSignature);
-		is.read(header.profileFlags);
-		is.read(header.deviceManufacturer);
-		is.read(header.deviceModel);
-		is.read(header.deviceAttributes);
-		header.renderingIntent = is.readInt();
-		is.read(header.PCSXYZ);
-		is.read(header.profileCreator);
-		is.read(header.profileID);
-		is.read(header.bytesReserved);
+	public boolean canBeUsedIndependently() {
+		return (((header.profileFlags[0]>>6)&0x01) == 0);
+	}
+	
+	public String getBytesReserved() {
+		return StringUtils.byteArrayToHexString(header.bytesReserved);
 	}
 	
 	public String getColorSpace() {
@@ -97,8 +98,28 @@ public class ICCProfile {
 		return year + "/" + month + "/" + day + ", " + hour + ":" + minutes + ":" + seconds;
 	}
 	
+	public String getDeviceAttributes() {
+		return (isReflective()?"reflective":"transparency") + ", " + (isGlossy()?"glossy":"matte") + ", " + (isPositive()?"positive":"negative") + ", " + (isColor()?"color":"black & white");
+	}
+	
+	public String getDeviceManufacturer() {
+		return new String(header.deviceManufacturer);
+	}
+	
+	public String getDeviceModel() {
+		return new String(header.deviceModel);
+	}
+	
 	public String getPCS() {
 		return new String(header.PCS);
+	}
+	
+	public float[] getPCSXYZ() {
+		float PCSX = IOUtils.readS15Fixed16MMNumber(header.PCSXYZ, 0);
+		float PCSY = IOUtils.readS15Fixed16MMNumber(header.PCSXYZ, 4);
+		float PCSZ = IOUtils.readS15Fixed16MMNumber(header.PCSXYZ, 8);
+		
+		return new float[] {PCSX, PCSY, PCSZ};
 	}
 	
 	public String getPreferredCMMType() {
@@ -151,8 +172,20 @@ public class ICCProfile {
 		}
 	}
 	
+	public String getProfileCreator() {
+		return new String(header.profileCreator);
+	}
+	
 	public String getProfileFileSignature() {
 		return new String(header.profileFileSignature);
+	}
+	
+	public String getProfileFlags() {
+		return (isEmbeddedInFile()?"embedded in file":"not embedded") + ", " + (canBeUsedIndependently()?"used independently":"cannot be used independently");
+	}
+	
+	public String getProfileID() {
+		return StringUtils.byteArrayToHexString(header.profileID);
 	}
 	
 	public long getProfileSize() {
@@ -165,46 +198,6 @@ public class ICCProfile {
 		int bugFix = (header.profileVersionNumber[1]&0x0f);
 		
 		return "" + majorVersion + "." + minorRevision + bugFix;			
-	}
-	
-	public boolean isEmbeddedInFile() {
-		return (((header.profileFlags[0]>>7)&0x01) == 1);
-	}
-	
-	public boolean canBeUsedIndependently() {
-		return (((header.profileFlags[0]>>6)&0x01) == 0);
-	}
-	
-	public String getProfileFlags() {
-		return (isEmbeddedInFile()?"embedded in file":"not embedded") + ", " + (canBeUsedIndependently()?"used independently":"cannot be used independently");
-	}
-	
-	public String getDeviceManufacturer() {
-		return new String(header.deviceManufacturer);
-	}
-	
-	public String getDeviceModel() {
-		return new String(header.deviceModel);
-	}
-	
-	public boolean isReflective() {
-		return (((header.deviceAttributes[0]>>7)&0x01) == 0);
-	}
-	
-	public boolean isGlossy() {
-		return (((header.deviceAttributes[0]>>6)&0x01) == 0);
-	}
-	
-	public boolean isPositive() {
-		return (((header.deviceAttributes[0]>>5)&0x01) == 0);
-	}
-	
-	public boolean isColor() {
-		return (((header.deviceAttributes[0]>>4)&0x01) == 0);
-	}
-	
-	public String getDeviceAttributes() {
-		return (isReflective()?"reflective":"transparency") + ", " + (isGlossy()?"glossy":"matte") + ", " + (isPositive()?"positive":"negative") + ", " + (isColor()?"color":"black & white");
 	}
 	
 	public int getRenderingIntent() {
@@ -226,24 +219,45 @@ public class ICCProfile {
 		}
 	}
 	
-	public float[] getPCSXYZ() {
-		float PCSX = IOUtils.readS15Fixed16MMNumber(header.PCSXYZ, 0);
-		float PCSY = IOUtils.readS15Fixed16MMNumber(header.PCSXYZ, 4);
-		float PCSZ = IOUtils.readS15Fixed16MMNumber(header.PCSXYZ, 8);
-		
-		return new float[] {PCSX, PCSY, PCSZ};
+	public boolean isColor() {
+		return (((header.deviceAttributes[0]>>4)&0x01) == 0);
 	}
 	
-	public String getProfileCreator() {
-		return new String(header.profileCreator);
+	public boolean isEmbeddedInFile() {
+		return (((header.profileFlags[0]>>7)&0x01) == 1);
 	}
 	
-	public String getProfileID() {
-		return StringUtils.byteArrayToHexString(header.profileID);
+	public boolean isGlossy() {
+		return (((header.deviceAttributes[0]>>6)&0x01) == 0);
 	}
 	
-	public String getBytesReserved() {
-		return StringUtils.byteArrayToHexString(header.bytesReserved);
+	public boolean isPositive() {
+		return (((header.deviceAttributes[0]>>5)&0x01) == 0);
+	}
+	
+	public boolean isReflective() {
+		return (((header.deviceAttributes[0]>>7)&0x01) == 0);
+	}
+	
+	private void readHeader(RandomAccessInputStream is) throws IOException {
+		header.profileSize = is.readUnsignedInt();
+		is.read(header.preferredCMMType);
+		is.read(header.profileVersionNumber);
+		header.profileClass = is.readInt();
+		is.read(header.colorSpace);
+		is.read(header.PCS);
+		is.read(header.dateTimeCreated);
+		is.read(header.profileFileSignature);
+		is.read(header.primaryPlatformSignature);
+		is.read(header.profileFlags);
+		is.read(header.deviceManufacturer);
+		is.read(header.deviceModel);
+		is.read(header.deviceAttributes);
+		header.renderingIntent = is.readInt();
+		is.read(header.PCSXYZ);
+		is.read(header.profileCreator);
+		is.read(header.profileID);
+		is.read(header.bytesReserved);
 	}
 	
 	private void readTagTable(RandomAccessInputStream is) throws IOException {
