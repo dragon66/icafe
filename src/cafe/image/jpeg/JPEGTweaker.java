@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    29Sep2014  Added insertICCProfile(InputStream, OutputStream, ICCProfile)
  * WY    29Sep2014  Added writeICCProfile(OutputStream, ICCProfile)
  * WY    29Sep2014  Added getICCProfile(InputStream)
  * WY    29Sep2014  Removed showICCProfile(byte[])
@@ -434,7 +435,7 @@ public class JPEGTweaker {
 			is.close();
 	}
 	
-	public static void insertICCProfile(InputStream is, OutputStream os, ICC_Profile icc_profile) throws Exception {
+	public static void insertICCProfile(InputStream is, OutputStream os, byte[] data) throws Exception {
 		// Copy the original image and insert ICC_Profile data
 		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
 		boolean finished = false;
@@ -485,7 +486,7 @@ public class JPEGTweaker {
 				    	break;				
 				    case SOS: 
 				    	// We add ICC_Profile data right before the SOS segment.
-				    	writeICCProfile(os, icc_profile);
+				    	writeICCProfile(os, data);
 				    	IOUtils.writeShortMM(os, marker);
 						copyToEnd(is, os);
 						finished = true; // No more marker to read, we are done. 
@@ -525,6 +526,14 @@ public class JPEGTweaker {
 				}
 			}
 	    }
+	}
+	
+	public static void insertICCProfile(InputStream is, OutputStream os, ICC_Profile icc_profile) throws Exception {
+		insertICCProfile(is, os, icc_profile.getData());
+	}
+	
+	public static void insertICCProfile(InputStream is, OutputStream os, ICCProfile icc_profile) throws Exception {
+		insertICCProfile(is, os, icc_profile.getData());
 	}
 	
 	private static void readAPP0(InputStream is) throws IOException
