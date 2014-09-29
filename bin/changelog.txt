@@ -1,6 +1,7 @@
 ***************************
 Last modified on 09/29/2014
 ***************************
+29Sep2014  Added writeICCProfile(OutputStream, ICCProfile) to JPEGTweaker
 29Sep2014  Added getICCProfile(InputStream) to JPEGTweaker 
 29Sep2014  Removed showICCProfile(byte[]) from JPEGTweaker
 29Sep2014  Added new constructor and getData() to ICCProfile

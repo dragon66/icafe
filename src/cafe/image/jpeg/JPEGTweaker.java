@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    29Sep2014  Added writeICCProfile(OutputStream, ICCProfile)
  * WY    29Sep2014  Added getICCProfile(InputStream)
  * WY    29Sep2014  Removed showICCProfile(byte[])
  * WY    14Sep2014  Added removeExif() to remove EXIF data
@@ -1423,11 +1424,11 @@ public class JPEGTweaker {
 	 * Write ICC_Profile as one or more APP2 segments
 	 * 
 	 * @param os output stream to write the ICC_Profile
-	 * @param icc_profile ICC_Profile read from a file or other means
+	 * @param data ICC_Profile data
 	 * @throws IOException
 	 */
-	public static void writeICCProfile(OutputStream os, ICC_Profile icc_profile) throws IOException {
-		byte[] data = icc_profile.getData();
+	public static void writeICCProfile(OutputStream os, byte[] data) throws IOException {
+		// ICC_Profile ID
 		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
 		int maxSegmentLen = 65535;
 		int maxICCDataLen = 65519;
@@ -1448,6 +1449,30 @@ public class JPEGTweaker {
 			IOUtils.writeShortMM(os, totalSegment|totalSegment<<8);
 			IOUtils.write(os, data, data.length - leftOver, leftOver);
 		}
+	}
+	
+	/**
+	 * Write ICC_Profile as one or more APP2 segments
+	 * 
+	 * @param os output stream to write the ICC_Profile
+	 * @param icc_profile ICC_Profile read from a file or other means
+	 * @throws IOException
+	 */
+	public static void writeICCProfile(OutputStream os, ICC_Profile icc_profile) throws IOException {
+		byte[] data = icc_profile.getData();
+		writeICCProfile(os, data);
+	}
+	
+	/**
+	 * Write ICCProfile as one or more APP2 segments
+	 * 
+	 * @param os output stream to write the ICC_Profile
+	 * @param icc_profile ICCProfile read from a file or other means
+	 * @throws IOException
+	 */
+	public static void writeICCProfile(OutputStream os, ICCProfile icc_profile) throws IOException {
+		byte[] data = icc_profile.getData();
+		writeICCProfile(os, data);
 	}
 	
 	// Prevent from instantiation
