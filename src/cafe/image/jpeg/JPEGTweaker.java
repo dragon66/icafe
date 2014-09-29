@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    29Sep2014  Added getICCProfile(InputStream)
+ * WY    29Sep2014  Removed showICCProfile(byte[])
  * WY    14Sep2014  Added removeExif() to remove EXIF data
  * WY    14Sep2014  Changed insertICCProfile() to remove old profile
  * WY    29Aug2014  Changed removeAPP1() to more general removeAPPn()
@@ -311,6 +313,14 @@ public class JPEGTweaker {
 		}	
 	}
 	
+	public static ICCProfile getICCProfile(InputStream is) throws IOException {
+		ICCProfile profile = null;
+		byte[] buf = extractICCProfile(is);
+		if(buf.length > 0)
+			profile = new ICCProfile(buf);
+		return profile;
+	}
+	
 	/**
 	 * @param is input image stream 
 	 * @param os output image stream
@@ -514,218 +524,6 @@ public class JPEGTweaker {
 				}
 			}
 	    }
-	}
-	
-	private static void readDHT(InputStream is, List<HTable> m_acTables, List<HTable> m_dcTables) throws IOException 
-	{	
-		final String[] HT_class_table = {"DC Component", "AC Component"};
-	 			
-		int len = IOUtils.readUnsignedShortMM(is);
-        System.out.println("DHT segment length: " + len);       	
-        byte buf[] = new byte[len - 2];
-        IOUtils.readFully(is, buf);
-		
-		DHTReader reader = new DHTReader(new Segment(Marker.DHT, len, buf));
-		
-		List<HTable> dcTables = reader.getDCTables();
-		List<HTable> acTables = reader.getACTables();
-		
-		m_acTables.addAll(acTables);
-		m_dcTables.addAll(dcTables);
-		
-		List<HTable> tables = new ArrayList<HTable>(dcTables);
-		tables.addAll(acTables);
-		
-		for(HTable table : tables )
-		{
-			System.out.println("Class: " + table.getComponentClass() + " (" + HT_class_table[table.getComponentClass()] + ")");
-			System.out.println("Destination ID: " + table.getDestinationID());
-			
-			byte[] bits = table.getBits();
-			byte[] values = table.getValues();
-			
-		    int count = 0;
-			
-			for (int i = 0; i < bits.length; i++)
-			{
-				count += (bits[i]&0xff);
-			}
-			
-            System.out.println("Number of codes: " + count);
-			
-            if (count > 256)
-			{
-				System.out.println("invalid huffman code count!");			
-				return;
-			}
-	        
-            int j = 0;
-            
-			for (int i = 0; i < 16; i++) {
-			
-				System.out.print("Codes of length " + (i+1) + " (" + (bits[i]&0xff) +  " total): [ ");
-				
-				for (int k = 0; k < (bits[i]&0xff); k++) {
-					System.out.print((values[j++]&0xff) + " ");
-				}
-				
-				System.out.println("]");
-			}
-			
-			System.out.println("**********************************");
-		}
-   	}
-	
-	// Process define Quantization table
-	private static void readDQT(InputStream is, List<QTable> m_qTables) throws IOException
-	{
-		int len = IOUtils.readUnsignedShortMM(is);
-		byte buf[] = new byte[len - 2];
-		IOUtils.readFully(is, buf);
-		
-		DQTReader reader = new DQTReader(new Segment(Marker.DQT, len, buf));
-		List<QTable> qTables = reader.getTables();
-		m_qTables.addAll(qTables);
-		
-		int count = 0;
-		  
-		for(QTable table : qTables)
-		{
-			int QT_precision = table.getPrecision();
-			short[] qTable = table.getTable();
-			System.out.println("precision of QT is " + QT_precision);
-			System.out.println("Quantization table #" + table.getIndex() + ":");
-			
-		   	if(QT_precision == 0) {
-				for (int j = 0; j<64; j++)
-			    {
-					if (j != 0 && j%8 == 0) {
-						System.out.println();
-					}
-					
-					System.out.print((qTable[j]&0xff) + " ");			
-			    }
-			} else { // 16 bit big-endian
-								
-				for (int j = 0; j < 64; j++) {
-					if (j != 0 && j%8 == 0) {
-						System.out.println();
-					}
-					
-					System.out.print((qTable[j]&0xffff) + " ");	
-				}				
-			}
-		   	
-		   	count++;
-		
-			System.out.println();
-			System.out.println("***************************");
-		}
-		
-		System.out.println("Total number of Quantation tables: " + count);
-		System.out.println("**********************************");
-	}
-	
-	private static void readSOF0(InputStream is, Map<String, Segment> segmentMap) throws IOException 
-	{		
-		int len = IOUtils.readUnsignedShortMM(is);
-		byte buf[] = new byte[len - 2];
-		IOUtils.readFully(is, buf);
-		
-		Segment segment = new Segment(Marker.SOF0, len, buf);		
-		SOF0Reader reader = new SOF0Reader(segment);
-		
-		segmentMap.put(Marker.SOF0.name(), segment);		
-		
-		System.out.println("Data length: " + len);		
-		System.out.println("Precision: " + reader.getPrecision());
-		System.out.println("Image height: " + reader.getImageHeight());
-		System.out.println("Image width: " + reader.getImageWidth());
-		System.out.println("# of Components: " + reader.getNumOfComponents());
-		System.out.println(" (1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)");		
-		    
-		for(Component component:reader.getComponents()) {
-			System.out.println();
-			System.out.println("Component ID: " + component.getId());
-			System.out.println("Herizontal sampling factor: " + component.getHSampleFactor());
-			System.out.println("Vertical sampling factor: " + component.getVSampleFactor());
-			System.out.println("Quantization table #: " + component.getQTableNumber());
-		}
-		
-		System.out.println("**********************************");
-	}
-	
-	private static short readSOS(InputStream is, Map<String, Segment> segmentMap) throws IOException 
-	{
-		int len = IOUtils.readUnsignedShortMM(is);
-		byte buf[] = new byte[len - 2];
-		IOUtils.readFully(is, buf);
-		
-		Segment sof = segmentMap.get(Marker.SOF0.name());
-		
-		if(sof == null) {
-			System.out.println("<<No SOF0 found, skip remaining SOS!>>");
-			return Marker.EOI.getValue(); 
-		}
-		
-		Segment segment = new Segment(Marker.SOS, len, buf);	
-		SOF0Reader sof0Reader = new SOF0Reader(sof);
-		new SOSReader(segment, sof0Reader);
-		
-		Component[] components = sof0Reader.getComponents();
-		
-		for(Component component : components) {
-			System.out.println("Component ID: " + component.getId());
-			System.out.println("Horizontal sampling factor: " + component.getHSampleFactor());
-			System.out.println("Vertical sampling factor: " + component.getVSampleFactor());
-			System.out.println("Quantization table #: " + component.getQTableNumber());
-			System.out.println("DC table number: " + component.getDCTableNumber());
-			System.out.println("AC table number: " + component.getACTableNumber());
-		}
-		
-		System.out.println("****************************************");
-		
-		// Actual image data follow.
-		int nextByte = 0;
-		short marker = 0;	
-		
-		while((nextByte = IOUtils.read(is)) != -1)
-		{
-			if(nextByte == 0xff)
-			{
-				nextByte = IOUtils.read(is);
-				
-				if (nextByte == -1) {
-					throw new IOException("Premature end of SOS segment!");					
-				}								
-				
-				if (nextByte != 0x00)
-				{
-					marker = (short)((0xff<<8)|nextByte);
-					
-					switch (Marker.fromShort(marker)) {										
-						case RST0:  
-						case RST1:
-						case RST2:
-						case RST3:
-						case RST4:
-						case RST5:
-						case RST6:
-						case RST7:
-							System.out.println(Marker.fromShort(marker));
-							continue;
-						default:											
-					}
-					break;
-				}
-			}
-		}
-		
-		if (nextByte == -1) {
-			throw new IOException("Premature end of SOS segment!");
-		}
-
-		return marker;
 	}
 	
 	private static void readAPP0(InputStream is) throws IOException
@@ -1066,7 +864,117 @@ public class JPEGTweaker {
 		byte[] data = new byte[length-2];
 		IOUtils.readFully(is, data, 0, length-2);
 		return new String(data).trim();
-	}	
+	}
+	
+	private static void readDHT(InputStream is, List<HTable> m_acTables, List<HTable> m_dcTables) throws IOException 
+	{	
+		final String[] HT_class_table = {"DC Component", "AC Component"};
+	 			
+		int len = IOUtils.readUnsignedShortMM(is);
+        System.out.println("DHT segment length: " + len);       	
+        byte buf[] = new byte[len - 2];
+        IOUtils.readFully(is, buf);
+		
+		DHTReader reader = new DHTReader(new Segment(Marker.DHT, len, buf));
+		
+		List<HTable> dcTables = reader.getDCTables();
+		List<HTable> acTables = reader.getACTables();
+		
+		m_acTables.addAll(acTables);
+		m_dcTables.addAll(dcTables);
+		
+		List<HTable> tables = new ArrayList<HTable>(dcTables);
+		tables.addAll(acTables);
+		
+		for(HTable table : tables )
+		{
+			System.out.println("Class: " + table.getComponentClass() + " (" + HT_class_table[table.getComponentClass()] + ")");
+			System.out.println("Destination ID: " + table.getDestinationID());
+			
+			byte[] bits = table.getBits();
+			byte[] values = table.getValues();
+			
+		    int count = 0;
+			
+			for (int i = 0; i < bits.length; i++)
+			{
+				count += (bits[i]&0xff);
+			}
+			
+            System.out.println("Number of codes: " + count);
+			
+            if (count > 256)
+			{
+				System.out.println("invalid huffman code count!");			
+				return;
+			}
+	        
+            int j = 0;
+            
+			for (int i = 0; i < 16; i++) {
+			
+				System.out.print("Codes of length " + (i+1) + " (" + (bits[i]&0xff) +  " total): [ ");
+				
+				for (int k = 0; k < (bits[i]&0xff); k++) {
+					System.out.print((values[j++]&0xff) + " ");
+				}
+				
+				System.out.println("]");
+			}
+			
+			System.out.println("**********************************");
+		}
+   	}
+	
+	// Process define Quantization table
+	private static void readDQT(InputStream is, List<QTable> m_qTables) throws IOException
+	{
+		int len = IOUtils.readUnsignedShortMM(is);
+		byte buf[] = new byte[len - 2];
+		IOUtils.readFully(is, buf);
+		
+		DQTReader reader = new DQTReader(new Segment(Marker.DQT, len, buf));
+		List<QTable> qTables = reader.getTables();
+		m_qTables.addAll(qTables);
+		
+		int count = 0;
+		  
+		for(QTable table : qTables)
+		{
+			int QT_precision = table.getPrecision();
+			short[] qTable = table.getTable();
+			System.out.println("precision of QT is " + QT_precision);
+			System.out.println("Quantization table #" + table.getIndex() + ":");
+			
+		   	if(QT_precision == 0) {
+				for (int j = 0; j<64; j++)
+			    {
+					if (j != 0 && j%8 == 0) {
+						System.out.println();
+					}
+					
+					System.out.print((qTable[j]&0xff) + " ");			
+			    }
+			} else { // 16 bit big-endian
+								
+				for (int j = 0; j < 64; j++) {
+					if (j != 0 && j%8 == 0) {
+						System.out.println();
+					}
+					
+					System.out.print((qTable[j]&0xffff) + " ");	
+				}				
+			}
+		   	
+		   	count++;
+		
+			System.out.println();
+			System.out.println("***************************");
+		}
+		
+		System.out.println("Total number of Quantation tables: " + count);
+		System.out.println("**********************************");
+	}
 	
 	private static void readExif(InputStream is) throws IOException {		
 		RandomAccessInputStream randInputStream = new FileCacheRandomAccessInputStream(is);
@@ -1100,6 +1008,108 @@ public class JPEGTweaker {
 	    	}
 	    }
 		randInputStream.close();
+	}
+	
+	private static void readSOF0(InputStream is, Map<String, Segment> segmentMap) throws IOException 
+	{		
+		int len = IOUtils.readUnsignedShortMM(is);
+		byte buf[] = new byte[len - 2];
+		IOUtils.readFully(is, buf);
+		
+		Segment segment = new Segment(Marker.SOF0, len, buf);		
+		SOF0Reader reader = new SOF0Reader(segment);
+		
+		segmentMap.put(Marker.SOF0.name(), segment);		
+		
+		System.out.println("Data length: " + len);		
+		System.out.println("Precision: " + reader.getPrecision());
+		System.out.println("Image height: " + reader.getImageHeight());
+		System.out.println("Image width: " + reader.getImageWidth());
+		System.out.println("# of Components: " + reader.getNumOfComponents());
+		System.out.println(" (1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)");		
+		    
+		for(Component component:reader.getComponents()) {
+			System.out.println();
+			System.out.println("Component ID: " + component.getId());
+			System.out.println("Herizontal sampling factor: " + component.getHSampleFactor());
+			System.out.println("Vertical sampling factor: " + component.getVSampleFactor());
+			System.out.println("Quantization table #: " + component.getQTableNumber());
+		}
+		
+		System.out.println("**********************************");
+	}	
+	
+	private static short readSOS(InputStream is, Map<String, Segment> segmentMap) throws IOException 
+	{
+		int len = IOUtils.readUnsignedShortMM(is);
+		byte buf[] = new byte[len - 2];
+		IOUtils.readFully(is, buf);
+		
+		Segment sof = segmentMap.get(Marker.SOF0.name());
+		
+		if(sof == null) {
+			System.out.println("<<No SOF0 found, skip remaining SOS!>>");
+			return Marker.EOI.getValue(); 
+		}
+		
+		Segment segment = new Segment(Marker.SOS, len, buf);	
+		SOF0Reader sof0Reader = new SOF0Reader(sof);
+		new SOSReader(segment, sof0Reader);
+		
+		Component[] components = sof0Reader.getComponents();
+		
+		for(Component component : components) {
+			System.out.println("Component ID: " + component.getId());
+			System.out.println("Horizontal sampling factor: " + component.getHSampleFactor());
+			System.out.println("Vertical sampling factor: " + component.getVSampleFactor());
+			System.out.println("Quantization table #: " + component.getQTableNumber());
+			System.out.println("DC table number: " + component.getDCTableNumber());
+			System.out.println("AC table number: " + component.getACTableNumber());
+		}
+		
+		System.out.println("****************************************");
+		
+		// Actual image data follow.
+		int nextByte = 0;
+		short marker = 0;	
+		
+		while((nextByte = IOUtils.read(is)) != -1)
+		{
+			if(nextByte == 0xff)
+			{
+				nextByte = IOUtils.read(is);
+				
+				if (nextByte == -1) {
+					throw new IOException("Premature end of SOS segment!");					
+				}								
+				
+				if (nextByte != 0x00)
+				{
+					marker = (short)((0xff<<8)|nextByte);
+					
+					switch (Marker.fromShort(marker)) {										
+						case RST0:  
+						case RST1:
+						case RST2:
+						case RST3:
+						case RST4:
+						case RST5:
+						case RST6:
+						case RST7:
+							System.out.println(Marker.fromShort(marker));
+							continue;
+						default:											
+					}
+					break;
+				}
+			}
+		}
+		
+		if (nextByte == -1) {
+			throw new IOException("Premature end of SOS segment!");
+		}
+
+		return marker;
 	}
 	
 	// Remove APPn segment
@@ -1266,16 +1276,13 @@ public class JPEGTweaker {
 	    }
 	}
 	
-	public static void showICCProfile(byte[] icc_profile) throws IOException {
-		// TODO
-		ICCProfile profile = new ICCProfile(new ByteArrayInputStream(icc_profile));
-		profile.showHeader();
-		profile.showTagTable();
-	}
-	
 	public static void showICCProfile(InputStream is) throws IOException {
 		byte[] icc_profile = extractICCProfile(is);
-		if(icc_profile != null && icc_profile.length > 0) showICCProfile(icc_profile);
+		if(icc_profile != null && icc_profile.length > 0) {
+			ICCProfile profile = new ICCProfile(icc_profile);
+			profile.showHeader();
+			profile.showTagTable();
+		}
 	}
 	
 	@SuppressWarnings("unused")
