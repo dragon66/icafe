@@ -1,6 +1,8 @@
 ***************************
-Last modified on 09/24/2014
+Last modified on 09/29/2014
 ***************************
+29Sep2014  Added getICCProfile(InputStream) to JPEGTweaker 
+29Sep2014  Removed showICCProfile(byte[]) from JPEGTweaker
 24Sep2014  Added write() method to ImageIO
 22Sep2014  Added read() method to ImageIO
 22Sep2014  Added guessImageType() to IMGUtisl to auto detect image type
