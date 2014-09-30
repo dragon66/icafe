@@ -13,20 +13,17 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    30Sep2014  Rewrite to use byte array as input
  * WY    29Sep2014  Added getData()
  * WY    29Sep2014  Added new constructor ICCProfile(byte[])
  */
 
 package cafe.image.meta.icc;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
-import cafe.io.RandomAccessInputStream;
-import cafe.io.ReadStrategyMM;
 import cafe.string.StringUtils;
 
 /**
@@ -57,27 +54,20 @@ public class ICCProfile {
 		private byte[] profileID = new byte[16];
 		private byte[] bytesReserved = new byte[28];
 	}
+	public static final int TAG_TABLE_OFFSET = 128;
 	
 	private ICCProfileHeader header;
 	private ProfileTagTable tagTable;
 	private byte[] data;
-	private InputStream is;
-	
-	public ICCProfile(byte[] profile) throws IOException {
-		this(new ByteArrayInputStream(profile));
+		
+	public ICCProfile(byte[] profile) {
 		this.data = profile;
+		loadProfile();
 	}
 	
 	public ICCProfile(InputStream is) throws IOException {
-		this.is = is;
-		// Wrap the input stream with a RandomAccessInputStream
-		RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(is);
-		randIS.setReadStrategy(ReadStrategyMM.getInstance());
-		this.header = new ICCProfileHeader();
-		this.tagTable = new ProfileTagTable();
-		readHeader(randIS);
-		readTagTable(randIS);
-		randIS.close();
+		this.data = IOUtils.inputStreamToByteArray(is);
+		loadProfile();
 	}
 	
 	public boolean canBeUsedIndependently() {
@@ -92,9 +82,8 @@ public class ICCProfile {
 		return new String(header.colorSpace);
 	}
 	
-	public byte[] getData() throws IOException {
-		if(data != null) return data;
-		return IOUtils.inputStreamToByteArray(is);
+	public byte[] getData() {
+		return data;
 	}
 	
 	public String getDateTimeCreated() {
@@ -229,6 +218,10 @@ public class ICCProfile {
 		}
 	}
 	
+	public ProfileTagTable getTagTable() {
+		return tagTable;
+	}
+	
 	public boolean isColor() {
 		return (((header.deviceAttributes[0]>>4)&0x01) == 0);
 	}
@@ -249,29 +242,36 @@ public class ICCProfile {
 		return (((header.deviceAttributes[0]>>7)&0x01) == 0);
 	}
 	
-	private void readHeader(RandomAccessInputStream is) throws IOException {
-		header.profileSize = is.readUnsignedInt();
-		is.read(header.preferredCMMType);
-		is.read(header.profileVersionNumber);
-		header.profileClass = is.readInt();
-		is.read(header.colorSpace);
-		is.read(header.PCS);
-		is.read(header.dateTimeCreated);
-		is.read(header.profileFileSignature);
-		is.read(header.primaryPlatformSignature);
-		is.read(header.profileFlags);
-		is.read(header.deviceManufacturer);
-		is.read(header.deviceModel);
-		is.read(header.deviceAttributes);
-		header.renderingIntent = is.readInt();
-		is.read(header.PCSXYZ);
-		is.read(header.profileCreator);
-		is.read(header.profileID);
-		is.read(header.bytesReserved);
+	private void loadProfile() {
+		this.header = new ICCProfileHeader();
+		this.tagTable = new ProfileTagTable();
+		readHeader(data);
+		readTagTable(data);
 	}
 	
-	private void readTagTable(RandomAccessInputStream is) throws IOException {
-		tagTable.read(is);
+	private void readHeader(byte[] data) {
+		header.profileSize = IOUtils.readUnsignedIntMM(data, 0);
+		System.arraycopy(data, 4, header.preferredCMMType, 0, 4);
+		System.arraycopy(data, 8, header.profileVersionNumber, 0, 4);
+		header.profileClass = IOUtils.readIntMM(data, 12);
+		System.arraycopy(data, 16, header.colorSpace, 0, 4);
+		System.arraycopy(data, 20, header.PCS, 0, 4);
+		System.arraycopy(data, 24, header.dateTimeCreated, 0, 12);
+		System.arraycopy(data, 36, header.profileFileSignature, 0, 4);
+		System.arraycopy(data, 40, header.primaryPlatformSignature, 0, 4);
+		System.arraycopy(data, 44, header.profileFlags, 0, 4);
+		System.arraycopy(data, 48, header.deviceManufacturer, 0, 4);
+		System.arraycopy(data, 52, header.deviceModel, 0, 4);
+		System.arraycopy(data, 56, header.deviceAttributes, 0, 8);
+		header.renderingIntent = IOUtils.readIntMM(data, 64);
+		System.arraycopy(data, 68, header.PCSXYZ, 0, 12);
+		System.arraycopy(data, 80, header.profileCreator, 0, 4);
+		System.arraycopy(data, 84, header.profileID, 0, 16);
+		System.arraycopy(data, 100, header.bytesReserved, 0, 28);
+	}
+	
+	private void readTagTable(byte[] data) {
+		tagTable.read(data);
 	}
 	
 	public void showHeader() {

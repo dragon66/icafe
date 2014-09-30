@@ -10,7 +10,6 @@
 
 package cafe.image.meta.icc;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import cafe.io.IOUtils;
-import cafe.io.RandomAccessInputStream;
 
 /**
  * ICC Profile Tag Table
@@ -71,21 +69,22 @@ public class ProfileTagTable {
 		tagEntries.put(tagEntry.getProfileTag(), tagEntry);
 	}
 	
-	public void read(RandomAccessInputStream is) throws IOException {
-		tagCount = IOUtils.readIntMM(is);
+	public void read(byte[] data) {
+		int offset = ICCProfile.TAG_TABLE_OFFSET;
+		tagCount = IOUtils.readIntMM(data, offset);
+		offset += 4;
 		// Read each tag
 		for(int i = 0; i < tagCount; i++) {
-			int tagSignature = IOUtils.readIntMM(is);
+			int tagSignature = IOUtils.readIntMM(data, offset);
+			offset += 4;
 			ProfileTag tag = ProfileTag.fromInt(tagSignature);
-			int dataOffset = is.readInt();
-			int dataLength = is.readInt();
-			long streamOffset = is.getStreamPointer();
-			is.seek(dataOffset);
+			int dataOffset = IOUtils.readIntMM(data, offset);
+			offset += 4;
+			int dataLength = IOUtils.readIntMM(data, offset);
+			offset += 4;
 			
 			byte[] temp = new byte[dataLength];
-			is.read(temp);
-			
-			is.seek(streamOffset);
+			System.arraycopy(data, dataOffset, temp, 0, temp.length);
 			
 			tagEntries.put(tagSignature, new TagEntry(tag.getValue(), dataOffset, dataLength, temp));
 		}
@@ -93,6 +92,10 @@ public class ProfileTagTable {
 	
 	public int getTagCount() {
 		return tagCount;
+	}
+	
+	public TagEntry getTagEntry(ProfileTag profileTag) {
+		return tagEntries.get(profileTag.getValue());
 	}
 	
 	public List<TagEntry> getTagEntries() {
