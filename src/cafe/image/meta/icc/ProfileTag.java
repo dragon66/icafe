@@ -62,7 +62,8 @@ public enum ProfileTag {
 	pre0(TagType.PUBLIC, 0x70726530, "preview0Tag"), // Preview transformation: 8-bit or 16-bit data
 	pre1(TagType.PUBLIC, 0x70726531, "preview1Tag"), // Preview transformation: 8-bit or 16-bit data
 	pre2(TagType.PUBLIC, 0x70726532, "preview2Tag"), // Preview transformation: 8-bit or 16-bit data
-	desc(TagType.PUBLIC, 0x64657363, "profileDescriptionTag"), //	Structure containing invariant and localizable versions of the profile name for displays
+	desc(TagType.PUBLIC, 0x64657363, "profileDescriptionTag"), // Structure containing invariant and localizable versions of the profile name for displays
+	desm(TagType.PRIVATE, 0x6473636d, "appleMultilanguageDescriptionTag"),
 	pseq(TagType.PUBLIC, 0x70736571, "profileSequenceDescTag"), // An array of descriptions of the profile sequence
 	psid(TagType.PUBLIC, 0x70736964, "profileSequenceIdentifierTag"),
 	rXYZ(TagType.PUBLIC, 0x7258595A, "redMatrixColumnTag"), // The first column in the matrix used in matrix/TRC transforms. (This column is combined with the linear red channel during the matrix multiplication).
