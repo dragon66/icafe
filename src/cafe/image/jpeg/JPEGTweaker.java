@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    01Oct2014  Added code to read APP13 thumbnail
  * WY    29Sep2014  Added insertICCProfile(InputStream, OutputStream, ICCProfile)
  * WY    29Sep2014  Added writeICCProfile(OutputStream, ICCProfile)
  * WY    29Sep2014  Added getICCProfile(InputStream)
@@ -38,10 +39,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import cafe.image.meta.ImageResourceID;
+
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.iptc.IPTCDataSet;
+import cafe.image.meta.photoshop.ImageResourceID;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.TIFFTweaker;
 import cafe.image.tiff.TiffField;
@@ -190,7 +192,7 @@ public class JPEGTweaker {
 						    if(ifds.size() >= 2) {
 						    	IFD thumbnailIFD = ifds.get(1);
 						    	TiffField<?> field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
-						    	if(field != null) { // Save as JPEG
+						    	if(field != null) { // JPEG format, save as JPEG
 						    		int thumbnailOffset = field.getDataAsLong()[0];
 						    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());
 						    		int thumbnailLen = field.getDataAsLong()[0];
@@ -200,7 +202,7 @@ public class JPEGTweaker {
 						    		OutputStream fout = new FileOutputStream(pathToThumbnail.replaceFirst("[.][^.]+$", "")+".jpg");
 						    		fout.write(data);
 						    		fout.close();
-						    	} else { // Save as TIFF
+						    	} else { // Uncompressed, save as TIFF
 						    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS.getValue());
 						    		if(field == null) 
 						    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS.getValue());
@@ -780,6 +782,53 @@ public class JPEGTweaker {
 							System.out.println(" - Plus 1 byte unknown trailer value = " + data[i++]); // Always seems to be 0x01
 							if(size%2 != 0) i++;
 							break;
+						case THUMBNAIL_RESOURCE_PS4:
+						case THUMBNAIL_RESOURCE_PS5:	
+							int thumbnailFormat = IOUtils.readIntMM(data, i); //1 = kJpegRGB. Also supports kRawRGB (0).
+							i += 4;
+							switch (thumbnailFormat) {
+								case 1:
+									System.out.println("Thumbnail format: KJpegRGB");
+									break;
+								case 0:
+									System.out.println("Thumbnail format: KRawRGB");
+									break;
+							}
+							int width = IOUtils.readIntMM(data, i);
+							System.out.println("Thumbnail width: " + width);
+							i += 4;
+							int height = IOUtils.readIntMM(data, i);
+							System.out.println("Thumbnail height: " + height);
+							i += 4;
+							// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
+							int widthBytes = IOUtils.readIntMM(data, i);
+							System.out.println("Padded row bytes: " + widthBytes);
+							i += 4;
+							// Total size = widthbytes * height * planes
+							int totalSize = IOUtils.readIntMM(data, i);
+							System.out.println("Total size: "  + totalSize);
+							i += 4;
+							// Size after compression. Used for consistency check.
+							int sizeAfterCompression = IOUtils.readIntMM(data, i);
+							System.out.println("Size after compression: " + sizeAfterCompression);
+							i += 4;
+							short bitsPerPixel = IOUtils.readShortMM(data, i); // Bits per pixel. = 24
+							System.out.println("Bits per pixel: " + bitsPerPixel);
+							i += 2;
+							short numOfPlanes = IOUtils.readShortMM(data, i); // Number of planes. = 1
+							System.out.println("Number of planes: "  + numOfPlanes);
+							i += 2; 	
+							// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
+							if(thumbnailFormat == 1) {
+								// Note: Not sure whether or not this will create wrong color JPEG
+								// if it's written by Photoshop 4.0!
+								OutputStream fout = new FileOutputStream("photoshop_thumbnail.jpg");
+					    		fout.write(data, i, sizeAfterCompression);
+					    		fout.close();
+							} else
+								i += sizeAfterCompression; // TODO: extract thumbnail
+							if(size%2 != 0) i++;
+							break;
 						case VERSION_INFO:
 							System.out.println("Version: " + StringUtils.byteArrayToHexString(ArrayUtils.subArray(data, i, 4)));
 							i += 4;
@@ -1000,7 +1049,7 @@ public class JPEGTweaker {
 	    		randInputStream.seek(thumbnailOffset);
 	    		byte[] data = new byte[thumbnailLen];
 	    		randInputStream.readFully(data);
-	    		OutputStream fout = new FileOutputStream("thumbnail.jpg");
+	    		OutputStream fout = new FileOutputStream("exif_thumbnail.jpg");
 	    		fout.write(data);
 	    		fout.close();
 	    	} else { // Save as TIFF
@@ -1009,7 +1058,7 @@ public class JPEGTweaker {
 	    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS.getValue());
 	    		if(field != null) {
 	    			 randInputStream.seek(0);
-	    			 OutputStream fout = new FileOutputStream("thumbnail.tif");
+	    			 OutputStream fout = new FileOutputStream("exif_thumbnail.tif");
 	    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(fout);
 	    			 TIFFTweaker.retainPages(randInputStream, tiffout, 1);
 	    			 tiffout.close(); // Auto flush when closed
