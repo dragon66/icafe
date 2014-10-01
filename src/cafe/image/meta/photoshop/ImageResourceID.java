@@ -6,9 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ *
+ * Change History - most recent changes go on top of previous changes
+ *
+ * ImageResourceID.java
+ *
+ * Who   Date       Description
+ * ====  =========  =================================================================
+ * WY    01Oct2014  Moved from cafe.image.meta to cafe.image.meta.photoshop
  */
 
-package cafe.image.meta;
+package cafe.image.meta.photoshop;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,10 +61,10 @@ public enum ImageResourceID {
 	IMAGE_MODE("Image mode for raw format files.", (short)0x0405),
 	JPEG_QUALITY("JPEG quality. Private.", (short)0x0406),
 	GRID_INFO("Grid and guides information.", (short)0x0408),
-	THUMBNAIL_RESOURCE0("Thumbnail resource.", (short)0x0409),
+	THUMBNAIL_RESOURCE_PS4("Photoshop 4.0 thumbnail resource.", (short)0x0409), // Photoshop 4.0
 	COPYRIGHT_FLAG("Copyright flag. Boolean indicating whether image is copyrighted. Can be set via Property suite or by user in File Info...", (short)0x040a),
 	URL("URL. Handle of a text string with uniform resource locator. Can be set via Property suite or by user in File Info...", (short)0x040b),
-	THUMBNAIL_RESOURCE1("Thumbnail resource.", (short)0x040c),
+	THUMBNAIL_RESOURCE_PS5("Photoshop 5.0 thumbnail resource.", (short)0x040c), // Photoshop 5.0
 	GLOBLE_ANGLE("Global Angle. 4 bytes that contain an integer between 0..359 which is the global lighting angle for effects layer. If not present assumes 30.", (short)0x040d),
 	COLOR_SAMPLERS_RESOURCE("Color samplers resource. See color samplers resource format later in this chapter.", (short)0x040e),
 	ICC_PROFILE("ICC Profile. The raw bytes of an ICC format profile.", (short)0x040f),
