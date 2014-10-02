@@ -12,7 +12,9 @@
  * JPEGTweaker.java
  *
  * Who   Date       Description
- * ====  =======    =================================================
+ * ====  =======    ============================================================
+ * WY    02Oct2014  Renamed extractExifThumbnail() to extractThumbnail()
+ * WY    02Oct2014  Removed readExif()
  * WY    01Oct2014  Added code to read APP13 thumbnail
  * WY    29Sep2014  Added insertICCProfile(InputStream, OutputStream, ICCProfile)
  * WY    29Sep2014  Added writeICCProfile(OutputStream, ICCProfile)
@@ -31,8 +33,16 @@ package cafe.image.jpeg;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -40,6 +50,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import cafe.image.ImageIO;
+import cafe.image.writer.ImageWriter;
+import cafe.image.core.ImageType;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.iptc.IPTCDataSet;
@@ -129,8 +142,8 @@ public class JPEGTweaker {
 		}
 	}
 	
-	// Extract a thumbnail image from Exif APP1 segment if any
-	public static void extractExifThumbnail(InputStream is, String pathToThumbnail) throws IOException {
+	// Extract a thumbnail image from Exif APP1 and/or Adobe APP13 segment if any
+	public static void extractThumbnail(InputStream is, String pathToThumbnail) throws IOException {
 		// Flag when we are done
 		boolean finished = false;
 		int length = 0;	
@@ -190,6 +203,11 @@ public class JPEGTweaker {
 							List<IFD> ifds = new ArrayList<IFD>();
 						    TIFFTweaker.readIFDs(ifds, tiffin);
 						    if(ifds.size() >= 2) {
+						    	String outpath = "";
+								if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
+									outpath = pathToThumbnail + "exif_thumbnail";
+								else
+									outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_exif_t";
 						    	IFD thumbnailIFD = ifds.get(1);
 						    	TiffField<?> field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
 						    	if(field != null) { // JPEG format, save as JPEG
@@ -199,7 +217,7 @@ public class JPEGTweaker {
 						    		tiffin.seek(thumbnailOffset);
 						    		byte[] data = new byte[thumbnailLen];
 						    		tiffin.readFully(data);
-						    		OutputStream fout = new FileOutputStream(pathToThumbnail.replaceFirst("[.][^.]+$", "")+".jpg");
+						    		OutputStream fout = new FileOutputStream(outpath + ".jpg");
 						    		fout.write(data);
 						    		fout.close();
 						    	} else { // Uncompressed, save as TIFF
@@ -208,7 +226,7 @@ public class JPEGTweaker {
 						    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS.getValue());
 						    		if(field != null) {
 						    			 tiffin.seek(0);
-						    			 OutputStream fout = new FileOutputStream(pathToThumbnail.replaceFirst("[.][^.]+$", "")+".tif");
+						    			 OutputStream fout = new FileOutputStream(outpath + ".tif");
 						    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(fout);
 						    			 TIFFTweaker.retainPages(tiffin, tiffout, 1);
 						    			 tiffout.close(); // Auto flush when closed
@@ -222,6 +240,100 @@ public class JPEGTweaker {
 						}
 						marker = IOUtils.readShortMM(is);
 						break;
+				    case APP13:
+				    	length = IOUtils.readUnsignedShortMM(is);
+						byte[] data = new byte[length-2];
+						IOUtils.readFully(is, data, 0, length-2);						
+						int i = 0;
+						boolean done = false;
+						
+						while(data[i] != 0) i++;
+						
+						if(new String(data, 0, i++).equals("Photoshop 3.0")) {
+							while((i+4) < data.length && !done) {
+								String _8bim = new String(data, i, 4);
+								i += 4;			
+								if(_8bim.equals("8BIM")) {
+									short id = IOUtils.readShortMM(data, i);
+									i += 2;
+									int nameLen = (data[i++]&0xff);
+									i += nameLen;
+									if((nameLen%2) == 0) i++;
+									int size = IOUtils.readIntMM(data, i);
+									i += 4;
+									
+									ImageResourceID eId =ImageResourceID.fromShort(id); 
+									
+									switch (eId) {										
+										case THUMBNAIL_RESOURCE_PS4:
+										case THUMBNAIL_RESOURCE_PS5:
+											String outpath = "";
+											if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
+												outpath = pathToThumbnail + "photoshop_thumbnail";
+											else
+												outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_photoshop_t";
+											int thumbnailFormat = IOUtils.readIntMM(data, i); //1 = kJpegRGB. Also supports kRawRGB (0).
+											i += 4;
+											int width = IOUtils.readIntMM(data, i);
+											i += 4;
+											int height = IOUtils.readIntMM(data, i);
+											i += 4;
+											// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
+											int widthBytes = IOUtils.readIntMM(data, i);
+											i += 4;
+											// Total size = widthbytes * height * planes
+											int totalSize = IOUtils.readIntMM(data, i);
+											i += 4;
+											// Size after compression. Used for consistency check.
+											int sizeAfterCompression = IOUtils.readIntMM(data, i);
+											i += 4;
+											IOUtils.readShortMM(data, i); // Bits per pixel. = 24
+											i += 2;
+											IOUtils.readShortMM(data, i); // Number of planes. = 1
+											i += 2; 	
+											// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
+											if(thumbnailFormat == 1) {
+												// Note: Not sure whether or not this will create wrong color JPEG
+												// if it's written by Photoshop 4.0!
+												OutputStream fout = new FileOutputStream(outpath + ".jpg");
+									    		fout.write(data, i, sizeAfterCompression);
+									    		fout.close();
+											} else if(thumbnailFormat == 0) {
+												// kRawRGB - NOT tested yet!
+												//Create a BufferedImage
+												DataBuffer db = new DataBufferByte(ArrayUtils.subArray(data, i, totalSize), totalSize);
+												int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
+												if(eId == ImageResourceID.THUMBNAIL_RESOURCE_PS4)
+													off = new int[]{2, 1, 0}; // RGB band offset for BGR for photoshop4.0 BGR format
+												int numOfBands = 3;
+												int trans = Transparency.OPAQUE;
+													
+												WritableRaster raster = Raster.createInterleavedRaster(db, width, height, widthBytes, numOfBands, off, null);
+												ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, trans, DataBuffer.TYPE_BYTE);
+										   		BufferedImage bi = new BufferedImage(cm, raster, false, null);
+												// Create a new writer to write the image
+												ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
+												FileOutputStream fout = new FileOutputStream(outpath + ".jpg");
+												try {
+													writer.write(bi, fout);
+												} catch (Exception e) {
+													e.printStackTrace();
+												}
+												fout.close();								
+											}
+											i += sizeAfterCompression; 
+											if(size%2 != 0) i++;
+											done = true;
+											break;										
+										default:							
+											i += size;
+											if(size%2 != 0) i++;
+									}					
+								}
+							}
+						}				
+				    	marker = IOUtils.readShortMM(is);
+				    	break;
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
@@ -311,7 +423,12 @@ public class JPEGTweaker {
 		byte[] icc_profile = extractICCProfile(is);
 		
 		if(icc_profile != null && icc_profile.length > 0) {
-			OutputStream os = new FileOutputStream(pathToICCProfile.replaceFirst("[.][^.]+$", "")+".icc");
+			String outpath = "";
+			if(pathToICCProfile.endsWith("\\") || pathToICCProfile.endsWith("/"))
+				outpath = pathToICCProfile + "icc_profile";
+			else
+				outpath = pathToICCProfile.replaceFirst("[.][^.]+$", "");
+			OutputStream os = new FileOutputStream(outpath + ".icc");
 			os.write(icc_profile);
 			os.close();
 		}	
@@ -557,7 +674,10 @@ public class JPEGTweaker {
 		if (Arrays.equals(buf, exif)||Arrays.equals(buf, exif2)) {
 			buf = new byte[length-8];
 		    IOUtils.readFully(is, buf);
-			JPEGTweaker.readExif(new ByteArrayInputStream(buf));		
+			RandomAccessInputStream randInputStream = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(buf));
+			List<IFD> list = new ArrayList<IFD>();
+		    TIFFTweaker.readIFDs(list, randInputStream);
+		   	randInputStream.close();
 		} else {
 			// Might be Adobe XMP segment.
 			//IOUtils.skipFully(is, length-8);
@@ -819,14 +939,7 @@ public class JPEGTweaker {
 							System.out.println("Number of planes: "  + numOfPlanes);
 							i += 2; 	
 							// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
-							if(thumbnailFormat == 1) {
-								// Note: Not sure whether or not this will create wrong color JPEG
-								// if it's written by Photoshop 4.0!
-								OutputStream fout = new FileOutputStream("photoshop_thumbnail.jpg");
-					    		fout.write(data, i, sizeAfterCompression);
-					    		fout.close();
-							} else
-								i += sizeAfterCompression; // TODO: extract thumbnail
+							i += sizeAfterCompression; 
 							if(size%2 != 0) i++;
 							break;
 						case VERSION_INFO:
@@ -1033,40 +1146,6 @@ public class JPEGTweaker {
 		
 		System.out.println("Total number of Quantation tables: " + count);
 		System.out.println("**********************************");
-	}
-	
-	private static void readExif(InputStream is) throws IOException {		
-		RandomAccessInputStream randInputStream = new FileCacheRandomAccessInputStream(is);
-		List<IFD> list = new ArrayList<IFD>();
-	    TIFFTweaker.readIFDs(list, randInputStream);
-	    if(list.size() >= 2) {
-	    	IFD thumbnailIFD = list.get(1);
-	    	TiffField<?> field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
-	    	if(field != null) { // Save as JPEG
-	    		int thumbnailOffset = field.getDataAsLong()[0];
-	    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());
-	    		int thumbnailLen = field.getDataAsLong()[0];
-	    		randInputStream.seek(thumbnailOffset);
-	    		byte[] data = new byte[thumbnailLen];
-	    		randInputStream.readFully(data);
-	    		OutputStream fout = new FileOutputStream("exif_thumbnail.jpg");
-	    		fout.write(data);
-	    		fout.close();
-	    	} else { // Save as TIFF
-	    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS.getValue());
-	    		if(field == null) 
-	    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS.getValue());
-	    		if(field != null) {
-	    			 randInputStream.seek(0);
-	    			 OutputStream fout = new FileOutputStream("exif_thumbnail.tif");
-	    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(fout);
-	    			 TIFFTweaker.retainPages(randInputStream, tiffout, 1);
-	    			 tiffout.close(); // Auto flush when closed
-	    			 fout.close();
-	    		}
-	    	}
-	    }
-		randInputStream.close();
 	}
 	
 	private static void readSOF0(InputStream is, Map<String, Segment> segmentMap) throws IOException 

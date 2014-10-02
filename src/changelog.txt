@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/01/2014
+Last modified on 10/02/2014
 ***************************
+02Oct2014  Renamed extractExifThumbnail() in JPEGTweaker to extractThumbnail()
 01Oct2014  Added code to extract APP13 thumbnail to JPEGTweaker
 30Sep2014  Rewrite ICCProfile to use byte array as input
 29Sep2014  Added insertICCProfile(InputStream, OutputStream, ICCProfile) to JPEGTweaker
