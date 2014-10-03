@@ -6,11 +6,21 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * GIFReader.java
+ *
+ * Who   Date       Description
+ * ====  =========  ===================================================
+ * WY    03Oct2014  Added getFrameAsBufferedImageEx()
  */
 
 package cafe.image.reader;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -82,9 +92,11 @@ public class GIFReader extends ImageReader
 	private int logicalScreenWidth;
 	private int logicalScreenHeight;
 	private Color backgroundColor = new Color(255, 255, 255);
-
 	private int[] globalColorPalette;
-   
+	
+	// BufferedImage with the width and height of the logical screen to draw frames upon
+	BufferedImage baseImage;
+	
 	private byte[] decodeLZW(InputStream is) throws Exception
 	{
 		int dimension = width*height;		
@@ -144,10 +156,18 @@ public class GIFReader extends ImageReader
 		return disposalMethod;
 	}
    
+	/**
+	 * Creates a BufferedImage for the current frame. For animated GIF, the frame may only
+	 * occupy part of the logical screen and may also rely on transparency and previous
+	 * frames to work properly. A more 
+	 * @param is
+	 * @return
+	 * @throws Exception
+	 */
 	public BufferedImage getFrameAsBufferedImage(InputStream is) throws Exception {
 		// Read frame into a byte array
 		byte[] pixels = readFrame(is);
-		if(pixels == null) return null; 	   
+		if(pixels == null) return null;
 		//Create a BufferedImage
 		int[] off = {0};//band offset, we have only one band start at 0
 		DataBuffer db = new DataBufferByte(pixels, pixels.length);
@@ -155,6 +175,46 @@ public class GIFReader extends ImageReader
 		ColorModel cm = new IndexColorModel(bitsPerPixel, rgbColorPalette.length, rgbColorPalette, 0, false, transparent_color, DataBuffer.TYPE_BYTE);
    	
 		return new BufferedImage(cm, raster, false, null);
+	}
+	
+	/**
+	 * Creates a BufferedImage the same size as the logical screen
+	 * <p>
+	 * <b>Note</b>: the underlying frame will share the same data with the current base image. 
+	 * Subsequent call to this method will change the previous frames too. If this is
+	 * not intended, backups of the previous frames should be done before new calls 
+	 * @param is input stream for the image - single frame of multiple frame animated GIF
+	 * @return java BufferedImage or null if there is no more frames
+	 * @throws Exception
+	 */
+	public BufferedImage getFrameAsBufferedImageEx(InputStream is) throws Exception {
+		// This single call will trigger the reading of the global scope data
+		BufferedImage bi = getFrameAsBufferedImage(is);
+		if(bi == null) return null;
+		if(baseImage == null)
+			baseImage = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
+		Rectangle area = new Rectangle(image_x, image_y, width, height);
+		// Create a backup bufferedImage from the base image for the area of the current frame
+		BufferedImage backup = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		backup.setData(baseImage.getData(area));
+		/* End of backup */
+		Graphics2D g = baseImage.createGraphics();
+		// Check about disposal method to take action accordingly
+		if(disposalMethod == 1 || disposalMethod == 0) // Leave in place or unspecified
+			; // No action needed
+		else if(disposalMethod == 2) { // Restore to background
+			baseImage = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
+			g = baseImage.createGraphics();
+		} else if(disposalMethod == 3) { // Restore to previous
+			g.drawImage(backup, image_x, image_y, null);			
+		} else { // To be defined - should never come here
+			baseImage = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
+			g = baseImage.createGraphics();
+		}
+		// Draw this frame to the base
+		g.drawImage(bi, image_x, image_y, null);
+		
+		return baseImage;
 	}
 
 	public int getImageX() {
@@ -315,8 +375,9 @@ public class GIFReader extends ImageReader
 			int bitsPerColor = ((flags&0x70)>>4)+1;
 	
 			readGlobalPalette(is, colorsUsed);
-			if(gifHeader.bgcolor >= 0 && gifHeader.bgcolor < colorsUsed)
-			   backgroundColor = new Color(globalColorPalette[gifHeader.bgcolor]);
+			int bgcolor = gifHeader.bgcolor&0xff;
+			if(bgcolor >= 0 && bgcolor < colorsUsed)
+			   backgroundColor = new Color(globalColorPalette[bgcolor]);
 		   	}
 		   
 		   	return true;
