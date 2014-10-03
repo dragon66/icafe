@@ -13,9 +13,9 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
- * WY    22Apr2014  Added splitFramesEx() to split animated GIFs into separate GIFs
+ * WY    03Oct2014  Added splitFramesEx2() to split animated GIFs into separate images
+ * WY    22Apr2014  Added splitFramesEx() to split animated GIFs into separate images
  * WY    20Apr2014  Added splitFrames() to split animated GIFs into frames
- * WY    16Apr2014  Added writeFrame() to support animated GIFs
  */
 
 package cafe.image.gif;
@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+
 
 //import cafe.image.core.ImageMeta;
 import cafe.image.core.ImageType;
@@ -145,7 +147,7 @@ public class GIFTweaker {
 	/**
 	 * Split a multiple frame GIF into individual frames and save them as GIF images.
 	 * The split is "literally" since no frame decoding and other operations involved.
-	 * This sometimes lead to funny looking GIFs.
+	 * This sometimes leads to funny looking GIFs.
 	 * 
 	 * @param is input GIF image stream
 	 * @param outputFilePrefix optional output file name prefix  
@@ -178,14 +180,17 @@ public class GIFTweaker {
 		new File(outFileName + ".gif").delete();
 	}
 	
-	/** 
-	 * Split animated GIF to GIF images
+	/**
+	 * Split animated GIF to individual images
 	 * 
 	 * @param is input animated GIF stream
 	 * @param writer ImageWriter for the output frame
 	 * @param outputFilePrefix optional prefix for the output image
 	 * @throws Exception
+	 * 
+	 * @deprecated use {@link #splitFramesEx2(InputStream, ImageWriter, String) splitFramesEx2} instead.
 	 */
+	@Deprecated
 	public static void splitFramesEx(InputStream is, ImageWriter writer, String outputFilePrefix) throws Exception {
 		// Create a GIFReader to read GIF frames	
 		GIFReader reader = new GIFReader();
@@ -248,6 +253,33 @@ public class GIFTweaker {
 			}
 			// Read another frame if we have more
 			bi = reader.getFrameAsBufferedImage(is);
+		}
+	}
+
+	/** 
+	 * Split animated GIF to individual images
+	 * 
+	 * @param is input animated GIF stream
+	 * @param writer ImageWriter for the output frame
+	 * @param outputFilePrefix optional prefix for the output image
+	 * @throws Exception
+	 */
+	public static void splitFramesEx2(InputStream is, ImageWriter writer, String outputFilePrefix) throws Exception {
+		// Create a GIFReader to read GIF frames	
+		GIFReader reader = new GIFReader();
+		// Create a GIFWriter or other writers to write the frames
+		ImageType imageType = writer.getImageType();
+		BufferedImage bi = reader.getFrameAsBufferedImageEx(is);
+	
+		int frameCount = 0;		
+		String baseFileName = StringUtils.isNullOrEmpty(outputFilePrefix)?"frame_":outputFilePrefix + "_frame_";
+		
+		while(bi != null) {
+			// Write the frame to file
+			String outFileName = baseFileName + frameCount++;
+			FileOutputStream os = new FileOutputStream(outFileName + "." + imageType.getExtension());			
+			writer.write(bi, os);
+			bi = reader.getFrameAsBufferedImageEx(is);
 		}
 	}
 	
