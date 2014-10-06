@@ -304,7 +304,7 @@ public class GIFWriter extends ImageWriter {
 		
       	// Output the graphic control block
 	    writeGraphicControlBlock(os, delay, (byte)transparent_color);
-        // Output logical screen descriptor
+        // Output image descriptor
         if(writeLSD)
         	writeImageDescriptor(os, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, -1);
         else {
