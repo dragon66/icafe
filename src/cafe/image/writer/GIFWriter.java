@@ -46,9 +46,12 @@ public class GIFWriter extends ImageWriter {
 	private byte bytes_buf[] = new byte[256];
 
 	private int[] colorPalette;
-	private static final int IMAGE_SEPARATOR = 0x2c; // ","
- 	private static final int EXTENSION_INTRODUCER = 0x21; // "!"
-	private static final int IMAGE_TRAILER = 0x3b; // ";"
+	private static final byte IMAGE_SEPARATOR = 0x2c; // ","
+ 	private static final byte EXTENSION_INTRODUCER = 0x21; // "!"
+	private static final byte IMAGE_TRAILER = 0x3b; // ";"
+	private static final byte GRAPHIC_CONTROL_LABEL = (byte)0xf9;
+	private static final byte APPLICATION_EXTENSION_LABEL = (byte)0xff;
+	
  	private static int MASK[] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
 	/**
 	 * A child is made up of a parent(or prefix) code plus a suffix color
@@ -326,7 +329,7 @@ public class GIFWriter extends ImageWriter {
     	
         byte[] buf = new byte[8];
 		buf[0] = EXTENSION_INTRODUCER; // Extension introducer
-		buf[1] = (byte)0xf9; // Graphic control label
+		buf[1] = GRAPHIC_CONTROL_LABEL; // Graphic control label
 		buf[2] = 0x04; // Block size
 		buf[3] = 0x00;// Assume no transparency and disposal
 		buf[4] = (byte)(delay&0xff);// Delay time
@@ -392,7 +395,7 @@ public class GIFWriter extends ImageWriter {
     {
     	byte[] buf = new byte[19];
  		buf[0] = EXTENSION_INTRODUCER; // Extension introducer
- 		buf[1] = (byte)0xff; // Application extension label
+ 		buf[1] = APPLICATION_EXTENSION_LABEL; // Application extension label
  		buf[2] = 0x0b; // Block size
  		buf[3] = 'N'; // Application Identifier (8 bytes)
  		buf[4] = 'E';
