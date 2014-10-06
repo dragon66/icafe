@@ -174,10 +174,7 @@ public class GIFWriter extends ImageWriter {
 		os.write(bytes_buf,0,len);
 		// Clear the bytes buffer
 		bufIndex = 0;
-		for (int i=0;i<0xff;i++)
-		{
-			bytes_buf[i] = 0x00;
-		}
+		Arrays.fill(bytes_buf, 0, 0xff, (byte)0x00);
 	}
     
     @Override
