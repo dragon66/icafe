@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    07Oct2014  Added mergeTiffImages() to merge multiple page TIFFs
  * WY    19Sep2014  Reset pointer to the stream head in getPageCount()
  * WY    08May2014  Added insertExif() to insert EXIF data to TIFF page
  * WY    26Apr2014  Rewrite insertPage() to insert multiple pages one at a time
@@ -712,6 +713,37 @@ public class TIFFTweaker {
 		}
 		
 		writeToStream(rout, firstIFDOffset);
+	}
+	
+	public static void mergeTiffImages(RandomAccessInputStream src1, RandomAccessInputStream src2, RandomAccessOutputStream dest) throws IOException {
+		int offset1 = copyHeader(src1, dest);
+		int offset2 = readHeader(src2);
+		// Read IFDs
+		List<IFD> ifds1 = new ArrayList<IFD>();
+		List<IFD> ifds2 = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds1, offset1, src1);
+		readIFDs(null, null, TiffTag.class, ifds2, offset2, src2);
+		int maxPageNumber = ifds1.size() + ifds2.size() - 1;
+		// Reset pageNumber
+		for(int i = 0; i < ifds1.size(); i++) {
+			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)maxPageNumber}));
+		}
+		for(int i = 0; i < ifds2.size(); i++) {
+			ifds2.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			ifds2.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)(i+ifds1.size()), (short)maxPageNumber}));
+		}		
+		// Copy the pages
+		// 0x08 is the first write offset
+		int writeOffset = FIRST_WRITE_OFFSET;		
+		int offset = copyPages(ifds1, writeOffset, src1, dest);
+		offset = copyPages(ifds2, offset, src2, dest);
+		// Link the two IFDs
+		ifds1.get(ifds1.size() - 1).setNextIFDOffset(dest, ifds2.get(0).getStartOffset());
+		// Figure out the first IFD offset
+		int firstIFDOffset = ifds1.get(0).getStartOffset();
+		// And write the IFDs
+		writeToStream(dest, firstIFDOffset); // DONE!
 	}
 	
 	public static int prepareForInsert(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IFD> ifds) throws IOException {
