@@ -674,7 +674,11 @@ public class JPEGTweaker {
 	private static void printNode(Node node, String indent) {
 		switch(node.getNodeType()) {
 	        case Node.DOCUMENT_NODE: {
-	            System.out.println("Document Node");
+	            Node child = node.getFirstChild();
+	            while(child != null) {
+	            	printNode(child, indent);
+	            	child = child.getNextSibling();
+	            }
 	            break;
 	        } 
 	        case Node.DOCUMENT_TYPE_NODE: {
@@ -774,14 +778,12 @@ public class JPEGTweaker {
 			//document contains the complete XML as a Tree.
 			Document document = null;
 			try {
-				document = builder.parse(new ByteArrayInputStream(ArrayUtils.subArray(buf, xmp.length(), length - xmp.length() - 2)));
+				document = builder.parse(new ByteArrayInputStream(ArrayUtils.subArray(buf, xmp.length(), length - xmp.length() - 2)), "UTF-8");
 			} catch (SAXException e) {
 				e.printStackTrace();
 			}
 			
-			String indent = "";
-			
-			printNode(document.getDocumentElement(), indent);		
+			printNode(document,"");
 			
 			// For comparison purpose only
 			//System.out.println(new String(ArrayUtils.subArray(buf, xmp.length(), length - xmp.length() - 2), "utf-8"));
