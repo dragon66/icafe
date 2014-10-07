@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/03/2014
+Last modified on 10/07/2014
 ***************************
+07Oct2014  Revised readAPP1() in JPEGTweaker to show Adobe XMP information
 03Oct2014  Added getFrameAsBufferedImageEx() to GIFReader
 03Oct2014  Added splitFramesEx2() to GIFTweaker
 02Oct2014  Renamed extractExifThumbnail() in JPEGTweaker to extractThumbnail()

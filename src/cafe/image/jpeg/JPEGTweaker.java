@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    07Oct2014  Revised readAPP1() to show Adobe XMP information
  * WY    02Oct2014  Renamed extractExifThumbnail() to extractThumbnail()
  * WY    02Oct2014  Removed readExif()
  * WY    01Oct2014  Added code to read APP13 thumbnail
@@ -75,6 +76,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
+
 /**
  * JPEG image tweaking tool
  * 
@@ -93,7 +109,7 @@ public class JPEGTweaker {
 			if(nextByte == 0xff)
 			{
 				nextByte = IOUtils.read(is);
-						
+				
 				if (nextByte == -1) {
 					throw new IOException("Premature end of SOS segment!");					
 				}								
@@ -140,6 +156,96 @@ public class JPEGTweaker {
 		while((bytesRead = is.read(buffer)) != -1) {
 			os.write(buffer, 0, bytesRead);
 		}
+	}
+	
+	public static byte[] extractICCProfile(InputStream is) throws IOException {
+		// ICC_PROFILE identifier with trailing bytes [0x00].
+		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};		
+		ByteArrayOutputStream bo = new ByteArrayOutputStream();
+		// Flag when we are done
+		boolean finished = false;
+		int length = 0;	
+		short marker;
+		Marker emarker;
+				
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+		{
+			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+			return null;
+		}
+		
+		System.out.println(Marker.SOI);
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished)
+	    {	        
+			if (Marker.fromShort(marker) == Marker.EOI)
+			{
+				System.out.println(Marker.EOI);
+				finished = true;
+			}
+		   	else // Read markers
+			{
+		   		emarker = Marker.fromShort(marker);
+				System.out.println(emarker); 
+	
+				switch (emarker) {
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
+						marker = IOUtils.readShortMM(is);
+						break;
+				    case PADDING:	
+				    	int nextByte = 0;
+				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
+				    	marker = (short)((0xff<<8)|nextByte);
+				    	break;				
+				    case SOS:	
+				    	//marker = skipSOS(is);
+				    	finished = true;
+						break;
+				    case APP2:
+				    	byte[] icc_profile_buf = new byte[12];
+						length = IOUtils.readUnsignedShortMM(is);						
+						IOUtils.readFully(is, icc_profile_buf);		
+						// ICC_PROFILE segment.
+						if (Arrays.equals(icc_profile_buf, icc_profile_id)) {
+							icc_profile_buf = new byte[length-14];
+						    IOUtils.readFully(is, icc_profile_buf);
+						    bo.write(icc_profile_buf, 2, length-16);
+				  		} else {
+				  			IOUtils.skipFully(is, length-14);
+				  		}
+						marker = IOUtils.readShortMM(is);
+						break;
+				    default:
+					    length = IOUtils.readUnsignedShortMM(is);					
+					    byte[] buf = new byte[length - 2];					   
+					    IOUtils.readFully(is, buf);				
+					    marker = IOUtils.readShortMM(is);
+				}
+			}
+	    }
+		
+		return bo.toByteArray();
+	}
+	
+	public static void extractICCProfile(InputStream is, String pathToICCProfile) throws IOException {
+		byte[] icc_profile = extractICCProfile(is);
+		
+		if(icc_profile != null && icc_profile.length > 0) {
+			String outpath = "";
+			if(pathToICCProfile.endsWith("\\") || pathToICCProfile.endsWith("/"))
+				outpath = pathToICCProfile + "icc_profile";
+			else
+				outpath = pathToICCProfile.replaceFirst("[.][^.]+$", "");
+			OutputStream os = new FileOutputStream(outpath + ".icc");
+			os.write(icc_profile);
+			os.close();
+		}	
 	}
 	
 	// Extract a thumbnail image from Exif APP1 and/or Adobe APP13 segment if any
@@ -342,96 +448,6 @@ public class JPEGTweaker {
 				}
 			}
 	    }
-	}
-	
-	public static byte[] extractICCProfile(InputStream is) throws IOException {
-		// ICC_PROFILE identifier with trailing bytes [0x00].
-		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};		
-		ByteArrayOutputStream bo = new ByteArrayOutputStream();
-		// Flag when we are done
-		boolean finished = false;
-		int length = 0;	
-		short marker;
-		Marker emarker;
-				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
-			return null;
-		}
-		
-		System.out.println(Marker.SOI);
-		
-		marker = IOUtils.readShortMM(is);
-		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
-				System.out.println(Marker.EOI);
-				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
-				switch (emarker) {
-					case JPG: // JPG and JPGn shouldn't appear in the image.
-					case JPG0:
-					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-						marker = IOUtils.readShortMM(is);
-						break;
-				    case PADDING:	
-				    	int nextByte = 0;
-				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
-				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;				
-				    case SOS:	
-				    	//marker = skipSOS(is);
-				    	finished = true;
-						break;
-				    case APP2:
-				    	byte[] icc_profile_buf = new byte[12];
-						length = IOUtils.readUnsignedShortMM(is);						
-						IOUtils.readFully(is, icc_profile_buf);		
-						// ICC_PROFILE segment.
-						if (Arrays.equals(icc_profile_buf, icc_profile_id)) {
-							icc_profile_buf = new byte[length-14];
-						    IOUtils.readFully(is, icc_profile_buf);
-						    bo.write(icc_profile_buf, 2, length-16);
-				  		} else {
-				  			IOUtils.skipFully(is, length-14);
-				  		}
-						marker = IOUtils.readShortMM(is);
-						break;
-				    default:
-					    length = IOUtils.readUnsignedShortMM(is);					
-					    byte[] buf = new byte[length - 2];					   
-					    IOUtils.readFully(is, buf);				
-					    marker = IOUtils.readShortMM(is);
-				}
-			}
-	    }
-		
-		return bo.toByteArray();
-	}
-	
-	public static void extractICCProfile(InputStream is, String pathToICCProfile) throws IOException {
-		byte[] icc_profile = extractICCProfile(is);
-		
-		if(icc_profile != null && icc_profile.length > 0) {
-			String outpath = "";
-			if(pathToICCProfile.endsWith("\\") || pathToICCProfile.endsWith("/"))
-				outpath = pathToICCProfile + "icc_profile";
-			else
-				outpath = pathToICCProfile.replaceFirst("[.][^.]+$", "");
-			OutputStream os = new FileOutputStream(outpath + ".icc");
-			os.write(icc_profile);
-			os.close();
-		}	
 	}
 	
 	public static ICCProfile getICCProfile(InputStream is) throws IOException {
@@ -655,6 +671,72 @@ public class JPEGTweaker {
 		insertICCProfile(is, os, icc_profile.getData());
 	}
 	
+	private static void printNode(Node node, String indent) {
+		switch(node.getNodeType()) {
+	        case Node.DOCUMENT_NODE: {
+	            System.out.println("Document Node");
+	            break;
+	        } 
+	        case Node.DOCUMENT_TYPE_NODE: {
+	            DocumentType doctype = (DocumentType) node;
+	            System.out.println("<!DOCTYPE " + doctype.getName() + ">");
+	            break;
+	        }
+	        case Node.ELEMENT_NODE: { // Element node
+	            Element ele = (Element) node;
+	            System.out.print(indent + "<" + ele.getTagName());
+	            NamedNodeMap attrs = ele.getAttributes(); 
+	            for(int i = 0; i < attrs.getLength(); i++) {
+	                Node a = attrs.item(i);
+	                System.out.print(" " + a.getNodeName() + "='" + 
+	                          StringUtils.escapeXML(a.getNodeValue()) + "'");
+	            }
+	            System.out.println(">");
+
+	            String newindent = indent + "    ";
+	            Node child = ele.getFirstChild();
+	            while(child != null) {
+	            	printNode(child, newindent);
+	            	child = child.getNextSibling();
+	            }
+
+	            System.out.println(indent + "</" + ele.getTagName() + ">");
+	            break;
+	        }
+	        case Node.TEXT_NODE: {
+	            Text textNode = (Text)node;
+	            String text = textNode.getData().trim();
+	            if ((text != null) && text.length() > 0)
+	                System.out.println(indent + StringUtils.escapeXML(text));
+	            break;
+	        }
+	        case Node.PROCESSING_INSTRUCTION_NODE: {
+	            ProcessingInstruction pi = (ProcessingInstruction)node;
+	            System.out.println(indent + "<?" + pi.getTarget() +
+	                               " " + pi.getData() + "?>");
+	            break;
+	        }
+	        case Node.ENTITY_REFERENCE_NODE: {
+	            System.out.println(indent + "&" + node.getNodeName() + ";");
+	            break;
+	        }
+	        case Node.CDATA_SECTION_NODE: {           // Output CDATA sections
+	            CDATASection cdata = (CDATASection)node;
+	            System.out.println(indent + "<" + "![CDATA[" + cdata.getData() +
+	                        "]]" + ">");
+	            break;
+	        }
+	        case Node.COMMENT_NODE: {
+	        	Comment c = (Comment)node;
+	            System.out.println(indent + "<!--" + c.getData() + "-->");
+	            break;
+	        }
+	        default:
+	            System.err.println("Unknown node: " + node.getClass().getName());
+	            break;
+		}
+	}
+	
 	private static void readAPP0(InputStream is) throws IOException
 	{
 		int length = IOUtils.readUnsignedShortMM(is);
@@ -666,26 +748,43 @@ public class JPEGTweaker {
 		// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
 		byte[] exif = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
 		byte[] exif2 = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
-		byte[] buf = new byte[6];
+		String xmp = "http://ns.adobe.com/xap/1.0/\0";
 		int length = IOUtils.readUnsignedShortMM(is);
-		
+		byte[] buf = new byte[length-2];
 		IOUtils.readFully(is, buf);		
 		// EXIF segment.
-		if (Arrays.equals(buf, exif)||Arrays.equals(buf, exif2)) {
-			buf = new byte[length-8];
-		    IOUtils.readFully(is, buf);
-			RandomAccessInputStream randInputStream = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(buf));
+		if (Arrays.equals(ArrayUtils.subArray(buf, 0, 6), exif)||Arrays.equals(buf, exif2)) {
+			RandomAccessInputStream randInputStream = new FileCacheRandomAccessInputStream(
+					new ByteArrayInputStream(ArrayUtils.subArray(buf, 6, length-8)));
 			List<IFD> list = new ArrayList<IFD>();
 		    TIFFTweaker.readIFDs(list, randInputStream);
 		   	randInputStream.close();
-		} else {
-			// Might be Adobe XMP segment.
-			//IOUtils.skipFully(is, length-8);
-			// TODO process XMP packet.
-			byte[] tmp = new byte[length-2];
-			IOUtils.readFully(is, tmp, 6, length-8);
-			System.arraycopy(buf, 0, tmp, 0, 6);
-			System.out.println(new String(tmp, "utf-8").trim());		
+		} else if(new String(ArrayUtils.subArray(buf, 0, xmp.length())).equals(xmp)) {
+			// Adobe XMP segment.
+			//Get the DOM Builder Factory
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			//Get the DOM Builder
+			DocumentBuilder builder = null;
+			try {
+				builder = factory.newDocumentBuilder();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
+			//Load and Parse the XML document
+			//document contains the complete XML as a Tree.
+			Document document = null;
+			try {
+				document = builder.parse(new ByteArrayInputStream(ArrayUtils.subArray(buf, xmp.length(), length - xmp.length() - 2)));
+			} catch (SAXException e) {
+				e.printStackTrace();
+			}
+			
+			String indent = "";
+			
+			printNode(document.getDocumentElement(), indent);		
+			
+			// For comparison purpose only
+			//System.out.println(new String(ArrayUtils.subArray(buf, xmp.length(), length - xmp.length() - 2), "utf-8"));
   		}
 	}
 	
