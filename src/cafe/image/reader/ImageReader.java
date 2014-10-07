@@ -28,6 +28,7 @@ public abstract class ImageReader
 	protected int bitsPerPixel = 0;
 	protected int bytesPerScanLine = 0;
     protected int rgbColorPalette[] = null;
+    
     protected ImageMeta meta = ImageMeta.DEFAULT_IMAGE_META;
     
     // Entry method, to be implemented by specific ImageReader subclass
