@@ -248,7 +248,7 @@ public class JPEGTweaker {
 		}	
 	}
 	
-	// Extract a thumbnail image from Exif APP1 and/or Adobe APP13 segment if any
+	// Extract a thumbnail image from JFIF/APP0, Exif APP1 and/or Adobe APP13 segment if any
 	public static void extractThumbnail(InputStream is, String pathToThumbnail) throws IOException {
 		// Flag when we are done
 		boolean finished = false;
@@ -293,6 +293,10 @@ public class JPEGTweaker {
 				    	break;				
 				    case SOS:	
 						finished = true;
+						break;
+				    case APP0:
+				    	readAPP0(is);
+				    	marker = IOUtils.readShortMM(is);
 						break;
 				    case APP1:
 				    	// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
