@@ -13,7 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
- * WY    07Oct2014  Added mergeTiffImages() to merge multiple page TIFFs
+ * WY    09Oct2014  Added mergeTiffImages(RandomAccessOutputStream, File...)
+ * WY    07Oct2014  Added mergeTiffImages() to merge two multiple page TIFFs
  * WY    19Sep2014  Reset pointer to the stream head in getPageCount()
  * WY    08May2014  Added insertExif() to insert EXIF data to TIFF page
  * WY    26Apr2014  Rewrite insertPage() to insert multiple pages one at a time
@@ -32,6 +33,8 @@ package cafe.image.tiff;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -49,6 +52,7 @@ import cafe.image.meta.exif.GPSTag;
 import cafe.image.meta.exif.InteropTag;
 import cafe.image.util.IMGUtils;
 import cafe.image.writer.TIFFWriter;
+import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.FileCacheRandomAccessOutputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -715,14 +719,14 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);
 	}
 	
-	public static void mergeTiffImages(RandomAccessInputStream src1, RandomAccessInputStream src2, RandomAccessOutputStream dest) throws IOException {
-		int offset1 = copyHeader(src1, dest);
-		int offset2 = readHeader(src2);
+	public static void mergeTiffImages(RandomAccessInputStream image1, RandomAccessInputStream image2, RandomAccessOutputStream merged) throws IOException {
+		int offset1 = copyHeader(image1, merged);
+		int offset2 = readHeader(image2);
 		// Read IFDs
 		List<IFD> ifds1 = new ArrayList<IFD>();
 		List<IFD> ifds2 = new ArrayList<IFD>();
-		readIFDs(null, null, TiffTag.class, ifds1, offset1, src1);
-		readIFDs(null, null, TiffTag.class, ifds2, offset2, src2);
+		readIFDs(null, null, TiffTag.class, ifds1, offset1, image1);
+		readIFDs(null, null, TiffTag.class, ifds2, offset2, image2);
 		int maxPageNumber = ifds1.size() + ifds2.size() - 1;
 		// Reset pageNumber
 		for(int i = 0; i < ifds1.size(); i++) {
@@ -736,14 +740,68 @@ public class TIFFTweaker {
 		// Copy the pages
 		// 0x08 is the first write offset
 		int writeOffset = FIRST_WRITE_OFFSET;		
-		int offset = copyPages(ifds1, writeOffset, src1, dest);
-		offset = copyPages(ifds2, offset, src2, dest);
+		int offset = copyPages(ifds1, writeOffset, image1, merged);
+		offset = copyPages(ifds2, offset, image2, merged);
 		// Link the two IFDs
-		ifds1.get(ifds1.size() - 1).setNextIFDOffset(dest, ifds2.get(0).getStartOffset());
+		ifds1.get(ifds1.size() - 1).setNextIFDOffset(merged, ifds2.get(0).getStartOffset());
 		// Figure out the first IFD offset
 		int firstIFDOffset = ifds1.get(0).getStartOffset();
 		// And write the IFDs
-		writeToStream(dest, firstIFDOffset); // DONE!
+		writeToStream(merged, firstIFDOffset); // DONE!
+	}
+	
+	public static void mergeTiffImages(RandomAccessOutputStream merged, File... images) throws IOException {
+		if(images != null && images.length > 1) {
+			FileInputStream fis1 = new FileInputStream(images[0]);
+			RandomAccessInputStream image1 = new FileCacheRandomAccessInputStream(fis1);
+			List<IFD> ifds1 = new ArrayList<IFD>();
+			int offset1 = copyHeader(image1, merged);
+			// Read first IFD
+			readIFDs(null, null, TiffTag.class, ifds1, offset1, image1);
+			for(int i = 0; i < ifds1.size(); i++) {
+				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+				// Place holder, to be updated afterwards
+				ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0}));
+			}
+			// Copy the pages
+			// 0x08 is the first write offset
+			int writeOffset = FIRST_WRITE_OFFSET;	
+			int offset = copyPages(ifds1, writeOffset, image1, merged);
+			// Release resources
+			image1.close();
+			fis1.close();
+			for(int i = 1; i < images.length; i++) {
+				List<IFD> ifds2 = new ArrayList<IFD>();
+				FileInputStream fis2 = new FileInputStream(images[i]);
+				RandomAccessInputStream image2 = new FileCacheRandomAccessInputStream(fis2); 
+				int offset2 = readHeader(image2);
+				readIFDs(null, null, TiffTag.class, ifds2, offset2, image2);
+				for(int j = 0; j < ifds2.size(); j++) {
+					ifds2.get(j).removeField(TiffTag.PAGE_NUMBER.getValue());
+					// Place holder, to be updated afterwards
+					ifds2.get(j).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0})); 
+				}
+				offset = copyPages(ifds2, offset, image2, merged);
+				// Link the two IFDs
+				ifds1.get(ifds1.size() - 1).setNextIFDOffset(merged, ifds2.get(0).getStartOffset());
+				ifds1.addAll(ifds2);
+				// Release resources
+				image2.close();
+				fis2.close();
+			}
+			int maxPageNumber = ifds1.size();
+			// Reset pageNumber and total pages
+			for(int i = 0; i < ifds1.size(); i++) {
+				offset = ifds1.get(i).getField(TiffTag.PAGE_NUMBER.getValue()).getDataOffset();
+				merged.seek(offset);
+				merged.writeShort((short)i); // Update page number for this page
+				merged.writeShort((short)maxPageNumber); // Update total page number
+			}			
+			// Figure out the first IFD offset
+			int firstIFDOffset = ifds1.get(0).getStartOffset();
+			// And write the IFDs
+			writeToStream(merged, firstIFDOffset); // DONE!
+		}
 	}
 	
 	public static int prepareForInsert(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IFD> ifds) throws IOException {

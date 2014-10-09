@@ -22,6 +22,10 @@ public class TestTiffMerge {
 		RandomAccessInputStream src2 = new FileCacheRandomAccessInputStream(is2);
 		RandomAccessOutputStream dest = new FileCacheRandomAccessOutputStream(out);
 		TIFFTweaker.mergeTiffImages(src1, src2, dest);
+		// Release resources
+		src1.close();
+		src2.close();
+		dest.close();
 		is1.close();
 		is2.close();
 		out.close();
