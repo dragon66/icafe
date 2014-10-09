@@ -727,7 +727,7 @@ public class TIFFTweaker {
 		List<IFD> ifds2 = new ArrayList<IFD>();
 		readIFDs(null, null, TiffTag.class, ifds1, offset1, image1);
 		readIFDs(null, null, TiffTag.class, ifds2, offset2, image2);
-		int maxPageNumber = ifds1.size() + ifds2.size() - 1;
+		int maxPageNumber = ifds1.size() + ifds2.size();
 		// Reset pageNumber
 		for(int i = 0; i < ifds1.size(); i++) {
 			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
