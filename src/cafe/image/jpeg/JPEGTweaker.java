@@ -295,7 +295,44 @@ public class JPEGTweaker {
 						finished = true;
 						break;
 				    case APP0:
-				    	readAPP0(is);
+				    	byte[] jfif = {0x4A, 0x46, 0x49, 0x46, 0x00}; // JFIF
+						byte[] jfxx = {0x4A, 0x46, 0x58, 0x58, 0x00}; // JFXX
+						length = IOUtils.readUnsignedShortMM(is);
+						byte[] jfif_buf = new byte[length-2];
+					    IOUtils.readFully(is, jfif_buf);
+					    // EXIF segment
+					    if(Arrays.equals(ArrayUtils.subArray(jfif_buf, 0, 5), jfif) || Arrays.equals(ArrayUtils.subArray(jfif_buf, 0, 5), jfxx)) {
+					      	int thumbnailWidth = jfif_buf[12]&0xff;
+					    	int thumbnailHeight = jfif_buf[13]&0xff;
+					    	String outpath = "";
+							if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
+								outpath = pathToThumbnail + "jfif_thumbnail";
+							else
+								outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_jfif_t";
+					    	
+					    	if(thumbnailWidth != 0 && thumbnailHeight != 0) { // There is a thumbnail
+					    		// Extract the thumbnail
+					    		//Create a BufferedImage
+					    		int size = 3*thumbnailWidth*thumbnailHeight;
+								DataBuffer db = new DataBufferByte(ArrayUtils.subArray(jfif_buf, 14, size), size);
+								int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
+								int numOfBands = 3;
+								int trans = Transparency.OPAQUE;
+									
+								WritableRaster raster = Raster.createInterleavedRaster(db, thumbnailWidth, thumbnailHeight, 3*thumbnailWidth, numOfBands, off, null);
+								ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, trans, DataBuffer.TYPE_BYTE);
+						   		BufferedImage bi = new BufferedImage(cm, raster, false, null);
+								// Create a new writer to write the image
+								ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
+								FileOutputStream fout = new FileOutputStream(outpath + ".jpg");
+								try {
+									writer.write(bi, fout);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								fout.close();		
+					    	}
+					    }
 				    	marker = IOUtils.readShortMM(is);
 						break;
 				    case APP1:
@@ -752,7 +789,7 @@ public class JPEGTweaker {
 		int length = IOUtils.readUnsignedShortMM(is);
 		byte[] buf = new byte[length-2];
 	    IOUtils.readFully(is, buf);
-	    
+	    // JFIF segment
 	    if(Arrays.equals(ArrayUtils.subArray(buf, 0, 5), jfif) || Arrays.equals(ArrayUtils.subArray(buf, 0, 5), jfxx)) {
 	    	System.out.print(new String(buf, 0, 4));
 	    	System.out.println(" - version " + (buf[5]&0xff) + "." + (buf[6]&0xff));
@@ -775,30 +812,7 @@ public class JPEGTweaker {
 	    	System.out.println("Y density: " + IOUtils.readUnsignedShortMM(buf, 10));
 	    	int thumbnailWidth = buf[12]&0xff;
 	    	int thumbnailHeight = buf[13]&0xff;
-	    	System.out.println("Thumbnail dimension: " + thumbnailWidth + "X" + thumbnailHeight);
-	    	
-	    	if(thumbnailWidth != 0 && thumbnailHeight != 0) { // There is a thumbnail
-	    		// Extract the thumbnail
-	    		//Create a BufferedImage
-	    		int size = 3*thumbnailWidth*thumbnailHeight;
-				DataBuffer db = new DataBufferByte(ArrayUtils.subArray(buf, 14, size), size);
-				int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
-				int numOfBands = 3;
-				int trans = Transparency.OPAQUE;
-					
-				WritableRaster raster = Raster.createInterleavedRaster(db, thumbnailWidth, thumbnailHeight, 3*thumbnailWidth, numOfBands, off, null);
-				ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, trans, DataBuffer.TYPE_BYTE);
-		   		BufferedImage bi = new BufferedImage(cm, raster, false, null);
-				// Create a new writer to write the image
-				ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
-				FileOutputStream fout = new FileOutputStream("jfif_thumbnail.jpg");
-				try {
-					writer.write(bi, fout);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				fout.close();		
-	    	}
+	    	System.out.println("Thumbnail dimension: " + thumbnailWidth + "X" + thumbnailHeight);	   
 	    }
 	}
 	
