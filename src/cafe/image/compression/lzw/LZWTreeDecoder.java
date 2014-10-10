@@ -53,7 +53,7 @@ public class LZWTreeDecoder implements ImageDecoder
 	private InputStream is;
 	private boolean isTIFF;// Taking care of the difference between GIF and TIFF.
 
-	private static final int mask[] = {0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff};
+	private static final int MASK[] = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff};
 	
     private int leftOver = 0;// Used to keep track of the not fully expanded code string.
 	private int buf[] = new int[4097];
@@ -85,22 +85,30 @@ public class LZWTreeDecoder implements ImageDecoder
 	 * to the Clear Code + 1. These 2 codes are reserved in the string table. So in both cases, the LZW string
 	 * table is initialized to have a length equal to the End of Information Code + 1.	
 	 */
-	public LZWTreeDecoder(InputStream is, int min_code_size, boolean isTIFF)
-	{
-	   if(min_code_size < 2 || min_code_size > 12)
-		   throw new IllegalArgumentException("invalid min_code_size: " + min_code_size);
-	   this.is = is;
-	   this.isTIFF = isTIFF;
-	   this.min_code_size = min_code_size;
-	   clearCode = (1<<min_code_size);
-	   endOfImage = clearCode+1;
-	   first_code_index = endOfImage+1;
-	   // Variables to clear table
-	   codeLen = min_code_size+1;
-	   limit = (1<<codeLen)-1;
-	   codeIndex = endOfImage;
+	public LZWTreeDecoder(InputStream is, int min_code_size, boolean isTIFF) {
+		if(min_code_size < 2 || min_code_size > 12)
+			   throw new IllegalArgumentException("invalid min_code_size: " + min_code_size);
+		this.is = is;
+		this.isTIFF = isTIFF;
+	   	this.min_code_size = min_code_size;
+	   	clearCode = (1<<min_code_size);
+	   	endOfImage = clearCode+1;
+	   	first_code_index = endOfImage+1;
+	   	// Reset string table
+	   	clearStringTable();
 	}
-   
+	
+	public LZWTreeDecoder(int min_code_size, boolean isTIFF) {
+		this(null, min_code_size, isTIFF);
+	}
+	
+	private void clearStringTable() {
+	   	// Reset string table
+	   	codeLen = min_code_size+1;
+	   	limit = (1<<codeLen)-1;
+	   	codeIndex = endOfImage;	
+	}
+	
 	public int decode(byte[] pix, int offset, int len) throws Exception
 	{
 		int counter = 0;// Keep track of how many bytes have been decoded.
@@ -124,11 +132,8 @@ public class LZWTreeDecoder implements ImageDecoder
 		   code = readLZWCode();
 		   tempcode = code;
 
-		   if(code == clearCode) 
-		    {  	// Initialize the string table
-		        codeLen = min_code_size+1;
-				limit = (1<<codeLen)-1;
-		        codeIndex = endOfImage;
+		   if(code == clearCode) {
+			    clearStringTable();
 			}		   
 		    else if(code == endOfImage)  
 			    break;
@@ -156,7 +161,7 @@ public class LZWTreeDecoder implements ImageDecoder
 	           
 			   if((codeIndex > (isTIFF?limit-1:limit)) && (codeLen<12))
 			   {
-		           codeLen ++;
+		           codeLen++;
 			       limit = (1<<codeLen)-1;			  
 			   }
 			   // Output strings for the current code
@@ -172,15 +177,17 @@ public class LZWTreeDecoder implements ImageDecoder
 
 		return counter;
  	}
-	
+   
 	private int readLZWCode() throws Exception
 	{
         int temp = 0;
 	
 		if(!isTIFF) 
 			temp = (temp_byte >> (8-bits_remain));
-		else
-			temp = (temp_byte << 8); // Different packing order from GIF
+		else {
+			// Different packing order from GIF
+			temp = (temp_byte & MASK[bits_remain]); 
+		}			
 	
 		while (codeLen > bits_remain)
 		{
@@ -203,21 +210,32 @@ public class LZWTreeDecoder implements ImageDecoder
 						System.out.println("bad image format");
 						return endOfImage;
 					}
-				} 
-				
+				}				
 				temp_byte = bytes_buf[bufIndex++]&0xff;
 				bytes_available--;
-				temp |= (temp_byte<<bits_remain);				
+				temp |= (temp_byte<<bits_remain);
 			} else {
 				temp_byte = is.read();
 				if(temp_byte == -1)
 					return endOfImage;
-				temp |= temp_byte;			
+				temp = ((temp<<8)|temp_byte);				
 			}
 			bits_remain += 8;
 		}
 		
-        bits_remain -= codeLen;
-		return (temp&mask[codeLen-1]);
+		if(isTIFF) 
+			temp = (temp>>(bits_remain-codeLen));
+        
+		bits_remain -= codeLen;
+        
+		return (temp&MASK[codeLen]);
+	}
+	
+	public void setInput(byte[] input) {
+		is = new ByteArrayInputStream(input);
+		// Must discard the remaining bits!!!
+		bits_remain = 0;
+		// Reset string table
+		clearStringTable();		
 	}
 }

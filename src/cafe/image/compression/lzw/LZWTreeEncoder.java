@@ -53,7 +53,7 @@ public class LZWTreeEncoder implements ImageEncoder
 	private boolean isTIFF = false;
 	private Updatable writer;
 	
-	private static final short mask[] = {0x00,0x01,0x03,0x07,0x0f,0x1f,0x3f,0x7f,0xff};
+	private static final short MASK[] = {0x00,0x01,0x03,0x07,0x0f,0x1f,0x3f,0x7f,0xff};
 	
 	int compressedDataLen = 0;
 	
@@ -260,25 +260,25 @@ public class LZWTreeEncoder implements ImageEncoder
     	
     	if(isTIFF) {
     		temp = codeLen - empty_bits;
-    		bytes_buf[bufIndex] |= ((code>>>temp)&mask[empty_bits]);
+    		bytes_buf[bufIndex] |= ((code>>>temp)&MASK[empty_bits]);
     		
     		while (temp > 8)
 			{
     			if (++bufIndex >= buf_length)
 					flush_buf(buf_length);
-				bytes_buf[bufIndex] |= ((code>>>(temp - 8))&mask[8]);
+				bytes_buf[bufIndex] |= ((code>>>(temp - 8))&MASK[8]);
 				temp -= 8;
 			} 
     		
     		if(temp > 0) {
     			if (++bufIndex >= buf_length)
 					flush_buf(buf_length);
-				bytes_buf[bufIndex] |= ((code&mask[temp])<<(8 - temp));
+				bytes_buf[bufIndex] |= ((code&MASK[temp])<<(8 - temp));
     			temp -= 8;
     		}
        	} else { // GIF			
 			// Shift the code to the left of the last byte in bytes_buf
-			bytes_buf[bufIndex] |= ((code&mask[empty_bits])<<(8-empty_bits));
+			bytes_buf[bufIndex] |= ((code&MASK[empty_bits])<<(8-empty_bits));
 			code >>= empty_bits;
 	        temp -= empty_bits;
 	        // If the code is longer than the empty_bits
