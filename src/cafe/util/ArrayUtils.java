@@ -467,7 +467,7 @@ public class ArrayUtils
 		int end = start + len;
 		int strideCounter = 0;
 		
-		for(int i = start; i < end; i++, strideCounter++) {
+		for(int i = start; i < end; i++) {
 			// If we have enough space for input byte, one step operation
 			if(empty_bits >= bits) {
 				packedBytes[index] |= ((input[i]&mask[bits])<<(empty_bits-bits));
