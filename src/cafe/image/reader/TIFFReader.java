@@ -27,6 +27,7 @@ import java.util.List;
 
 import cafe.image.compression.deflate.DeflateDecoder;
 import cafe.image.compression.lzw.LZWTreeDecoder;
+import cafe.image.compression.packbits.Packbits;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.ByteField;
 import cafe.image.tiff.IFD;
@@ -116,9 +117,9 @@ public class TIFFReader extends ImageReader {
 				int numOfColors2 = (numOfColors<<1);
 				for(int i = 0, index = 0; i < colorMap.length/3;i++) {
 					rgbColorPalette[index++] = 0xff000000|((colorMap[i]&0xff00)<<8)|((colorMap[i+numOfColors]&0xff00))|((colorMap[i+numOfColors2]&0xff00)>>8) ;
-				}				
-				byte[] pixels = new byte[imageWidth*imageHeight];
-				
+				}
+				int bytesPerScanLine = (imageWidth*bitsPerSample +7)/8;
+				byte[] pixels = new byte[bytesPerScanLine*imageHeight];				
 				if(compression == TiffFieldEnum.Compression.LZW) {
 					LZWTreeDecoder decoder = new LZWTreeDecoder(8, true);					
 					for(int i = 0; i < stripByteCounts.length; i++) {
@@ -126,7 +127,7 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
 						decoder.setInput(temp);
-						int numOfBytes = decoder.decode(pixels, offset, Math.min(rowsPerStrip,rowsRemain)*imageWidth);
+						int numOfBytes = decoder.decode(pixels, offset, Math.min(rowsPerStrip,rowsRemain)*bytesPerScanLine);
 						offset += numOfBytes;
 						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);
 					}
@@ -137,7 +138,7 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
 						decoder.setInput(temp);
-						int numOfBytes = decoder.decode(pixels, offset, Math.min(rowsPerStrip,rowsRemain)*imageWidth);
+						int numOfBytes = decoder.decode(pixels, offset, Math.min(rowsPerStrip,rowsRemain)*bytesPerScanLine);
 						offset += numOfBytes;
 						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);
 					}
@@ -145,7 +146,7 @@ public class TIFFReader extends ImageReader {
 				//Create a BufferedImage
 				int[] off = {0};//band offset, we have only one band start at 0
 				DataBuffer db = new DataBufferByte(pixels, pixels.length);
-				WritableRaster raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth, 1, off, null);
+				WritableRaster raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, bytesPerScanLine, 1, off, null);
 				ColorModel cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_BYTE);
 		   	
 				return new BufferedImage(cm, raster, false, null);
@@ -182,18 +183,30 @@ public class TIFFReader extends ImageReader {
 						offset += numOfBytes;
 						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
 					}					
+				} else if(compression == TiffFieldEnum.Compression.PACKBITS) {
+					for(int i = 0; i < stripByteCounts.length; i++) {
+						byte[] temp = new byte[stripByteCounts[i]];
+						randIS.seek(stripOffsets[i]);
+						randIS.readFully(temp);
+						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*3;
+						byte[] temp2 = new byte[bytes2Read];
+						Packbits.unpackbits(temp, temp2);
+						System.arraycopy(temp2, 0, pixels, offset, bytes2Read);							
+						offset += bytes2Read;
+						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
+					}					
 				}
 				//Create a BufferedImage
-				 db = new DataBufferByte(pixels, pixels.length);
-				 int[] bandoff = {0, 1, 2}; //band offset, we have 3 bands
-				 int numOfBands = 3;
-				 int trans = Transparency.OPAQUE;
-				 int[] nBits = {8, 8, 8};						
-				 raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
-				 cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false,
+				db = new DataBufferByte(pixels, pixels.length);
+				int[] bandoff = {0, 1, 2}; //band offset, we have 3 bands
+				int numOfBands = 3;
+				int trans = Transparency.OPAQUE;
+				int[] nBits = {8, 8, 8};						
+				raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+				cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false,
 			                trans, DataBuffer.TYPE_BYTE);
 					
-		 	   	 return new BufferedImage(cm, raster, false, null);
+				return new BufferedImage(cm, raster, false, null);
 						
 			default:
 		 		break;
