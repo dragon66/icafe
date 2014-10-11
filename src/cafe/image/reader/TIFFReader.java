@@ -144,11 +144,16 @@ public class TIFFReader extends ImageReader {
 					}
 				}
 				//Create a BufferedImage
-				int[] off = {0};//band offset, we have only one band start at 0
 				DataBuffer db = new DataBufferByte(pixels, pixels.length);
-				WritableRaster raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, bytesPerScanLine, 1, off, null);
+				WritableRaster raster = null;
+				if(bitsPerSample != 8) {
+					   raster = Raster.createPackedRaster(db, imageWidth, imageHeight, bitsPerSample, null);
+				   } else {
+					   int[] off = {0};//band offset, we have only one band start at 0
+					   raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth, 1, off, null);
+				   }
 				ColorModel cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_BYTE);
-		   	
+				   
 				return new BufferedImage(cm, raster, false, null);
 			case RGB:
 				pixels = new byte[imageWidth*imageHeight*3];				
@@ -206,8 +211,7 @@ public class TIFFReader extends ImageReader {
 				cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false,
 			                trans, DataBuffer.TYPE_BYTE);
 					
-				return new BufferedImage(cm, raster, false, null);
-						
+				return new BufferedImage(cm, raster, false, null);						
 			default:
 		 		break;
 		}	
