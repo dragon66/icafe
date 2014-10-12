@@ -104,6 +104,16 @@ public class TIFFReader extends ImageReader {
 		TiffField<?> f_bitsPerSample = ifd.getField(TiffTag.BITS_PER_SAMPLE.getValue());
 		int bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
 		System.out.println("Bits per sample: " + bitsPerSample);
+		TiffField<?> f_samplesPerPixel = ifd.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
+		int samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
+		System.out.println("Samples per pixel: " + samplesPerPixel);
+		TiffField<?> f_predictor = ifd.getField(TiffTag.PREDICTOR.getValue());
+		int predictor = 0;
+		if(f_predictor != null) predictor = f_predictor.getDataAsLong()[0];
+		TiffField<?> f_planaryConfiguration = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());
+		int planaryConfiguration = f_planaryConfiguration.getDataAsLong()[0];
+		TiffFieldEnum.PlanarConfiguration e_planaryConfiguration = TiffFieldEnum.PlanarConfiguration.fromValue(planaryConfiguration);
+		System.out.println("Planary configuration: " + e_planaryConfiguration);
 		
 		if(rowsPerStrip < 0) rowsPerStrip = imageHeight;
 		int rowsRemain = imageHeight;
@@ -201,6 +211,10 @@ public class TIFFReader extends ImageReader {
 						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
 					}					
 				}
+				
+				if(predictor == 2 && planaryConfiguration == 1)
+					pixels = applyDePredictor(samplesPerPixel, pixels, imageWidth, imageHeight);
+				
 				//Create a BufferedImage
 				db = new DataBufferByte(pixels, pixels.length);
 				int[] bandoff = {0, 1, 2}; //band offset, we have 3 bands
@@ -382,5 +396,17 @@ public class TIFFReader extends ImageReader {
 		System.out.println("********************************");
 		randIS.seek(offset);
 		return randIS.readInt();
+	}
+	
+	// De-predictor for PLANARY_CONFIGURATION value 1
+	private static byte[] applyDePredictor(int numOfSamples, byte[] input, int imageWidth, int imageHeight) {
+		for(int i = 0, inc = numOfSamples*imageWidth, maxVal = inc - numOfSamples, minVal = numOfSamples; i <= imageHeight - 1; maxVal += inc, minVal += inc, i++) {
+			for (int j = minVal; j <= maxVal; j+=numOfSamples) {
+				for(int k = 0; k < numOfSamples; k++) {
+					input[j + k] += input[j - numOfSamples + k];
+				}
+			}			
+		}		
+		return input;
 	}
 }
