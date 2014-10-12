@@ -10,6 +10,7 @@ Read format support:
 - ZSoft's PCX
 - Truevision TGA
 - Portable Network Graphics (PNG) - support both 8 bit and 16 bit, all color depth; single color or alpha channel support; gamma support
+- Adobe  TIFF - still under development (limited support for RGB and Palette Color with LZW, Deflate compression)
 
 Write format support:
 -----------------------
