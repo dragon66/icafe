@@ -6,6 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * LZWTreeDecoder.java
+ *
+ * Who   Date       Description
+ * ====  =======    ============================================================
+ * WY    14Oct2014  Revised to show specification violation TIFF LZW compression
+ *                  which actually falls back to GIF LZW compression completely
  */
 
 package cafe.image.compression.lzw;
@@ -52,6 +61,8 @@ public class LZWTreeDecoder implements ImageDecoder
 
 	private InputStream is;
 	private boolean isTIFF;// Taking care of the difference between GIF and TIFF.
+	
+	private boolean isCodeBigEndian = true;
 
 	private static final int MASK[] = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff};
 	
@@ -159,7 +170,7 @@ public class LZWTreeDecoder implements ImageDecoder
 		       
 		       oldcode = code;
 	           
-			   if((codeIndex > (isTIFF?limit-1:limit)) && (codeLen<12))
+			   if((codeIndex > (isTIFF && isCodeBigEndian?limit-1:limit)) && (codeLen<12))
 			   {
 		           codeLen++;
 			       limit = (1<<codeLen)-1;			  
@@ -182,7 +193,7 @@ public class LZWTreeDecoder implements ImageDecoder
 	{
         int temp = 0;
 	
-		if(!isTIFF) 
+		if(!isTIFF || !isCodeBigEndian) 
 			temp = (temp_byte >> (8-bits_remain));
 		else {
 			// Different packing order from GIF
@@ -218,12 +229,15 @@ public class LZWTreeDecoder implements ImageDecoder
 				temp_byte = is.read();
 				if(temp_byte == -1)
 					return endOfImage;
-				temp = ((temp<<8)|temp_byte);				
+				if(isCodeBigEndian)
+					temp = ((temp<<8)|temp_byte);
+				else
+					temp |= (temp_byte<<bits_remain);
 			}
 			bits_remain += 8;
 		}
 		
-		if(isTIFF) 
+		if(isTIFF && isCodeBigEndian) 
 			temp = (temp>>(bits_remain-codeLen));
         
 		bits_remain -= codeLen;
@@ -232,6 +246,8 @@ public class LZWTreeDecoder implements ImageDecoder
 	}
 	
 	public void setInput(byte[] input) {
+		if(input[0] == (byte)0x00 && input[1] == (byte)0x01)  
+			isCodeBigEndian = false;   
 		is = new ByteArrayInputStream(input);
 		// Must discard the remaining bits!!!
 		bits_remain = 0;
