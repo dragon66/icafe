@@ -6,6 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * TIFFReader.java
+ *
+ * Who   Date       Description
+ * ====  =======    ============================================================
+ * WY    14Oct2014  Revised to show specification violation TIFF LZW compression
+ * WY    14Oct2014  Revised to show RGB TIFF with extra sample tag 
+ *                  - limited to unassociated alpha sample
  */
 
 package cafe.image.reader;
@@ -58,7 +68,8 @@ public class TIFFReader extends ImageReader {
 	private List<IFD> list = new ArrayList<IFD>();
 	 
 	public BufferedImage read(InputStream is) throws Exception
-	{		  
+	{	
+		//javax.imageio.ImageIO.read(new FileInputStream("images/quad-lzw.tif"));
 		randIS = new FileCacheRandomAccessInputStream(is);
 		if(!readHeader(randIS)) return null;
 		 
@@ -77,6 +88,7 @@ public class TIFFReader extends ImageReader {
 	}
 	 
 	private BufferedImage decode(IFD ifd) throws Exception {
+		// Grab some of the TIFF fields we are interested in
 		TiffField<?> field = ifd.getField(TiffTag.COMPRESSION.getValue());
 		short[] data = (short[])field.getData();
 		TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(data[0]&0xffff);
@@ -84,19 +96,19 @@ public class TIFFReader extends ImageReader {
 		// Forget about tiled TIFF for now
 		TiffField<?> f_stripOffsets = ifd.getField(TiffTag.STRIP_OFFSETS.getValue());
 		TiffField<?> f_stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS.getValue());
-		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
 		int[] stripOffsets = f_stripOffsets.getDataAsLong();
 		int[] stripByteCounts = f_stripByteCounts.getDataAsLong();
 		System.out.println(Arrays.toString(stripOffsets));
 		System.out.println(Arrays.toString(stripByteCounts));
-		int rowsPerStrip = -1;
-		if(f_rowsPerStrip != null)
-			rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];
-		System.out.println(rowsPerStrip);
 		int imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH.getValue()).getDataAsLong()[0];
 		int imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH.getValue()).getDataAsLong()[0];
 		System.out.println("Image width: " + imageWidth);
 		System.out.println("Image height: " + imageHeight);
+		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
+		int rowsPerStrip = imageHeight;
+		if(f_rowsPerStrip != null)
+			rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];
+		System.out.println("Rows per strip: " + rowsPerStrip);		
 		TiffField<?> f_photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue());
 		int photoMetric = f_photoMetric.getDataAsLong()[0];
 		TiffFieldEnum.PhotoMetric e_photoMetric = TiffFieldEnum.PhotoMetric.fromValue(photoMetric);
@@ -109,13 +121,16 @@ public class TIFFReader extends ImageReader {
 		System.out.println("Samples per pixel: " + samplesPerPixel);
 		TiffField<?> f_predictor = ifd.getField(TiffTag.PREDICTOR.getValue());
 		int predictor = 0;
-		if(f_predictor != null) predictor = f_predictor.getDataAsLong()[0];
+		if(f_predictor != null) {
+			predictor = f_predictor.getDataAsLong()[0];
+			System.out.println("Predictor: " + predictor);
+		}
 		TiffField<?> f_planaryConfiguration = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());
-		int planaryConfiguration = f_planaryConfiguration.getDataAsLong()[0];
+		int planaryConfiguration = 1;
+		if(f_planaryConfiguration != null) planaryConfiguration = f_planaryConfiguration.getDataAsLong()[0];
 		TiffFieldEnum.PlanarConfiguration e_planaryConfiguration = TiffFieldEnum.PlanarConfiguration.fromValue(planaryConfiguration);
 		System.out.println("Planary configuration: " + e_planaryConfiguration);
 		
-		if(rowsPerStrip < 0) rowsPerStrip = imageHeight;
 		int rowsRemain = imageHeight;
 		int offset = 0;
 		
@@ -166,11 +181,11 @@ public class TIFFReader extends ImageReader {
 				   
 				return new BufferedImage(cm, raster, false, null);
 			case RGB:
-				pixels = new byte[imageWidth*imageHeight*3];				
+				pixels = new byte[imageWidth*imageHeight*samplesPerPixel];				
 				if(compression == TiffFieldEnum.Compression.NONE) {
 					for(int i = 0; i < stripByteCounts.length; i++) {					
 						randIS.seek(stripOffsets[i]);
-						randIS.readFully(pixels, offset, Math.min(rowsPerStrip, rowsRemain)*imageWidth*3);
+						randIS.readFully(pixels, offset, Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel);
 						offset += Math.min(rowsPerStrip, rowsRemain)*imageWidth*3;
 						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
 					}
@@ -181,11 +196,11 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
 						decoder.setInput(temp);
-						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*3;
+						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel;
 						int numOfBytes = decoder.decode(pixels, offset, bytes2Read);							
 						offset += numOfBytes;
 						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
-					}					
+					}
 				} else if(compression == TiffFieldEnum.Compression.DEFLATE || compression == TiffFieldEnum.Compression.DEFLATE_ADOBE) {
 					DeflateDecoder decoder = new DeflateDecoder();
 					for(int i = 0; i < stripByteCounts.length; i++) {
@@ -193,7 +208,7 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
 						decoder.setInput(temp);
-						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*3;
+						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel;
 						int numOfBytes = decoder.decode(pixels, offset, bytes2Read);							
 						offset += numOfBytes;
 						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
@@ -203,7 +218,7 @@ public class TIFFReader extends ImageReader {
 						byte[] temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
-						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*3;
+						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel;
 						byte[] temp2 = new byte[bytes2Read];
 						Packbits.unpackbits(temp, temp2);
 						System.arraycopy(temp2, 0, pixels, offset, bytes2Read);							
@@ -212,19 +227,29 @@ public class TIFFReader extends ImageReader {
 					}					
 				}
 				
+				// This also works with 4 samples per pixel data
 				if(predictor == 2 && planaryConfiguration == 1)
 					pixels = applyDePredictor(samplesPerPixel, pixels, imageWidth, imageHeight);
 				
 				//Create a BufferedImage
 				db = new DataBufferByte(pixels, pixels.length);
-				int[] bandoff = {0, 1, 2}; //band offset, we have 3 bands
-				int numOfBands = 3;
+				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
+				int[] bandoff = {0, 1, 2}; 
+				boolean transparent = false;
+				int numOfBands = samplesPerPixel;
 				int trans = Transparency.OPAQUE;
-				int[] nBits = {8, 8, 8};						
+				int[] nBits = {8, 8, 8};
+				// There is an extra sample (most probably alpha)
+				if(samplesPerPixel == 4) {
+					bandoff = new int[]{0, 1, 2, 3};
+					nBits = new int[]{8, 8, 8, 8};
+					trans = Transparency.TRANSLUCENT;
+					transparent = true;
+				}
 				raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
-				cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false,
+				cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
 			                trans, DataBuffer.TYPE_BYTE);
-					
+
 				return new BufferedImage(cm, raster, false, null);						
 			default:
 		 		break;
