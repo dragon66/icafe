@@ -186,7 +186,7 @@ public class TIFFReader extends ImageReader {
 					for(int i = 0; i < stripByteCounts.length; i++) {					
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(pixels, offset, Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel);
-						offset += Math.min(rowsPerStrip, rowsRemain)*imageWidth*3;
+						offset += Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel;
 						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
 					}
 				} else if(compression == TiffFieldEnum.Compression.LZW) {
