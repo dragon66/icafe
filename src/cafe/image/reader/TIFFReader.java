@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    15Oct2014  Added basic support for 16 bits RGB image
  * WY    14Oct2014  Revised to show specification violation TIFF LZW compression
  * WY    14Oct2014  Revised to show RGB TIFF with extra sample tag 
  *                  - limited to unassociated alpha sample
@@ -190,7 +191,7 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(pixels, offset, rows2Read*bytesPerScanLine);
 						offset += rows2Read*bytesPerScanLine;
-						rowsRemain -= rows2Read;
+						rowsRemain -= rows2Read;					
 					}
 				} else if(compression == TiffFieldEnum.Compression.LZW) {
 					LZWTreeDecoder decoder = new LZWTreeDecoder(8, true);
