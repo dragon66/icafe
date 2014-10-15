@@ -37,7 +37,7 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
     private RandomAccessFile cache;
 
     /** The length of the read buffer. */
-    private int bufLen = 1024;
+    private int bufLen = 4096;
 
     /** The read buffer. */
     private byte[] buf = new byte[bufLen];
@@ -61,8 +61,14 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
      */
     public FileCacheRandomAccessInputStream(InputStream stream)
         throws IOException {
-        this.stream = stream;
-        this.cacheFile = File.createTempFile("cafe-FCRAIS-", ".tmp");
+       this(stream, 4096);
+    }
+    
+    public FileCacheRandomAccessInputStream(InputStream stream, int bufLen)
+            throws IOException {
+    	this.stream = stream;
+        this.bufLen = bufLen;
+    	this.cacheFile = File.createTempFile("cafe-FCRAIS-", ".tmp");
         cacheFile.deleteOnExit();
         this.cache = new RandomAccessFile(cacheFile, "rw");
     }
