@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/14/2014
+Last modified on 10/15/2014
 ***************************
+15Oct2014  Bumped up buffer size to 4k for FileCacheRandomAccessInputStream
 14Oct2014  Revised LZWTreeDecoder to show Intel style code LZW compressed TIFF 
 11Oct2014  Bug fix for ArrayUtils packByteArray()
 10Oct2014  Added DeflateDecoder and revised LZWTreeDecoder for TIFFReader

@@ -27,6 +27,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferUShort;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
@@ -56,6 +57,7 @@ import cafe.io.RandomAccessInputStream;
 import cafe.io.ReadStrategyII;
 import cafe.io.ReadStrategyMM;
 import cafe.string.StringUtils;
+import cafe.util.ArrayUtils;
 
 /** 
  * Decodes and shows TIFF images. 
@@ -68,8 +70,7 @@ public class TIFFReader extends ImageReader {
 	private List<IFD> list = new ArrayList<IFD>();
 	 
 	public BufferedImage read(InputStream is) throws Exception
-	{	
-		//javax.imageio.ImageIO.read(new FileInputStream("images/quad-lzw.tif"));
+	{
 		randIS = new FileCacheRandomAccessInputStream(is);
 		if(!readHeader(randIS)) return null;
 		 
@@ -181,76 +182,92 @@ public class TIFFReader extends ImageReader {
 				   
 				return new BufferedImage(cm, raster, false, null);
 			case RGB:
-				pixels = new byte[imageWidth*imageHeight*samplesPerPixel];				
+				bytesPerScanLine = imageWidth*samplesPerPixel*bitsPerSample/8;
+				pixels = new byte[imageWidth*bytesPerScanLine];				
 				if(compression == TiffFieldEnum.Compression.NONE) {
-					for(int i = 0; i < stripByteCounts.length; i++) {					
+					for(int i = 0; i < stripByteCounts.length; i++) {
+						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
 						randIS.seek(stripOffsets[i]);
-						randIS.readFully(pixels, offset, Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel);
-						offset += Math.min(rowsPerStrip, rowsRemain)*imageWidth*3;
-						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
+						randIS.readFully(pixels, offset, rows2Read*bytesPerScanLine);
+						offset += rows2Read*bytesPerScanLine;
+						rowsRemain -= rows2Read;					
 					}
 				} else if(compression == TiffFieldEnum.Compression.LZW) {
 					LZWTreeDecoder decoder = new LZWTreeDecoder(8, true);
 					for(int i = 0; i < stripByteCounts.length; i++) {
+						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
 						byte[] temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
 						decoder.setInput(temp);
-						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel;
+						int bytes2Read = rows2Read*bytesPerScanLine;
 						int numOfBytes = decoder.decode(pixels, offset, bytes2Read);							
 						offset += numOfBytes;
-						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
+						rowsRemain -= rows2Read;					
 					}
 				} else if(compression == TiffFieldEnum.Compression.DEFLATE || compression == TiffFieldEnum.Compression.DEFLATE_ADOBE) {
 					DeflateDecoder decoder = new DeflateDecoder();
 					for(int i = 0; i < stripByteCounts.length; i++) {
+						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
 						byte[] temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
 						decoder.setInput(temp);
-						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel;
+						int bytes2Read = rows2Read*bytesPerScanLine;
 						int numOfBytes = decoder.decode(pixels, offset, bytes2Read);							
 						offset += numOfBytes;
-						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
+						rowsRemain -= rows2Read;					
 					}					
 				} else if(compression == TiffFieldEnum.Compression.PACKBITS) {
 					for(int i = 0; i < stripByteCounts.length; i++) {
+						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
 						byte[] temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
-						int bytes2Read = Math.min(rowsPerStrip, rowsRemain)*imageWidth*samplesPerPixel;
+						int bytes2Read = rows2Read*bytesPerScanLine;
 						byte[] temp2 = new byte[bytes2Read];
 						Packbits.unpackbits(temp, temp2);
 						System.arraycopy(temp2, 0, pixels, offset, bytes2Read);							
 						offset += bytes2Read;
-						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);					
+						rowsRemain -= rows2Read;					
 					}					
 				}
 				
 				// This also works with 4 samples per pixel data
 				if(predictor == 2 && planaryConfiguration == 1)
 					pixels = applyDePredictor(samplesPerPixel, pixels, imageWidth, imageHeight);
-				
-				//Create a BufferedImage
-				db = new DataBufferByte(pixels, pixels.length);
-				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
-				int[] bandoff = {0, 1, 2}; 
-				boolean transparent = false;
-				int numOfBands = samplesPerPixel;
-				int trans = Transparency.OPAQUE;
-				int[] nBits = {8, 8, 8};
-				// There is an extra sample (most probably alpha)
-				if(samplesPerPixel == 4) {
-					bandoff = new int[]{0, 1, 2, 3};
-					nBits = new int[]{8, 8, 8, 8};
-					trans = Transparency.TRANSLUCENT;
-					transparent = true;
+				if(bitsPerSample == 16) {
+					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, true);
+					db = new DataBufferUShort(spixels, spixels.length);
+					int[] off = {0, 1, 2}; //band offset, we have 3 bands
+					int numOfBands = 3;
+					int trans = Transparency.OPAQUE;
+					int[] nBits = {16, 16, 16};						
+					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, off, null);
+					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false,
+			                trans, DataBuffer.TYPE_USHORT);
+				} else {
+					//Create a BufferedImage
+					db = new DataBufferByte(pixels, pixels.length);
+					//band offset, we have 3 bands if no extra sample is specified, otherwise 4
+					int[] bandoff = {0, 1, 2}; 
+					boolean transparent = false;
+					int numOfBands = samplesPerPixel;
+					int trans = Transparency.OPAQUE;
+					int[] nBits = {8, 8, 8};
+					// There is an extra sample (most probably alpha)
+					if(samplesPerPixel == 4) {
+						bandoff = new int[]{0, 1, 2, 3};
+						nBits = new int[]{8, 8, 8, 8};
+						trans = Transparency.TRANSLUCENT;
+						transparent = true;
+					}
+					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
+				                trans, DataBuffer.TYPE_BYTE);					
 				}
-				raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
-				cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
-			                trans, DataBuffer.TYPE_BYTE);
-
-				return new BufferedImage(cm, raster, false, null);						
+				
+				return new BufferedImage(cm, raster, false, null);
 			default:
 		 		break;
 		}	
