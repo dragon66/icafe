@@ -190,7 +190,7 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(pixels, offset, rows2Read*bytesPerScanLine);
 						offset += rows2Read*bytesPerScanLine;
-						rowsRemain -= rows2Read;					
+						rowsRemain -= rows2Read;
 					}
 				} else if(compression == TiffFieldEnum.Compression.LZW) {
 					LZWTreeDecoder decoder = new LZWTreeDecoder(8, true);
