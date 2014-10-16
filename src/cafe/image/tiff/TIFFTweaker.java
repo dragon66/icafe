@@ -448,10 +448,10 @@ public class TIFFTweaker {
 			ifd.addField(stripOffSets);		
 		}
 		// add copyright and software fields.
-		String copyRight = "Copyright (c) Wen Yu, 2014 (yuwen_66@yahoo.com)";
+		String copyRight = "Copyright (c) Wen Yu, 2014 (yuwen_66@yahoo.com)\0";
 		ifd.addField(new ASCIIField(TiffTag.COPYRIGHT.getValue(), copyRight));
 		
-		String softWare = "TIFFTweaker 1.0";
+		String softWare = "TIFFTweaker 1.0\0";
 		ifd.addField(new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare));
 		// End of copyright and software field.
 		
@@ -934,7 +934,7 @@ public class TIFFTweaker {
 					if(ftag == ExifTag.EXIF_VERSION || ftag == ExifTag.FLASH_PIX_VERSION)
 						System.out.println("Field value: " + new String(data));
 					else
-						System.out.println("Field value: " + StringUtils.byteArrayToHexString(data));
+						System.out.println("Field value: " + StringUtils.byteArrayToHexString(data, 0, 10));
 					offset += 4;					
 					tiffIFD.addField((ftype == FieldType.BYTE)?new ByteField(tag, data):new UndefinedField(tag, data));
 					break;
@@ -1279,8 +1279,7 @@ public class TIFFTweaker {
 		System.out.println("*** TIFF snooping starts ***");
 		int offset = readHeader(rin);
 		List<IFD> list = new ArrayList<IFD>();
-		readIFDs(null, null, TiffTag.class, list, offset, rin);
-	
+		readIFDs(null, null, TiffTag.class, list, offset, rin);	
 		System.out.println("*** TIFF snooping ends ***");
 	}
 	
