@@ -692,6 +692,8 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
+	MATTEING("Matteing", (short)0x80e3, Attribute.PRIVATE),
+	
 	COPYRIGHT("Copyright", (short)0x8298, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.ASCII;
