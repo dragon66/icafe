@@ -21,15 +21,14 @@ import java.io.InputStream;
  * <p>
  * Based on com.sun.media.jai.codec.SeekableStream.
  * <p>
- * This implementation has a major drawback: It has no knowledge 
- * of the length of the stream, it is supposed to move forward
- * even though it is possible to put the pointer at anywhere
- * before the end of the stream.
- * <p>
  * To make it flexible, this class and any of its sub-class doesn't close the underlying
  * stream. It's up to the underlying stream creator to close them. This ensures the actual
- * stream out-lives the random stream itself in case we need to read or write more content
- * from/to the underlying stream. 
+ * stream out-lives the random stream itself in case we need to read more content from the
+ * underlying stream.
+ * <p>
+ * NOTE:  for MemoryCacheRandomAccessInputStream, there is the risk of "over read" in which
+ * more bytes are cached in the buffer than actually needed. In this case, the underlying
+ * stream might not be usable anymore afterwards. 
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/24/2013 

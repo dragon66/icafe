@@ -59,13 +59,11 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
      * <p> An <code>IOException</code> will be thrown if the
      * attempt to create the cache file fails for any reason.
      */
-    public FileCacheRandomAccessInputStream(InputStream stream)
-        throws IOException {
+    public FileCacheRandomAccessInputStream(InputStream stream) throws IOException {
        this(stream, 4096);
     }
     
-    public FileCacheRandomAccessInputStream(InputStream stream, int bufLen)
-            throws IOException {
+    public FileCacheRandomAccessInputStream(InputStream stream, int bufLen) throws IOException {
     	this.stream = stream;
         this.bufLen = bufLen;
     	this.cacheFile = File.createTempFile("cafe-FCRAIS-", ".tmp");

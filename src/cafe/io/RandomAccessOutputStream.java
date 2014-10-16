@@ -20,8 +20,8 @@ import java.io.OutputStream;
  * * <p>
  * To make it flexible, this class and any of its sub-class doesn't close the underlying
  * stream. It's up to the underlying stream creator to close them. This ensures the actual
- * stream out-lives the random stream itself in case we need to read or write more content
- * from/to the underlying stream.
+ * stream out-lives the random stream itself in case we need to write more content to the
+ * underlying stream.
  *  
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/29/2013
