@@ -34,26 +34,41 @@ public class StringUtils
 	 * @param bytes an array of byte.
 	 * @return a hex string representation of the byte array.
 	 */
-	public static String byteArrayToHexString(byte [] bytes) {
-	    
-	    if ( bytes == null ) {
+	public static String byteArrayToHexString(byte [] bytes) {	    
+	    return byteArrayToHexString(bytes, 0, bytes.length);
+	}
+	
+	public static String byteArrayToHexString(byte [] bytes, int offset, int length) {
+		
+		if ( bytes == null ) {
 	      return null;
 	    }
+		
+		if(bytes.length == 0) return "[]";
 	    
-	    StringBuilder hex = new StringBuilder(5*bytes.length + 2);
+	    if(offset < 0 || offset >= bytes.length)
+	    	throw new IllegalArgumentException("Offset out of array bound!");
+	    
+	    if(offset + length > bytes.length)
+	    	length = bytes.length - offset;
+	    
+	    StringBuilder hex = new StringBuilder(5*length + 2);	    
 	    hex.append("[");
 	    
-	    if (bytes.length > 0)
-	    {
-	    	for (byte b : bytes ) {
-	    		hex.append("0x").append(HEXES[(b & 0xf0) >> 4])
-	         .append(HEXES[b & 0x0f]).append(",");
-	    	}
-	    	hex.deleteCharAt(hex.length()-1); 	      
+	    for (int i = offset; i < length; i++) {
+	    	hex.append("0x").append(HEXES[(bytes[i] & 0xf0) >> 4])
+	         .append(HEXES[bytes[i] & 0x0f]).append(",");
 	    }
 	    
+	    // Remove the last ","
+	    if(hex.length() > 1)
+	    	hex.deleteCharAt(hex.length()-1);
+	    
+	    if(offset + length < bytes.length)
+	    	hex.append(" ..."); // Partial output
+	    
 	    hex.append("]");
-
+	    
 	    return hex.toString();
 	}
 	
@@ -527,7 +542,9 @@ public class StringUtils
 			longs.append(",");
 		}
 		
-		longs.deleteCharAt(longs.length()-1);
+		if(longs.length() > 1)
+			longs.deleteCharAt(longs.length()-1);
+		
 		longs.append("]");
 		
 		return longs.toString();
@@ -725,7 +742,9 @@ public class StringUtils
 			shorts.append(",");
 		}
 		
-		shorts.deleteCharAt(shorts.length()-1);
+		if(shorts.length() > 1)
+			shorts.deleteCharAt(shorts.length()-1);
+		
 		shorts.append("]");
 		
 		return shorts.toString();
