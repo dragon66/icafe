@@ -46,8 +46,9 @@ public class IDATReader implements Reader {
 		return this;
 	}
 	
-	public byte[] getData() throws IOException { 
-		read();
+	public byte[] getData() throws IOException {
+		if(rawData == null)
+			read();
 		return rawData;
 	}
 
