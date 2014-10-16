@@ -44,6 +44,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -99,6 +100,7 @@ import org.xml.sax.SAXException;
  */
 public class JPEGTweaker {
 	/** Copy a single SOS segment */	
+	@SuppressWarnings("unused")
 	private static short copySOS(InputStream is, OutputStream os) throws IOException {
 		// Need special treatment.
 		int nextByte = 0;
@@ -1347,6 +1349,8 @@ public class JPEGTweaker {
 		System.out.println("**********************************");
 	}	
 	
+	// This method is very slow if not wrapped in some kind of cache stream but it works for multiple
+	// SOSs in case of progressive JPEG
 	private static short readSOS(InputStream is, Map<String, Segment> segmentMap) throws IOException 
 	{
 		int len = IOUtils.readUnsignedShortMM(is);
@@ -1474,9 +1478,9 @@ public class JPEGTweaker {
 				    case SOS:	
 				    	IOUtils.writeShortMM(os, marker);
 						// use copyToEnd instead for multiple SOS
-				    	marker = copySOS(is, os);
-				    	//copyToEnd(is, os);
-						//finished = true; 
+				    	//marker = copySOS(is, os);
+				    	copyToEnd(is, os);
+						finished = true; 
 						break;
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
@@ -1547,9 +1551,9 @@ public class JPEGTweaker {
 				    case SOS:	
 				    	IOUtils.writeShortMM(os, marker);
 						// use copyToEnd instead for multiple SOS
-				    	marker = copySOS(is, os);
-				    	//copyToEnd(is, os);
-						//finished = true; 
+				    	//marker = copySOS(is, os);
+				    	copyToEnd(is, os);
+						finished = true; 
 						break;
 				    case APP1:
 				    	// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
@@ -1639,6 +1643,9 @@ public class JPEGTweaker {
 	
 	public static void snoop(InputStream is) throws IOException 
 	{
+		// Need to wrap the input stream with a BufferedInputStream to
+		// speed up reading the SOS
+		is = new BufferedInputStream(is);
 		// Definitions
 		List<QTable> m_qTables = new ArrayList<QTable>(4);
 		List<HTable> m_acTables = new ArrayList<HTable>(4);	
@@ -1724,11 +1731,18 @@ public class JPEGTweaker {
 			}
 	    }
 		
+		is.close();
+		
 		System.out.println("*** JPEG snooping ends ***");
 	}
 	
 	/**
 	 * Write ICC_Profile as one or more APP2 segments
+	 * <p>
+	 * Due to the JPEG segment length limit, we have
+	 * to split ICC_Profile data and put them into 
+	 * different APP2 segments if the data can not fit
+	 * into one segment.
 	 * 
 	 * @param os output stream to write the ICC_Profile
 	 * @param data ICC_Profile data
