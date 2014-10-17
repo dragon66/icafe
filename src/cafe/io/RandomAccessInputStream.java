@@ -37,6 +37,10 @@ public abstract class RandomAccessInputStream extends InputStream implements Dat
     
     private ReadStrategy strategy = ReadStrategyMM.getInstance();
     
+    public ReadStrategy getReadStrategy() {
+    	return strategy;
+    }
+    
 	public abstract long getStreamPointer();
 	
 	public abstract int read() throws IOException;

@@ -60,8 +60,14 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 	 * @return the current stream position
 	 */
 	public abstract long getStreamPointer();
+	
+	public WriteStrategy getWriteStrategy()	{
+		return strategy;
+	}
+	
 	/** Reset this stream to be used again */
 	public abstract void reset();	
+	
 	public abstract void seek(long pos) throws IOException;
 	
 	public void setWriteStrategy(WriteStrategy strategy) 
