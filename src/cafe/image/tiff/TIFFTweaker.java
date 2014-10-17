@@ -719,6 +719,20 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);
 	}
 	
+	/**
+	 * Merges two TIFF images together
+	 * <p>
+	 * Note: this method works for all TIFF images with BitsPerSample <= 8.
+	 * For BitsPerSample > 8, the result is unpredictable: if the image is
+	 * the first one in the list to be merged, or the endianness of the image
+	 * is the same as the merged image, it works fine, otherwise, the merged
+	 * image with BitsPerSample > 8 will contain wrong image data.
+	 * 
+	 * @param image1 RandomAccessInputStream for the first TIFF image
+	 * @param image2 RandomAccessInputStream for the second TIFF image
+	 * @param merged RanomAccessOutputStream for the merged TIFF image
+	 * @throws IOException
+	 */
 	public static void mergeTiffImages(RandomAccessInputStream image1, RandomAccessInputStream image2, RandomAccessOutputStream merged) throws IOException {
 		int offset1 = copyHeader(image1, merged);
 		int offset2 = readHeader(image2);
@@ -750,6 +764,19 @@ public class TIFFTweaker {
 		writeToStream(merged, firstIFDOffset); // DONE!
 	}
 	
+	/**
+	 * Merges a list of TIFF images (single or multiple page) into one. 
+	 * <p>
+	 * Note: this method works for all TIFF images with BitsPerSample <= 8.
+	 * For BitsPerSample > 8, the result is unpredictable: if the image is
+	 * the first one in the list to be merged, or the endianness of the image
+	 * is the same as the merged image, it works fine, otherwise, the merged
+	 * image with BitsPerSample > 8 will contain wrong image data.  
+	 *  
+	 * @param merged RandomAccessOutputStream for the merged TIFF
+	 * @param images input TIFF image files to be merged
+	 * @throws IOException
+	 */
 	public static void mergeTiffImages(RandomAccessOutputStream merged, File... images) throws IOException {
 		if(images != null && images.length > 1) {
 			FileInputStream fis1 = new FileInputStream(images[0]);
@@ -802,6 +829,17 @@ public class TIFFTweaker {
 			// And write the IFDs
 			writeToStream(merged, firstIFDOffset); // DONE!
 		}
+	}
+	
+	/**
+	 * Merges a list of TIFF images into one regardless of the original bit depth
+	 * 
+	 * @param merged RandomAccessOutputStream for the merged TIFF
+	 * @param images input TIFF image files to be merged
+	 * @throws IOException
+	 */
+	public static void mergeTiffImagesEx(RandomAccessOutputStream merged, File... images) throws IOException {
+		// TODO
 	}
 	
 	public static int prepareForInsert(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IFD> ifds) throws IOException {
