@@ -27,6 +27,7 @@ Image convertion and management:
   * Create multiple page TIFF from a series of BufferedImages
   * Split multiple TIFF image to individual images in TIFF format without decompression
   * Insert and remove pages to and from multiple page TIFF etc.
+  * Merge multipage TIFF images togeter without decompressing (work with bitsPerSample <= 8)
 - Animated GIF support
   * Create animated GIF from a series of BufferedImages
   * split animated GIF to individual images in any of the supported writing formats - keeping transparency etc.
