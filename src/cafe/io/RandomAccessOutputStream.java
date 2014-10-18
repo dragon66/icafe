@@ -30,12 +30,17 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 
 	private WriteStrategy strategy = WriteStrategyMM.getInstance();
 	
-	public abstract void disposeBefore(long pos);
-	
 	public void close() throws IOException {
 		flush();
 	}
 	
+	public abstract void disposeBefore(long pos);
+	
+	protected void finalize() throws Throwable {
+		super.finalize();
+		close();
+	}
+		
 	public void flush() throws IOException {
 		long flushPos = getFlushPos();
 		long length = getLength();
@@ -46,7 +51,11 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 			writeToStream(length - flushPos);
 		}				
 	}
-		
+	
+	public short getEndian()	{
+		return strategy instanceof WriteStrategyMM?IOUtils.BIG_ENDIAN:IOUtils.LITTLE_ENDIAN;
+	}
+	
 	public abstract long getFlushPos();
 	
 	/**
@@ -59,14 +68,10 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 	/**
 	 * @return the current stream position
 	 */
-	public abstract long getStreamPointer();
-	
-	public WriteStrategy getWriteStrategy()	{
-		return strategy;
-	}
+	public abstract long getStreamPointer();	
 	
 	/** Reset this stream to be used again */
-	public abstract void reset();	
+	public abstract void reset();
 	
 	public abstract void seek(long pos) throws IOException;
 	
@@ -79,7 +84,7 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 	
 	@Override
 	public abstract void write(int value) throws IOException;
-	
+
 	public final void writeBoolean(boolean value) throws IOException {
 		this.write(value ? 1 : 0);
 	}
@@ -118,33 +123,33 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 		strategy.writeInt(buf, 0, value);
 		this.write(buf, 0, 4);
 	}
-
+	
 	public final void writeLong(long value) throws IOException {
 		byte[] buf = new byte[8];
 		strategy.writeLong(buf, 0, value);
 		this.write(buf, 0, 8);
 	}
-	
+
 	public final void writeS15Fixed16Number(float value) throws IOException {
 		byte[] buf = new byte[4];
 		strategy.writeS15Fixed16Number(buf, 0, value);
 		this.write(buf, 0, 4);
 	}
-
+	
 	public final void writeShort(int value) throws IOException {
 		byte[] buf = new byte[2];
 		strategy.writeShort(buf, 0, value);
 		this.write(buf, 0, 2);
-	}
-	
-	public abstract void writeToStream(long len) throws IOException; 
+	} 
 		
+	public abstract void writeToStream(long len) throws IOException;
+
 	public final void writeU16Fixed16Number(float value) throws IOException {
 		byte[] buf = new byte[4];
 		strategy.writeU16Fixed16Number(buf, 0, value);
 		this.write(buf, 0, 4);
 	}
-
+	
 	public final void writeU8Fixed8Number(float value) throws IOException {
 		byte[] buf = new byte[2];
 		strategy.writeU8Fixed8Number(buf, 0, value);
@@ -153,10 +158,5 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 	
 	public final void writeUTF(String value) throws IOException {
 		new DataOutputStream(this).writeUTF(value);
-	}
-	
-	protected void finalize() throws Throwable {
-		super.finalize();
-		close();
 	}
 }
