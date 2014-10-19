@@ -228,7 +228,7 @@ public class TIFFReader extends ImageReader {
 						int bytes2Read = rows2Read*bytesPerScanLine;
 						byte[] temp2 = new byte[bytes2Read];
 						Packbits.unpackbits(temp, temp2);
-						System.arraycopy(temp2, 0, pixels, offset, bytes2Read);							
+						System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
 						offset += bytes2Read;
 						rowsRemain -= rows2Read;					
 					}					
