@@ -70,8 +70,12 @@ public class ArrayUtils
 	}
 
 	public static int[] byteArrayToIntArray(byte[] data, boolean bigEndian) {
+		return byteArrayToIntArray(data, 0, data.length, bigEndian);
+	}
+	
+	public static int[] byteArrayToIntArray(byte[] data, int offset, int len, boolean bigEndian) {
 		
-		ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
 		
 		if (bigEndian) {
 			byteBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -87,8 +91,12 @@ public class ArrayUtils
 	}
 	
 	public static short[] byteArrayToShortArray(byte[] data, boolean bigEndian) {
+		return byteArrayToShortArray(data, 0, data.length, bigEndian);		
+	}
+	
+	public static short[] byteArrayToShortArray(byte[] data, int offset, int len, boolean bigEndian) {
 		
-		ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
 		
 		if (bigEndian) {
 			byteBuffer.order(ByteOrder.BIG_ENDIAN);
