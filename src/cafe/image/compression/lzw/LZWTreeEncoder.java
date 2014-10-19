@@ -208,9 +208,8 @@ public class LZWTreeEncoder implements ImageEncoder
 		// Flush the last code buffer
 		flush_buf(bufIndex+1);
 		
-		if(isTIFF) {
+		if(isTIFF && writer != null) {
 			writer.update(compressedDataLen);
-			compressedDataLen = 0;
 		}
 	}
 	
@@ -226,6 +225,14 @@ public class LZWTreeEncoder implements ImageEncoder
 		Arrays.fill(bytes_buf, 0, len, (byte)0x00);
 		
 		compressedDataLen += len;
+	}
+	
+	/**
+	 * This method is only intended to be called after calling finish()
+	 * @return total compressed bytes
+	 */
+	public int getCompressedDatalen() {
+		return compressedDataLen;
 	}
     
     private void init_encoder(int codesize)
@@ -243,6 +250,8 @@ public class LZWTreeEncoder implements ImageEncoder
 	    endOfImage = clearCode + 1;
   	   	firstTime = true;
   	    empty_bits = 0x08;
+  	    
+		compressedDataLen = 0;
   	   	
   		init_encoder(codeSize);
 		// Write out the length of the root for GIF
