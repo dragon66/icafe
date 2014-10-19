@@ -14,7 +14,7 @@ public interface ImageDecoder {
 	/**
 	 * @param pix buffer to put decoded data
 	 * @param offset offset to start put decoded data
-	 * @param len total number of bytes to decode
+	 * @param len the maximum number of uncompressed bytes
 	 * @return number of pixels decoded
 	 * @throws Exception
 	 */
