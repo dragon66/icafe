@@ -154,7 +154,7 @@ public class HuffmanEncoder implements ImageEncoder {
    	}
    	
    	// For book keeping purpose
-   	public int getTotalOut() {
+   	public int getCompressedDataLen() {
    		return totalBytes;
    	}
 	

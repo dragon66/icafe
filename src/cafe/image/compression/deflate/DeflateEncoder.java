@@ -57,6 +57,10 @@ public class DeflateEncoder implements ImageEncoder {
 		if(isTIFF)
 			writer.update(deflater.getTotalOut());
 	}
+	
+	public int getCompressedDataLen() {
+		return deflater.getTotalOut();
+	}
 
 	public void initialize() throws Exception {
 		deflater.reset();

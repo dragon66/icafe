@@ -26,4 +26,6 @@ public interface ImageEncoder {
 	public void finish() throws Exception;
 	// Prepare
 	public void initialize() throws Exception;
+	
+	public int getCompressedDataLen();
 }

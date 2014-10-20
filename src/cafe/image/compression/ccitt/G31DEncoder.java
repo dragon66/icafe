@@ -185,8 +185,7 @@ public class G31DEncoder implements ImageEncoder {
 			flush_buf(bufIndex + 1);
 		}
 		
-		writer.update(compressedDataLen);
-		compressedDataLen = 0;
+		writer.update(compressedDataLen);		
 	}
 
 	// Flush the buffer as needed
@@ -200,12 +199,17 @@ public class G31DEncoder implements ImageEncoder {
    		compressedDataLen += len;   		
    	}
    	
+   	public int getCompressedDataLen() {
+   		return compressedDataLen;
+   	}
+   	
    	protected int getScanLineWidth() {
    		return scanLineWidth;
    	}
 	
 	public void initialize() throws Exception {
-		empty_bits = 0x08;		
+		empty_bits = 0x08;
+		compressedDataLen = 0;
 	}
     
     // Translate codes into bytes

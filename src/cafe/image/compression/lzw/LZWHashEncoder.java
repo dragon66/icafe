@@ -72,6 +72,8 @@ public class LZWHashEncoder implements ImageEncoder
 		empty_bits = 0x08;
 		stringTable.clearTable(codeSize);
 		
+		compressedDataLen = 0;
+		
 		prefix = EMPTY;
 		
 		if(!isTIFF)
@@ -136,8 +138,11 @@ public class LZWHashEncoder implements ImageEncoder
 		
 		if(isTIFF) {
 			writer.update(compressedDataLen);
-			compressedDataLen = 0;
 		}
+	}
+	
+	public int getCompressedDataLen() {
+		return compressedDataLen;
 	}
 	
 	// Translate codes into bytes

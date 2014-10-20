@@ -231,7 +231,7 @@ public class LZWTreeEncoder implements ImageEncoder
 	 * This method is only intended to be called after calling finish()
 	 * @return total compressed bytes
 	 */
-	public int getCompressedDatalen() {
+	public int getCompressedDataLen() {
 		return compressedDataLen;
 	}
     
