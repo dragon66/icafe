@@ -876,7 +876,9 @@ public class TIFFTweaker {
 					IFD prevIFD = null;
 					for(int j = 0; j < ifds2.size(); j++) {
 						IFD currIFD = ifds2.get(j);
-						int bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE.getValue()).getDataAsLong()[0];
+						int bitsPerSample = 1; // Default
+						TiffField<?> f_bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE.getValue());
+						if(f_bitsPerSample != null) bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
 						if(bitsPerSample <= 8) { // Just copy data
 							offset = copyPageData(currIFD, offset, image2, merged);							
 						} else { // We assume BitsPerSample is 16, flip the byte sequence of the data
@@ -894,8 +896,10 @@ public class TIFFTweaker {
 							int imageWidth = currIFD.getField(TiffTag.IMAGE_WIDTH.getValue()).getDataAsLong()[0];
 							int imageHeight = currIFD.getField(TiffTag.IMAGE_LENGTH.getValue()).getDataAsLong()[0];
 							TiffField<?> f_tileLength = currIFD.getField(TiffTag.TILE_LENGTH.getValue());
-							TiffField<?> f_tileWidth = currIFD.getField(TiffTag.TILE_WIDTH.getValue());							
-							int samplesPerPixel = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL.getValue()).getDataAsLong()[0];
+							TiffField<?> f_tileWidth = currIFD.getField(TiffTag.TILE_WIDTH.getValue());
+							int samplesPerPixel = 1; // Default
+							TiffField<?> f_samplesPerPixel = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
+							if(f_samplesPerPixel != null) samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
 							int rowsPerStrip = imageHeight;
 							if(f_rowsPerStrip != null)
 								rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];
