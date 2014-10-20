@@ -47,6 +47,7 @@ import java.util.List;
 import cafe.image.compression.ImageDecoder;
 import cafe.image.compression.ImageEncoder;
 import cafe.image.compression.deflate.DeflateDecoder;
+import cafe.image.compression.deflate.DeflateEncoder;
 import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.image.compression.lzw.LZWTreeEncoder;
 import cafe.image.compression.packbits.Packbits;
@@ -880,6 +881,7 @@ public class TIFFTweaker {
 							offset = copyPageData(currIFD, offset, image2, merged);							
 						} else { // We assume BitsPerSample is 16, flip the byte sequence of the data
 							ImageDecoder decoder = null;
+							ImageEncoder encoder = null;
 							// Original image data start from these offsets.
 							TiffField<?> stripOffSets = currIFD.removeField(TiffTag.STRIP_OFFSETS.getValue());							
 							if(stripOffSets == null)
@@ -923,13 +925,15 @@ public class TIFFTweaker {
 								TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION.getValue());
 								TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(tiffField.getDataAsLong()[0]);
 								// Need to uncompress the data, reorder the byte sequence, and compress the data again
-								switch(compression) {
-									case LZW:
-										decoder = new LZWTreeDecoder(8, true);										
+								switch(compression) { // Predictor seems to work for LZW, DEFLATE as is! Need more test though!
+									case LZW: // Tested
+										decoder = new LZWTreeDecoder(8, true);
+										encoder = new LZWTreeEncoder(merged, 8, 4096, null); // 4K buffer	
 										break;
 									case DEFLATE:
-									case DEFLATE_ADOBE:
-										decoder = new DeflateDecoder();										
+									case DEFLATE_ADOBE: // Tested
+										decoder = new DeflateDecoder();
+										encoder = new DeflateEncoder(merged, 4096, 4, null); // 4K buffer	
 										break;
 									case PACKBITS:
 										// Not tested
@@ -993,7 +997,6 @@ public class TIFFTweaker {
 										short[] sbuf = ArrayUtils.byteArrayToShortArray(decompressed, 0, bytesDecompressed, readEndian == IOUtils.BIG_ENDIAN);
 										buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
 										// Compress the data
-										ImageEncoder encoder = new LZWTreeEncoder(merged, 8, 4096, null); // 4K buffer		
 										try {
 											encoder.initialize();
 											encoder.encode(buf, 0, buf.length);
