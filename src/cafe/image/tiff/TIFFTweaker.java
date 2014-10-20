@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    20Oct2014  Added mergeTiffImagesEx(RandomAccessOutputStream, File...)
  * WY    09Oct2014  Added mergeTiffImages(RandomAccessOutputStream, File...)
  * WY    07Oct2014  Added mergeTiffImages() to merge two multiple page TIFFs
  * WY    19Sep2014  Reset pointer to the stream head in getPageCount()
@@ -43,11 +44,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cafe.image.compression.ImageDecoder;
 import cafe.image.compression.ImageEncoder;
 import cafe.image.compression.deflate.DeflateDecoder;
-import cafe.image.compression.deflate.DeflateEncoder;
 import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.image.compression.lzw.LZWTreeEncoder;
+import cafe.image.compression.packbits.Packbits;
 import cafe.image.core.ImageMeta;
 import cafe.image.jpeg.Marker;
 import cafe.image.tiff.TiffFieldEnum.*;
@@ -877,6 +879,7 @@ public class TIFFTweaker {
 						if(bitsPerSample <= 8) { // Just copy data
 							offset = copyPageData(currIFD, offset, image2, merged);							
 						} else { // We assume BitsPerSample is 16, flip the byte sequence of the data
+							ImageDecoder decoder = null;
 							// Original image data start from these offsets.
 							TiffField<?> stripOffSets = currIFD.removeField(TiffTag.STRIP_OFFSETS.getValue());							
 							if(stripOffSets == null)
@@ -922,73 +925,40 @@ public class TIFFTweaker {
 								// Need to uncompress the data, reorder the byte sequence, and compress the data again
 								switch(compression) {
 									case LZW:
-										LZWTreeDecoder lzw_decoder = new LZWTreeDecoder(8, true);
-										for(int k = 0; k < off.length; k++) {
-											image2.seek(off[k]);
-											byte[] buf = new byte[counts[k]];
-											image2.read(buf);
-											lzw_decoder.setInput(buf);
-											int bytesDecompressed = 0;
-											byte[] decompressed = new byte[maximumLen];
-											try {
-												bytesDecompressed = lzw_decoder.decode(decompressed, 0, maximumLen);
-											} catch (Exception e) {
-												e.printStackTrace();
-											}
-											short[] sbuf = ArrayUtils.byteArrayToShortArray(decompressed, 0, bytesDecompressed, readEndian == IOUtils.BIG_ENDIAN);
-											buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
-											// Compressed the data
-											ImageEncoder encoder = new LZWTreeEncoder(merged, 8, 4096, null); // 4K buffer		
-											try {
-												encoder.initialize();
-												encoder.encode(buf, 0, buf.length);
-												encoder.finish();
-											} catch (Exception e) {
-												e.printStackTrace();
-											}
-											temp[k] = offset;
-											offset += buf.length; // DONE!
-										}
+										decoder = new LZWTreeDecoder(8, true);										
 										break;
 									case DEFLATE:
 									case DEFLATE_ADOBE:
-										DeflateDecoder deflate_decoder = new DeflateDecoder();
-										for(int k = 0; k < off.length; k++) {
-											image2.seek(off[k]);
-											byte[] buf = new byte[counts[k]];
-											image2.read(buf);
-											deflate_decoder.setInput(buf);
-											int bytesDecompressed = 0;
-											byte[] decompressed = new byte[maximumLen];
-											try {
-												bytesDecompressed = deflate_decoder.decode(decompressed, 0, maximumLen);
-											} catch (Exception e) {
-												e.printStackTrace();
-											}
-											short[] sbuf = ArrayUtils.byteArrayToShortArray(decompressed, 0, bytesDecompressed, readEndian == IOUtils.BIG_ENDIAN);
-											buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
-											// re-compress the data
-											ImageEncoder encoder = new DeflateEncoder(merged, 4096, 4, null); // 4K buffer		
-											try {
-												encoder.initialize();
-												encoder.encode(buf, 0, buf.length);
-												encoder.finish();
-											} catch (Exception e) {
-												e.printStackTrace();
-											}
-											temp[k] = offset;
-											offset += buf.length; // DONE!
-										}
+										decoder = new DeflateDecoder();										
 										break;
 									case PACKBITS:
-										// TODO
-										
+										// Not tested
+										int rowsRemain = imageHeight;
+										int bytesPerScanLine = (imageWidth*samplesPerPixel*bitsPerSample + 7)/8;
+										for(int k = 0; k < off.length; k++) {
+											int rows2Read = Math.min(rowsPerStrip, rowsRemain);
+											image2.seek(off[k]);
+											byte[] buf = new byte[counts[k]];
+											image2.readFully(buf);
+											int bytesRead = rows2Read*bytesPerScanLine;
+											byte[] buf2 = new byte[tileWidth > 0?maximumLen:bytesRead];
+											Packbits.unpackbits(buf, buf2);
+											rowsRemain -= rows2Read;
+											short[] sbuf = ArrayUtils.byteArrayToShortArray(buf2, 0, buf2.length, readEndian == IOUtils.BIG_ENDIAN);
+											buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
+											// Compress the data
+											buf2 = new byte[buf.length + (buf.length + 127)/128];
+											int bytesCompressed = Packbits.packbits(buf, buf2);
+											merged.write(buf2, 0, bytesCompressed);
+											temp[k] = offset;
+											offset += bytesCompressed; // DONE!
+										}
 										break;
 									case NONE: // Read the data, reorder the byte sequence and write back the data
 										for(int k = 0; k < off.length; k++) {
 											image2.seek(off[k]);
 											byte[] buf = new byte[counts[k]];
-											image2.read(buf);
+											image2.readFully(buf);
 											short[] sbuf = ArrayUtils.byteArrayToShortArray(buf, readEndian == IOUtils.BIG_ENDIAN);
 											buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
 											merged.write(buf);
@@ -1000,13 +970,41 @@ public class TIFFTweaker {
 										for(int l = 0; l < off.length; l++) {
 											image2.seek(off[l]);
 											byte[] buf = new byte[counts[l]];
-											image2.read(buf);
+											image2.readFully(buf);
 											merged.write(buf);
 											temp[l] = offset;
 											offset += buf.length;
 										}
 										break;								
-								}								
+								}
+								if(decoder != null) {
+									for(int k = 0; k < off.length; k++) {
+										image2.seek(off[k]);
+										byte[] buf = new byte[counts[k]];
+										image2.readFully(buf);
+										decoder.setInput(buf);
+										int bytesDecompressed = 0;
+										byte[] decompressed = new byte[maximumLen];
+										try {
+											bytesDecompressed = decoder.decode(decompressed, 0, maximumLen);
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+										short[] sbuf = ArrayUtils.byteArrayToShortArray(decompressed, 0, bytesDecompressed, readEndian == IOUtils.BIG_ENDIAN);
+										buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
+										// Compress the data
+										ImageEncoder encoder = new LZWTreeEncoder(merged, 8, 4096, null); // 4K buffer		
+										try {
+											encoder.initialize();
+											encoder.encode(buf, 0, buf.length);
+											encoder.finish();
+										} catch (Exception e) {
+											e.printStackTrace();
+										}
+										temp[k] = offset;
+										offset += encoder.getCompressedDataLen(); // DONE!
+									}
+								}
 								if(currIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()) != null)
 									stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
 								else
