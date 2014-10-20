@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cafe.image.compression.ImageDecoder;
 import cafe.image.compression.deflate.DeflateDecoder;
 import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.image.compression.packbits.Packbits;
@@ -136,6 +137,8 @@ public class TIFFReader extends ImageReader {
 		int rowsRemain = imageHeight;
 		int offset = 0;
 		
+		ImageDecoder decoder = null;
+		
 		switch(e_photoMetric) {
 			case PALETTE_COLOR:
 				short[] colorMap = (short[])ifd.getField(TiffTag.COLORMAP.getValue()).getData();
@@ -147,19 +150,17 @@ public class TIFFReader extends ImageReader {
 				}
 				int bytesPerScanLine = (imageWidth*bitsPerSample +7)/8;
 				byte[] pixels = new byte[bytesPerScanLine*imageHeight];				
-				if(compression == TiffFieldEnum.Compression.LZW) {
-					LZWTreeDecoder decoder = new LZWTreeDecoder(8, true);					
-					for(int i = 0; i < stripByteCounts.length; i++) {
-						byte[] temp = new byte[stripByteCounts[i]];
-						randIS.seek(stripOffsets[i]);
-						randIS.readFully(temp);
-						decoder.setInput(temp);
-						int numOfBytes = decoder.decode(pixels, offset, Math.min(rowsPerStrip,rowsRemain)*bytesPerScanLine);
-						offset += numOfBytes;
-						rowsRemain -= Math.min(rowsPerStrip, rowsRemain);
-					}
-				}  else if(compression == TiffFieldEnum.Compression.DEFLATE || compression == TiffFieldEnum.Compression.DEFLATE_ADOBE) {
-					DeflateDecoder decoder = new DeflateDecoder();
+				switch(compression) {
+					case LZW:
+						decoder = new LZWTreeDecoder(8, true);
+						break;
+					case DEFLATE:
+					case DEFLATE_ADOBE:
+						decoder = new DeflateDecoder();
+						break;
+					default:
+				}
+				if(decoder != null) {
 					for(int i = 0; i < stripByteCounts.length; i++) {
 						byte[] temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
@@ -184,56 +185,53 @@ public class TIFFReader extends ImageReader {
 				return new BufferedImage(cm, raster, false, null);
 			case RGB:
 				bytesPerScanLine = imageWidth*samplesPerPixel*bitsPerSample/8;
-				pixels = new byte[imageWidth*bytesPerScanLine];				
-				if(compression == TiffFieldEnum.Compression.NONE) {
-					for(int i = 0; i < stripByteCounts.length; i++) {
-						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
-						randIS.seek(stripOffsets[i]);
-						randIS.readFully(pixels, offset, rows2Read*bytesPerScanLine);
-						offset += rows2Read*bytesPerScanLine;
-						rowsRemain -= rows2Read;					
-					}
-				} else if(compression == TiffFieldEnum.Compression.LZW) {
-					LZWTreeDecoder decoder = new LZWTreeDecoder(8, true);
-					for(int i = 0; i < stripByteCounts.length; i++) {
-						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
-						byte[] temp = new byte[stripByteCounts[i]];
-						randIS.seek(stripOffsets[i]);
-						randIS.readFully(temp);
-						decoder.setInput(temp);
-						int bytes2Read = rows2Read*bytesPerScanLine;
-						int numOfBytes = decoder.decode(pixels, offset, bytes2Read);							
-						offset += numOfBytes;
-						rowsRemain -= rows2Read;					
-					}
-				} else if(compression == TiffFieldEnum.Compression.DEFLATE || compression == TiffFieldEnum.Compression.DEFLATE_ADOBE) {
-					DeflateDecoder decoder = new DeflateDecoder();
-					for(int i = 0; i < stripByteCounts.length; i++) {
-						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
-						byte[] temp = new byte[stripByteCounts[i]];
-						randIS.seek(stripOffsets[i]);
-						randIS.readFully(temp);
-						decoder.setInput(temp);
-						int bytes2Read = rows2Read*bytesPerScanLine;
-						int numOfBytes = decoder.decode(pixels, offset, bytes2Read);							
-						offset += numOfBytes;
-						rowsRemain -= rows2Read;					
-					}					
-				} else if(compression == TiffFieldEnum.Compression.PACKBITS) {
-					for(int i = 0; i < stripByteCounts.length; i++) {
-						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
-						byte[] temp = new byte[stripByteCounts[i]];
-						randIS.seek(stripOffsets[i]);
-						randIS.readFully(temp);
-						int bytes2Read = rows2Read*bytesPerScanLine;
-						byte[] temp2 = new byte[bytes2Read];
-						Packbits.unpackbits(temp, temp2);
-						System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
-						offset += bytes2Read;
-						rowsRemain -= rows2Read;					
-					}					
+				pixels = new byte[imageWidth*bytesPerScanLine];
+				switch(compression) {
+					case NONE:
+						for(int i = 0; i < stripByteCounts.length; i++) {
+							int rows2Read = Math.min(rowsPerStrip, rowsRemain);
+							randIS.seek(stripOffsets[i]);
+							randIS.readFully(pixels, offset, rows2Read*bytesPerScanLine);
+							offset += rows2Read*bytesPerScanLine;
+							rowsRemain -= rows2Read;					
+						}
+						break;
+					case PACKBITS:
+						for(int i = 0; i < stripByteCounts.length; i++) {
+							int rows2Read = Math.min(rowsPerStrip, rowsRemain);
+							byte[] temp = new byte[stripByteCounts[i]];
+							randIS.seek(stripOffsets[i]);
+							randIS.readFully(temp);
+							int bytes2Read = rows2Read*bytesPerScanLine;
+							byte[] temp2 = new byte[bytes2Read];
+							Packbits.unpackbits(temp, temp2);
+							System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
+							offset += bytes2Read;
+							rowsRemain -= rows2Read;					
+						}
+						break;
+					case LZW:
+						decoder = new LZWTreeDecoder(8, true);
+						break;
+					case DEFLATE:
+					case DEFLATE_ADOBE:
+						decoder = new DeflateDecoder();
+						break;
+					default:
 				}
-				
+				if(decoder != null) {
+					for(int i = 0; i < stripByteCounts.length; i++) {
+						int rows2Read = Math.min(rowsPerStrip, rowsRemain);
+						byte[] temp = new byte[stripByteCounts[i]];
+						randIS.seek(stripOffsets[i]);
+						randIS.readFully(temp);
+						decoder.setInput(temp);
+						int bytes2Read = rows2Read*bytesPerScanLine;
+						int numOfBytes = decoder.decode(pixels, offset, bytes2Read);							
+						offset += numOfBytes;
+						rowsRemain -= rows2Read;					
+					}
+				}
 				// This also works with 4 samples per pixel data
 				if(predictor == 2 && planaryConfiguration == 1)
 					pixels = applyDePredictor(samplesPerPixel, pixels, imageWidth, imageHeight);
