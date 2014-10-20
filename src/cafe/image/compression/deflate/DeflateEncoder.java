@@ -54,7 +54,7 @@ public class DeflateEncoder implements ImageEncoder {
 	}
 
 	public void finish() throws Exception {
-		if(isTIFF)
+		if(isTIFF && writer != null)
 			writer.update(deflater.getTotalOut());
 	}
 	
