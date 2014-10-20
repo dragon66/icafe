@@ -246,9 +246,14 @@ public class LZWTreeDecoder implements ImageDecoder
 	}
 	
 	public void setInput(byte[] input) {
-		if(input[0] == (byte)0x00 && input[1] == (byte)0x01)  
+		setInput(input, 0, input.length);
+	}
+
+	@Override
+	public void setInput(byte[] input, int offset, int len) {
+		if(input[offset] == (byte)0x00 && input[offset+1] == (byte)0x01)  
 			isCodeBigEndian = false;   
-		is = new ByteArrayInputStream(input);
+		is = new ByteArrayInputStream(input, offset, len);
 		// Must discard the remaining bits!!!
 		bits_remain = 0;
 		// Reset string table

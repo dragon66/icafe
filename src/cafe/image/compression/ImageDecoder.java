@@ -19,4 +19,6 @@ public interface ImageDecoder {
 	 * @throws Exception
 	 */
 	public int decode(byte[] pix, int offset, int len) throws Exception;
+	public void setInput(byte[] input);
+	public void setInput(byte[] input, int offset, int len);
 }

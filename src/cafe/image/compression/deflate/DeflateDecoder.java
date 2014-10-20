@@ -33,8 +33,7 @@ public class DeflateDecoder implements ImageDecoder {
 	}
 	
 	public void setInput(byte[] input) {
-		inflater.reset(); // Must reset to work with new input
-		inflater.setInput(input);
+		setInput(input, 0, input.length);
 	}
 	
 	public void setInput(byte[] input, int start, int len) {
