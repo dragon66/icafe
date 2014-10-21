@@ -68,7 +68,7 @@ public enum ExifTag implements Tag {
 			
 			switch(value) {
 				case 1:	description = "sRGB"; break;
-				case 2: description = "Uncalibrated";	break;
+				case 65535: description = "Uncalibrated";	break;
 			}
 			
 			return description;
