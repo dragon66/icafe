@@ -7,8 +7,8 @@ Read format support:
 ----------------------
 - Windows BITMAP
 - CompuServe GIF - Backed by a from-scratch tree-based LZW decoder (no hash, no string table, quick and clean); transparency support; Frame extraction for animated GIF. 
-- ZSoft's PCX
-- Truevision TGA
+- ZSoft's PCX - Hard to find decoder for this dinosaur type of image 
+- Truevision TGA - support all kinds of scan line mode, bit depth, and even transparency (alpha channel)
 - Portable Network Graphics (PNG) - support both 8 bit and 16 bit, all color depth; single color or alpha channel support; gamma support
 - Adobe  TIFF - still under development (limited support for RGB and Palette Color with LZW, Deflate, and Packbits compression)
 
