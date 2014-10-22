@@ -340,8 +340,118 @@ public class TIFFTweaker {
 			if(tiffField != null && tiffField.getDataAsLong()[0] == 1) {
 				// Bug fix for uncompressed image with wrong StripByteCounts value
 				counts = getUncompressedStripByteCounts(ifd, off.length);
-				// End of bug fix for uncompressed TIFF image	
+				// End of bug fix for uncompressed TIFF image
 			} 
+			/*
+			// Uncompressed TIFF. Old bug fix works for strip image only
+			if(tiffField != null && tiffField.getDataAsLong()[0] == 1) {
+				// Bug fix for uncompressed image with wrong StripByteCounts value
+				tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
+				int imageWidth = tiffField.getDataAsLong()[0];
+				tiffField = ifd.getField(TiffTag.IMAGE_LENGTH.getValue());
+				int imageHeight = tiffField.getDataAsLong()[0];
+				
+				int samplesPerPixel = 1;
+				tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
+				
+				if(tiffField != null) {
+					samplesPerPixel = tiffField.getDataAsLong()[0];
+				}
+				
+				int[] bitsPerSample = new int[samplesPerPixel];
+				Arrays.fill(bitsPerSample, 1);
+				tiffField = ifd.getField(TiffTag.BITS_PER_SAMPLE.getValue());
+								
+				if(tiffField != null) {
+					bitsPerSample = tiffField.getDataAsLong();
+				}
+				
+				int rowsPerStrip = imageHeight;
+				tiffField = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
+			
+				if(tiffField != null) {
+					rowsPerStrip = tiffField.getDataAsLong()[0];
+				}
+				
+				int planarConfiguration = PlanarConfiguration.CONTIGUOUS.getValue();
+				tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());
+				
+				if(tiffField != null) {
+					planarConfiguration = tiffField.getDataAsLong()[0];
+				}							
+				
+				if(planarConfiguration == PlanarConfiguration.CONTIGUOUS.getValue()) { // Contiguous
+					int bitsPerPixel = 0;
+					int bytesPerStrip = 0;
+					for(int i = 0; i < samplesPerPixel; i++) {
+						bitsPerPixel += bitsPerSample[i];
+					}
+					int bitsPerStrip = bitsPerPixel * rowsPerStrip * imageWidth;					
+					bytesPerStrip = bitsPerStrip / 8;
+					if(bitsPerStrip % 8 != 0) bytesPerStrip++;
+					
+					int totalBits = bitsPerPixel * imageWidth * imageHeight;
+					int totalBytes = totalBits / 8;
+					if(totalBits % 8 != 0) totalBytes++;
+					
+					int bytesRead = 0;					
+					for(int i = 0; i < off.length - 1; i++) {
+						rin.seek(off[i]);
+						byte[] buf = new byte[bytesPerStrip];
+						bytesRead += bytesPerStrip;
+						rin.read(buf);			
+						rout.write(buf);
+						temp[i] = offset;
+						offset += buf.length;
+					}					
+					rin.seek(off[off.length - 1]);
+					byte[] buf = new byte[totalBytes - bytesRead];
+					rin.read(buf);			
+					rout.write(buf);
+					temp[off.length - 1] = offset;
+					offset += buf.length;
+				} else { // Separate planes
+					int[] bitsPerStrip = new int[samplesPerPixel];
+					int[] bytesPerStrip = new int[samplesPerPixel];
+					for(int i = 0; i < samplesPerPixel; i++) {
+						bitsPerStrip[i] = bitsPerSample[i] * imageWidth * rowsPerStrip;
+						bytesPerStrip[i] = bitsPerStrip[i] / 8;
+						if(bitsPerStrip[i] % 8 != 0) bytesPerStrip[i]++;
+					}
+					int[] totalBits = new int[samplesPerPixel];
+					int[] totalBytes = new int[samplesPerPixel];
+					for(int i = 0; i < samplesPerPixel; i++) {
+						totalBits[i] = imageWidth * imageHeight * bitsPerSample[i];
+						totalBytes[i] = totalBits[i] / 8;
+						if(totalBits[i] % 8 != 0 ) totalBytes[i]++;
+					}
+					
+					int[] bytesRead = new int[samplesPerPixel];
+					
+					for(int i = 0; i < off.length - samplesPerPixel;) {
+						for(int j = 0; j < samplesPerPixel; j++) {
+							rin.seek(off[i]);
+							byte[] buf = new byte[bytesPerStrip[j]];
+							bytesRead[j] += bytesPerStrip[j];
+							rin.read(buf);			
+							rout.write(buf);
+							temp[i++] = offset;
+							offset += buf.length;
+						}						
+					}
+					
+					for(int j = 0; j < samplesPerPixel; j++) {
+						rin.seek(off[off.length - samplesPerPixel + j ]);
+						byte[] buf = new byte[totalBytes[j] - bytesRead[j]];
+						rin.read(buf);			
+						rout.write(buf);
+						temp[off.length - samplesPerPixel + j] = offset;
+						offset += buf.length;
+					}
+				}
+				// End of bug fix for uncompressed TIFF image
+			}
+			*/
 			
 			// Copy image data from offset
 			for(int i = 0; i < off.length; i++) {
