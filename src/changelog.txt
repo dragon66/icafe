@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/20/2014
+Last modified on 10/21/2014
 ***************************
+21Oct2014  Revised mergeTiffImagesEx() and copyPageData() in TIFFTweaker
 20Oct2014  Added mergeTiffImagesEx(RandomAccessOutputStream, File...) to TIFFTWeaker
 15Oct2014  Bumped up buffer size to 4k for FileCacheRandomAccessInputStream
 14Oct2014  Revised LZWTreeDecoder to show Intel style code LZW compressed TIFF 
