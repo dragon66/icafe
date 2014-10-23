@@ -371,7 +371,7 @@ public class IMGUtils {
 	        else {
 	         	cmyk[index++] = (byte)((c - tempK)/(1 - tempK)*255);
 	        	cmyk[index++] = (byte)((m - tempK)/(1 - tempK)*255);
-	        	cmyk[index++] = (byte)((m - tempK)/(1 - tempK)*255);
+	        	cmyk[index++] = (byte)((y - tempK)/(1 - tempK)*255);
 	        }
 	        
 	        cmyk[index++] = (byte)(tempK*255);
