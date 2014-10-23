@@ -590,7 +590,7 @@ public class TIFFTweaker {
 			rowWidth = tileWidth;
 		}
 
-		int bytesPerRow = (bitsPerSample*samplesPerPixel*rowWidth + 7)/8;
+		int bytesPerRow = ((bitsPerSample*rowWidth + 7)/8)*samplesPerPixel;
 	
 		int planaryConfiguration = 1;
 		
