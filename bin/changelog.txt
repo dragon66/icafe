@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/22/2014
+Last modified on 10/24/2014
 ***************************
+24Oct2014  Revised getUncompressedStripByteCounts of TIFFTweaker to include YCbCrSubSampling
 22Oct2014  Added CMYKColorSpace to read CMYK TIFF image
 21Oct2014  Revised mergeTiffImagesEx() and copyPageData() in TIFFTweaker
 20Oct2014  Added mergeTiffImagesEx(RandomAccessOutputStream, File...) to TIFFTWeaker
