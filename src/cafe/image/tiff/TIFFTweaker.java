@@ -9,10 +9,14 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * TIFFWriter.java
+ * TIFFTeaker.java
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    24Oct2014  Added getBytes2Read() to fix bug of uncompressed image with only one
+ *                  strip/SamplesPerPixel strips for PlanaryConfiguration = 2 and wrong
+ *                  StripByteCounts value/values
+ * WY    24Oct2014  Revised getUncompressedStripByteCounts to include YCbCrSubSampling
  * WY    21Oct2014  Changed copyPageData() and mergeTiffImagesEx() to use the extracted
  *                  getUncompressedStripByteCounts() method
  * WY    21Oct2014  Extracted method getUncompressedStripByteCounts()
@@ -331,138 +335,44 @@ public class TIFFTweaker {
 			int[] off = stripOffSets.getDataAsLong();
 			int[] temp = new int[off.length];
 			
-			// We are going to write the image data first
-			rout.seek(offset);
-			
 			TiffField<?> tiffField = ifd.getField(TiffTag.COMPRESSION.getValue());
 			
-			// Uncompressed TIFF.
-			if(tiffField != null && tiffField.getDataAsLong()[0] == 1) {
-				// Bug fix for uncompressed image with wrong StripByteCounts value
-				counts = getUncompressedStripByteCounts(ifd, off.length);
-				// End of bug fix for uncompressed TIFF image
-			} 
-			/*
-			// Uncompressed TIFF. Old bug fix works for strip image only
-			if(tiffField != null && tiffField.getDataAsLong()[0] == 1) {
-				// Bug fix for uncompressed image with wrong StripByteCounts value
-				tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
-				int imageWidth = tiffField.getDataAsLong()[0];
-				tiffField = ifd.getField(TiffTag.IMAGE_LENGTH.getValue());
-				int imageHeight = tiffField.getDataAsLong()[0];
+			// Uncompressed image with one strip or tile (may contain wrong StripByteCounts value)
+			// Bug fix for uncompressed image with one strip and wrong StripByteCounts value
+			if(tiffField != null && tiffField.getDataAsLong()[0] == 1) { // Uncompressed data
+				int planaryConfiguration = 1;
 				
-				int samplesPerPixel = 1;
+				tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+				if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
+				
 				tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
 				
-				if(tiffField != null) {
-					samplesPerPixel = tiffField.getDataAsLong()[0];
-				}
+				int samplesPerPixel = 1;
+				if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
 				
-				int[] bitsPerSample = new int[samplesPerPixel];
-				Arrays.fill(bitsPerSample, 1);
-				tiffField = ifd.getField(TiffTag.BITS_PER_SAMPLE.getValue());
-								
-				if(tiffField != null) {
-					bitsPerSample = tiffField.getDataAsLong();
-				}
+				// If there is only one strip/samplesPerPixel strips for PlanaryConfiguration = 2
+				if(planaryConfiguration == 1 && off.length == 1 || planaryConfiguration == 2 && off.length == samplesPerPixel)
+				{
+					int[] totalBytes2Read = getBytes2Read(ifd);
 				
-				int rowsPerStrip = imageHeight;
-				tiffField = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
+					for(int i = 0; i < off.length; i++)
+						counts[i] = totalBytes2Read[i];					
+				}				
+			} // End of bug fix
 			
-				if(tiffField != null) {
-					rowsPerStrip = tiffField.getDataAsLong()[0];
-				}
-				
-				int planarConfiguration = PlanarConfiguration.CONTIGUOUS.getValue();
-				tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());
-				
-				if(tiffField != null) {
-					planarConfiguration = tiffField.getDataAsLong()[0];
-				}							
-				
-				if(planarConfiguration == PlanarConfiguration.CONTIGUOUS.getValue()) { // Contiguous
-					int bitsPerPixel = 0;
-					int bytesPerStrip = 0;
-					for(int i = 0; i < samplesPerPixel; i++) {
-						bitsPerPixel += bitsPerSample[i];
-					}
-					int bitsPerStrip = bitsPerPixel * rowsPerStrip * imageWidth;					
-					bytesPerStrip = bitsPerStrip / 8;
-					if(bitsPerStrip % 8 != 0) bytesPerStrip++;
-					
-					int totalBits = bitsPerPixel * imageWidth * imageHeight;
-					int totalBytes = totalBits / 8;
-					if(totalBits % 8 != 0) totalBytes++;
-					
-					int bytesRead = 0;					
-					for(int i = 0; i < off.length - 1; i++) {
-						rin.seek(off[i]);
-						byte[] buf = new byte[bytesPerStrip];
-						bytesRead += bytesPerStrip;
-						rin.read(buf);			
-						rout.write(buf);
-						temp[i] = offset;
-						offset += buf.length;
-					}					
-					rin.seek(off[off.length - 1]);
-					byte[] buf = new byte[totalBytes - bytesRead];
-					rin.read(buf);			
-					rout.write(buf);
-					temp[off.length - 1] = offset;
-					offset += buf.length;
-				} else { // Separate planes
-					int[] bitsPerStrip = new int[samplesPerPixel];
-					int[] bytesPerStrip = new int[samplesPerPixel];
-					for(int i = 0; i < samplesPerPixel; i++) {
-						bitsPerStrip[i] = bitsPerSample[i] * imageWidth * rowsPerStrip;
-						bytesPerStrip[i] = bitsPerStrip[i] / 8;
-						if(bitsPerStrip[i] % 8 != 0) bytesPerStrip[i]++;
-					}
-					int[] totalBits = new int[samplesPerPixel];
-					int[] totalBytes = new int[samplesPerPixel];
-					for(int i = 0; i < samplesPerPixel; i++) {
-						totalBits[i] = imageWidth * imageHeight * bitsPerSample[i];
-						totalBytes[i] = totalBits[i] / 8;
-						if(totalBits[i] % 8 != 0 ) totalBytes[i]++;
-					}
-					
-					int[] bytesRead = new int[samplesPerPixel];
-					
-					for(int i = 0; i < off.length - samplesPerPixel;) {
-						for(int j = 0; j < samplesPerPixel; j++) {
-							rin.seek(off[i]);
-							byte[] buf = new byte[bytesPerStrip[j]];
-							bytesRead[j] += bytesPerStrip[j];
-							rin.read(buf);			
-							rout.write(buf);
-							temp[i++] = offset;
-							offset += buf.length;
-						}						
-					}
-					
-					for(int j = 0; j < samplesPerPixel; j++) {
-						rin.seek(off[off.length - samplesPerPixel + j ]);
-						byte[] buf = new byte[totalBytes[j] - bytesRead[j]];
-						rin.read(buf);			
-						rout.write(buf);
-						temp[off.length - samplesPerPixel + j] = offset;
-						offset += buf.length;
-					}
-				}
-				// End of bug fix for uncompressed TIFF image
-			}
-			*/
-			
+			// We are going to write the image data first
+			rout.seek(offset);
+		
 			// Copy image data from offset
 			for(int i = 0; i < off.length; i++) {
-					rin.seek(off[i]);
-					byte[] buf = new byte[counts[i]];
-					rin.readFully(buf);
-					rout.write(buf);
-					temp[i] = offset;
-					offset += buf.length;
-			}		
-			
+				rin.seek(off[i]);
+				byte[] buf = new byte[counts[i]];
+				rin.readFully(buf);
+				rout.write(buf);
+				temp[i] = offset;
+				offset += buf.length;
+			}
+						
 			if(ifd.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()) != null)
 				stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
 			else
@@ -539,6 +449,96 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);
 	}
 	
+	// Used to calculate how many bytes to read in case we have only one strip or tile
+	private static int[] getBytes2Read(IFD ifd) {
+		// Let's calculate how many bytes we are supposed to read
+		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
+		int imageWidth = tiffField.getDataAsLong()[0];
+		tiffField = ifd.getField(TiffTag.IMAGE_LENGTH.getValue());
+		int imageHeight = tiffField.getDataAsLong()[0];				
+		
+		int samplesPerPixel = 1;
+		
+		tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
+		if(tiffField != null) {
+			samplesPerPixel = tiffField.getDataAsLong()[0];
+		}				
+		
+		int bitsPerSample = 1;
+		
+		tiffField = ifd.getField(TiffTag.BITS_PER_SAMPLE.getValue());
+		if(tiffField != null) {
+			bitsPerSample = tiffField.getDataAsLong()[0];
+		}
+		
+		int tileWidth = -1;
+		int tileLength = -1;			
+		
+		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH.getValue());
+		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH.getValue());
+		
+		if(f_tileWidth != null) {
+			tileWidth = f_tileWidth.getDataAsLong()[0];
+			tileLength = f_tileLength.getDataAsLong()[0];
+		}
+		
+		int rowsPerStrip = imageHeight;
+		int rowWidth = imageWidth;
+		
+		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
+		if(f_rowsPerStrip != null) rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];					
+		
+		if(tileWidth > 0) {
+			rowsPerStrip = tileLength;
+			rowWidth = tileWidth;
+		}
+	
+		int[] totalBytes2Read = new int[samplesPerPixel];
+		totalBytes2Read[0] = ((rowWidth*bitsPerSample*samplesPerPixel + 7)/8)*rowsPerStrip;
+		
+		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
+		
+		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
+			// Deal with down sampling
+			int horizontalSampleFactor = 2; // Default 2X2
+			int verticalSampleFactor = 2; // Not 1X1
+			
+			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
+			
+			if(f_YCbCrSubSampling != null) {
+				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
+				horizontalSampleFactor = sampleFactors[0];
+				verticalSampleFactor = sampleFactors[1];
+			}
+			
+			if(samplesPerPixel != 3) samplesPerPixel = 3;
+			
+			int[] sampleBytesPerRow = new int[samplesPerPixel];
+			sampleBytesPerRow[0] = (bitsPerSample*rowWidth + 7)/8;
+			sampleBytesPerRow[1] = (bitsPerSample*rowWidth/horizontalSampleFactor + 7)/8;
+			sampleBytesPerRow[2] = sampleBytesPerRow[1];
+			
+			int[] sampleRowsPerStrip = new int[samplesPerPixel];
+			sampleRowsPerStrip[0] = rowsPerStrip;
+			sampleRowsPerStrip[1] = rowsPerStrip/verticalSampleFactor;
+			sampleRowsPerStrip[2]= sampleRowsPerStrip[1];
+			
+			totalBytes2Read[0] = sampleBytesPerRow[0]*sampleRowsPerStrip[0];
+			totalBytes2Read[1] = sampleBytesPerRow[1]*sampleRowsPerStrip[1];
+			totalBytes2Read[2] = totalBytes2Read[1];
+		
+			int planaryConfiguration = 1;
+			
+			tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+			if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
+		
+			if(planaryConfiguration == 1)
+				totalBytes2Read[0] = totalBytes2Read[0] + totalBytes2Read[1] + totalBytes2Read[2];			
+		}
+		
+		return totalBytes2Read;
+	}
+	
 	public static int getPageCount(RandomAccessInputStream rin) throws IOException {
 		List<IFD> list = new ArrayList<IFD>();
 		readIFDs(list, rin);
@@ -547,6 +547,7 @@ public class TIFFTweaker {
 		return list.size();
 	}
 	
+	// Calculate the expected StripByteCounts values for uncompressed image
 	private static int[] getUncompressedStripByteCounts(IFD ifd, int strips) {
 		// Get image dimension first
 		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
@@ -589,35 +590,102 @@ public class TIFFTweaker {
 			rowsPerStrip = tileLength;
 			rowWidth = tileWidth;
 		}
-
+		
 		int bytesPerRow = ((bitsPerSample*rowWidth + 7)/8)*samplesPerPixel;
 	
 		int planaryConfiguration = 1;
 		
-		tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());
-		
+		tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
 		if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
 		
 		if(planaryConfiguration == 2) {
 			bytesPerRow = (bitsPerSample*rowWidth + 7)/8;
-		}							
+		}
 		
 		int bytesPerStrip = bytesPerRow*rowsPerStrip;
 		
 		int[] counts = new int[strips];
 		
-		Arrays.fill(counts, bytesPerStrip);
+		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
 		
-		if(tileWidth < 0) { // Stripped structure, last strips may be smaller
-			int lastStripBytes = bytesPerRow*imageHeight - bytesPerStrip*(strips - 1);
-			if(planaryConfiguration == 2) {
-				lastStripBytes = (bytesPerRow*imageHeight - bytesPerStrip*(strips - samplesPerPixel))/samplesPerPixel;
-				Arrays.fill(counts, counts.length - samplesPerPixel, counts.length, lastStripBytes);
-			} else {
+		if(photoMetric != TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
+			// File the StripByteCounts first
+			Arrays.fill(counts, bytesPerStrip);
+			// We may need to adjust the last strip in case we are dealing with stripped structure
+			if(tileWidth < 0) { // Stripped structure, last strip/strips may be smaller
+				int lastStripBytes = bytesPerRow*imageHeight - bytesPerStrip*(strips - 1);
 				counts[counts.length - 1] = lastStripBytes;
-			}					
+				// Structure |sample1sample1 ...|sample2sample2 ...| ...
+				if(planaryConfiguration == 2) {
+					int stripsPerSample = strips/samplesPerPixel;
+					lastStripBytes = bytesPerRow*imageHeight - bytesPerStrip*(stripsPerSample - 1);
+					if(lastStripBytes > 0) {
+						for(int i = 0, stripOffset = stripsPerSample - 1; i < samplesPerPixel; i++) {
+							counts[stripOffset] = lastStripBytes;
+							stripOffset += stripsPerSample;
+						}
+					}
+				}				
+			}
+		} else { // Deal with down sampling
+			int horizontalSampleFactor = 2; // Default 2X2
+			int verticalSampleFactor = 2; // Not 1X1
+			
+			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
+			
+			if(f_YCbCrSubSampling != null) {
+				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
+				horizontalSampleFactor = sampleFactors[0];
+				verticalSampleFactor = sampleFactors[1];
+			}
+			
+			if(samplesPerPixel != 3) samplesPerPixel = 3;
+			
+			int[] sampleBytesPerRow = new int[samplesPerPixel];
+			sampleBytesPerRow[0] = (bitsPerSample*rowWidth + 7)/8;
+			sampleBytesPerRow[1] = (bitsPerSample*rowWidth/horizontalSampleFactor + 7)/8;
+			sampleBytesPerRow[2] = sampleBytesPerRow[1];
+			
+			int[] sampleRowsPerStrip = new int[samplesPerPixel];
+			sampleRowsPerStrip[0] = rowsPerStrip;
+			sampleRowsPerStrip[1] = rowsPerStrip/verticalSampleFactor;
+			sampleRowsPerStrip[2]= sampleRowsPerStrip[1];
+						
+			if(planaryConfiguration == 1) {
+				bytesPerStrip = sampleBytesPerRow[0]*sampleRowsPerStrip[0] + sampleBytesPerRow[1]*sampleRowsPerStrip[1] + sampleBytesPerRow[2]*sampleRowsPerStrip[2];
+				Arrays.fill(counts, bytesPerStrip);
+				if(tileWidth < 0) { // Stripped structure, last strip may be smaller
+					int lastStripBytes = (sampleBytesPerRow[0] + sampleBytesPerRow[1] + sampleBytesPerRow[2])*imageHeight - bytesPerStrip*(strips - 1);
+					counts[counts.length - 1] = lastStripBytes;										
+				}
+			} else { // Separate sample planes -
+				int[] sampleBytesPerStrip = new int[samplesPerPixel];
+				sampleBytesPerStrip[0] = sampleRowsPerStrip[0]*sampleBytesPerRow[0];
+				sampleBytesPerStrip[1] = sampleRowsPerStrip[1]*sampleBytesPerRow[1];
+				sampleBytesPerStrip[2] = sampleBytesPerStrip[1];
+				
+				int stripsPerSample = strips/samplesPerPixel;
+				int startOffset = 0;
+				int endOffset = stripsPerSample;
+				for(int i = 0; i < samplesPerPixel; i++) {
+					Arrays.fill(counts, startOffset, endOffset, sampleBytesPerStrip[i]);
+					startOffset = endOffset;
+					endOffset += stripsPerSample;
+				}
+				if(tileWidth < 0) { // Stripped structure, last strip may be smaller
+					int[] lastStripBytes = new int[samplesPerPixel];
+					lastStripBytes[0] = sampleBytesPerRow[0]*imageHeight - sampleBytesPerStrip[0]*(stripsPerSample - 1);
+					lastStripBytes[1] = sampleBytesPerRow[1]*imageHeight - sampleBytesPerStrip[1]*(stripsPerSample - 1);
+					lastStripBytes[2] = lastStripBytes[1];
+					startOffset = stripsPerSample - 1;
+					for(int i = 0; i < samplesPerPixel; i++) {
+						counts[startOffset] = lastStripBytes[i];
+						startOffset = stripsPerSample;
+					}
+				}
+			}			
 		}
-		
+			
 		return counts;
 	}
 	
@@ -1024,7 +1092,25 @@ public class TIFFTweaker {
 										}
 										break;
 									case NONE: // Read the data, reorder the byte sequence and write back the data
-										counts = uncompressedStripByteCounts;
+										// In case we only have one strip/tile but StripByteCounts contains wrong value
+										int planaryConfiguration = 1;
+										
+										tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+										if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
+										
+										tiffField = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
+										
+										int samplesPerPixel = 1;
+										if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
+										
+										// If there is only one strip/samplesPerPixel strips for PlanaryConfiguration = 2
+										if(planaryConfiguration == 1 && off.length == 1 || planaryConfiguration == 2 && off.length == samplesPerPixel)
+										{
+											int[] totalBytes2Read = getBytes2Read(currIFD);
+										
+											for(int k = 0; k < off.length; i++)
+												counts[k] = totalBytes2Read[k];					
+										}				
 										for(int k = 0; k < off.length; k++) {
 											image2.seek(off[k]);
 											byte[] buf = new byte[counts[k]];
@@ -1034,7 +1120,7 @@ public class TIFFTweaker {
 											merged.write(buf);
 											temp[k] = offset;
 											offset += buf.length;
-										}
+										}										
 										break;
 									default: // Fall back to simple copy, at least won't break the whole merged image
 										for(int l = 0; l < off.length; l++) {
