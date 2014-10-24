@@ -351,7 +351,7 @@ public class TIFFTweaker {
 				if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
 				
 				// If there is only one strip/samplesPerPixel strips for PlanaryConfiguration = 2
-				if(planaryConfiguration == 1 && off.length == 1 || planaryConfiguration == 2 && off.length == samplesPerPixel)
+				if((planaryConfiguration == 1 && off.length == 1) || (planaryConfiguration == 2 && off.length == samplesPerPixel))
 				{
 					int[] totalBytes2Read = getBytes2Read(ifd);
 				
@@ -488,13 +488,24 @@ public class TIFFTweaker {
 		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
 		if(f_rowsPerStrip != null) rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];					
 		
+		if(rowsPerStrip > imageHeight) rowsPerStrip = imageHeight;
+		
 		if(tileWidth > 0) {
 			rowsPerStrip = tileLength;
 			rowWidth = tileWidth;
 		}
 	
-		int[] totalBytes2Read = new int[samplesPerPixel];
-		totalBytes2Read[0] = ((rowWidth*bitsPerSample*samplesPerPixel + 7)/8)*rowsPerStrip;
+		int planaryConfiguration = 1;
+		
+		tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());
+		if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
+		
+		int[] totalBytes2Read = new int[samplesPerPixel];		
+		
+		if(planaryConfiguration == 1)
+			totalBytes2Read[0] = ((rowWidth*bitsPerSample + 7)/8)*samplesPerPixel*rowsPerStrip;
+		else
+			totalBytes2Read[0] = totalBytes2Read[1] = totalBytes2Read[2] = ((rowWidth*bitsPerSample + 7)/8)*rowsPerStrip;
 		
 		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
 		
@@ -527,9 +538,6 @@ public class TIFFTweaker {
 			totalBytes2Read[1] = sampleBytesPerRow[1]*sampleRowsPerStrip[1];
 			totalBytes2Read[2] = totalBytes2Read[1];
 		
-			int planaryConfiguration = 1;
-			
-			tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
 			if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
 		
 			if(planaryConfiguration == 1)
@@ -585,6 +593,8 @@ public class TIFFTweaker {
 		
 		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
 		if(f_rowsPerStrip != null) rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];					
+		
+		if(rowsPerStrip > imageHeight) rowsPerStrip = imageHeight;
 		
 		if(tileWidth > 0) {
 			rowsPerStrip = tileLength;
