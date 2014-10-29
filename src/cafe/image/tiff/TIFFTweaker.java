@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    28Oct2014  Changed mergeTiffImagesEx() to use flipEndian() from ArrayUtils
  * WY    24Oct2014  Added getBytes2Read() to fix bug of uncompressed image with only one
  *                  strip/SamplesPerPixel strips for PlanaryConfiguration = 2 and wrong
  *                  StripByteCounts value/values
@@ -556,7 +557,7 @@ public class TIFFTweaker {
 	}
 	
 	// Calculate the expected StripByteCounts values for uncompressed image
-	private static int[] getUncompressedStripByteCounts(IFD ifd, int strips) {
+	public static int[] getUncompressedStripByteCounts(IFD ifd, int strips) {
 		// Get image dimension first
 		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
 		int imageWidth = tiffField.getDataAsLong()[0];
@@ -1091,8 +1092,10 @@ public class TIFFTweaker {
 											image2.readFully(buf);
 											byte[] buf2 = new byte[uncompressedStripByteCounts[k]];
 											Packbits.unpackbits(buf, buf2);
-											short[] sbuf = ArrayUtils.byteArrayToShortArray(buf2, 0, buf2.length, readEndian == IOUtils.BIG_ENDIAN);
-											buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
+											if(bitsPerSample == 16) {
+												short[] sbuf = ArrayUtils.byteArrayToShortArray(buf2, 0, buf2.length, readEndian == IOUtils.BIG_ENDIAN);
+												buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
+											}
 											// Compress the data
 											buf2 = new byte[buf.length + (buf.length + 127)/128];
 											int bytesCompressed = Packbits.packbits(buf, buf2);
@@ -1118,15 +1121,24 @@ public class TIFFTweaker {
 										{
 											int[] totalBytes2Read = getBytes2Read(currIFD);
 										
-											for(int k = 0; k < off.length; i++)
+											for(int k = 0; k < off.length; k++)
 												counts[k] = totalBytes2Read[k];					
 										}				
 										for(int k = 0; k < off.length; k++) {
 											image2.seek(off[k]);
 											byte[] buf = new byte[counts[k]];
 											image2.readFully(buf);
-											short[] sbuf = ArrayUtils.byteArrayToShortArray(buf, readEndian == IOUtils.BIG_ENDIAN);
-											buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
+											/*
+											 * TIFF viewers seem to have problem interpreting data with more than 8 BitsPerSample.
+											 * Most of the viewer interpret 16 BitsPerSample according to the  endianess of the image,
+											 * but think other bit depth like 12 bits always as big endian. This is a misunderstanding
+											 * of the specification. For now we only flip the endian of 16 BitsPerSample is needed and
+											 * leave the other bit depth as is.
+											 */
+											if(bitsPerSample == 16)
+												buf = ArrayUtils.flipEndian(buf, 0, bitsPerSample, buf.length, readEndian == IOUtils.BIG_ENDIAN);
+											//short[] sbuf = ArrayUtils.byteArrayToShortArray(buf, readEndian == IOUtils.BIG_ENDIAN);
+											//buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
 											merged.write(buf);
 											temp[k] = offset;
 											offset += buf.length;
@@ -1156,8 +1168,10 @@ public class TIFFTweaker {
 										} catch (Exception e) {
 											e.printStackTrace();
 										}
-										short[] sbuf = ArrayUtils.byteArrayToShortArray(decompressed, 0, bytesDecompressed, readEndian == IOUtils.BIG_ENDIAN);
-										buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
+										if(bitsPerSample == 16) {
+											short[] sbuf = ArrayUtils.byteArrayToShortArray(decompressed, 0, bytesDecompressed, readEndian == IOUtils.BIG_ENDIAN);
+											buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
+										}
 										// Compress the data
 										try {
 											encoder.initialize();
