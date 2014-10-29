@@ -6,6 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * ArrayUtils.java
+ *
+ * Who   Date       Description
+ * ====  =========  ===================================================================
+ * WY    28Oct2014  Added flipEndian() to work with TIFTweaker mergeTiffImagesEx()
  */
 
 package cafe.util;
@@ -21,6 +29,7 @@ import java.util.AbstractList;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+
 /**
  * Array utility class 
  *
@@ -315,12 +324,113 @@ public class ArrayUtils
     	return findEqualOrLess(a, 0, a.length, key, c);
     }
    	
-   	// Insertion sort
+    /**
+     * Flip the endian of the input byte-compacted array
+     * 
+     * @param input the input byte array which is byte compacted
+     * @param offset the offset to start the reading input
+     * @param bits number of bits for the data before compaction
+     * @param len number of bytes to read
+     * @param bigEndian whether or not the input data is in big endian order
+     *
+     * @return a byte array with the endian flipped
+     */     
+   	public static byte[] flipEndian(byte[] input, int offset, int bits, int len, boolean bigEndian) {
+   		long temp = 0;
+   		int bits_remain = 0;
+   		int temp_byte = 0;
+   		int empty_bits = 8;
+   		
+   		byte[] output = new byte[input.length];
+   		
+   		// Bit mask 0 - 32 bits
+   		long[] MASK = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff,
+   				      0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff,
+   				      0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff,
+   				      0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffffL};
+   		
+   		int end = offset + len;
+   		int bufIndex = 0;
+    	 
+   		int temp1 = bits;
+    	boolean bigEndianOut = !bigEndian;
+    	
+   	  	loop:
+   	  	while(true) {  			
+   	   		
+			if(!bigEndian)
+				temp = (temp_byte >> (8-bits_remain));
+			else				
+				temp = (temp_byte & MASK[bits_remain]); 
+				
+			while (bits > bits_remain)
+			{
+				if(offset >= end) {
+					break loop;
+				}
+				
+				temp_byte = input[offset++]&0xff;
+				
+				if(bigEndian)
+					temp = ((temp<<8)|temp_byte);
+				else
+					temp |= (temp_byte<<bits_remain);
+				
+				bits_remain += 8;
+			}
+			
+			bits_remain -= bits;
+			
+			if(bigEndian)
+				temp = (temp>>(bits_remain));			
+	        
+			long value = (temp&MASK[bits]);			
+		
+	   	  	//////////////////////// Write bits bit length value in opposite endian	    	
+	    	if(bigEndianOut) {
+	    		temp1 = bits-empty_bits;
+	    		output[bufIndex] |= ((value>>>temp1)&MASK[empty_bits]);
+	    		
+	    		while(temp1 > 8)
+				{
+					output[++bufIndex] |= ((value>>>(temp1-8))&MASK[8]);
+					temp1 -= 8;
+				} 
+	    		
+	    		if(temp1 > 0) {
+	    			output[++bufIndex] |= ((value&MASK[temp1])<<(8-temp1));
+	    			temp1 -= 8;
+	    		}
+	       	} else { // Little endian
+	       		temp1 = bits;
+				output[bufIndex] |= ((value&MASK[empty_bits])<<(8-empty_bits));
+				value >>= empty_bits;
+		        temp1 -= empty_bits;
+		        // If the code is longer than the empty_bits
+				while(temp1 > 8) {
+					output[++bufIndex] |= (value&0xff);
+					value >>= 8;
+					temp1 -= 8;
+				}
+				
+		        if(temp1 > 0)
+				{
+		        	output[++bufIndex] |= (value&MASK[temp1]);
+	    			temp1 -= 8;
+				}
+			}
+			empty_bits = -temp1;
+   	  	}
+   		
+		return output;
+	}
+   	
+    // Insertion sort
     public static void insertionsort(int[] array)
     {
 	   insertionsort(array, 0, array.length-1);
-    } 
-   	
+    } 	
+
     public static void insertionsort(int[] array, int start, int end)
     {
 	   int j;
@@ -333,8 +443,8 @@ public class ArrayUtils
 		   // Move temp to the right place
 		   array[j] = temp;
 	   }
-    } 	
-
+    }
+    
     // Insertion sort
     public static <T extends Comparable<? super T>> void insertionsort(T[] array, int start, int end)
     {
@@ -350,7 +460,7 @@ public class ArrayUtils
 	   }
     }
     
-    // From Effective Java 2nd Edition. 
+   	// From Effective Java 2nd Edition. 
    	public static List<Integer> intArrayAsList(final int[] a) 
    	{
    		if (a == null)
@@ -370,8 +480,8 @@ public class ArrayUtils
    			}
    		};
    	}
-    
-   	public static byte[] intArrayToByteArray(int[] data, boolean bigEndian) {
+
+    public static byte[] intArrayToByteArray(int[] data, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 4);
 		
@@ -397,7 +507,7 @@ public class ArrayUtils
 	        (byte)(value >>> 24)	            		            
 	        };
 	}
-
+    
     public static byte[] intToByteArrayMM(int value) {
     	return new byte[] {
 	        (byte)(value >>> 24),
@@ -405,8 +515,8 @@ public class ArrayUtils
 	        (byte)(value >>> 8),
 	        (byte)value};
 	}
-    
-    /**
+	
+	/**
 	 * Packs all or part of the input byte array which uses "bits" bits to use all 8 bits.
 	 * 
 	 * @param input input byte array
