@@ -178,7 +178,7 @@ public class TIFFTweaker {
 		return new LongField(TiffTag.JPEG_DC_TABLES.getValue(), tmp);
 	}
 	
-	private static void copyJPEGInfoOffset(RandomAccessInputStream rin, RandomAccessOutputStream rout, int offset, int outOffset) throws IOException 
+	private static void copyJPEGIFByteCount(RandomAccessInputStream rin, RandomAccessOutputStream rout, int offset, int outOffset) throws IOException 
 	{		
 		boolean finished = false;
 		int length = 0;	
@@ -380,6 +380,7 @@ public class TIFFTweaker {
 				stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
 			ifd.addField(stripOffSets);		
 		}
+		
 		// add copyright and software fields.
 		String copyRight = "Copyright (c) Wen Yu, 2014 (yuwen_66@yahoo.com)\0";
 		ifd.addField(new ASCIIField(TiffTag.COPYRIGHT.getValue(), copyRight));
@@ -387,15 +388,24 @@ public class TIFFTweaker {
 		String softWare = "TIFFTweaker 1.0\0";
 		ifd.addField(new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare));
 		// End of copyright and software field.
-		
-		/* The following are added to work with old-style JPEG compression (type 6) */
+	
+		/* The following are added to work with old-style JPEG compression (type 6) */		
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
-		TiffField<?> jpegInfoOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
-		if(jpegInfoOffset != null) {
-			copyJPEGInfoOffset(rin, rout, jpegInfoOffset.getDataAsLong()[0], offset);
-			jpegInfoOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{offset});
-			ifd.addField(jpegInfoOffset);
-		}
+		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
+		if(jpegIFOffset != null) {
+			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());			
+			if(jpegIFByteCount != null) {
+				rin.seek(jpegIFOffset.getDataAsLong()[0]);
+				byte[] bytes2Read = new byte[jpegIFByteCount.getDataAsLong()[0]];
+				rin.readFully(bytes2Read);
+				rout.seek(offset);
+				rout.write(bytes2Read);
+			} else {		
+				copyJPEGIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
+			}
+			jpegIFOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{offset});
+			ifd.addField(jpegIFOffset);
+		}		
 		/* Another flavor of the old style JPEG compression type 6 contains separate tables */
 		TiffField<?> jpegTable = ifd.removeField(TiffTag.JPEG_DC_TABLES.getValue());
 		if(jpegTable != null) {
@@ -410,8 +420,9 @@ public class TIFFTweaker {
 		jpegTable = ifd.removeField(TiffTag.JPEG_Q_TABLES.getValue());
 		if(jpegTable != null) {
 			ifd.addField(copyJPEGQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
-		}
+		}		
 		/* End of code to work with old-style JPEG compression */
+		
 		// Return the actual stream position (we may have lost track of it)  
 		return (int)rout.getStreamPointer();	
 	}
