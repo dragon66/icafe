@@ -42,6 +42,7 @@ package cafe.image.tiff;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -393,7 +394,7 @@ public class TIFFTweaker {
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
 		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
 		if(jpegIFOffset != null) {
-			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());			
+			TiffField<?> jpegIFByteCount = ifd.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());			
 			if(jpegIFByteCount != null) {
 				rin.seek(jpegIFOffset.getDataAsLong()[0]);
 				byte[] bytes2Read = new byte[jpegIFByteCount.getDataAsLong()[0]];
@@ -409,18 +410,24 @@ public class TIFFTweaker {
 		/* Another flavor of the old style JPEG compression type 6 contains separate tables */
 		TiffField<?> jpegTable = ifd.removeField(TiffTag.JPEG_DC_TABLES.getValue());
 		if(jpegTable != null) {
-			ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+			try {
+				ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+			} catch(EOFException ex) {;}
 		}
 		
 		jpegTable = ifd.removeField(TiffTag.JPEG_AC_TABLES.getValue());
 		if(jpegTable != null) {
-			ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+			try {
+				ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+			} catch(EOFException ex) {;}
 		}
 	
 		jpegTable = ifd.removeField(TiffTag.JPEG_Q_TABLES.getValue());
 		if(jpegTable != null) {
-			ifd.addField(copyJPEGQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
-		}		
+			try {
+				ifd.addField(copyJPEGQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+			} catch(EOFException ex) {;}
+		}
 		/* End of code to work with old-style JPEG compression */
 		
 		// Return the actual stream position (we may have lost track of it)  
