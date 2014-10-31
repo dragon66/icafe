@@ -679,12 +679,17 @@ public class TIFFTweaker {
 			sampleRowsPerStrip[0] = rowsPerStrip;
 			sampleRowsPerStrip[1] = rowsPerStrip/verticalSampleFactor;
 			sampleRowsPerStrip[2]= sampleRowsPerStrip[1];
+			
+			int[] columnHeight = new int[samplesPerPixel];
+			columnHeight[0] = imageHeight;
+			columnHeight[1] = imageHeight/verticalSampleFactor;
+			columnHeight[2] = columnHeight[1];
 						
 			if(planaryConfiguration == 1) {
 				bytesPerStrip = sampleBytesPerRow[0]*sampleRowsPerStrip[0] + sampleBytesPerRow[1]*sampleRowsPerStrip[1] + sampleBytesPerRow[2]*sampleRowsPerStrip[2];
 				Arrays.fill(counts, bytesPerStrip);
 				if(tileWidth < 0) { // Stripped structure, last strip may be smaller
-					int lastStripBytes = (sampleBytesPerRow[0] + sampleBytesPerRow[1] + sampleBytesPerRow[2])*imageHeight - bytesPerStrip*(strips - 1);
+					int lastStripBytes = (sampleBytesPerRow[0]*columnHeight[0] + sampleBytesPerRow[1]*columnHeight[1] + sampleBytesPerRow[2]*columnHeight[2]) - bytesPerStrip*(strips - 1);
 					counts[counts.length - 1] = lastStripBytes;										
 				}
 			} else { // Separate sample planes -
@@ -703,8 +708,8 @@ public class TIFFTweaker {
 				}
 				if(tileWidth < 0) { // Stripped structure, last strip may be smaller
 					int[] lastStripBytes = new int[samplesPerPixel];
-					lastStripBytes[0] = sampleBytesPerRow[0]*imageHeight - sampleBytesPerStrip[0]*(stripsPerSample - 1);
-					lastStripBytes[1] = sampleBytesPerRow[1]*imageHeight - sampleBytesPerStrip[1]*(stripsPerSample - 1);
+					lastStripBytes[0] = sampleBytesPerRow[0]*columnHeight[0] - sampleBytesPerStrip[0]*(stripsPerSample - 1);
+					lastStripBytes[1] = sampleBytesPerRow[1]*columnHeight[1] - sampleBytesPerStrip[1]*(stripsPerSample - 1);
 					lastStripBytes[2] = lastStripBytes[1];
 					startOffset = stripsPerSample - 1;
 					for(int i = 0; i < samplesPerPixel; i++) {
