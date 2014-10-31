@@ -20,6 +20,10 @@ public abstract class AbstractRationalField extends TiffField<int[]> {
 		super(tag, fieldType, data.length>>1);
 		this.data = data;
 	}
+	
+	public int[] getDataAsLong() {
+		return data;
+	}
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		//
