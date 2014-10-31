@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    31Oct2014  Added basic support for uncompressed and LZW compressed YCbCr
  * WY    15Oct2014  Added basic support for 16 bits RGB image
  * WY    14Oct2014  Revised to show specification violation TIFF LZW compression
  * WY    14Oct2014  Revised to show RGB TIFF with extra sample tag 
@@ -34,7 +35,6 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cafe.image.colorspace.CMYKColorSpace;
@@ -112,8 +112,6 @@ public class TIFFReader extends ImageReader {
 		TiffField<?> f_stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS.getValue());
 		int[] stripOffsets = f_stripOffsets.getDataAsLong();
 		int[] stripByteCounts = f_stripByteCounts.getDataAsLong();
-		System.out.println(Arrays.toString(stripOffsets));
-		System.out.println(Arrays.toString(stripByteCounts));
 		int imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH.getValue()).getDataAsLong()[0];
 		int imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH.getValue()).getDataAsLong()[0];
 		System.out.println("Image width: " + imageWidth);
@@ -267,6 +265,26 @@ public class TIFFReader extends ImageReader {
 				int[] samplingFactor = {2, 2}; // Default value, Not [1, 1]
 				TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
 				if(f_YCbCrSubSampling != null) samplingFactor = f_YCbCrSubSampling.getDataAsLong();
+				
+				float referenceBlackY = 0.0f;
+				float referenceWhiteY = 255.0f;
+			    float referenceBlackCb = 128.0f;
+			    float referenceWhiteCb = 255.0f;
+		        float referenceBlackCr = 128.0f;
+		        float referenceWhiteCr = 255.0f;
+			    float codingRangeY = 255.0f;
+			    float codingRangeCbCr = 127.0f;
+			    
+			    TiffField<?> f_referenceBlackWhite = ifd.getField(TiffTag.REFERENCE_BLACK_WHITE.getValue());
+			    if(f_referenceBlackWhite != null) {
+			    	int[] referenceBlackWhite = f_referenceBlackWhite.getDataAsLong();
+			    	referenceBlackY = 1.0f*referenceBlackWhite[0]/referenceBlackWhite[1];
+			    	referenceWhiteY = 1.0f*referenceBlackWhite[2]/referenceBlackWhite[3];
+			    	referenceBlackCb = 1.0f*referenceBlackWhite[4]/referenceBlackWhite[5];
+			    	referenceWhiteCb = 1.0f*referenceBlackWhite[6]/referenceBlackWhite[7];
+			    	referenceBlackCr = 1.0f*referenceBlackWhite[8]/referenceBlackWhite[9];
+			    	referenceWhiteCr = 1.0f*referenceBlackWhite[10]/referenceBlackWhite[11];
+			    }
 				/*
 				 * R, G, and B may be computed from YCbCr as follows:
 				 * R = Cr * ( 2 - 2 * LumaRed ) + Y
@@ -276,7 +294,7 @@ public class TIFFReader extends ImageReader {
 				 */
 				float lumaRed = 0.299f;
 				float lumaGreen = 0.587f;
-				float lumaBlue = 0.144f;
+				float lumaBlue = 0.114f;
 				
 				TiffField<?> f_YCbCrCoefficients = ifd.getField(TiffTag.YCbCr_COEFFICIENTS.getValue());
 				
@@ -287,7 +305,171 @@ public class TIFFReader extends ImageReader {
 					lumaBlue = 1.0f*lumas[4]/lumas[5];
 				}
 				
-				break;
+				int bytesPerUnitY = samplingFactor[0]*samplingFactor[1];
+				int bytesPerUnitCb = 1;
+				int bytesPerUnitCr = 1;
+				int bytesPerDataUnit = bytesPerUnitY + bytesPerUnitCb + bytesPerUnitCr;
+				int dataUnitsPerWidth = imageWidth/samplingFactor[0];
+											
+				int offsetX = 0;
+				int offsetY = 0;
+				int bytesY = imageWidth*imageHeight;
+				pixels = new byte[bytesY*3 + rowsPerStrip*imageWidth*samplesPerPixel]; // Make sure this is large enough!!!
+				
+				switch(compression) {
+					case NONE:
+						if(planaryConfiguration == 1) {
+							byte[] temp = null;
+						
+							for(int i = 0; i < stripByteCounts.length; i++) {
+								randIS.seek(stripOffsets[i]);
+								int len = stripByteCounts[i];
+								temp = new byte[len];
+								randIS.readFully(temp);
+								
+								offset = 0;
+								offsetX = 0;
+								int numOfDataUnit = len/bytesPerDataUnit;
+						
+								for(int j = 1; j <= numOfDataUnit; j++) {
+									int offsetCb = offset + bytesPerUnitY;
+									int Cb = temp[offsetCb]&0xff;
+									int Cr = temp[offsetCb + 1]&0xff;
+									for(int k = 0; k < samplingFactor[1]; k++) {// Rows
+										for(int l = 0; l < samplingFactor[0]; l++, offsetX++) { // Columns
+											// Populate the pixels array
+											int Y = temp[offset++]&0xff;
+											// Convert YCbCr code to full-range YCbCr.
+									        float fY = (Y - referenceBlackY)*codingRangeY/(referenceWhiteY - referenceBlackY);
+									        float fCb = (Cb - referenceBlackCb)*codingRangeCbCr/(referenceWhiteCb - referenceBlackCb);
+									        float fCr = (Cr - referenceBlackCr)*codingRangeCbCr/(referenceWhiteCr - referenceBlackCr);
+									        /*
+									         * R, G, and B may be computed from YCbCr as follows:
+									         * R = Cr * ( 2 - 2 * LumaRed ) + Y
+									         * G = ( Y - LumaBlue * B - LumaRed * R ) / LumaGreen
+									         * B = Cb * ( 2 - 2 * LumaBlue ) + Y
+									        */ 
+									        float R = (fCr * (2 - 2 * lumaRed) + fY);
+									        float B = (fCb * (2 - 2 * lumaBlue) + fY);
+											float G = ((fY - lumaBlue * B - lumaRed * R) / lumaGreen);
+											// This is very important!!!
+											if(R < 0) R = 0;
+											if(R > 255) R = 255;
+											if(G < 0) G = 0;
+											if(G > 255) G = 255;
+											if(B < 0) B = 0;
+											if(B > 255) B = 255;
+											//
+											int yPos = offsetX + offsetY*imageWidth;
+											int redPos = 3*yPos;
+											
+											pixels[redPos] = (byte)R;
+											pixels[redPos+1] = (byte)G;
+											pixels[redPos+2] = (byte)B;											
+										}
+										offsetX -= samplingFactor[0];
+										offsetY += 1;
+									}
+									offsetY -= samplingFactor[1];
+									offset += 2;
+									offsetX += samplingFactor[0];
+									if(j%dataUnitsPerWidth == 0) {
+										offsetY += samplingFactor[1];
+										offsetX = 0;
+									}
+								}
+							}
+						} else {
+							
+						}
+						break;
+					case LZW:
+						if(planaryConfiguration == 1) {
+							byte[] temp = null;
+							byte[] temp2 = null;
+								
+							int[] stripBytes = TIFFTweaker.getUncompressedStripByteCounts(ifd, stripOffsets.length);
+						
+							for(int i = 0; i < stripByteCounts.length; i++) {
+								randIS.seek(stripOffsets[i]);
+								int len = stripByteCounts[i];
+								temp = new byte[len];
+								randIS.readFully(temp);
+								temp2 = new byte[stripBytes[i]];
+								decoder = new LZWTreeDecoder(8, true);
+								decoder.setInput(temp);
+								int numOfBytes = decoder.decode(temp2, 0, temp2.length);	
+								
+								offset = 0;
+								offsetX = 0;
+								int numOfDataUnit = numOfBytes/bytesPerDataUnit;
+								
+								for(int j = 1; j <= numOfDataUnit; j++) {
+									int offsetCb = offset + bytesPerUnitY;
+									int Cb = temp2[offsetCb]&0xff;
+									int Cr = temp2[offsetCb + 1]&0xff;
+									for(int k = 0; k < samplingFactor[1]; k++) {// Rows
+										for(int l = 0; l < samplingFactor[0]; l++, offsetX++) { // Columns
+											// Populate the pixels array
+											int Y = temp2[offset++]&0xff;
+											// Convert YCbCr code to full-range YCbCr.
+									        float fY = (Y - referenceBlackY)*codingRangeY/(referenceWhiteY - referenceBlackY);
+									        float fCb = (Cb - referenceBlackCb)*codingRangeCbCr/(referenceWhiteCb - referenceBlackCb);
+									        float fCr = (Cr - referenceBlackCr)*codingRangeCbCr/(referenceWhiteCr - referenceBlackCr);
+									        /*
+									         * R, G, and B may be computed from YCbCr as follows:
+									         * R = Cr * ( 2 - 2 * LumaRed ) + Y
+									         * G = ( Y - LumaBlue * B - LumaRed * R ) / LumaGreen
+									         * B = Cb * ( 2 - 2 * LumaBlue ) + Y
+									        */ 
+									        float R =  (fCr * (2 - 2 * lumaRed) + fY);
+									        float B = (fCb * (2 - 2 * lumaBlue) + fY);
+											float G = ((fY - lumaBlue * B - lumaRed * R) / lumaGreen);
+											// This is very important!!!
+											if(R < 0) R = 0;
+											if(R > 255) R = 255;
+											if(G < 0) G = 0;
+											if(G > 255) G = 255;
+											if(B < 0) B = 0;
+											if(B > 255) B = 255;
+											//
+											int yPos = offsetX + offsetY*imageWidth;
+											int redPos = 3*yPos;
+											pixels[redPos] = (byte)R;
+											pixels[redPos+1] = (byte)G;
+											pixels[redPos+2] = (byte)B;
+										}
+										offsetX -= samplingFactor[0];
+										offsetY += 1;
+									}
+									offsetY -= samplingFactor[1];
+									offset += 2;
+									offsetX += samplingFactor[0];
+									if(j%dataUnitsPerWidth == 0) {
+										offsetY += samplingFactor[1];
+										offsetX = 0;
+									}
+								}
+							}
+						} else {
+							
+						}
+						break;
+					default:
+				}
+				//Create a BufferedImage
+				db = new DataBufferByte(pixels, pixels.length);
+				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
+				bandoff = new int[]{0, 1, 2}; 
+				transparent = false;
+				numOfBands = samplesPerPixel;
+				trans = Transparency.OPAQUE;
+				nBits = new int[]{8, 8, 8};
+				raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+				cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
+			                trans, DataBuffer.TYPE_BYTE);
+				
+				return new BufferedImage(cm, raster, false, null);
 			case RGB:
 				bytesPerScanLine = samplesPerPixel*((imageWidth*bitsPerSample + 7)/8);
 				int totalBytes2Read = imageHeight*bytesPerScanLine;
