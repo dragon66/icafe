@@ -394,18 +394,24 @@ public class TIFFTweaker {
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
 		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
 		if(jpegIFOffset != null) {
-			TiffField<?> jpegIFByteCount = ifd.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());			
-			if(jpegIFByteCount != null) {
-				rin.seek(jpegIFOffset.getDataAsLong()[0]);
-				byte[] bytes2Read = new byte[jpegIFByteCount.getDataAsLong()[0]];
-				rin.readFully(bytes2Read);
-				rout.seek(offset);
-				rout.write(bytes2Read);
-			} else {		
-				copyJPEGIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
-			}
-			jpegIFOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{offset});
-			ifd.addField(jpegIFOffset);
+			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());			
+			try {
+				if(jpegIFByteCount != null) {
+					rin.seek(jpegIFOffset.getDataAsLong()[0]);
+					byte[] bytes2Read = new byte[jpegIFByteCount.getDataAsLong()[0]];
+					rin.readFully(bytes2Read);
+					rout.seek(offset);
+					rout.write(bytes2Read);
+					ifd.addField(jpegIFByteCount);
+				} else {
+					long startOffset = rout.getStreamPointer();
+					copyJPEGIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
+					long endOffset = rout.getStreamPointer();
+					ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{(int)(endOffset - startOffset)}));
+				}
+				jpegIFOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{offset});
+				ifd.addField(jpegIFOffset);
+			} catch (EOFException ex) {;};
 		}		
 		/* Another flavor of the old style JPEG compression type 6 contains separate tables */
 		TiffField<?> jpegTable = ifd.removeField(TiffTag.JPEG_DC_TABLES.getValue());
