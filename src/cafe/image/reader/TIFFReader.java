@@ -243,7 +243,7 @@ public class TIFFReader extends ImageReader {
 				int trans = Transparency.OPAQUE;
 				int[] nBits = {8, 8, 8, 8};
 				// There is an extra sample (most probably alpha)
-				if(samplesPerPixel == 5) {
+				if(samplesPerPixel >= 5) {
 					bandoff = new int[]{0, 1, 2, 3, 4};
 					nBits = new int[]{8, 8, 8, 8, 8};
 					trans = Transparency.TRANSLUCENT;
