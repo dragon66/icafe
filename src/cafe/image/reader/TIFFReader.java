@@ -254,27 +254,43 @@ public class TIFFReader extends ImageReader {
 				if(f_colorProfile != null) profile = ICC_Profile.getInstance((byte[])f_colorProfile.getData());
 				ColorSpace colorSpace  = CMYKColorSpace.getInstance();
 				if(profile != null) colorSpace = new ICC_ColorSpace(profile);
-				if(planaryConfiguration == 2) {
-					int bytesPerLine = (samplesPerPixel*bitsPerSample*imageWidth +7)/8;
-					raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerLine*samplesPerPixel,
-			                new int[]{0, 0, 0}, new int[] {0, bytesPerLine, bytesPerLine*2}, null);
-					if(profile != null) {
-						raster = IMGUtils.CMYK2RGB(raster, profile, transparent);
-						cm = new ComponentColorModel(colorSpace, nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
-					} else
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);				    
+				if(bitsPerSample == 16) {
+					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, true);
+					db = new DataBufferUShort(spixels, spixels.length);
+					int[] off = {0, 1, 2, 3}; //band offset, we have 4 bands
+					nBits = new int[]{16, 16, 16, 16};
+					trans = Transparency.OPAQUE;	
+					numOfBands = samplesPerPixel;
+					if(samplesPerPixel == 5) {
+						off = new int[]{0, 1, 2, 3, 4};
+						nBits = new int[]{16, 16, 16, 16, 16};
+						trans = Transparency.TRANSLUCENT;
+					}										
+					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, off, null);
+					cm = new ComponentColorModel(CMYKColorSpace.getInstance(), nBits, transparent, false,
+			                trans, DataBuffer.TYPE_USHORT);
 				} else {
-					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
-					if(profile != null) {
-						raster = IMGUtils.CMYK2RGB(raster, profile, transparent);
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
+					if(planaryConfiguration == 2) {
+						int bytesPerLine = (samplesPerPixel*bitsPerSample*imageWidth +7)/8;
+						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerLine*samplesPerPixel,
+				                new int[]{0, 0, 0}, new int[] {0, bytesPerLine, bytesPerLine*2}, null);
+						if(profile != null) {
+							raster = IMGUtils.CMYK2RGB(raster, profile, transparent);
+							cm = new ComponentColorModel(colorSpace, nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
+						} else
+							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);				    
 					} else {
-						cm = new ComponentColorModel(colorSpace, nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
-					}					
+						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+						if(profile != null) {
+							raster = IMGUtils.CMYK2RGB(raster, profile, transparent);
+							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
+						} else {
+							cm = new ComponentColorModel(colorSpace, nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
+						}					
+					}
 				}
-				BufferedImage bi = new BufferedImage(cm, raster, false, null);
 				
-				return bi;
+				return new BufferedImage(cm, raster, false, null);
 			case YCbCr:
 				int[] samplingFactor = {2, 2}; // Default value, Not [1, 1]
 				TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
