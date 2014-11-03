@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/28/2014
+Last modified on 11/03/2014
 ***************************
+03Nov2014  Added CMYK2RGB() to IMGUtils to convert CMYK raster to RGB raster
 28Oct2014  Added flipEndian to ArrayUtils to work with TIFFTweaker mergeTiffImagesEx()
 24Oct2014  Revised getUncompressedStripByteCounts of TIFFTweaker to include YCbCrSubSampling
 22Oct2014  Added CMYKColorSpace to read CMYK TIFF image
