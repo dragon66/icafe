@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    03Nov2014  Added CMYK2RGB() to convert CMYK raster to RGB raster
  * WY    22Sep2014  Added guessImageType() to auto detect image type
  * WY    13Aug2014  Added RGB2YCCK_Inverted() to support YCCK JPEG
  * WY    05May2014  Added getRGB() and getRGB2() to replace BufferedImage.getRGB()
@@ -178,6 +179,20 @@ public class IMGUtils {
 		colorInfo[1] = transparent_index;
 
         return colorInfo;
+	}
+	
+	// Convert CMYK raster RGB raster
+	public static WritableRaster CMYK2RGB(Raster raster, ICC_Profile profile, boolean hasAlpha) {
+		ColorModel cm = null;
+		if(hasAlpha) {
+			cm = ColorModel.getRGBdefault();
+		} else 
+			cm = new DirectColorModel(24, 0x00ff0000, 0x0000ff00, 0x000000ff);
+		ColorConvertOp converter = new ColorConvertOp(new ICC_ColorSpace(profile), cm.getColorSpace(), null);
+		WritableRaster destRaster = converter.createCompatibleDestRaster(raster);
+		converter.filter(raster, destRaster);
+		
+		return destRaster;
 	}
 	
 	/**
