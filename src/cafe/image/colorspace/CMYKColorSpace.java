@@ -22,13 +22,16 @@ package cafe.image.colorspace;
 import java.awt.color.ColorSpace;
 
 /**
- * CMYK color space
+ * CMYK color space to work with CMYK image without embedded ICC_Profile.
+ * Conversion to and from RGB using simple formula.
  *  
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 10/22/2014
  */
 public class CMYKColorSpace extends ColorSpace {
-	// TODO add ICC_Profile support
+	// TODO add ICC_Profile support - ICC_ColorSpace.toRGB() is way too slow
+	// to make it feasible to add ICC_Profile to this class. If we have embedded
+	// ICC_Profile, we would do a color conversion to RGB elsewhere instead
    	private static final long serialVersionUID = -4823887516599874355L;
 	private static CMYKColorSpace instance;
 
