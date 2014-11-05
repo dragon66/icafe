@@ -181,18 +181,21 @@ public class IMGUtils {
         return colorInfo;
 	}
 	
-	// Convert CMYK raster RGB raster
-	public static WritableRaster CMYK2RGB(Raster raster, ICC_Profile profile, boolean hasAlpha) {
-		ColorModel cm = null;
-		if(hasAlpha) {
-			cm = ColorModel.getRGBdefault();
-		} else 
-			cm = new DirectColorModel(24, 0x00ff0000, 0x0000ff00, 0x000000ff);
-		ColorConvertOp converter = new ColorConvertOp(new ICC_ColorSpace(profile), cm.getColorSpace(), null);
-		WritableRaster destRaster = converter.createCompatibleDestRaster(raster);
-		converter.filter(raster, destRaster);
-		
-		return destRaster;
+	/**
+	 * Convert CMYK raster to RGB raster w/o alpha
+	 * 
+	 * @param raster WritableRaster for CMYK ICC_Profile ColorSpace
+	 * @param cm ColorModel for CMYK ICC_Profile ColorSpace
+	 * @return WritableRaster for RGB ColorSpace
+	 */
+	public static WritableRaster CMYK2RGB(WritableRaster raster, ColorModel cm) {
+		ColorSpace sRGB = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+		ColorConvertOp cco = new ColorConvertOp(cm.getColorSpace(), sRGB, null);
+		WritableRaster rgbRaster = null;		
+		BufferedImage cmykImage = new BufferedImage(cm, raster, false, null);
+		// Filter on BufferedImage to keep alpha channel
+		rgbRaster = cco.filter(cmykImage, null).getRaster();
+		return rgbRaster;
 	}
 	
 	/**
