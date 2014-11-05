@@ -152,6 +152,19 @@ public class TIFFReader extends ImageReader {
 		byte[] pixels = null;
 		int[] stripBytes = TIFFTweaker.getUncompressedStripByteCounts(ifd, stripOffsets.length);
 		
+		int[] count = new int[samplesPerPixel];
+	
+		if(planaryConfiguration == 2) {
+			int inc = stripBytes.length/samplesPerPixel;
+			int startOff = 0;
+			int endOff = inc;
+			for(int k = 0; k < samplesPerPixel; k++) {
+				for(int j = startOff; j < endOff; j++) count[k] += stripBytes[j];							
+				startOff += inc;
+				endOff = startOff + inc;
+			}
+		}
+		
 		switch(e_photoMetric) {
 			case PALETTE_COLOR:
 				short[] colorMap = (short[])ifd.getField(TiffTag.COLORMAP.getValue()).getData();
@@ -197,7 +210,8 @@ public class TIFFReader extends ImageReader {
 				return new BufferedImage(cm, raster, false, null);
 			case SEPARATED:
 				// Hopefully CMYK
-				bytesPerScanLine = (imageWidth*samplesPerPixel*bitsPerSample + 7)/8;
+				bytesPerScanLine = samplesPerPixel*((imageWidth*bitsPerSample + 7)/8);
+				if(planaryConfiguration == 2) bytesPerScanLine = (imageWidth*bitsPerSample + 7)/8;
 				pixels = new byte[imageHeight*bytesPerScanLine];
 				switch(compression) {
 					case NONE:
@@ -236,6 +250,12 @@ public class TIFFReader extends ImageReader {
 					pixels = applyDePredictor(samplesPerPixel, pixels, imageWidth, imageHeight);
 				//Create a BufferedImage
 				db = new DataBufferByte(pixels, pixels.length);
+				// Get ICC_Profile
+				TiffField<?> f_colorProfile = ifd.getField(TiffTag.ICC_PROFILE.getValue());
+				ICC_Profile profile = null;
+				if(f_colorProfile != null) profile = ICC_Profile.getInstance((byte[])f_colorProfile.getData());
+				ColorSpace colorSpace  = CMYKColorSpace.getInstance();
+				if(profile != null) colorSpace = new ICC_ColorSpace(profile);
 				//band offset, we have 4 bands if no extra sample is specified, otherwise 5
 				int[] bandoff = {0, 1, 2, 3}; 
 				boolean transparent = false;
@@ -248,12 +268,7 @@ public class TIFFReader extends ImageReader {
 					nBits = new int[]{8, 8, 8, 8, 8};
 					trans = Transparency.TRANSLUCENT;
 					transparent = true;
-				}
-				TiffField<?> f_colorProfile = ifd.getField(TiffTag.ICC_PROFILE.getValue());
-				ICC_Profile profile = null;
-				if(f_colorProfile != null) profile = ICC_Profile.getInstance((byte[])f_colorProfile.getData());
-				ColorSpace colorSpace  = CMYKColorSpace.getInstance();
-				if(profile != null) colorSpace = new ICC_ColorSpace(profile);
+				}				
 				if(bitsPerSample == 16) {
 					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, true);
 					db = new DataBufferUShort(spixels, spixels.length);
@@ -261,7 +276,7 @@ public class TIFFReader extends ImageReader {
 					nBits = new int[]{16, 16, 16, 16};
 					trans = Transparency.OPAQUE;	
 					numOfBands = samplesPerPixel;
-					if(samplesPerPixel == 5) {
+					if(samplesPerPixel >= 5) {
 						off = new int[]{0, 1, 2, 3, 4};
 						nBits = new int[]{16, 16, 16, 16, 16};
 						trans = Transparency.TRANSLUCENT;
@@ -270,23 +285,25 @@ public class TIFFReader extends ImageReader {
 					cm = new ComponentColorModel(CMYKColorSpace.getInstance(), nBits, transparent, false,
 			                trans, DataBuffer.TYPE_USHORT);
 				} else {
+					cm = new ComponentColorModel(colorSpace, nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
 					if(planaryConfiguration == 2) {
-						int bytesPerLine = (samplesPerPixel*bitsPerSample*imageWidth +7)/8;
-						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerLine*samplesPerPixel,
-				                new int[]{0, 0, 0}, new int[] {0, bytesPerLine, bytesPerLine*2}, null);
-						if(profile != null) {
-							raster = IMGUtils.CMYK2RGB(raster, profile, transparent);
-							cm = new ComponentColorModel(colorSpace, nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
-						} else
-							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);				    
+						bandoff = new int[]{0, count[0], count[0] + count[1], count[0] + count[1] + count[2]};
+						int[] bandIndices = new int[]{0, 0, 0, 0};
+						if(samplesPerPixel >= 5) {
+							bandoff = new int[]{0, count[0], count[0] + count[1], count[0] + count[1] + count[2], count[0] + count[1] + count[2] + count[3]};
+							bandIndices = new int[]{0, 0, 0, 0, 0};
+						}		
+						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine, bandIndices, bandoff, null);
+						if(profile != null) {			
+							raster = IMGUtils.CMYK2RGB(raster, cm);
+							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
+						}
 					} else {
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
 						if(profile != null) {
-							raster = IMGUtils.CMYK2RGB(raster, profile, transparent);
+							raster = IMGUtils.CMYK2RGB(raster, cm);
 							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
-						} else {
-							cm = new ComponentColorModel(colorSpace, nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
-						}					
+						}				
 					}
 				}
 				
@@ -532,19 +549,7 @@ public class TIFFReader extends ImageReader {
 						decoder = new DeflateDecoder();
 						break;
 					default:
-				}
-				
-				int[] count = new int[samplesPerPixel];
-				if(planaryConfiguration == 2) {
-					int inc = stripBytes.length/samplesPerPixel;
-					int startOff = 0;
-					int endOff = inc;
-					for(int k = 0; k < samplesPerPixel; k++) {
-						for(int j = startOff; j < endOff; j++) count[k] += stripBytes[j];							
-						startOff += inc;
-						endOff = startOff + inc;
-					}
-				}
+				}				
 				if(decoder != null) {					
 					pixels = new byte[stripOffsets.length*stripBytes[0]];
 					for(int i = 0; i < stripByteCounts.length; i++) {
