@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    05Nov2014  Fixed bug for YCbCr image with wrong image width and height
  * WY    31Oct2014  Added basic support for uncompressed and LZW compressed YCbCr
  * WY    15Oct2014  Added basic support for 16 bits RGB image
  * WY    14Oct2014  Revised to show specification violation TIFF LZW compression
@@ -324,7 +325,8 @@ public class TIFFReader extends ImageReader {
 				int[] samplingFactor = {2, 2}; // Default value, Not [1, 1]
 				TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
 				if(f_YCbCrSubSampling != null) samplingFactor = f_YCbCrSubSampling.getDataAsLong();
-				
+				int expandedImageWidth = ((imageWidth + samplingFactor[0] - 1)/samplingFactor[0])*samplingFactor[0];
+				int expandedImageHeight = ((imageHeight + samplingFactor[1] - 1)/samplingFactor[1])*samplingFactor[1];				
 				float referenceBlackY = 0.0f;
 				float referenceWhiteY = 255.0f;
 			    float referenceBlackCb = 128.0f;
@@ -368,12 +370,12 @@ public class TIFFReader extends ImageReader {
 				int bytesPerUnitCb = 1;
 				int bytesPerUnitCr = 1;
 				int bytesPerDataUnit = bytesPerUnitY + bytesPerUnitCb + bytesPerUnitCr;
-				int dataUnitsPerWidth = imageWidth/samplingFactor[0];
+				int dataUnitsPerWidth = expandedImageWidth/samplingFactor[0];
 											
 				int offsetX = 0;
 				int offsetY = 0;
-				int bytesY = imageWidth*imageHeight;
-				pixels = new byte[bytesY*3 + rowsPerStrip*imageWidth*samplesPerPixel]; // Make sure this is large enough!!!
+				int bytesY = expandedImageWidth*expandedImageHeight;
+				pixels = new byte[bytesY*3 + rowsPerStrip*expandedImageWidth*samplesPerPixel]; // Make sure this is large enough!!!
 				
 				switch(compression) {
 					case NONE:
@@ -419,7 +421,7 @@ public class TIFFReader extends ImageReader {
 											if(B < 0) B = 0;
 											if(B > 255) B = 255;
 											//
-											int yPos = offsetX + offsetY*imageWidth;
+											int yPos = offsetX + offsetY*expandedImageWidth;
 											int redPos = 3*yPos;
 											
 											pixels[redPos] = (byte)R;
@@ -490,7 +492,7 @@ public class TIFFReader extends ImageReader {
 											if(B < 0) B = 0;
 											if(B > 255) B = 255;
 											//
-											int yPos = offsetX + offsetY*imageWidth;
+											int yPos = offsetX + offsetY*expandedImageWidth;
 											int redPos = 3*yPos;
 											pixels[redPos] = (byte)R;
 											pixels[redPos+1] = (byte)G;
@@ -522,11 +524,11 @@ public class TIFFReader extends ImageReader {
 				numOfBands = samplesPerPixel;
 				trans = Transparency.OPAQUE;
 				nBits = new int[]{8, 8, 8};
-				raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+				raster = Raster.createInterleavedRaster(db, expandedImageWidth, expandedImageHeight, expandedImageWidth*numOfBands, numOfBands, bandoff, null);
 				cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,
 			                trans, DataBuffer.TYPE_BYTE);
 				
-				return new BufferedImage(cm, raster, false, null);
+				return new BufferedImage(cm, raster, false, null).getSubimage(0, 0, imageWidth, imageHeight);
 			case RGB:
 				bytesPerScanLine = samplesPerPixel*((imageWidth*bitsPerSample + 7)/8);
 				int totalBytes2Read = imageHeight*bytesPerScanLine;
