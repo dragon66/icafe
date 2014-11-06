@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    06Nov2014  Fixed bug for getUncompressedStripByteCounts() with YCbCr image
  * WY    28Oct2014  Changed mergeTiffImagesEx() to use flipEndian() from ArrayUtils
  * WY    24Oct2014  Added getBytes2Read() to fix bug of uncompressed image with only one
  *                  strip/SamplesPerPixel strips for PlanaryConfiguration = 2 and wrong
@@ -480,7 +481,26 @@ public class TIFFTweaker {
 		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
 		int imageWidth = tiffField.getDataAsLong()[0];
 		tiffField = ifd.getField(TiffTag.IMAGE_LENGTH.getValue());
-		int imageHeight = tiffField.getDataAsLong()[0];				
+		int imageHeight = tiffField.getDataAsLong()[0];
+		
+		// For YCbCr image only
+		int horizontalSampleFactor = 2; // Default 2X2
+		int verticalSampleFactor = 2; // Not 1X1
+		
+		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
+		
+		// Correction for imageWidth and imageHeight for YCbCr image
+		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
+			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
+			
+			if(f_YCbCrSubSampling != null) {
+				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
+				horizontalSampleFactor = sampleFactors[0];
+				verticalSampleFactor = sampleFactors[1];
+			}
+			imageWidth = ((imageWidth + horizontalSampleFactor - 1)/horizontalSampleFactor)*horizontalSampleFactor;
+			imageHeight = ((imageHeight + verticalSampleFactor - 1)/verticalSampleFactor)*verticalSampleFactor;	
+		}
 		
 		int samplesPerPixel = 1;
 		
@@ -532,21 +552,7 @@ public class TIFFTweaker {
 		else
 			totalBytes2Read[0] = totalBytes2Read[1] = totalBytes2Read[2] = ((rowWidth*bitsPerSample + 7)/8)*rowsPerStrip;
 		
-		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
-		
 		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
-			// Deal with down sampling
-			int horizontalSampleFactor = 2; // Default 2X2
-			int verticalSampleFactor = 2; // Not 1X1
-			
-			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
-			
-			if(f_YCbCrSubSampling != null) {
-				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
-				horizontalSampleFactor = sampleFactors[0];
-				verticalSampleFactor = sampleFactors[1];
-			}
-			
 			if(samplesPerPixel != 3) samplesPerPixel = 3;
 			
 			int[] sampleBytesPerRow = new int[samplesPerPixel];
@@ -586,7 +592,26 @@ public class TIFFTweaker {
 		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
 		int imageWidth = tiffField.getDataAsLong()[0];
 		tiffField = ifd.getField(TiffTag.IMAGE_LENGTH.getValue());
-		int imageHeight = tiffField.getDataAsLong()[0];				
+		int imageHeight = tiffField.getDataAsLong()[0];
+		
+		// For YCbCr image only
+		int horizontalSampleFactor = 2; // Default 2X2
+		int verticalSampleFactor = 2; // Not 1X1
+		
+		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
+		
+		// Correction for imageWidth and imageHeight for YCbCr image
+		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
+			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
+			
+			if(f_YCbCrSubSampling != null) {
+				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
+				horizontalSampleFactor = sampleFactors[0];
+				verticalSampleFactor = sampleFactors[1];
+			}
+			imageWidth = ((imageWidth + horizontalSampleFactor - 1)/horizontalSampleFactor)*horizontalSampleFactor;
+			imageHeight = ((imageHeight + verticalSampleFactor - 1)/verticalSampleFactor)*verticalSampleFactor;	
+		}
 		
 		int samplesPerPixel = 1;
 		
@@ -641,8 +666,6 @@ public class TIFFTweaker {
 		
 		int[] counts = new int[strips];
 		
-		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
-		
 		if(photoMetric != TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
 			// File the StripByteCounts first
 			Arrays.fill(counts, bytesPerStrip);
@@ -662,18 +685,7 @@ public class TIFFTweaker {
 					}
 				}				
 			}
-		} else { // Deal with down sampling
-			int horizontalSampleFactor = 2; // Default 2X2
-			int verticalSampleFactor = 2; // Not 1X1
-			
-			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
-			
-			if(f_YCbCrSubSampling != null) {
-				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
-				horizontalSampleFactor = sampleFactors[0];
-				verticalSampleFactor = sampleFactors[1];
-			}
-			
+		} else { // Deal with YCbCr down sampling
 			if(samplesPerPixel != 3) samplesPerPixel = 3;
 			
 			int[] sampleBytesPerRow = new int[samplesPerPixel];
@@ -720,7 +732,7 @@ public class TIFFTweaker {
 					startOffset = stripsPerSample - 1;
 					for(int i = 0; i < samplesPerPixel; i++) {
 						counts[startOffset] = lastStripBytes[i];
-						startOffset = stripsPerSample;
+						startOffset += stripsPerSample;
 					}
 				}
 			}			
