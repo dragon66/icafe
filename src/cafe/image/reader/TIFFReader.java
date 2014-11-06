@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    06Nov2014  Planar support for stripped YCbCr image
  * WY    05Nov2014  Fixed bug for YCbCr image with wrong image width and height
  * WY    31Oct2014  Added basic support for uncompressed and LZW compressed YCbCr
  * WY    15Oct2014  Added basic support for 16 bits RGB image
@@ -325,8 +326,10 @@ public class TIFFReader extends ImageReader {
 				int[] samplingFactor = {2, 2}; // Default value, Not [1, 1]
 				TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
 				if(f_YCbCrSubSampling != null) samplingFactor = f_YCbCrSubSampling.getDataAsLong();
+				
 				int expandedImageWidth = ((imageWidth + samplingFactor[0] - 1)/samplingFactor[0])*samplingFactor[0];
 				int expandedImageHeight = ((imageHeight + samplingFactor[1] - 1)/samplingFactor[1])*samplingFactor[1];				
+				
 				float referenceBlackY = 0.0f;
 				float referenceWhiteY = 255.0f;
 			    float referenceBlackCb = 128.0f;
@@ -365,23 +368,25 @@ public class TIFFReader extends ImageReader {
 					lumaGreen = 1.0f*lumas[2]/lumas[3];
 					lumaBlue = 1.0f*lumas[4]/lumas[5];
 				}
-				
-				int bytesPerUnitY = samplingFactor[0]*samplingFactor[1];
-				int bytesPerUnitCb = 1;
-				int bytesPerUnitCr = 1;
-				int bytesPerDataUnit = bytesPerUnitY + bytesPerUnitCb + bytesPerUnitCr;
-				int dataUnitsPerWidth = expandedImageWidth/samplingFactor[0];
 											
 				int offsetX = 0;
 				int offsetY = 0;
-				int bytesY = expandedImageWidth*expandedImageHeight;
-				pixels = new byte[bytesY*3 + rowsPerStrip*expandedImageWidth*samplesPerPixel]; // Make sure this is large enough!!!
 				
-				switch(compression) {
-					case NONE:
-						if(planaryConfiguration == 1) {
-							byte[] temp = null;
+				int bytesY = expandedImageWidth*expandedImageHeight;
+				pixels = new byte[bytesY*3];
+				
+				byte[] temp = null, temp2 = null;
 						
+				if(planaryConfiguration == 1) {
+					// Define variables related to data unit
+					int bytesPerUnitY = samplingFactor[0]*samplingFactor[1];
+					int bytesPerUnitCb = 1;
+					int bytesPerUnitCr = 1;
+					int bytesPerDataUnit = bytesPerUnitY + bytesPerUnitCb + bytesPerUnitCr;
+					int dataUnitsPerWidth = expandedImageWidth/samplingFactor[0];							
+					
+					switch(compression) {
+						case NONE:
 							for(int i = 0; i < stripByteCounts.length; i++) {
 								randIS.seek(stripOffsets[i]);
 								int len = stripByteCounts[i];
@@ -390,6 +395,7 @@ public class TIFFReader extends ImageReader {
 								
 								offset = 0;
 								offsetX = 0;
+								
 								int numOfDataUnit = len/bytesPerDataUnit;
 						
 								for(int j = 1; j <= numOfDataUnit; j++) {
@@ -439,16 +445,10 @@ public class TIFFReader extends ImageReader {
 										offsetX = 0;
 									}
 								}
-							}
-						} else {
+							}							
 							
-						}
-						break;
-					case LZW:
-						if(planaryConfiguration == 1) {
-							byte[] temp = null;
-							byte[] temp2 = null;
-								
+							break;
+						case LZW:
 							for(int i = 0; i < stripByteCounts.length; i++) {
 								randIS.seek(stripOffsets[i]);
 								int len = stripByteCounts[i];
@@ -461,6 +461,7 @@ public class TIFFReader extends ImageReader {
 								
 								offset = 0;
 								offsetX = 0;
+								
 								int numOfDataUnit = numOfBytes/bytesPerDataUnit;
 								
 								for(int j = 1; j <= numOfDataUnit; j++) {
@@ -472,17 +473,17 @@ public class TIFFReader extends ImageReader {
 											// Populate the pixels array
 											int Y = temp2[offset++]&0xff;
 											// Convert YCbCr code to full-range YCbCr.
-									        float fY = (Y - referenceBlackY)*codingRangeY/(referenceWhiteY - referenceBlackY);
-									        float fCb = (Cb - referenceBlackCb)*codingRangeCbCr/(referenceWhiteCb - referenceBlackCb);
-									        float fCr = (Cr - referenceBlackCr)*codingRangeCbCr/(referenceWhiteCr - referenceBlackCr);
-									        /*
-									         * R, G, and B may be computed from YCbCr as follows:
-									         * R = Cr * ( 2 - 2 * LumaRed ) + Y
-									         * G = ( Y - LumaBlue * B - LumaRed * R ) / LumaGreen
-									         * B = Cb * ( 2 - 2 * LumaBlue ) + Y
-									        */ 
-									        float R =  (fCr * (2 - 2 * lumaRed) + fY);
-									        float B = (fCb * (2 - 2 * lumaBlue) + fY);
+											float fY = (Y - referenceBlackY)*codingRangeY/(referenceWhiteY - referenceBlackY);
+											float fCb = (Cb - referenceBlackCb)*codingRangeCbCr/(referenceWhiteCb - referenceBlackCb);
+											float fCr = (Cr - referenceBlackCr)*codingRangeCbCr/(referenceWhiteCr - referenceBlackCr);
+											/*
+											 * R, G, and B may be computed from YCbCr as follows:
+											 * R = Cr * ( 2 - 2 * LumaRed ) + Y
+											 * G = ( Y - LumaBlue * B - LumaRed * R ) / LumaGreen
+											 * B = Cb * ( 2 - 2 * LumaBlue ) + Y
+											 */ 
+											float R =  (fCr * (2 - 2 * lumaRed) + fY);
+											float B = (fCb * (2 - 2 * lumaBlue) + fY);
 											float G = ((fY - lumaBlue * B - lumaRed * R) / lumaGreen);
 											// This is very important!!!
 											if(R < 0) R = 0;
@@ -491,9 +492,10 @@ public class TIFFReader extends ImageReader {
 											if(G > 255) G = 255;
 											if(B < 0) B = 0;
 											if(B > 255) B = 255;
-											//
+											
 											int yPos = offsetX + offsetY*expandedImageWidth;
 											int redPos = 3*yPos;
+											
 											pixels[redPos] = (byte)R;
 											pixels[redPos+1] = (byte)G;
 											pixels[redPos+2] = (byte)B;
@@ -510,11 +512,79 @@ public class TIFFReader extends ImageReader {
 									}
 								}
 							}
-						} else {
 							
-						}
-						break;
-					default:
+							break;
+						default:
+					}				
+				} else {
+					// Planar configuration
+					bytesPerScanLine = (expandedImageWidth*bitsPerSample + 7)/8;
+								
+					switch(compression) {
+						case NONE:
+							int stripsPerSample = stripByteCounts.length/samplesPerPixel;
+							byte[][] buf = new byte[samplesPerPixel][];
+							ByteArrayOutputStream bout = new ByteArrayOutputStream();
+							for(int i = 0, index = 0; i < samplesPerPixel; i++) {
+								for(int j = 0; j < stripsPerSample; j++, index++) {
+									randIS.seek(stripOffsets[index]);
+									int len = stripByteCounts[index];
+									temp = new byte[len];
+									randIS.readFully(temp);
+									bout.write(temp);
+								}
+								buf[i] = bout.toByteArray();
+								bout.reset();
+							}
+							
+							int yPos = 0;
+							int CbPos = 0;
+							int CrPos = 0;
+							int yOffset = 0;
+						
+							int stride = samplingFactor[0]*samplingFactor[1];
+							int counter = 1;
+							
+							for(int i = 0; i < expandedImageHeight; i++) {
+								for(int j = 0; j < expandedImageWidth; j++, yPos++, yOffset++, counter++) {
+									// Populate the pixels array
+									int Y = buf[0][yPos]&0xff;
+									int Cb = buf[1][CbPos]&0xff;
+									int Cr = buf[2][CrPos]&0xff;
+									if(counter%stride == 0) {
+										CbPos++;
+										CrPos++;
+									}
+									// Convert YCbCr code to full-range YCbCr.
+							        float fY = (Y - referenceBlackY)*codingRangeY/(referenceWhiteY - referenceBlackY);
+							        float fCb = (Cb - referenceBlackCb)*codingRangeCbCr/(referenceWhiteCb - referenceBlackCb);
+							        float fCr = (Cr - referenceBlackCr)*codingRangeCbCr/(referenceWhiteCr - referenceBlackCr);
+							        /*
+							         * R, G, and B may be computed from YCbCr as follows:
+							         * R = Cr * ( 2 - 2 * LumaRed ) + Y
+							         * G = ( Y - LumaBlue * B - LumaRed * R ) / LumaGreen
+							         * B = Cb * ( 2 - 2 * LumaBlue ) + Y
+							        */ 
+							        float R = (fCr * (2 - 2 * lumaRed) + fY);
+							        float B = (fCb * (2 - 2 * lumaBlue) + fY);
+									float G = ((fY - lumaBlue * B - lumaRed * R) / lumaGreen);
+									// This is very important!!!
+									if(R < 0) R = 0;
+									if(R > 255) R = 255;
+									if(G < 0) G = 0;
+									if(G > 255) G = 255;
+									if(B < 0) B = 0;
+									if(B > 255) B = 255;
+									//								
+									int redPos = 3*yOffset;
+									
+									pixels[redPos] = (byte)R;
+									pixels[redPos+1] = (byte)G;
+									pixels[redPos+2] = (byte)B;			
+								}
+							}							
+						default:
+					}					
 				}
 				//Create a BufferedImage
 				db = new DataBufferByte(pixels, pixels.length);
@@ -546,10 +616,10 @@ public class TIFFReader extends ImageReader {
 					case PACKBITS:
 						for(int i = 0; i < stripByteCounts.length; i++) {
 							int bytes2Read = stripBytes[i];
-							byte[] temp = new byte[stripByteCounts[i]];
+							temp = new byte[stripByteCounts[i]];
 							randIS.seek(stripOffsets[i]);
 							randIS.readFully(temp);
-							byte[] temp2 = new byte[bytes2Read];
+							temp2 = new byte[bytes2Read];
 							Packbits.unpackbits(temp, temp2);
 							System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
 							offset += bytes2Read;
@@ -567,7 +637,7 @@ public class TIFFReader extends ImageReader {
 				if(decoder != null) {					
 					pixels = new byte[stripOffsets.length*stripBytes[0]];
 					for(int i = 0; i < stripByteCounts.length; i++) {
-						byte[] temp = new byte[stripByteCounts[i]];
+						temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
 						randIS.readFully(temp);
 						decoder.setInput(temp);
