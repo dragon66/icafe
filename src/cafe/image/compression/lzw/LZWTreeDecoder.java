@@ -256,6 +256,8 @@ public class LZWTreeDecoder implements ImageDecoder
 		is = new ByteArrayInputStream(input, offset, len);
 		// Must discard the remaining bits!!!
 		bits_remain = 0;
+		// and the leftover!!!
+		leftOver = 0;
 		// Reset string table
 		clearStringTable();		
 	}
