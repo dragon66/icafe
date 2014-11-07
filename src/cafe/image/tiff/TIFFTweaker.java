@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    07Nov2014  Fixed bug for mergeTiffImagesEx() when there is no compression field
  * WY    06Nov2014  Fixed bug for getUncompressedStripByteCounts() with YCbCr image
  * WY    28Oct2014  Changed mergeTiffImagesEx() to use flipEndian() from ArrayUtils
  * WY    24Oct2014  Added getBytes2Read() to fix bug of uncompressed image with only one
@@ -342,7 +343,7 @@ public class TIFFTweaker {
 			
 			// Uncompressed image with one strip or tile (may contain wrong StripByteCounts value)
 			// Bug fix for uncompressed image with one strip and wrong StripByteCounts value
-			if(tiffField != null && tiffField.getDataAsLong()[0] == 1) { // Uncompressed data
+			if((tiffField == null ) || (tiffField != null && tiffField.getDataAsLong()[0] == 1)) { // Uncompressed data
 				int planaryConfiguration = 1;
 				
 				tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
@@ -1120,7 +1121,10 @@ public class TIFFTweaker {
 								merged.seek(offset);
 								
 								TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION.getValue());
-								TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(tiffField.getDataAsLong()[0]);
+								int tiffCompression = 1;
+								if(tiffField != null)
+									tiffCompression = tiffField.getDataAsLong()[0];
+								TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(tiffCompression);
 								// Need to uncompress the data, reorder the byte sequence, and compress the data again
 								switch(compression) { // Predictor seems to work for LZW, DEFLATE as is! Need more test though!
 									case LZW: // Tested
