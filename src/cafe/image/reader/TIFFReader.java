@@ -13,13 +13,13 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    07Nov2014  Added support for 16 bit CMYK image
  * WY    06Nov2014  Planar support for stripped YCbCr image
  * WY    05Nov2014  Fixed bug for YCbCr image with wrong image width and height
  * WY    31Oct2014  Added basic support for uncompressed and LZW compressed YCbCr
  * WY    15Oct2014  Added basic support for 16 bits RGB image
  * WY    14Oct2014  Revised to show specification violation TIFF LZW compression
- * WY    14Oct2014  Revised to show RGB TIFF with extra sample tag 
- *                  - limited to unassociated alpha sample
+ * WY    14Oct2014  Revised to show RGB TIFF with extra sample tag
  */
 
 package cafe.image.reader;
@@ -110,7 +110,9 @@ public class TIFFReader extends ImageReader {
 	private BufferedImage decodeStrippedTiff(IFD ifd) throws Exception {
 		// Grab some of the TIFF fields we are interested in
 		TiffField<?> field = ifd.getField(TiffTag.COMPRESSION.getValue());
-		short[] data = (short[])field.getData();
+		short[] data = new short[]{1}; // Default no compression
+		if(field != null)
+			data = (short[])field.getData();
 		TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(data[0]&0xffff);
 		System.out.println("Compression type: " + compression.getDescription());
 		// Forget about tiled TIFF for now
@@ -153,6 +155,7 @@ public class TIFFReader extends ImageReader {
 		boolean isAssociatedAlpha = false;
 		int numOfBands = samplesPerPixel;
 		int trans = Transparency.OPAQUE;
+		
 		TiffField<?> f_extraSamples = ifd.getField(TiffTag.EXTRA_SAMPLES.getValue());
 		if(f_extraSamples != null) isAssociatedAlpha = (f_extraSamples.getDataAsLong()[0] == 1)? true:false;
 		
@@ -229,12 +232,11 @@ public class TIFFReader extends ImageReader {
 			case SEPARATED:
 				// Hopefully CMYK
 				bytesPerScanLine = samplesPerPixel*((imageWidth*bitsPerSample + 7)/8);
+				int totalBytes = bytesPerScanLine*imageHeight;
 				if(planaryConfiguration == 2) bytesPerScanLine = (imageWidth*bitsPerSample + 7)/8;
-				pixels = new byte[imageHeight*bytesPerScanLine];
+				pixels = new byte[totalBytes];
 				switch(compression) {
 					case NONE:
-						bytesPerScanLine = imageWidth*samplesPerPixel*bitsPerSample/8;
-						pixels = new byte[imageWidth*bytesPerScanLine];
 						for(int i = 0; i < stripByteCounts.length; i++) {
 							int bytes2Read = stripBytes[i];
 							randIS.seek(stripOffsets[i]);
@@ -273,7 +275,7 @@ public class TIFFReader extends ImageReader {
 				ICC_Profile profile = null;
 				if(f_colorProfile != null) profile = ICC_Profile.getInstance((byte[])f_colorProfile.getData());
 				ColorSpace colorSpace  = CMYKColorSpace.getInstance();
-				if(profile != null) colorSpace = new ICC_ColorSpace(profile);
+				if(profile != null) colorSpace = new ICC_ColorSpace(profile);			
 				//band offset, we have 4 bands if no extra sample is specified, otherwise 5
 				int[] bandoff = {0, 1, 2, 3}; 
 				int[] nBits = {8, 8, 8, 8};
@@ -285,21 +287,33 @@ public class TIFFReader extends ImageReader {
 					transparent = true;
 				}				
 				if(bitsPerSample == 16) {
-					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, true);
+					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, endian == IOUtils.BIG_ENDIAN);
 					db = new DataBufferUShort(spixels, spixels.length);
-					int[] off = {0, 1, 2, 3}; //band offset, we have 4 bands
-					nBits = new int[]{16, 16, 16, 16};
-					trans = Transparency.OPAQUE;	
-					numOfBands = samplesPerPixel;
+					nBits = new int[]{16, 16, 16, 16};	
 					if(samplesPerPixel >= 5) {
-						off = new int[]{0, 1, 2, 3, 4};
+						bandoff = new int[]{0, 1, 2, 3, 4};
 						nBits = new int[]{16, 16, 16, 16, 16};
 						trans = Transparency.TRANSLUCENT;
-					}										
-					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, off, null);
+						transparent = true;
+					}					
 					cm = new ComponentColorModel(CMYKColorSpace.getInstance(), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
+					if(planaryConfiguration == 2) {
+						bandoff = new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample, (count[0] + count[1] + count[2])*8/bitsPerSample};
+						int[] bandIndices = new int[]{0, 0, 0, 0};
+						if(samplesPerPixel >= 5) {
+							bandoff = new int[]{0, count[0], count[0] + count[1], count[0] + count[1] + count[2], count[0] + count[1] + count[2] + count[3]};
+							bandIndices = new int[]{0, 0, 0, 0, 0};
+						}		
+						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine*8/bitsPerSample, bandIndices, bandoff, null);
+					} else {						
+						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+					}
+					if(profile != null) {
+						raster = IMGUtils.CMYK2RGB(raster, cm);
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, raster.getTransferType());
+					}
 				} else {
-					cm = new ComponentColorModel(colorSpace, nBits, transparent, false, trans, DataBuffer.TYPE_BYTE);
+					cm = new ComponentColorModel(colorSpace, nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
 					if(planaryConfiguration == 2) {
 						bandoff = new int[]{0, count[0], count[0] + count[1], count[0] + count[1] + count[2]};
 						int[] bandIndices = new int[]{0, 0, 0, 0};
@@ -308,17 +322,13 @@ public class TIFFReader extends ImageReader {
 							bandIndices = new int[]{0, 0, 0, 0, 0};
 						}		
 						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine, bandIndices, bandoff, null);
-						if(profile != null) {			
-							raster = IMGUtils.CMYK2RGB(raster, cm);
-							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
-						}
 					} else {
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
-						if(profile != null) {
-							raster = IMGUtils.CMYK2RGB(raster, cm);
-							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
-						}				
 					}
+					if(profile != null) {
+						raster = IMGUtils.CMYK2RGB(raster, cm);
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
+					}				
 				}
 				
 				return new BufferedImage(cm, raster, false, null);
@@ -870,7 +880,7 @@ public class TIFFReader extends ImageReader {
 	 
 	private boolean readHeader(RandomAccessInputStream randIS) throws IOException {
 		// First 2 bytes determine the byte order of the file
-		short endian = randIS.readShort();
+		endian = randIS.readShort();
 		
 		if(endian == IOUtils.BIG_ENDIAN)
 		{
@@ -883,8 +893,6 @@ public class TIFFReader extends ImageReader {
 			System.out.println("Warning: invalid TIFF byte order!");
 			return false;
 		} 
-		
-		this.endian = endian;
 		
 		// Read TIFF identifier
 		short tiff_id = randIS.readShort();
