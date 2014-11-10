@@ -278,33 +278,26 @@ public class TIFFReader extends ImageReader {
 				if(profile != null) colorSpace = new ICC_ColorSpace(profile);			
 				//band offset, we have 4 bands if no extra sample is specified, otherwise 5
 				int[] bandoff = {0, 1, 2, 3}; 
-				int[] nBits = {8, 8, 8, 8};
+				int[] nBits = {bitsPerSample, bitsPerSample, bitsPerSample, bitsPerSample};
 				// There is an extra sample (most probably alpha)
 				if(samplesPerPixel >= 5) {
 					bandoff = new int[]{0, 1, 2, 3, 4};
-					nBits = new int[]{8, 8, 8, 8, 8};
+					nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample, bitsPerSample, bitsPerSample};
 					trans = Transparency.TRANSLUCENT;
 					transparent = true;
 				}				
 				if(bitsPerSample == 16) {
 					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, endian == IOUtils.BIG_ENDIAN);
 					db = new DataBufferUShort(spixels, spixels.length);
-					nBits = new int[]{16, 16, 16, 16};	
-					if(samplesPerPixel >= 5) {
-						bandoff = new int[]{0, 1, 2, 3, 4};
-						nBits = new int[]{16, 16, 16, 16, 16};
-						trans = Transparency.TRANSLUCENT;
-						transparent = true;
-					}					
 					cm = new ComponentColorModel(CMYKColorSpace.getInstance(), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
 					if(planaryConfiguration == 2) {
 						bandoff = new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample, (count[0] + count[1] + count[2])*8/bitsPerSample};
-						int[] bandIndices = new int[]{0, 0, 0, 0};
+						int[] bankIndices = new int[]{0, 0, 0, 0};
 						if(samplesPerPixel >= 5) {
 							bandoff = new int[]{0, count[0], count[0] + count[1], count[0] + count[1] + count[2], count[0] + count[1] + count[2] + count[3]};
-							bandIndices = new int[]{0, 0, 0, 0, 0};
+							bankIndices = new int[]{0, 0, 0, 0, 0};
 						}		
-						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine*8/bitsPerSample, bandIndices, bandoff, null);
+						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine*8/bitsPerSample, bankIndices, bandoff, null);
 					} else {						
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
 					}
@@ -316,12 +309,12 @@ public class TIFFReader extends ImageReader {
 					cm = new ComponentColorModel(colorSpace, nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
 					if(planaryConfiguration == 2) {
 						bandoff = new int[]{0, count[0], count[0] + count[1], count[0] + count[1] + count[2]};
-						int[] bandIndices = new int[]{0, 0, 0, 0};
+						int[] bankIndices = new int[]{0, 0, 0, 0};
 						if(samplesPerPixel >= 5) {
 							bandoff = new int[]{0, count[0], count[0] + count[1], count[0] + count[1] + count[2], count[0] + count[1] + count[2] + count[3]};
-							bandIndices = new int[]{0, 0, 0, 0, 0};
+							bankIndices = new int[]{0, 0, 0, 0, 0};
 						}		
-						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine, bandIndices, bandoff, null);
+						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine, bankIndices, bandoff, null);
 					} else {
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
 					}
@@ -668,40 +661,32 @@ public class TIFFReader extends ImageReader {
 					}						
 				}
 				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
-				bandoff = new int[]{0, 1, 2}; 
+				bandoff = new int[]{0, 1, 2};
+				nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample};
 				transparent = false;
 				numOfBands = samplesPerPixel;
-				trans = Transparency.OPAQUE;				
+				trans = Transparency.OPAQUE;
+				if(samplesPerPixel == 4) {
+					bandoff = new int[]{0, 1, 2, 3};
+					nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample, bitsPerSample};
+					trans = Transparency.TRANSLUCENT;
+					transparent = true;
+				}				
 				if(bitsPerSample == 16) {
 					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, endian == IOUtils.BIG_ENDIAN);
 					db = new DataBufferUShort(spixels, spixels.length);
-					nBits = new int[]{16, 16, 16};	
-					if(samplesPerPixel == 4) {
-						bandoff = new int[]{0, 1, 2, 3};
-						nBits = new int[]{16, 16, 16, 16};
-						trans = Transparency.TRANSLUCENT;
-						transparent = true;
-					}					
 				} else {
 					//Create a BufferedImage
 					db = new DataBufferByte(pixels, pixels.length);					
-					nBits = new int[]{8, 8, 8};
-					// There is an extra sample (most probably alpha)
-					if(samplesPerPixel == 4) {
-						bandoff = new int[]{0, 1, 2, 3};
-						nBits = new int[]{8, 8, 8, 8};
-						trans = Transparency.TRANSLUCENT;
-						transparent = true;
-					}					
 				}
 				if(planaryConfiguration == 2) {
 					bandoff = new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample};
-					int[] bandIndices = new int[]{0, 0, 0};
+					int[] bankIndices = new int[]{0, 0, 0};
 					if(samplesPerPixel == 4) {
 						bandoff = new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample, (count[0] + count[1] + count[2])*8/bitsPerSample};
-						bandIndices = new int[]{0, 0, 0, 0};
+						bankIndices = new int[]{0, 0, 0, 0};
 					}							
-					raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine*8/bitsPerSample, bandIndices, bandoff, null);					
+					raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine*8/bitsPerSample, bankIndices, bandoff, null);					
 				} else
 					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
 				if(bitsPerSample == 16)
@@ -779,47 +764,112 @@ public class TIFFReader extends ImageReader {
 		
 		ImageDecoder decoder = null;
 		byte[] pixels = null;
-		int bytes2Read = ((tileWidth*bitsPerSample*samplesPerPixel + 7)/8)*tileLength;
+		
+		int bytes2Read = ((tileWidth*bitsPerSample + 7)/8)*samplesPerPixel*tileLength;
+		
+		int[] stripBytes = TIFFTweaker.getUncompressedStripByteCounts(ifd, tileOffsets.length);
+		
+		int[] count = new int[samplesPerPixel];
+		
+		if(planaryConfiguration == 2) {
+			int inc = stripBytes.length/samplesPerPixel;
+			int startOff = 0;
+			int endOff = inc;
+			for(int k = 0; k < samplesPerPixel; k++) {
+				for(int j = startOff; j < endOff; j++) count[k] += stripBytes[j];
+				startOff += inc;
+				endOff += inc ;
+			}
+		}
 		
 		switch(e_photoMetric) {
 			case RGB:
 				//Create a BufferedImage
-				pixels = new byte[tileLength*((tileWidth*bitsPerSample*samplesPerPixel +7)/8)*tilesPerImage];
+				pixels = new byte[tileLength*((tileWidth*bitsPerSample +7)/8)*samplesPerPixel*tilesPerImage];
+				short[] spixels = null;
 				DataBuffer db = new DataBufferByte(pixels, pixels.length);
 				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
 				int[] bandoff = new int[]{0, 1, 2}; 
 				boolean transparent = false;
 				int numOfBands = samplesPerPixel;
 				int trans = Transparency.OPAQUE;
-				int[] nBits = new int[]{8, 8, 8};
+				int[] nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample};
 				// There is an extra sample (most probably alpha)
 				if(samplesPerPixel == 4) {
 					bandoff = new int[]{0, 1, 2, 3};
-					nBits = new int[]{8, 8, 8, 8};
+					nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample, bitsPerSample};
 					trans = Transparency.TRANSLUCENT;
 					transparent = true;
 				}
-				WritableRaster raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross*numOfBands, numOfBands, bandoff, null);
 				ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
-			                trans, DataBuffer.TYPE_BYTE);					
+			                trans, DataBuffer.TYPE_BYTE);
+				if(bitsPerSample == 16) {
+					spixels = new short[pixels.length];
+					db = new DataBufferUShort(spixels, spixels.length);
+					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
+			                trans, DataBuffer.TYPE_USHORT);
+				}
+				WritableRaster raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross*numOfBands, numOfBands, bandoff, null);
 				// Now we are going to read and set tiles to the raster
 				int xoff = 0;
 				int yoff = 0;
 				int tileCounter = 0;
 				switch(compression) {
 					case NONE:
-						for(int i = 0; i < tileByteCounts.length; i++) {
-							byte[] temp = new byte[tileByteCounts[i]];
-							randIS.seek(tileOffsets[i]);
-							randIS.readFully(temp);
-							raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp);
-							xoff += tileWidth;
-							tileCounter++;
-							if(tileCounter >= tilesAcross) {
-								xoff = 0;
-								yoff += tileLength;
-								tileCounter = 0;
-							}						
+						if(planaryConfiguration == 1) {
+							for(int i = 0; i < tileByteCounts.length; i++) {
+								byte[] temp = new byte[tileByteCounts[i]];
+								randIS.seek(tileOffsets[i]);
+								randIS.readFully(temp);
+								if(bitsPerSample == 16) {
+									raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp, endian == IOUtils.BIG_ENDIAN));
+								} else
+									raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp);
+								xoff += tileWidth;
+								tileCounter++;
+								if(tileCounter >= tilesAcross) {
+									xoff = 0;
+									yoff += tileLength;
+									tileCounter = 0;
+								}						
+							}
+						} else {							
+							byte[][] rgb = new byte[samplesPerPixel][];
+							Raster tileRaster = null;
+							DataBuffer tileDatabuffer = null;
+							int[] bankIndices = {0, 1, 2};
+							bandoff = new int[]{0, 0, 0};
+							raster = Raster.createBandedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileLength*tilesAcross, new int[]{0, 0, 0}, new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample}, null);
+							for(int i = 0; i < tilesPerImage; i++) {
+								rgb[0] = new byte[tileByteCounts[i]];
+								randIS.seek(tileOffsets[i]);
+								randIS.readFully(rgb[0]);
+								int greenOff = i + tilesPerImage;
+								rgb[1] = new byte[tileByteCounts[greenOff]];
+								randIS.seek(tileOffsets[greenOff]);
+								randIS.readFully(rgb[1]);
+								int blueOff = greenOff + tilesPerImage;
+								rgb[2] = new byte[tileByteCounts[blueOff]];
+								randIS.seek(tileOffsets[blueOff]);
+								randIS.readFully(rgb[2]);
+								if(bitsPerSample == 16) {
+									tileDatabuffer = new DataBufferUShort(new short[][]{ArrayUtils.byteArrayToShortArray(rgb[0], endian == IOUtils.BIG_ENDIAN), 
+											ArrayUtils.byteArrayToShortArray(rgb[1], endian == IOUtils.BIG_ENDIAN), 
+											ArrayUtils.byteArrayToShortArray(rgb[2], endian == IOUtils.BIG_ENDIAN)},
+											tileWidth);
+								} else {
+									tileDatabuffer = new DataBufferByte(rgb, rgb[0].length);
+								}
+								tileRaster = Raster.createBandedRaster(tileDatabuffer, tileWidth, tileLength, tileWidth, bankIndices, bandoff, null);
+								raster.setRect(xoff, yoff, tileRaster);
+								xoff += tileWidth;
+								tileCounter++;
+								if(tileCounter >= tilesAcross) {
+									xoff = 0;
+									yoff += tileLength;
+									tileCounter = 0;
+								}
+							}							
 						}
 						break;
 					case PACKBITS:
@@ -829,7 +879,10 @@ public class TIFFReader extends ImageReader {
 							randIS.readFully(temp);
 							byte[] temp2 = new byte[bytes2Read];
 							Packbits.unpackbits(temp, temp2);
-							raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp2);
+							if(bitsPerSample == 16) {
+								raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
+							} else
+								raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp2);
 							xoff += tileWidth;
 							tileCounter++;
 							if(tileCounter >= tilesAcross) {
@@ -856,7 +909,10 @@ public class TIFFReader extends ImageReader {
 						randIS.readFully(temp);
 						decoder.setInput(temp);
 						decoder.decode(temp2, 0, bytes2Read);
-						raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp2);
+						if(bitsPerSample == 16) {
+							raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
+						} else
+							raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp2);
 						xoff += tileWidth;
 						tileCounter++;
 						if(tileCounter >= tilesAcross) {
@@ -867,9 +923,9 @@ public class TIFFReader extends ImageReader {
 					}
 				}
 				// This also works with 4 samples per pixel data
-				if(predictor == 2 && planaryConfiguration == 1)
+				if(predictor == 2 && planaryConfiguration == 1 && bitsPerPixel == 8)
 					pixels = applyDePredictor(samplesPerPixel, pixels, imageWidth, imageHeight);
-								
+			
 				return new BufferedImage(cm, raster, false, null).getSubimage(0, 0, imageWidth, imageHeight);
 			default:
 		 		break;
