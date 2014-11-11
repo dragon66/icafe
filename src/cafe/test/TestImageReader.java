@@ -3,6 +3,7 @@ package cafe.test;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileOutputStream;
 
 import javax.swing.ImageIcon;
@@ -28,7 +29,10 @@ public class TestImageReader {
 	 public static void main(String args[]) throws Exception
 	 {
 		  long t1 = System.currentTimeMillis();
-		  BufferedImage img = ImageIO.read(args[0]);
+		  BufferedImage img = ImageIO.read(new File(args[0]));
+		  System.out.println(img.getColorModel());
+		  System.out.println(img.getRaster());
+		  System.out.println(img.getSampleModel());
 		  long t2 = System.currentTimeMillis();
 		
 		  System.out.println("decoding time "+(t2-t1)+"ms");
