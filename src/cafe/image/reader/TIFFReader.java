@@ -34,6 +34,7 @@ import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferUShort;
+import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
@@ -78,6 +79,9 @@ public class TIFFReader extends ImageReader {
 	private RandomAccessInputStream randIS = null;
 	private List<IFD> list = new ArrayList<IFD>();
 	private int endian = IOUtils.BIG_ENDIAN;
+	private static final long[] redMask =   {0x00, 0x04, 0x30, 0x1c0, 0xf00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfff000000L};
+	private static final long[] greenMask = {0x00, 0x02, 0x0c, 0x038, 0x0f0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfff000};
+	private static final long[] blueMask =  {0x00, 0x01, 0x03, 0x007, 0x00f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfff};
 	 
 	public BufferedImage read(InputStream is) throws Exception
 	{
@@ -660,6 +664,7 @@ public class TIFFReader extends ImageReader {
 						}						
 					}						
 				}
+				cm = null;
 				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
 				bandoff = new int[]{0, 1, 2};
 				nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample};
@@ -685,15 +690,31 @@ public class TIFFReader extends ImageReader {
 					if(samplesPerPixel == 4) {
 						bandoff = new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample, (count[0] + count[1] + count[2])*8/bitsPerSample};
 						bankIndices = new int[]{0, 0, 0, 0};
-					}							
-					raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine*8/bitsPerSample, bankIndices, bandoff, null);					
-				} else
-					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+					}
+					if(bitsPerSample < 8) {						
+						raster = Raster.createPackedRaster(db, imageWidth, imageHeight, samplesPerPixel*bitsPerSample, null);
+					} else
+						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, bytesPerScanLine*8/bitsPerSample, bankIndices, bandoff, null);					
+				} else {
+					if(bitsPerSample < 8) {
+						Object tempArray = ArrayUtils.toNBits(bitsPerSample*samplesPerPixel, pixels, imageWidth, true);
+						cm = new DirectColorModel(bitsPerSample*samplesPerPixel, (int)redMask[bitsPerSample], (int)greenMask[bitsPerSample], (int)blueMask[bitsPerSample]);
+						raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
+						raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
+					} else if(bitsPerSample == 8) {
+						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+					} else {
+						Object tempArray = ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN);
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
+						raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
+						raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
+					}
+				}
 				if(bitsPerSample == 16)
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,	trans, DataBuffer.TYPE_USHORT);
-				else
+				else if(bitsPerSample == 8)
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,	trans, DataBuffer.TYPE_BYTE);
-				
+			
 				return new BufferedImage(cm, raster, false, null);
 			default:
 		 		break;
