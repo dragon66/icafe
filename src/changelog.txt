@@ -1,6 +1,8 @@
 ***************************
-Last modified on 11/07/2014
+Last modified on 11/11/2014
 ***************************
+11Nov2014  Added toNBits() to ArrayUtils to convert byte array to nBits data unit
+11Nov2014  Added scan line stride to flipEndian() in ArrayUtils 
 07Nov2014  Fixed bug with mergeTiffImagesEx() in TIFFTweaker with no compression field
 06Nov2014  Fixed TIFFTweaker bug for YCbCr image with wrong image width and height 
 05Nov2014  Fixed TIFFReader bug for YCbCr image with wrong image width and height
