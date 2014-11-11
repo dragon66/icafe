@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    11Nov2014  Changed flipEndian() to include scan line stride to skip bits
+ * WY    11Nov2014  Added toNBits() to convert byte array to nBits data unit
  * WY    28Oct2014  Added flipEndian() to work with TIFTweaker mergeTiffImagesEx()
  */
 
@@ -331,23 +333,26 @@ public class ArrayUtils
      * @param offset the offset to start the reading input
      * @param bits number of bits for the data before compaction
      * @param len number of bytes to read
+     * @param scanLineStride scan line stride to skip bits
      * @param bigEndian whether or not the input data is in big endian order
      *
      * @return a byte array with the endian flipped
      */     
-   	public static byte[] flipEndian(byte[] input, int offset, int bits, int len, boolean bigEndian) {
-   		long temp = 0;
+   	public static byte[] flipEndian(byte[] input, int offset, int bits, int len, int scanLineStride, boolean bigEndian) {
+   		int temp = 0;
    		int bits_remain = 0;
    		int temp_byte = 0;
    		int empty_bits = 8;
    		
    		byte[] output = new byte[input.length];
    		
+   		int strideCounter = 0;
+   		
    		// Bit mask 0 - 32 bits
-   		long[] MASK = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff,
+   		int[] MASK = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff,
    				      0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff,
    				      0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff,
-   				      0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffffL};
+   				      0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff};
    		
    		int end = offset + len;
    		int bufIndex = 0;
@@ -382,9 +387,9 @@ public class ArrayUtils
 			bits_remain -= bits;
 			
 			if(bigEndian)
-				temp = (temp>>(bits_remain));			
+				temp = (temp>>(bits_remain));		
 	        
-			long value = (temp&MASK[bits]);			
+			int value = (temp&MASK[bits]);	
 		
 	   	  	//////////////////////// Write bits bit length value in opposite endian	    	
 	    	if(bigEndianOut) {
@@ -419,7 +424,13 @@ public class ArrayUtils
 	    			temp1 -= 8;
 				}
 			}
-			empty_bits = -temp1;
+	    	
+	    	empty_bits = -temp1;
+			
+	    	if(++strideCounter%scanLineStride == 0) {
+				empty_bits = 0;
+				bits_remain = 0;	
+			}			
    	  	}
    		
 		return output;
@@ -763,6 +774,9 @@ public class ArrayUtils
 	}
 	
 	public static byte[] subArray(byte[] src, int offset, int len) {
+		if(offset == 0 && len == src.length) return src;
+		if((offset < 0 || offset >= src.length) || (offset + len > src.length))
+			throw new IllegalArgumentException("Copy range out of array bounds");
 		byte[] dest = new byte[len];
 		System.arraycopy(src, offset, dest, 0, len);
 		
@@ -780,6 +794,97 @@ public class ArrayUtils
 	   array[a] = array[b];
 	   array[b] = temp;
     }
+	
+	/**
+	 * Convert an input byte array to nBits data array using the smallest data type which
+	 * can hold the nBits data. Each data type contains only one data element
+	 * 
+	 * @param nBits number of bits for the data element
+	 * @param input the input array for the data elements
+	 * @param stride scan line stride used to discard remaining bits 
+	 * @param bigEndian the packing order of the bits
+	 * 
+	 * @return an array of the smallest data type which can hold the nBits data
+	 */
+	public static Object toNBits(int nBits, byte[] input, int stride, boolean bigEndian) {
+		int temp = 0;
+   		int bits_remain = 0;
+   		int temp_byte = 0;
+   		
+   		byte[] byteOutput = null;
+   		short[] shortOutput = null;
+   		int[] intOutput = null;   		
+   		Object output = null;
+   		
+   		int outLen = (input.length*8 + nBits - 1)/nBits;
+   		
+   		if(nBits <= 8) {
+   			byteOutput = new byte[outLen];
+   			output = byteOutput;
+   		} else if(nBits <= 16) {
+   			shortOutput = new short[outLen];
+   			output = shortOutput;
+   		} else if(nBits <= 32){
+   			intOutput = new int[outLen];
+   			output = intOutput;   			
+   		} else {
+   			throw new IllegalArgumentException("nBits exceeds limit - maximum 32");
+   		}
+   		// Bit mask 0 - 32 bits
+   		int[] MASK = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff,
+   				      0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff,
+   				      0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff,
+   				      0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff // 32 bits
+   				    };
+   		
+   		int offset = 0;
+    	int index = 0;
+    	
+    	int strideCounter = 0;
+   		
+    	loop:
+   	  	while(true) {  			
+   	   		
+			if(!bigEndian)
+				temp = (temp_byte >> (8-bits_remain));
+			else				
+				temp = (temp_byte & MASK[bits_remain]); 
+				
+			while (nBits > bits_remain)
+			{
+				if(offset >= input.length) {
+					break loop;
+				}
+				
+				temp_byte = input[offset++]&0xff;
+				
+				if(bigEndian)
+					temp = ((temp<<8)|temp_byte);
+				else
+					temp |= (temp_byte<<bits_remain);
+				
+				bits_remain += 8;
+			}
+			
+			bits_remain -= nBits;
+			
+			if(bigEndian)
+				temp = (temp>>(bits_remain));			
+	        
+			int value = (temp&MASK[nBits]);
+			
+			if(++strideCounter%stride == 0) {
+				bits_remain = 0;				
+			}
+		
+			if(nBits <= 8)
+	   	  		byteOutput[index++] = (byte)value;
+			else if(nBits <= 16) shortOutput[index++] = (short)value;
+			else intOutput[index++] = value;
+   	  	}
+   		
+		return output;
+	}
    	
    	private ArrayUtils(){} // Prevents instantiation
 }
