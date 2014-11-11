@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    11Nov2014  Added getRowWidth() to determine scan line stride
  * WY    07Nov2014  Fixed bug for mergeTiffImagesEx() when there is no compression field
  * WY    06Nov2014  Fixed bug for getUncompressedStripByteCounts() with YCbCr image
  * WY    28Oct2014  Changed mergeTiffImagesEx() to use flipEndian() from ArrayUtils
@@ -549,7 +550,7 @@ public class TIFFTweaker {
 		int[] totalBytes2Read = new int[samplesPerPixel];		
 		
 		if(planaryConfiguration == 1)
-			totalBytes2Read[0] = ((rowWidth*bitsPerSample + 7)/8)*samplesPerPixel*rowsPerStrip;
+			totalBytes2Read[0] = ((rowWidth*bitsPerSample*samplesPerPixel + 7)/8)*rowsPerStrip;
 		else
 			totalBytes2Read[0] = totalBytes2Read[1] = totalBytes2Read[2] = ((rowWidth*bitsPerSample + 7)/8)*rowsPerStrip;
 		
@@ -585,6 +586,41 @@ public class TIFFTweaker {
 		rin.seek(STREAM_HEAD); // Reset pointer to the stream head
 		
 		return list.size();
+	}
+	
+	private static int getRowWidth(IFD ifd) {
+		// Get image dimension first
+		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
+		int imageWidth = tiffField.getDataAsLong()[0];
+		
+		// For YCbCr image only
+		int horizontalSampleFactor = 2; // Default 2X2
+		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
+		
+		// Correction for imageWidth and imageHeight for YCbCr image
+		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
+			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
+			
+			if(f_YCbCrSubSampling != null) {
+				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
+				horizontalSampleFactor = sampleFactors[0];
+			}
+			imageWidth = ((imageWidth + horizontalSampleFactor - 1)/horizontalSampleFactor)*horizontalSampleFactor;
+		}
+		
+		int rowWidth = imageWidth;		
+		
+		int tileWidth = -1;
+		
+		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH.getValue());
+		
+		if(f_tileWidth != null) {
+			tileWidth = f_tileWidth.getDataAsLong()[0];
+			if(tileWidth > 0) 
+				rowWidth = tileWidth;
+		}
+			
+		return rowWidth;
 	}
 	
 	// Calculate the expected StripByteCounts values for uncompressed image
@@ -652,7 +688,7 @@ public class TIFFTweaker {
 			rowWidth = tileWidth;
 		}
 		
-		int bytesPerRow = ((bitsPerSample*rowWidth + 7)/8)*samplesPerPixel;
+		int bytesPerRow = ((bitsPerSample*rowWidth*samplesPerPixel + 7)/8);
 	
 		int planaryConfiguration = 1;
 		
@@ -1179,7 +1215,7 @@ public class TIFFTweaker {
 											image2.seek(off[k]);
 											byte[] buf = new byte[counts[k]];
 											image2.readFully(buf);											
-											buf = ArrayUtils.flipEndian(buf, 0, bitsPerSample, buf.length, readEndian == IOUtils.BIG_ENDIAN);
+											buf = ArrayUtils.flipEndian(buf, 0, bitsPerSample, buf.length, samplesPerPixel*getRowWidth(currIFD), readEndian == IOUtils.BIG_ENDIAN);
 											//short[] sbuf = ArrayUtils.byteArrayToShortArray(buf, readEndian == IOUtils.BIG_ENDIAN);
 											//buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
 											merged.write(buf);
