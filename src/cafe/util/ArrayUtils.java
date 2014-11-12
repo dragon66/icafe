@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    12Nov2014  Changed the argument sequence for flipEndian()
  * WY    11Nov2014  Changed flipEndian() to include scan line stride to skip bits
  * WY    11Nov2014  Added toNBits() to convert byte array to nBits data unit
  * WY    28Oct2014  Added flipEndian() to work with TIFTweaker mergeTiffImagesEx()
@@ -331,14 +332,14 @@ public class ArrayUtils
      * 
      * @param input the input byte array which is byte compacted
      * @param offset the offset to start the reading input
-     * @param bits number of bits for the data before compaction
      * @param len number of bytes to read
+     * @param bits number of bits for the data before compaction
      * @param scanLineStride scan line stride to skip bits
      * @param bigEndian whether or not the input data is in big endian order
      *
      * @return a byte array with the endian flipped
      */     
-   	public static byte[] flipEndian(byte[] input, int offset, int bits, int len, int scanLineStride, boolean bigEndian) {
+   	public static byte[] flipEndian(byte[] input, int offset, int len, int bits, int scanLineStride, boolean bigEndian) {
    		int temp = 0;
    		int bits_remain = 0;
    		int temp_byte = 0;
