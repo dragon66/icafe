@@ -42,7 +42,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import cafe.image.colorspace.CMYKColorSpace;
+import cafe.image.color.CMYKColorSpace;
+import cafe.image.color.Int32ComponentColorModel;
 import cafe.image.compression.ImageDecoder;
 import cafe.image.compression.deflate.DeflateDecoder;
 import cafe.image.compression.lzw.LZWTreeDecoder;
@@ -79,9 +80,9 @@ public class TIFFReader extends ImageReader {
 	private RandomAccessInputStream randIS = null;
 	private List<IFD> list = new ArrayList<IFD>();
 	private int endian = IOUtils.BIG_ENDIAN;
-	private static final long[] redMask =   {0x00, 0x04, 0x30, 0x1c0, 0xf00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfff000000L};
-	private static final long[] greenMask = {0x00, 0x02, 0x0c, 0x038, 0x0f0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfff000};
-	private static final long[] blueMask =  {0x00, 0x01, 0x03, 0x007, 0x00f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xfff};
+	private static final int[] redMask =   {0x00, 0x04, 0x30, 0x1c0, 0xf00};
+	private static final int[] greenMask = {0x00, 0x02, 0x0c, 0x038, 0x0f0};
+	private static final int[] blueMask =  {0x00, 0x01, 0x03, 0x007, 0x00f};
 	 
 	public BufferedImage read(InputStream is) throws Exception
 	{
@@ -698,14 +699,19 @@ public class TIFFReader extends ImageReader {
 				} else {
 					if(bitsPerSample < 8) {
 						Object tempArray = ArrayUtils.toNBits(bitsPerSample*samplesPerPixel, pixels, imageWidth, true);
-						cm = new DirectColorModel(bitsPerSample*samplesPerPixel, (int)redMask[bitsPerSample], (int)greenMask[bitsPerSample], (int)blueMask[bitsPerSample]);
+						cm = new DirectColorModel(bitsPerSample*samplesPerPixel, redMask[bitsPerSample], greenMask[bitsPerSample], blueMask[bitsPerSample]);
 						raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
 						raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
 					} else if(bitsPerSample == 8) {
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
 					} else {
 						Object tempArray = ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN);
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
+						if(bitsPerSample <= 16) {
+							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
+						} else if(bitsPerSample == 32) { // A workaround for Java's ComponentColorModel bug with 32 bit sample
+							cm = new Int32ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent);
+						} else
+							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_INT);
 						raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
 						raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
 					}
