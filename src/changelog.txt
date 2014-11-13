@@ -1,6 +1,7 @@
 ***************************
-Last modified on 11/11/2014
+Last modified on 11/13/2014
 ***************************
+13Nov2014  Added Int32ComponentColorModel and moved CMYKColorSpace to new package
 11Nov2014  Added toNBits() to ArrayUtils to convert byte array to nBits data unit
 11Nov2014  Added scan line stride to flipEndian() in ArrayUtils 
 07Nov2014  Fixed bug with mergeTiffImagesEx() in TIFFTweaker with no compression field
