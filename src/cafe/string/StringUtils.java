@@ -49,13 +49,15 @@ public class StringUtils
 	    if(offset < 0 || offset >= bytes.length)
 	    	throw new IllegalArgumentException("Offset out of array bound!");
 	    
-	    if(offset + length > bytes.length)
+	    int endOffset = offset + Math.min(length, bytes.length);
+		 
+	    if(endOffset > bytes.length)
 	    	length = bytes.length - offset;
 	    
 	    StringBuilder hex = new StringBuilder(5*length + 2);	    
 	    hex.append("[");
 	    
-	    for (int i = offset; i < length; i++) {
+	    for (int i = offset; i < endOffset; i++) {
 	    	hex.append("0x").append(HEXES[(bytes[i] & 0xf0) >> 4])
 	         .append(HEXES[bytes[i] & 0x0f]).append(",");
 	    }
@@ -64,7 +66,7 @@ public class StringUtils
 	    if(hex.length() > 1)
 	    	hex.deleteCharAt(hex.length()-1);
 	    
-	    if(offset + length < bytes.length)
+	    if(endOffset < bytes.length)
 	    	hex.append(" ..."); // Partial output
 	    
 	    hex.append("]");
@@ -528,12 +530,31 @@ public class StringUtils
 	 * @return a string representation of the int array.
 	 */
 	public static String longArrayToString(int[] data, boolean unsigned) {
-		StringBuilder longs = new StringBuilder();
-		longs.append("[");
 		
-		for (int i=0; i<data.length; i++)
+		return longArrayToString(data, 0, data.length, unsigned);
+	}
+	
+	public static String longArrayToString(int[] data, int offset, int length, boolean unsigned) {
+		if ( data == null ) {
+		      return null;
+		}
+			
+		if(data.length == 0) return "[]";
+	    
+	    if(offset < 0 || offset >= data.length)
+	    	throw new IllegalArgumentException("Offset out of array bound!");
+	    
+	    int endOffset = offset + Math.min(length, data.length);
+		 
+	    if(endOffset > data.length)
+	    	length = data.length - offset;
+	    
+	    StringBuilder longs = new StringBuilder();	    
+	    longs.append("[");
+		    
+	    for (int i = offset; i < endOffset; i++)
 		{
-			if(unsigned) {
+	    	if(unsigned) {
 				// Convert it to unsigned integer
 				longs.append(data[i]&0xffffffffL);
 			} else {
@@ -541,13 +562,17 @@ public class StringUtils
 			}
 			longs.append(",");
 		}
-		
-		if(longs.length() > 1)
-			longs.deleteCharAt(longs.length()-1);
-		
-		longs.append("]");
-		
-		return longs.toString();
+	    
+	    // Remove the last ","
+	    if(longs.length() > 1)
+	    	longs.deleteCharAt(longs.length()-1);
+	    
+	    if(endOffset < data.length)
+	    	longs.append(" ..."); // Partial output
+	    
+	    longs.append("]");
+	    
+	    return longs.toString();	    
 	}
 	
 	public static boolean parseBoolean(String s) {
@@ -728,10 +753,29 @@ public class StringUtils
 	 */
 	public static String shortArrayToString(short[] data, boolean unsigned) 
 	{
-		StringBuilder shorts = new StringBuilder();
-		shorts.append("[");
-		
-		for (int i=0; i<data.length; i++)
+		return shortArrayToString(data, 0, data.length, unsigned);
+	}
+	
+	public static String shortArrayToString(short[] data, int offset, int length, boolean unsigned) 
+	{
+		if ( data == null ) {
+		      return null;
+		}
+			
+		if(data.length == 0) return "[]";
+	    
+	    if(offset < 0 || offset >= data.length)
+	    	throw new IllegalArgumentException("Offset out of array bound!");
+	    
+	    int endOffset = offset + Math.min(length, data.length);
+		 
+	    if(endOffset > data.length)
+	    	length = data.length - offset;
+	    
+	    StringBuilder shorts = new StringBuilder();	    
+	    shorts.append("[");
+		    
+	    for (int i = offset; i < endOffset; i++)
 		{
 			if(unsigned) {
 				// Convert it to unsigned short
@@ -741,14 +785,18 @@ public class StringUtils
 			}
 			shorts.append(",");
 		}
-		
-		if(shorts.length() > 1)
-			shorts.deleteCharAt(shorts.length()-1);
-		
-		shorts.append("]");
+	    
+	    // Remove the last ","
+	    if(shorts.length() > 1)
+	    	shorts.deleteCharAt(shorts.length()-1);
+	    
+	    if(endOffset < data.length)
+	    	shorts.append(" ..."); // Partial output
+	    
+	    shorts.append("]");
 		
 		return shorts.toString();
-	}  
+	}
 	
 	public static String shortToHexString(short value) {
 		StringBuilder buffer = new StringBuilder(6);
