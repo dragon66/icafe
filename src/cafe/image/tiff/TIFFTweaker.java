@@ -1483,7 +1483,7 @@ public class TIFFTweaker {
 					}	
 					tiffIFD.addField(new ShortField(tag, sdata));
 					System.out.print(indent);
-					System.out.println("Field value: " + StringUtils.shortArrayToString(sdata, true) + " " + ftag.getFieldDescription(sdata[0]&0xffff));
+					System.out.println("Field value: " + StringUtils.shortArrayToString(sdata, 0, 10, true) + " " + ftag.getFieldDescription(sdata[0]&0xffff));
 					break;
 				case LONG:
 					int[] ldata = new int[field_length];
@@ -1506,7 +1506,7 @@ public class TIFFTweaker {
 					tiffIFD.addField(new LongField(tag, ldata));
 					
 					System.out.print(indent);
-					System.out.println("Field value: " + StringUtils.longArrayToString(ldata, true) + " " + ftag.getFieldDescription(ldata[0]&0xffff));
+					System.out.println("Field value: " + StringUtils.longArrayToString(ldata, 0, 10, true) + " " + ftag.getFieldDescription(ldata[0]&0xffff));
 					
 					if ((ftag == TiffTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
 						System.out.print(indent);
