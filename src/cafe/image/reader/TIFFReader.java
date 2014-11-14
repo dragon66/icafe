@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    14Nov2014  Added support for tiled Palette Image
  * WY    07Nov2014  Added support for 16 bit CMYK image
  * WY    06Nov2014  Planar support for stripped YCbCr image
  * WY    05Nov2014  Fixed bug for YCbCr image with wrong image width and height
@@ -809,12 +810,99 @@ public class TIFFReader extends ImageReader {
 			}
 		}
 		
+		int xoff = 0;
+		int yoff = 0;
+		int tileCounter = 0;
+		
+		WritableRaster raster = null;
+		DataBuffer db = null;
+		ColorModel cm = null;
+		
 		switch(e_photoMetric) {
+			case PALETTE_COLOR:
+				short[] colorMap = (short[])ifd.getField(TiffTag.COLORMAP.getValue()).getData();
+				rgbColorPalette = new int[colorMap.length/3];
+				int numOfColors = (1<<bitsPerSample);
+				int numOfColors2 = (numOfColors<<1);
+				for(int i = 0, index = 0; i < colorMap.length/3;i++) {
+					rgbColorPalette[index++] = 0xff000000|((colorMap[i]&0xff00)<<8)|((colorMap[i+numOfColors]&0xff00))|((colorMap[i+numOfColors2]&0xff00)>>8) ;
+				}
+				int bytesPerScanLine = tilesAcross*(tileWidth*bitsPerSample +7)/8;
+				pixels = new byte[bytesPerScanLine*tilesDown*tileLength];
+				short[] spixels = null;
+				db = new DataBufferByte(pixels, pixels.length);
+				cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_BYTE);
+				if(bitsPerSample < 8) {
+					raster = Raster.createPackedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, bitsPerSample, null);
+				} else {
+					int[] off = {0}; //band offset, we have only one band start at 0
+					if(bitsPerSample > 8) {
+						spixels = new short[pixels.length/2];
+						db = new DataBufferUShort(spixels, spixels.length);
+						cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_USHORT);
+					}
+					raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross, 1, off, null);
+				}
+				
+				switch(compression) {
+					case NONE:
+						for(int i = 0; i < tileByteCounts.length; i++) {
+							byte[] temp = new byte[tileByteCounts[i]];
+							randIS.seek(tileOffsets[i]);
+							randIS.readFully(temp);
+							if(bitsPerSample == 16) {
+								raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp, endian == IOUtils.BIG_ENDIAN));
+							} else {
+								DataBuffer tileDataBuffer = new DataBufferByte(temp, temp.length);
+								WritableRaster tileRaster = Raster.createPackedRaster(tileDataBuffer, tileWidth, tileLength, bitsPerSample, null);
+								raster.setDataElements(xoff, yoff, tileRaster);
+							}
+							xoff += tileWidth;
+							tileCounter++;
+							if(tileCounter >= tilesAcross) {
+								xoff = 0;
+								yoff += tileLength;
+								tileCounter = 0;
+							}						
+						}
+						break;
+					case LZW:
+						decoder = new LZWTreeDecoder(8, true);
+						break;
+					case DEFLATE:
+					case DEFLATE_ADOBE:
+						decoder = new DeflateDecoder();
+						break;
+					default:
+				}
+				if(decoder != null) {
+					for(int i = 0; i < tileByteCounts.length; i++) {
+						byte[] temp = new byte[tileByteCounts[i]];
+						byte[] temp2 = new byte[bytes2Read];
+						randIS.seek(tileOffsets[i]);
+						randIS.readFully(temp);
+						decoder.setInput(temp);
+						decoder.decode(temp2, 0, bytes2Read);
+						if(bitsPerSample == 16) {
+							raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
+						} else
+							raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp2);
+						xoff += tileWidth;
+						tileCounter++;
+						if(tileCounter >= tilesAcross) {
+							xoff = 0;
+							yoff += tileLength;
+							tileCounter = 0;
+						}					
+					}
+				}
+							   
+				return new BufferedImage(cm, raster, false, null).getSubimage(0, 0, imageWidth, imageHeight);
 			case RGB:
 				//Create a BufferedImage
 				pixels = new byte[tileLength*((tileWidth*bitsPerSample +7)/8)*samplesPerPixel*tilesPerImage];
-				short[] spixels = null;
-				DataBuffer db = new DataBufferByte(pixels, pixels.length);
+				spixels = null;
+				db = new DataBufferByte(pixels, pixels.length);
 				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
 				int[] bandoff = new int[]{0, 1, 2}; 
 				boolean transparent = false;
@@ -828,7 +916,7 @@ public class TIFFReader extends ImageReader {
 					trans = Transparency.TRANSLUCENT;
 					transparent = true;
 				}
-				ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
+				cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
 			                trans, DataBuffer.TYPE_BYTE);
 				if(bitsPerSample == 16) {
 					spixels = new short[pixels.length];
@@ -836,11 +924,9 @@ public class TIFFReader extends ImageReader {
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
 			                trans, DataBuffer.TYPE_USHORT);
 				}
-				WritableRaster raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross*numOfBands, numOfBands, bandoff, null);
+				raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross*numOfBands, numOfBands, bandoff, null);
 				// Now we are going to read and set tiles to the raster
-				int xoff = 0;
-				int yoff = 0;
-				int tileCounter = 0;
+				
 				switch(compression) {
 					case NONE:
 						if(planaryConfiguration == 1) {
@@ -1077,7 +1163,7 @@ public class TIFFReader extends ImageReader {
 						}
 					}	
 					tiffIFD.addField(new ShortField(tag, sdata));
-					System.out.println("TiffField value: " + StringUtils.shortArrayToString(sdata, true));
+					System.out.println("TiffField value: " + StringUtils.shortArrayToString(sdata, 0, 10, true));
 					break;
 				case LONG:
 					int[] ldata = new int[field_length];
