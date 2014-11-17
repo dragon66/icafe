@@ -13,34 +13,8 @@ package cafe.image.options;
 import cafe.image.core.ImageType;
 
 public class GIFOptions extends ImageOptions {
-	// Fields
-	private boolean requireUserInput;
-	int disposalMethod;
-	// Constants
-	public static int DISPOSAL_UNSPECIFIED = 0;	
-	public static int DISPOSAL_NONE = 1;	
-	public static int DISPOSAL_RESTORE_TO_BACKGROUND = 2;
-	public static int DISPOSAL_RESTORE_TO_PREVIOUS = 3;
-	
-	public int getDispoalMethod() {
-		return disposalMethod;
-	}
-	
+			
 	public ImageType getImageType() {
 		return ImageType.GIF;
-	}
-	
-	public boolean getRequireUserInput() {
-		return requireUserInput;
-	}
-	
-	public void setDisposalMethod(int disposalMethod) {
-		if(disposalMethod < DISPOSAL_UNSPECIFIED || disposalMethod > DISPOSAL_RESTORE_TO_PREVIOUS)
-			throw new IllegalArgumentException("Invalid disposal method: " + disposalMethod);
-		this.disposalMethod = disposalMethod;
-	}
-	
-	public void setRequireUserInput(boolean requireUserInput) {
-		this.requireUserInput = requireUserInput;
 	}
 }
