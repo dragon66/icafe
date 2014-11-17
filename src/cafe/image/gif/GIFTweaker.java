@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    17Nov2014  Added writeAnimatedGIF(GIFFrame) to work with GIFFrame
  * WY    03Oct2014  Added splitFramesEx2() to split animated GIFs into separate images
  * WY    22Apr2014  Added splitFramesEx() to split animated GIFs into separate images
  * WY    20Apr2014  Added splitFrames() to split animated GIFs into frames
@@ -30,6 +31,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 
+
+import java.util.List;
 
 //import cafe.image.core.ImageMeta;
 import cafe.image.core.ImageType;
@@ -287,12 +290,45 @@ public class GIFTweaker {
 	 * Create animated GIFs from a series of BufferedImage
 	 * 
 	 * @param images an array of BufferedImage 
-	 * @param os OutputStream to write the image
 	 * @param delays delay times in millisecond between the frames
+	 * @param loopCount loop count for the animated GIF
+	 * @param os OutputStream to write the image
 	 */
-	public static void writeAnimatedGIF(BufferedImage[] images, int[] delays, OutputStream os) throws Exception {
-		GIFWriter writer = new GIFWriter(); // We can set GIFOptions such as disposal method here
+	public static void writeAnimatedGIF(BufferedImage[] images, int[] delays, int loopCount,  OutputStream os) throws Exception {
+		GIFWriter writer = new GIFWriter();
+		writer.setLoopCount(loopCount);
 		writer.writeAnimatedGIF(images, delays, os);
+	}
+	
+	public static void writeAnimatedGIF(BufferedImage[] images, int[] delays, OutputStream os) throws Exception {
+		writeAnimatedGIF(images, delays, 0, os);
+	}
+	
+	/**
+	 * Write an array of GIFFrame as an animated GIF. This method gives a user more control over the frame
+	 * parameters such as delay, frame position, disposal method etc.
+	 * 
+	 * @param frames array of GIFFrame
+	 * @param loopCount loopCount for the animated GIF
+	 * @param os OutputStream to write the image
+	 * @throws Exception
+	 */
+	public static void writeAnimatedGIF(GIFFrame[] frames, int loopCount, OutputStream os) throws Exception {
+		GIFWriter writer = new GIFWriter();
+		writer.setLoopCount(loopCount);
+		writer.writeAnimatedGIF(frames, os);
+	}
+	
+	public static void writeAnimatedGIF(GIFFrame[] frames, OutputStream os) throws Exception {
+		writeAnimatedGIF(frames, 0, os);
+	}
+	
+	public static void writeAnimatedGIF(List<GIFFrame> frames, int loopCount, OutputStream os) throws Exception {
+		writeAnimatedGIF(frames.toArray(new GIFFrame[0]), loopCount, os);
+	}
+	
+	public static void writeAnimatedGIF(List<GIFFrame> frames, OutputStream os) throws Exception {
+		writeAnimatedGIF(frames, 0, os);
 	}
 	
 	private GIFTweaker() {}
