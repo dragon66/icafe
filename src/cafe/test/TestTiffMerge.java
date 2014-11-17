@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 public class TestTiffMerge {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
+		long t1 = System.currentTimeMillis();
 		FileOutputStream out = new FileOutputStream(args[2]);
 		File[] files = FileUtils.listFilesMatching(new File(args[0]), args[1]);
 		RandomAccessOutputStream dest = new FileCacheRandomAccessOutputStream(out);
@@ -21,5 +22,7 @@ public class TestTiffMerge {
 		// Release resources
 		dest.close();
 		out.close();
+		long t2 = System.currentTimeMillis();
+		System.out.println("Merging time: " + (t2-t1) + " ms");
 	}
 }
