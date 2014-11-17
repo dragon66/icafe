@@ -1,6 +1,8 @@
 ***************************
-Last modified on 11/13/2014
+Last modified on 11/17/2014
 ***************************
+17Nov2014  Revised GIF related code to write GIFFrames as animated GIF 
+17Nov2014  Added GIFFrame as a wrapper for GIF frame
 13Nov2014  Added Int32ComponentColorModel and moved CMYKColorSpace to new package
 11Nov2014  Added toNBits() to ArrayUtils to convert byte array to nBits data unit
 11Nov2014  Added scan line stride to flipEndian() in ArrayUtils 
