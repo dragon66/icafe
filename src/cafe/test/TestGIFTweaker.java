@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import cafe.image.ImageIO;
 import cafe.image.core.ImageMeta;
 import cafe.image.core.ImageType;
+import cafe.image.gif.GIFFrame;
 import cafe.image.gif.GIFTweaker;
 import cafe.image.options.JPEGOptions;
 import cafe.image.options.PNGOptions;
@@ -26,19 +27,18 @@ public class TestGIFTweaker {
 		
 		File[] files = FileUtils.listFilesMatching(new File(args[1]), args[2]);
 		
-		BufferedImage[] images = new BufferedImage[files.length];
-		int[] delays = new int[images.length];
+		GIFFrame[] images = new GIFFrame[files.length];
 		
 		for(int i = 0; i < files.length; i++) {
 			FileInputStream fin = new FileInputStream(files[i]);
 			BufferedImage image = javax.imageio.ImageIO.read(fin);
-			images[i] = image;
-			delays[i] = 100;
+			GIFFrame frame = new GIFFrame(image, 100, GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND);
+			images[i] = frame;
 			fin.close();
 		}
 		
 		long t1 = System.currentTimeMillis();
-		GIFTweaker.writeAnimatedGIF(images, delays, fout);
+		GIFTweaker.writeAnimatedGIF(images, 0, fout);
 		long t2 = System.currentTimeMillis();
 		System.out.println("time used: " + (t2-t1) + "ms");
 		

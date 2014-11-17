@@ -12,8 +12,10 @@
  * GIFWriter.java
  *
  * Who   Date       Description
- * ====  =======    =================================================
- * WY    16Apr2014  Added writeFrame to support animated GIF
+ * ====  =======    ==========================================================
+ * WY    17Nov2014  Revised writeGraphicControlBlock() to take more parameters
+ * WY    17Nov2014  Added new writeFrame() method to take more parameters
+ * WY    16Apr2014  Added writeFrame() to support animated GIF
  */
 
 package cafe.image.writer;
@@ -22,8 +24,10 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.*; 
 import java.util.Arrays;
+import java.util.List;
 
 import cafe.image.core.ImageType;
+import cafe.image.gif.GIFFrame;
 import cafe.image.util.IMGUtils;
 
 /**
@@ -39,33 +43,20 @@ public class GIFWriter extends ImageWriter {
 	private int codeIndex;
 	private int clearCode;
 	private int endOfImage;
-	private int bufIndex = 0;
-	private int empty_bits = 0x08;	
-	private int bitsPerPixel = 0x08;
+	private int bufIndex = 0;	
+	private int empty_bits = 0x08;
 	
-	private byte bytes_buf[] = new byte[256];
+	private int bitsPerPixel = 0x08;
 
+	private byte bytes_buf[] = new byte[256];
 	private int[] colorPalette;
-	private static final byte IMAGE_SEPARATOR = 0x2c; // ","
- 	private static final byte EXTENSION_INTRODUCER = 0x21; // "!"
+ 	private static final byte IMAGE_SEPARATOR = 0x2c; // ","
+	private static final byte EXTENSION_INTRODUCER = 0x21; // "!"
 	private static final byte IMAGE_TRAILER = 0x3b; // ";"
 	private static final byte GRAPHIC_CONTROL_LABEL = (byte)0xf9;
-	private static final byte APPLICATION_EXTENSION_LABEL = (byte)0xff;
 	
- 	private static int MASK[] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
-	/**
-	 * A child is made up of a parent(or prefix) code plus a suffix color
-	 * and siblings are strings with a common parent(or prefix) and different
-	 * suffix colors
-	 */
-	int child[] = new int[4097];
-	int siblings[] = new int[4097];	
-	int suffix[] = new int[4097];
-	
-	private int logicalScreenWidth;
-	private int logicalScreenHeight;
-	
-	private boolean animated;
+ 	private static final byte APPLICATION_EXTENSION_LABEL = (byte)0xff;
+	private static int MASK[] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
 	
 	private static Dimension getLogicalScreenSize(BufferedImage[] images) {
 		int logicalScreenWidth = 0;
@@ -80,6 +71,39 @@ public class GIFWriter extends ImageWriter {
 		
 		return new Dimension(logicalScreenWidth, logicalScreenHeight);
 	}
+	
+	private static Dimension getLogicalScreenSize(GIFFrame[] frames) {
+		int logicalScreenWidth = 0;
+		int logicalScreenHeight = 0;
+		
+		for(GIFFrame frame : frames) {
+			int frameRightPosition = frame.getFrameWidth() + frame.getLeftPosition();
+			int frameBottomPosition = frame.getFrameHeight() + frame.getTopPosition();
+			if(frameRightPosition > logicalScreenWidth)
+				logicalScreenWidth = frameRightPosition;
+			if(frameBottomPosition > logicalScreenHeight)
+				logicalScreenHeight = frameBottomPosition;
+		}
+		
+		return new Dimension(logicalScreenWidth, logicalScreenHeight);
+	}
+	
+	/**
+	 * A child is made up of a parent(or prefix) code plus a suffix color
+	 * and siblings are strings with a common parent(or prefix) and different
+	 * suffix colors
+	 */
+	int child[] = new int[4097];
+	
+	int siblings[] = new int[4097];
+	int suffix[] = new int[4097];
+	
+	private int logicalScreenWidth;
+	private int logicalScreenHeight;
+	
+	private boolean animated;
+	
+	private int loopCount;
 	
 	public GIFWriter() {}
 	
@@ -215,6 +239,10 @@ public class GIFWriter extends ImageWriter {
 		}
 		empty_bits = -temp;
 	}
+    
+    public void setLoopCount(int loopCount) {
+    	this.loopCount = loopCount;
+    }
 
     // The entry point for all the image writers
     public void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {	
@@ -256,10 +284,41 @@ public class GIFWriter extends ImageWriter {
     	os.write(IMAGE_TRAILER);
 		os.close();    	
     }
+    
+    public void writeAnimatedGIF(GIFFrame[] frames, OutputStream os) throws Exception {
+    	// Header first
+    	writeHeader(os, true);
+    	
+    	Dimension logicalScreenSize = getLogicalScreenSize(frames);
+    	
+    	logicalScreenWidth = logicalScreenSize.width;
+    	logicalScreenHeight = logicalScreenSize.height;
+    	// We are going to write animated GIF, so enable animated flag
+    	animated = true;
+    	
+    	for(int i = 0; i < frames.length; i++) {
+    		// Retrieve image dimension
+			int imageWidth = frames[i].getFrameWidth();
+			int imageHeight = frames[i].getFrameHeight();
+			int[] pixels = IMGUtils.getRGB(frames[i].getFrame());//images[i].getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+			
+			if(i == 0) writeFrame(pixels, imageWidth, imageHeight, frames[i].getLeftPosition(), frames[i].getTopPosition(),
+					frames[i].getDelay(), frames[i].getDisposalMethod(), frames[i].getUserInputFlag(), os, true);
+			else writeFrame(pixels, imageWidth, imageHeight, frames[i].getLeftPosition(), frames[i].getTopPosition(), 
+					frames[i].getDelay(), frames[i].getDisposalMethod(), frames[i].getUserInputFlag(), os, false);
+    	}
+    	
+    	os.write(IMAGE_TRAILER);
+		os.close();    	
+    }
+    
+    public void writeAnimatedGIF(List<GIFFrame> frames, OutputStream os) throws Exception {
+    	writeAnimatedGIF(frames.toArray(new GIFFrame[0]), os);
+    }
 
-	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition,  int delay, OutputStream os, boolean writeLSD) throws Exception
+	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition,  int delay, int disposalMethod, int userInputFlag, OutputStream os, boolean writeLSD) throws Exception
 	{	
-    	// Reset empty_bits
+		// Reset empty_bits
     	empty_bits = 0x08;
     	
     	int transparent_color = -1;
@@ -299,11 +358,11 @@ public class GIFWriter extends ImageWriter {
 			// Write the global colorPalette
 			writePalette(os, num_of_color);
 			if(animated)// Write Netscape extension block
-				writeNetscapeApplicationBlock(os, 0);
+				writeNetscapeApplicationBlock(os, loopCount);
 	    }		
 		
       	// Output the graphic control block
-	    writeGraphicControlBlock(os, delay, (byte)transparent_color);
+	    writeGraphicControlBlock(os, delay, (byte)transparent_color, disposalMethod, userInputFlag);
         // Output image descriptor
         if(writeLSD)
         	writeImageDescriptor(os, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, -1);
@@ -316,10 +375,15 @@ public class GIFWriter extends ImageWriter {
         encode(newPixels, os);
 		/** Write out a zero length data sub-block */
 		os.write(0x00);
+	}
+	
+	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition,  int delay, OutputStream os, boolean writeLSD) throws Exception
+	{	
+    	writeFrame(pixels, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, delay, GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND, GIFFrame.USER_INPUT_NONE, os, writeLSD);
     }
 	
 	// Unit of delay is supposed to be in millisecond
-    private void writeGraphicControlBlock(OutputStream os, int delay, byte transparent_color) throws Exception
+    private void writeGraphicControlBlock(OutputStream os, int delay, byte transparent_color, int disposalMethod, int userInputFlag) throws Exception
     {
     	// Scale delay
     	delay = Math.round(delay/10.0f);
@@ -335,7 +399,10 @@ public class GIFWriter extends ImageWriter {
 		buf[7] = 0x00;
 		
 		if(transparent_color >= 0) // Add transparency indicator
-			buf[3] |= (0x01|0x10);
+			buf[3] |= 0x01;
+		
+		buf[3] |= ((disposalMethod&0x07) << 2); // Add disposalMethod
+		buf[3] |= ((userInputFlag&0x01) << 1); // Add userInputFlag
 		
 		os.write(buf, 0, 8);
 	}
