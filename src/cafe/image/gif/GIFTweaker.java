@@ -12,7 +12,8 @@
  * GIFFWriter.java
  *
  * Who   Date       Description
- * ====  =========  =================================================================
+ * ====  =========  ====================================================================
+ * WY    18Nov2014  Fixed bug with splitFramesEx() disposal method "RESTORE_TO_PREVIOUS" 
  * WY    17Nov2014  Added writeAnimatedGIF(GIFFrame) to work with GIFFrame
  * WY    03Oct2014  Added splitFramesEx2() to split animated GIFs into separate images
  * WY    22Apr2014  Added splitFramesEx() to split animated GIFs into separate images
@@ -21,6 +22,8 @@
 
 package cafe.image.gif;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -33,6 +36,8 @@ import java.io.OutputStream;
 
 
 import java.util.List;
+
+
 
 //import cafe.image.core.ImageMeta;
 import cafe.image.core.ImageType;
@@ -240,13 +245,18 @@ public class GIFTweaker {
 			if(reader.getDisposalMethod() == 1 || reader.getDisposalMethod() == 0) // Leave in place or unspecified
 				; // No action needed
 			else if(reader.getDisposalMethod() == 2) { // Restore to background
-				baseImage = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
-				g = baseImage.createGraphics();
+				Composite oldComposite = g.getComposite();
+				g.setComposite(AlphaComposite.Clear);
+				g.fillRect(image_x, image_y, imageWidth, imageHeight);
+				g.setComposite(oldComposite);
 				//g.setColor(reader.getBackgroundColor());
 				//g.fillRect(0, 0, logicalScreenWidth, logicalScreenHeight);
 				//builder.transparent(true);
 			} else if(reader.getDisposalMethod() == 3) { // Restore to previous
-				g.drawImage(backup, image_x, image_y, null);			
+				Composite oldComposite = g.getComposite();
+				g.setComposite(AlphaComposite.Src);
+				g.drawImage(backup, image_x, image_y, null);
+				g.setComposite(oldComposite);			
 			} else { // To be defined - should never come here
 				baseImage = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
 				g = baseImage.createGraphics();
