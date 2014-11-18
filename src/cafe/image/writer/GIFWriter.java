@@ -301,7 +301,13 @@ public class GIFWriter extends ImageWriter {
 			int imageWidth = frames[i].getFrameWidth();
 			int imageHeight = frames[i].getFrameHeight();
 			int[] pixels = IMGUtils.getRGB(frames[i].getFrame());//images[i].getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-			
+			if(frames[i].getTransparencyFlag() == GIFFrame.TRANSPARENCY_INDEX_SET && frames[i].getTransparentColor() != -1) {
+				int transColor = (frames[i].getTransparentColor() & 0x00ffffff);				
+				for(int j = pixels.length - 1; j > 0; j--) {
+					int pixel = (pixels[j] & 0x00ffffff);
+					if(pixel == transColor) pixels[j] = pixel; 
+				}
+			}
 			if(i == 0) writeFrame(pixels, imageWidth, imageHeight, frames[i].getLeftPosition(), frames[i].getTopPosition(),
 					frames[i].getDelay(), frames[i].getDisposalMethod(), frames[i].getUserInputFlag(), os, true);
 			else writeFrame(pixels, imageWidth, imageHeight, frames[i].getLeftPosition(), frames[i].getTopPosition(), 
@@ -392,7 +398,8 @@ public class GIFWriter extends ImageWriter {
 		buf[0] = EXTENSION_INTRODUCER; // Extension introducer
 		buf[1] = GRAPHIC_CONTROL_LABEL; // Graphic control label
 		buf[2] = 0x04; // Block size
-		buf[3] = 0x00;// Assume no transparency and disposal
+		// Add disposalMethod and userInputFlag
+		buf[3] |= (((disposalMethod&0x07) << 2)|((userInputFlag&0x01) << 1));
 		buf[4] = (byte)(delay&0xff);// Delay time
 		buf[5] = (byte)((delay>>8)&0xff);
 		buf[6] = transparent_color;
@@ -400,9 +407,6 @@ public class GIFWriter extends ImageWriter {
 		
 		if(transparent_color >= 0) // Add transparency indicator
 			buf[3] |= 0x01;
-		
-		buf[3] |= ((disposalMethod&0x07) << 2); // Add disposalMethod
-		buf[3] |= ((userInputFlag&0x01) << 1); // Add userInputFlag
 		
 		os.write(buf, 0, 8);
 	}
