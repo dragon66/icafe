@@ -1,6 +1,7 @@
 ***************************
-Last modified on 11/17/2014
+Last modified on 11/18/2014
 ***************************
+18Nov2014  Fixed GIFReader getFrameAsBufferedImageEx() bug with disposal method "RESTORE_TO_PREVIOUS"
 17Nov2014  Revised GIF related code to write GIFFrames as animated GIF 
 17Nov2014  Added GIFFrame as a wrapper for GIF frame
 13Nov2014  Added Int32ComponentColorModel and moved CMYKColorSpace to new package
