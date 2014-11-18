@@ -12,13 +12,17 @@
  * GIFReader.java
  *
  * Who   Date       Description
- * ====  =========  ===================================================
+ * ====  =========  ==========================================================
+ * WY    18Nov2014  Fixed getFrameAsBufferedImageEx() bug with disposal method 
+ *                  "RESTORE_TO_PREVIOUS" 
  * WY    03Oct2014  Added getFrameAsBufferedImageEx()
  */
 
 package cafe.image.reader;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -159,9 +163,10 @@ public class GIFReader extends ImageReader
 	/**
 	 * Creates a BufferedImage for the current frame. For animated GIF, the frame may only
 	 * occupy part of the logical screen and may also rely on transparency and previous
-	 * frames to work properly. A more 
-	 * @param is
-	 * @return
+	 * frames to work properly.
+	 *  
+	 * @param is InputStream for the GIF/Animated GIF
+	 * @return a BufferedImage for the GIF image or current frame in case of animated GIF
 	 * @throws Exception
 	 */
 	public BufferedImage getFrameAsBufferedImage(InputStream is) throws Exception {
@@ -178,11 +183,8 @@ public class GIFReader extends ImageReader
 	}
 	
 	/**
-	 * Creates a BufferedImage the same size as the logical screen
-	 * <p>
-	 * <b>Note</b>: the underlying frame will share the same data with the current base image. 
-	 * Subsequent call to this method will change the previous frames too. If this is
-	 * not intended, backups of the previous frames should be done before new calls 
+	 * Creates a frame as a BufferedImage the same size as the logical screen
+	 *  
 	 * @param is input stream for the image - single frame of multiple frame animated GIF
 	 * @return java BufferedImage or null if there is no more frames
 	 * @throws Exception
@@ -199,22 +201,30 @@ public class GIFReader extends ImageReader
 		backup.setData(baseImage.getData(area));
 		/* End of backup */
 		Graphics2D g = baseImage.createGraphics();
+		// Draw this frame to the base
+		g.drawImage(bi, image_x, image_y, null);
+		// We need to clone the base image since we are going to dispose it later according to the disposal method
+		BufferedImage clone = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
+		clone.setData(baseImage.getData());
 		// Check about disposal method to take action accordingly
 		if(disposalMethod == 1 || disposalMethod == 0) // Leave in place or unspecified
 			; // No action needed
 		else if(disposalMethod == 2) { // Restore to background
-			baseImage = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
-			g = baseImage.createGraphics();
+			Composite oldComposite = g.getComposite();
+			g.setComposite(AlphaComposite.Clear);
+			g.fillRect(image_x, image_y, width, height);
+			g.setComposite(oldComposite);
 		} else if(disposalMethod == 3) { // Restore to previous
-			g.drawImage(backup, image_x, image_y, null);			
+			Composite oldComposite = g.getComposite();
+			g.setComposite(AlphaComposite.Src);
+			g.drawImage(backup, image_x, image_y, null);
+			g.setComposite(oldComposite);
 		} else { // To be defined - should never come here
 			baseImage = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
 			g = baseImage.createGraphics();
-		}
-		// Draw this frame to the base
-		g.drawImage(bi, image_x, image_y, null);
+		}	
 		
-		return baseImage;
+		return clone;
 	}
 
 	public int getImageX() {
