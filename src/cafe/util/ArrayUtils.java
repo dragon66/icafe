@@ -886,6 +886,28 @@ public class ArrayUtils
    		
 		return output;
 	}
+	
+	public float[] toPrimitive(Float[] floats) {
+		float[] fArray = new float[floats.length];
+		int i = 0;
+		
+		for (float f : fArray) {
+			fArray[i++] = f;
+		}
+		
+		return fArray;
+	}
+	
+	public int[] toPrimitive(Integer[] integers) {
+		int[] ints = new int[integers.length];
+		int i = 0;
+		
+		for (Integer n : ints) {
+			ints[i++] = n;
+		}
+		
+		return ints;
+	}
    	
    	private ArrayUtils(){} // Prevents instantiation
 }
