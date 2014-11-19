@@ -887,7 +887,7 @@ public class ArrayUtils
 		return output;
 	}
 	
-	public float[] toPrimitive(Float[] floats) {
+	public static float[] toPrimitive(Float[] floats) {
 		float[] fArray = new float[floats.length];
 		int i = 0;
 		
@@ -898,7 +898,7 @@ public class ArrayUtils
 		return fArray;
 	}
 	
-	public int[] toPrimitive(Integer[] integers) {
+	public static int[] toPrimitive(Integer[] integers) {
 		int[] ints = new int[integers.length];
 		int i = 0;
 		
