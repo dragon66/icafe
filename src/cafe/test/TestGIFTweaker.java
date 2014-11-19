@@ -74,7 +74,7 @@ public class TestGIFTweaker {
 		
 		FileInputStream is = new FileInputStream(args[0]);
 		
-		GIFTweaker.splitFramesEx2(is, writer, "bufferfly");
+		GIFTweaker.splitFramesEx2(is, writer, "split");
 		
 		is.close();
 	}
