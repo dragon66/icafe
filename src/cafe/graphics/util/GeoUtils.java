@@ -21,10 +21,11 @@ public class GeoUtils {
 
 	private GeoUtils() {} // Prevents instantiation
 	
-	public static boolean isInsidePoly(int npol, int[] xp, int[] yp, int x, int y)
+	public static boolean isInsidePoly(int x, int y, int[] xp, int[] yp)
 	{		
 	     int i, j;
 	     boolean c = false;
+	     int npol = xp.length;
 	     
 	     for (i = 0, j = npol-1; i < npol; j = i++) {
 	           if ((((yp[i]<=y) && (y<yp[j])) ||((yp[j]<=y) && (y<yp[i]))) &&
@@ -33,13 +34,29 @@ public class GeoUtils {
 	     }
 	     
 	     return c;
-	}   
-
-	public static boolean isInsidePoly(int npol, double[] xp, double[] yp, double x, double y)
+	}
+	
+	public static boolean isInsidePoly(float x, float y, float[] xp, float[] yp)
 	{
 		int i, j;
 		boolean c = false;
+		int npol = xp.length;
+		
+		for (i = 0, j = npol-1; i < npol; j = i++) {
+			if ((((yp[i]<=y) && (y<yp[j])) ||((yp[j]<=y) && (y<yp[i]))) &&
+					(x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))
+				c = !c;
+		}
      
+		return c;
+	}
+
+	public static boolean isInsidePoly(double x, double y, double[] xp, double[] yp)
+	{
+		int i, j;
+		boolean c = false;
+		int npol = xp.length;
+		
 		for (i = 0, j = npol-1; i < npol; j = i++) {
 			if ((((yp[i]<=y) && (y<yp[j])) ||((yp[j]<=y) && (y<yp[i]))) &&
 					(x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))
