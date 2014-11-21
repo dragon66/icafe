@@ -891,7 +891,7 @@ public class ArrayUtils
 		float[] fArray = new float[floats.length];
 		int i = 0;
 		
-		for (float f : fArray) {
+		for (float f : floats) {
 			fArray[i++] = f;
 		}
 		
@@ -902,7 +902,7 @@ public class ArrayUtils
 		int[] ints = new int[integers.length];
 		int i = 0;
 		
-		for (Integer n : ints) {
+		for (Integer n : integers) {
 			ints[i++] = n;
 		}
 		
