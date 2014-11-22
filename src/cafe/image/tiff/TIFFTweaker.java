@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    21Nov2014  Added new writeMultipageTIFF() to use TIFFFrame array as argument
  * WY    12Nov2014  Added support for up to 32 BitsPerSample image to mergeTiffImagesEx()
  * WY    11Nov2014  Added getRowWidth() to determine scan line stride
  * WY    07Nov2014  Fixed bug for mergeTiffImagesEx() when there is no compression field
@@ -1912,6 +1913,42 @@ public class TIFFTweaker {
 		
 		// Link the IFDs
 		for(int i = 0; i < images.length - 1; i++)
+			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
+				
+		int firstIFDOffset = list.get(0).getStartOffset();
+		
+		writeToStream(rout, firstIFDOffset);
+	}
+	
+	public static void writeMultipageTIFF(RandomAccessOutputStream rout, TIFFWriter writer, TIFFFrame[] frames) throws IOException {
+		// Write header first
+		writeHeader(IOUtils.BIG_ENDIAN, rout);
+		// Write pages
+		int writeOffset = FIRST_WRITE_OFFSET;
+		int pageNumber = 0;
+		int maxPageNumber = frames.length;
+		List<IFD> list = new ArrayList<IFD>(frames.length);
+			
+		// Grab image pixels in ARGB format and write image
+		for(int i = 0; i < frames.length; i++) {
+			// Retrieve image dimension
+			BufferedImage frame = frames[i].getFrame();
+			ImageMeta meta = frames[i].getFrameMeta();
+			int imageWidth = frame.getWidth();
+			int imageHeight = frame.getHeight();
+			int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+			
+			try {
+				writer.setImageMeta(meta);
+				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
+				list.add(writer.getIFD());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// Link the IFDs
+		for(int i = 0; i < frames.length - 1; i++)
 			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
 				
 		int firstIFDOffset = list.get(0).getStartOffset();
