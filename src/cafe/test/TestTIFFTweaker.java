@@ -19,6 +19,7 @@ import cafe.image.options.TIFFOptions;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.RationalField;
 import cafe.image.tiff.ShortField;
+import cafe.image.tiff.TIFFFrame;
 import cafe.image.tiff.TIFFTweaker;
 import cafe.image.tiff.TiffFieldEnum.Compression;
 import cafe.image.tiff.IFD;
@@ -54,11 +55,11 @@ public class TestTIFFTweaker {
 				rout.close();
 			} else if(args[1].equalsIgnoreCase("writemultipage") || args[1].equalsIgnoreCase("insertpage")) {
 				File[] files = FileUtils.listFilesMatching(new File(args[2]), args[3]);
-				BufferedImage[] images = new BufferedImage[files.length];				
+				TIFFFrame[] frames = new TIFFFrame[files.length];				
 				for(int i = 0; i < files.length; i++) {
 					FileInputStream fin = new FileInputStream(files[i]);
 					BufferedImage image = javax.imageio.ImageIO.read(fin);
-					images[i] = image;
+					frames[i] = new TIFFFrame(image);
 					fin.close();
 				}				
 				TIFFWriter writer = new TIFFWriter();
@@ -70,22 +71,25 @@ public class TestTIFFTweaker {
 				tiffOptions.setDeflateCompressionLevel(6);
 				builder.imageOptions(tiffOptions);
 				
-				ImageMeta[] meta = new ImageMeta[3];
-				meta[0] =  builder.indexedColor(false).grayscale(true).bilevel(false).applyDither(true).ditherThreshold(18).hasAlpha(false).build();
+				frames[0].setFrameMeta(builder.grayscale(true).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
 				
 				tiffOptions = new TIFFOptions(tiffOptions); // Copy constructor		
 				tiffOptions.setTiffCompression(Compression.DEFLATE);
 								
-				meta[1] =  builder.imageOptions(tiffOptions).build();
+				frames[1].setFrameMeta(builder.imageOptions(tiffOptions).build());
 				
 				tiffOptions = new TIFFOptions(tiffOptions);				
 				tiffOptions.setTiffCompression(Compression.CCITTFAX4);
 				
-				meta[2] = builder.bilevel(true).imageOptions(tiffOptions).build();
+				ImageMeta meta = builder.bilevel(true).imageOptions(tiffOptions).build();
+				
+				for(int i = 2; i < frames.length; i++)
+					frames[i].setFrameMeta(meta);
 				
 				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
+				
 				if(args[1].equalsIgnoreCase("writemultipage"))
-					TIFFTweaker.writeMultipageTIFF(rout, writer, meta, images);
+					TIFFTweaker.writeMultipageTIFF(rout, writer, frames);
 				else {
 					// This one line test one time insert using insertPages
 					//TIFFTweaker.insertPages(rin, rout, writer, 0, meta, images);
@@ -94,9 +98,9 @@ public class TestTIFFTweaker {
 					List<IFD> list = new ArrayList<IFD>();
 					int offset = TIFFTweaker.prepareForInsert(rin, rout, list);
 					int index = 3;
-					writer.setImageMeta(meta[0]);
-					for(int i = 0; i < images.length; i++) {
-						offset = TIFFTweaker.insertPage(images[i], index+=2, rout, list, offset, writer);
+					writer.setImageMeta(frames[0].getFrameMeta());
+					for(int i = 0; i < frames.length; i++) {
+						offset = TIFFTweaker.insertPage(frames[i].getFrame(), index+=2, rout, list, offset, writer);
 					}
 					int nColors = 2;
 					byte[] reds   = new byte[]{0,(byte)255};
@@ -115,7 +119,7 @@ public class TestTIFFTweaker {
 						for(int w = 0; w < width; w++)
 							if (((h/50)+(w/50)) % 2 == 0) raster.setSample(w, h, 0, 0); // checkerboard pattern.
 							else raster.setSample(w, h, 0, 1);
-					writer.setImageMeta(meta[2]);
+					writer.setImageMeta(frames[2].getFrameMeta());
 					TIFFTweaker.insertPage(im, 0, rout, list, offset, writer);
 					TIFFTweaker.finishInsert(rout, list);
 					long t2 = System.currentTimeMillis();
