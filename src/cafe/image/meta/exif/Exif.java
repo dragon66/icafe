@@ -164,7 +164,7 @@ public class Exif {
 			randOS.setWriteStrategy(WriteStrategyMM.getInstance());
 			randOS.writeShort(endian);
 			randOS.writeShort(tiffID);
-			// First IDF relative to TIFF structure
+			// First IFD offset relative to TIFF structure
 			randOS.seek(0x04);
 			randOS.writeInt(firstIFDOffset);
 			// Writes IFDs
