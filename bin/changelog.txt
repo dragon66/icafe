@@ -1,6 +1,7 @@
 ***************************
-Last modified on 11/18/2014
+Last modified on 11/21/2014
 ***************************
+21Nov2014  Added new writeMultipageTIFF() method to TIFFTeaker to use TIFFFrame array as argument
 18Nov2014  Fixed GIFReader getFrameAsBufferedImageEx() bug with disposal method "RESTORE_TO_PREVIOUS"
 17Nov2014  Revised GIF related code to write GIFFrames as animated GIF 
 17Nov2014  Added GIFFrame as a wrapper for GIF frame
