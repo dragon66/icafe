@@ -62,7 +62,7 @@ public class TestTIFFTweaker {
 					frames[i] = new TIFFFrame(image);
 					fin.close();
 				}				
-				TIFFWriter writer = new TIFFWriter();
+				
 				ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
 				  
 				TIFFOptions tiffOptions = new TIFFOptions();
@@ -89,15 +89,16 @@ public class TestTIFFTweaker {
 				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
 				
 				if(args[1].equalsIgnoreCase("writemultipage"))
-					TIFFTweaker.writeMultipageTIFF(rout, writer, frames);
+					TIFFTweaker.writeMultipageTIFF(rout, frames);
 				else {
 					// This one line test one time insert using insertPages
-					//TIFFTweaker.insertPages(rin, rout, writer, 0, meta, images);
+					//TIFFTweaker.insertPages(rin, rout, 0, frames);
 					// The following lines test insert pages each at a time
 					long t1 = System.currentTimeMillis();
 					List<IFD> list = new ArrayList<IFD>();
 					int offset = TIFFTweaker.prepareForInsert(rin, rout, list);
 					int index = 3;
+					TIFFWriter writer = new TIFFWriter();
 					writer.setImageMeta(frames[0].getFrameMeta());
 					for(int i = 0; i < frames.length; i++) {
 						offset = TIFFTweaker.insertPage(frames[i].getFrame(), index+=2, rout, list, offset, writer);
@@ -108,8 +109,8 @@ public class TestTIFFTweaker {
 					byte[] blues  = new byte[]{0,(byte)255};
 					int width = 400; // Dimensions of the image
 					int height = 400;
-					// Let's create the IndexColorModel for this image.
-					IndexColorModel colorModel = new IndexColorModel(1,nColors,reds,greens,blues);
+					// Let's create a IndexColorModel for this image.
+					IndexColorModel colorModel = new IndexColorModel(1, nColors, reds, greens, blues);
 					// Let's create a BufferedImage for an indexed color image.
 					BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY, colorModel);
 					// We need its raster to set the pixels' values.
