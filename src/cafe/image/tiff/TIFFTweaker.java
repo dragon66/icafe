@@ -1952,10 +1952,10 @@ public class TIFFTweaker {
 	}
 	
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, BufferedImage[] images) throws IOException {
-		writeMultipageTIFF(rout, images, null);
+		writeMultipageTIFF(rout, null, images);
 	}
 	
-	public static void writeMultipageTIFF(RandomAccessOutputStream rout, BufferedImage[] images, ImageMeta[] imageMeta) throws IOException {
+	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageMeta[] imageMeta, BufferedImage ... images) throws IOException {
 		// Write header first
 		writeHeader(IOUtils.BIG_ENDIAN, rout);
 		// Write pages
