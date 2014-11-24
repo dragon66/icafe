@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =======================================================================
+ * WY    24Nov2014  Added getChild() method
  * WY    02Apr2014  Added setNextIFDOffset() to work with the case of non-contiguous IFDs
  * WY    30Mar2014  Added children map, changed write() method to write child nodes as well.
  */
@@ -59,6 +60,10 @@ public final class IFD {
 		for(TiffField<?> field : tiffFields) {
 			addField(field);
 		}
+	}
+	
+	public IFD getChild(Tag tag) {
+		return children.get(tag);
 	}
 	
 	public int getEndOffset() {
