@@ -1,6 +1,8 @@
 ***************************
-Last modified on 11/22/2014
+Last modified on 11/24/2014
 ***************************
+24Nov2014  Changed TIFFTweaker write(TIFFImage) to write(TIFFImage, RandomAccessOutputStream) 
+24Nov2014  Removed RandomAccessOutputStream from TIFFImage constructor
 22Nov2014  Removed unnecessary TIFFWriter argument from corresponding TIFFTweaker methods
 21Nov2014  Added new writeMultipageTIFF() method to TIFFTeaker to use TIFFFrame array as argument
 18Nov2014  Fixed GIFReader getFrameAsBufferedImageEx() bug with disposal method "RESTORE_TO_PREVIOUS"
