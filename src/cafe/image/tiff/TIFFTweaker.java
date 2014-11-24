@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    24Nov2014  Changed write(TIFFImage) to write(TIFFImage, RandomAccessOutputStream)
  * WY    22Nov2014  Removed unnecessary TIFFWriter argument from corresponding methods
  * WY    21Nov2014  Added new writeMultipageTIFF() to use TIFFFrame array as argument
  * WY    12Nov2014  Added support for up to 32 BitsPerSample image to mergeTiffImagesEx()
@@ -324,6 +325,9 @@ public class TIFFTweaker {
 	 * @return the position where to write the IFD for the current image page
 	 */
 	private static int copyPageData(IFD ifd, int offset, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		// Move stream pointer to the right place
+		rout.seek(offset);
+
 		// Original image data start from these offsets.
 		TiffField<?> stripOffSets = ifd.removeField(TiffTag.STRIP_OFFSETS.getValue());
 		
@@ -333,7 +337,7 @@ public class TIFFTweaker {
 		TiffField<?> stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS.getValue());
 		
 		if(stripByteCounts == null)
-			stripByteCounts = ifd.getField(TiffTag.TILE_BYTE_COUNTS.getValue());		
+			stripByteCounts = ifd.getField(TiffTag.TILE_BYTE_COUNTS.getValue());	
 		/* 
 		 * Make sure this will work in the case when neither STRIP_OFFSETS nor TILE_OFFSETS presents.
 		 * Not sure if this will ever happen for TIFF. JPEG EXIF data do not contain these fields. 
@@ -1923,9 +1927,8 @@ public class TIFFTweaker {
 		}
 	}
 	
-	public static void write(TIFFImage tiffImage) throws IOException {
+	public static void write(TIFFImage tiffImage, RandomAccessOutputStream rout) throws IOException {
 		RandomAccessInputStream rin = tiffImage.getInputStream();
-		RandomAccessOutputStream rout = tiffImage.getOutputStream();
 		int offset = writeHeader(IOUtils.BIG_ENDIAN, rout);
 		offset = copyPages(tiffImage.getIFDs(), offset, rin, rout);
 		int firstIFDOffset = tiffImage.getIFDs().get(0).getStartOffset();	
