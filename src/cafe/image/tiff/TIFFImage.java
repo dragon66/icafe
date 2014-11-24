@@ -29,12 +29,10 @@ public class TIFFImage {
 	private int workingPage;
 	private List<IFD> ifds;
 	private RandomAccessInputStream rin;
-	private RandomAccessOutputStream rout;
 
-	public TIFFImage(RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+	public TIFFImage(RandomAccessInputStream rin) throws IOException {
 		ifds = new ArrayList<IFD>();
 		this.rin = rin;
-		this.rout = rout;
 		TIFFTweaker.readIFDs(ifds, rin);
 		this.numOfPages = ifds.size();
 		this.workingPage = 0;
@@ -56,10 +54,6 @@ public class TIFFImage {
 		return numOfPages;
 	}
 	
-	public RandomAccessOutputStream getOutputStream() {
-		return rout;
-	}
-	
 	public TiffField<?> getField(short tag) {
 		return ifds.get(workingPage).getField(tag);
 	}
@@ -75,7 +69,7 @@ public class TIFFImage {
 			throw new IllegalArgumentException("Invalid page number: " + workingPage);
 	}
 	
-	public void write() throws IOException {
-		TIFFTweaker.write(this);
+	public void write(RandomAccessOutputStream out) throws IOException {
+		TIFFTweaker.write(this, out);
 	}
 }
