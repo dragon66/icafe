@@ -23,13 +23,13 @@ public class TestTIFFImage {
 		RandomAccessInputStream rin = new FileCacheRandomAccessInputStream(fin);
 		FileOutputStream fout = new FileOutputStream("NEW.tif");
 		RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(fout);
-		TIFFImage tiffImage = new TIFFImage(rin, rout);
+		TIFFImage tiffImage = new TIFFImage(rin);
 		int numOfPages = tiffImage.getNumOfPages();
 		tiffImage.setWorkingPage(numOfPages - 1); // Add something to the last page
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss z");
 		TiffField<?> tiffField = new ASCIIField(TiffTag.DATETIME.getValue(), formatter.format(new Date()) + '\0');
 		tiffImage.addField(tiffField);
-		tiffImage.write();
+		tiffImage.write(rout);
 		rin.close(); // Release resources
 		rout.close(); // Release resources
 		fin.close(); // We need to close the stream explicitly since neither input 
