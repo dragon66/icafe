@@ -13,6 +13,7 @@ package cafe.image.tiff;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import cafe.io.RandomAccessInputStream;
@@ -24,12 +25,16 @@ import cafe.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 05/23/2014
  */
-public class TIFFImage {
+public class TIFFImage implements Iterable<IFD> {
 	private int numOfPages;
 	private int workingPage;
 	private List<IFD> ifds;
 	private RandomAccessInputStream rin;
 
+	public TIFFImage() {
+		ifds= new ArrayList<IFD>();
+	}
+	
 	public TIFFImage(RandomAccessInputStream rin) throws IOException {
 		ifds = new ArrayList<IFD>();
 		this.rin = rin;
@@ -40,6 +45,20 @@ public class TIFFImage {
 	
 	public void addField(TiffField<?> field) {
 		ifds.get(workingPage).addField(field);
+	}
+	
+	public void addPage(IFD page) {
+		ifds.add(page);
+		numOfPages++;
+	}
+	
+	public void addPage(int index, IFD page) {
+		ifds.add(index, page);
+		numOfPages++;
+	}
+	
+	public TiffField<?> getField(short tag) {
+		return ifds.get(workingPage).getField(tag);
 	}
 	
 	public List<IFD> getIFDs() {
@@ -54,12 +73,15 @@ public class TIFFImage {
 		return numOfPages;
 	}
 	
-	public TiffField<?> getField(short tag) {
-		return ifds.get(workingPage).getField(tag);
-	}
-	
 	public TiffField<?> removeField(short tag) {
 		return ifds.get(workingPage).removeField(tag);
+	}
+	
+	public IFD removePage(int index) {
+		IFD removed = ifds.remove(index);
+		numOfPages--;
+		
+		return removed;
 	}
 	
 	public void setWorkingPage(int workingPage) {
@@ -71,5 +93,10 @@ public class TIFFImage {
 	
 	public void write(RandomAccessOutputStream out) throws IOException {
 		TIFFTweaker.write(this, out);
+	}
+
+	@Override
+	public Iterator<IFD> iterator() {
+		return ifds.iterator();
 	}
 }

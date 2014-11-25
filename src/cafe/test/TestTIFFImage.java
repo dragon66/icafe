@@ -29,6 +29,11 @@ public class TestTIFFImage {
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss z");
 		TiffField<?> tiffField = new ASCIIField(TiffTag.DATETIME.getValue(), formatter.format(new Date()) + '\0');
 		tiffImage.addField(tiffField);
+		// Remove the first page
+		while(numOfPages > 1) {
+			tiffImage.removePage(0);
+			numOfPages--;
+		}		
 		tiffImage.write(rout);
 		rin.close(); // Release resources
 		rout.close(); // Release resources
