@@ -21,6 +21,21 @@ public class GeoUtils {
 
 	private GeoUtils() {} // Prevents instantiation
 	
+	// Algorithm to find the area of a non self-crossing polygons
+	// From http://www.mathopenref.com/coordpolygonarea2.html
+	public static float area(float[] xp, float[] yp) {
+		float area = 0;
+		int numPoints = xp.length;
+		int j = numPoints - 1;
+
+		for (int i = 0; i < numPoints; i++) {
+			area = area +  (xp[j] + xp[i]) * (yp[j] - yp[i]); 
+			j = i;
+	    }
+			
+		return Math.abs(area)/2;
+	}
+
 	public static boolean isInsidePoly(int x, int y, int[] xp, int[] yp)
 	{		
 	     int i, j;
