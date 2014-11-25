@@ -92,6 +92,12 @@ public class TIFFImage implements Iterable<IFD> {
 	}
 	
 	public void write(RandomAccessOutputStream out) throws IOException {
+		if(numOfPages > 1) { // Reset pageNumber if we have more than 1 pages
+			for(int i = 0; i < ifds.size(); i++) {
+				ifds.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+				ifds.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(numOfPages - 1)}));
+			}
+		}
 		TIFFTweaker.write(this, out);
 	}
 
