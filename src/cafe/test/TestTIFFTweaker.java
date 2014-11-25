@@ -137,7 +137,7 @@ public class TestTIFFTweaker {
 				int pageCount = TIFFTweaker.getPageCount(rin);
 				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
 				if(pageCount > 1)
-					TIFFTweaker.removePages(rin, rout, pageCount - 1); // Last page
+					TIFFTweaker.removePages(rin, rout, 0, 2, 4, 100, -100);
 				else
 					TIFFTweaker.copyCat(rin, rout);
 				rout.close();

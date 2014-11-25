@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    24Nov2014  Changed removePages() to remove the actual pages from the arguments
  * WY    24Nov2014  Changed write(TIFFImage) to write(TIFFImage, RandomAccessOutputStream)
  * WY    22Nov2014  Removed unnecessary TIFFWriter argument from corresponding methods
  * WY    21Nov2014  Added new writeMultipageTIFF() to use TIFFFrame array as argument
@@ -58,6 +59,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import cafe.image.compression.ImageDecoder;
@@ -1780,13 +1782,17 @@ public class TIFFTweaker {
 		readIFDs(null, null, TiffTag.class, list, offset, rin);		
 		// Step 2: remove pages from a multiple page TIFF
 		int pagesRemoved = 0;
-		Arrays.sort(pages);
-		for(int i = pages.length - 1; i >= 0; i--) {
-			if(pages[i] < 0) break;			
+		
+		List<Integer> pageList = ArrayUtils.intArrayAsList(pages);
+		Collections.sort(pageList);
+		
+		for(int i = pageList.size() - 1; i >= 0; i--) {
+			int index = pageList.get(i);
+			if(index < 0) break;
 			// We have to keep at least one page to avoid corrupting the image
-			if(list.size() > 1 && list.size() > pages[i]) {
+			if(list.size() > 1 && list.size() > index) {
 				pagesRemoved++;
-				list.remove(pages[i]); 
+				list.remove(index); 
 			}
 		}
 		// End of removing pages
