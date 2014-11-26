@@ -1786,8 +1786,8 @@ public class TIFFTweaker {
 			if(pages[i] < 0) break;
 			// We have to keep at least one page to avoid corrupting the image
 			if(list.size() > 1 && list.size() > pages[i]) {
-			pagesRemoved++;
-			list.remove(pages[i]);
+				pagesRemoved++;
+				list.remove(pages[i]);
 			}
 		}
 		// End of removing pages
