@@ -12,7 +12,8 @@
  * IMGUtils.java
  *
  * Who   Date       Description
- * ====  =========  =================================================================
+ * ====  =========  ==============================================================
+ * WY    26Nov2014  Changed rgb2bilevel() to take into account transparency
  * WY    03Nov2014  Added CMYK2RGB() to convert CMYK raster to RGB raster
  * WY    22Sep2014  Added guessImageType() to auto detect image type
  * WY    13Aug2014  Added RGB2YCCK_Inverted() to support YCCK JPEG
@@ -1094,7 +1095,9 @@ public class IMGUtils {
 		int sum = 0;
 		
 		for(int i = 0; i < rgb.length; i++) {
-			pixels[i] = (byte)(((rgb[i]>>16)&0xff)*0.2126 + ((rgb[i]>>8)&0xff)*0.7152 + (rgb[i]&0xff)*0.0722);
+			if((rgb[i] >>> 24) < 0x80) pixels[i] = (byte)0xff; // Dealing with transparency color
+			else
+				pixels[i] = (byte)(((rgb[i]>>16)&0xff)*0.2126 + ((rgb[i]>>8)&0xff)*0.7152 + (rgb[i]&0xff)*0.0722);
 			sum += (pixels[i]&0xff);
 		}
 		
@@ -1128,7 +1131,9 @@ public class IMGUtils {
 		int sum = 0;
 		
 		for(int i = 0; i < rgb.length; i++) {
-			pixels[i] = (byte)(((rgb[i]>>16)&0xff)*0.2126 + ((rgb[i]>>8)&0xff)*0.7152 + (rgb[i]&0xff)*0.0722);
+			if((rgb[i] >>> 24) < 0x80) pixels[i] = (byte)0xff; // Dealing with transparency color
+			else
+				pixels[i] = (byte)(((rgb[i]>>16)&0xff)*0.2126 + ((rgb[i]>>8)&0xff)*0.7152 + (rgb[i]&0xff)*0.0722);
 			sum += (pixels[i]&0xff);
 		}
 		
