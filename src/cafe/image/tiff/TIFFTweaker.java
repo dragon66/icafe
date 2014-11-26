@@ -59,7 +59,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import cafe.image.compression.ImageDecoder;
@@ -1779,20 +1778,16 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		
 		// Step 1: read the IFDs into a list first
-		readIFDs(null, null, TiffTag.class, list, offset, rin);		
+		readIFDs(null, null, TiffTag.class, list, offset, rin);
 		// Step 2: remove pages from a multiple page TIFF
-		int pagesRemoved = 0;
-		
-		List<Integer> pageList = ArrayUtils.intArrayAsList(pages);
-		Collections.sort(pageList);
-		
-		for(int i = pageList.size() - 1; i >= 0; i--) {
-			int index = pageList.get(i);
-			if(index < 0) break;
+		int pagesRemoved = 0;			
+		pages = ArrayUtils.removeDuplicates(pages);
+		for(int i = pages.length - 1; i >= 0; i--) {
+			if(pages[i] < 0) break;
 			// We have to keep at least one page to avoid corrupting the image
-			if(list.size() > 1 && list.size() > index) {
-				pagesRemoved++;
-				list.remove(index); 
+			if(list.size() > 1 && list.size() > pages[i]) {
+			pagesRemoved++;
+			list.remove(pages[i]);
 			}
 		}
 		// End of removing pages
