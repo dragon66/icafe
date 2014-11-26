@@ -12,7 +12,8 @@
  * ArrayUtils.java
  *
  * Who   Date       Description
- * ====  =========  ===================================================================
+ * ====  =========  ======================================================================
+ * WY    25Nov2014  Added removeDuplicates() to sort and remove duplicates from int arrays
  * WY    12Nov2014  Changed the argument sequence for flipEndian()
  * WY    11Nov2014  Changed flipEndian() to include scan line stride to skip bits
  * WY    11Nov2014  Added toNBits() to convert byte array to nBits data unit
@@ -697,6 +698,40 @@ public class ArrayUtils
 		if (i < high)
 			quicksort(array, i, high);
 	}
+    
+    // Based on java2novice.com example
+    /**
+     * Remove duplicate elements from an int array
+     * 
+     * @param input input unsorted int array
+     * @return a sorted int array with unique elements
+     */
+    public static int[] removeDuplicates(int[] input) {
+        //return if the array length is less than 2
+        if(input.length < 2){
+            return input;
+        }
+      
+        // Sort the array first
+        Arrays.sort(input);        
+        
+    	int j = 0;
+        int i = 1;
+              
+        while(i < input.length){
+            if(input[i] == input[j]){
+                i++;
+            } else{
+                input[++j] = input[i++];
+            }   
+        }
+        
+        int[] output = new int[j + 1];
+        
+        System.arraycopy(input, 0, output, 0, j + 1);
+        
+        return output;
+    }
 
     // Shell sort
     public static void shellsort(int[] array)
