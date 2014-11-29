@@ -34,6 +34,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferUShort;
 import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
@@ -923,8 +924,11 @@ public class TIFFReader extends ImageReader {
 					db = new DataBufferUShort(spixels, spixels.length);
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
 			                trans, DataBuffer.TYPE_USHORT);
-				}
-				raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross*numOfBands, numOfBands, bandoff, null);
+				} else if(bitsPerSample == 32) {
+					cm = new Int32ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent);
+					raster = cm.createCompatibleWritableRaster(tileWidth*tilesAcross, tileLength*tilesDown);
+				} else
+					raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross*numOfBands, numOfBands, bandoff, null);
 				// Now we are going to read and set tiles to the raster
 				
 				switch(compression) {
@@ -936,6 +940,9 @@ public class TIFFReader extends ImageReader {
 								randIS.readFully(temp);
 								if(bitsPerSample == 16) {
 									raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp, endian == IOUtils.BIG_ENDIAN));
+								} else if(bitsPerSample == 32) {
+									Object tempArray = ArrayUtils.toNBits(bitsPerSample, temp, samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN);
+									raster.setDataElements(xoff, yoff, tileWidth, tileLength, tempArray);									
 								} else
 									raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp);
 								xoff += tileWidth;
@@ -952,7 +959,10 @@ public class TIFFReader extends ImageReader {
 							DataBuffer tileDatabuffer = null;
 							int[] bankIndices = {0, 1, 2};
 							bandoff = new int[]{0, 0, 0};
-							raster = Raster.createBandedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileLength*tilesAcross, new int[]{0, 0, 0}, new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample}, null);
+							if(bitsPerSample == 32)
+								raster = cm.createCompatibleWritableRaster(tileWidth*tilesAcross, tileLength*tilesDown);
+							else
+								raster = Raster.createBandedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileLength*tilesAcross, new int[]{0, 0, 0}, new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample}, null);
 							for(int i = 0; i < tilesPerImage; i++) {
 								rgb[0] = new byte[tileByteCounts[i]];
 								randIS.seek(tileOffsets[i]);
@@ -969,6 +979,11 @@ public class TIFFReader extends ImageReader {
 									tileDatabuffer = new DataBufferUShort(new short[][]{ArrayUtils.byteArrayToShortArray(rgb[0], endian == IOUtils.BIG_ENDIAN), 
 											ArrayUtils.byteArrayToShortArray(rgb[1], endian == IOUtils.BIG_ENDIAN), 
 											ArrayUtils.byteArrayToShortArray(rgb[2], endian == IOUtils.BIG_ENDIAN)},
+											tileWidth);
+								} else if(bitsPerSample == 32) {
+									tileDatabuffer = new DataBufferInt(new int[][]{(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[0], samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN)), 
+											(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[1], samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN)), 
+											(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[2], samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN))},
 											tileWidth);
 								} else {
 									tileDatabuffer = new DataBufferByte(rgb, rgb[0].length);
