@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    28Nov2014  Added support for 32 bits tiled image
  * WY    14Nov2014  Added support for tiled Palette Image
  * WY    07Nov2014  Added support for 16 bit CMYK image
  * WY    06Nov2014  Planar support for stripped YCbCr image
@@ -683,10 +684,13 @@ public class TIFFReader extends ImageReader {
 				if(bitsPerSample == 16) {
 					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, endian == IOUtils.BIG_ENDIAN);
 					db = new DataBufferUShort(spixels, spixels.length);
+					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,	trans, DataBuffer.TYPE_USHORT);
 				} else {
 					//Create a BufferedImage
-					db = new DataBufferByte(pixels, pixels.length);					
+					db = new DataBufferByte(pixels, pixels.length);
+					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,	trans, DataBuffer.TYPE_BYTE);
 				}
+		
 				if(planaryConfiguration == 2) {
 					bandoff = new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample};
 					int[] bankIndices = new int[]{0, 0, 0};
@@ -718,10 +722,6 @@ public class TIFFReader extends ImageReader {
 						raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
 					}
 				}
-				if(bitsPerSample == 16)
-					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,	trans, DataBuffer.TYPE_USHORT);
-				else if(bitsPerSample == 8)
-					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,	trans, DataBuffer.TYPE_BYTE);
 			
 				return new BufferedImage(cm, raster, false, null);
 			default:
@@ -924,11 +924,14 @@ public class TIFFReader extends ImageReader {
 					db = new DataBufferUShort(spixels, spixels.length);
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
 			                trans, DataBuffer.TYPE_USHORT);
-				} else if(bitsPerSample == 32) {
+				}
+				raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross*numOfBands, numOfBands, bandoff, null);
+				
+				if(bitsPerSample == 32) {
 					cm = new Int32ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent);
 					raster = cm.createCompatibleWritableRaster(tileWidth*tilesAcross, tileLength*tilesDown);
-				} else
-					raster = Raster.createInterleavedRaster(db, tileWidth*tilesAcross, tileLength*tilesDown, tileWidth*tilesAcross*numOfBands, numOfBands, bandoff, null);
+				} 
+				
 				// Now we are going to read and set tiles to the raster
 				
 				switch(compression) {
