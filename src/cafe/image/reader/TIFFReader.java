@@ -671,13 +671,19 @@ public class TIFFReader extends ImageReader {
 				}
 				cm = null;
 				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
-				bandoff = new int[]{0, 0, 0};
+				if(planaryConfiguration == 2)
+					bandoff = new int[]{0, 0, 0};
+				else
+					bandoff = new int[]{0, 1, 2};
 				nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample};
 				transparent = false;
 				numOfBands = samplesPerPixel;
 				trans = Transparency.OPAQUE;
 				if(samplesPerPixel == 4) {
-					bandoff = new int[]{0, 0, 0, 0};
+					if(planaryConfiguration == 2)
+						bandoff = new int[]{0, 0, 0, 0};
+					else
+						bandoff = new int[]{0, 1, 2, 3};
 					nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample, bitsPerSample};
 					trans = Transparency.TRANSLUCENT;
 					transparent = true;
