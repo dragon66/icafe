@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    03Dec2014  Added byteArrayToFloatArray() and byteArrayToDoubleArray()
  * WY    25Nov2014  Added removeDuplicates() to sort and remove duplicates from int arrays
  * WY    12Nov2014  Changed the argument sequence for flipEndian()
  * WY    11Nov2014  Changed flipEndian() to include scan line stride to skip bits
@@ -31,6 +32,8 @@ import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.util.AbstractList;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
@@ -80,6 +83,48 @@ public class ArrayUtils
 	            }
 	        }
 	    }
+	}
+	
+	public static double[] byteArrayToDoubleArray(byte[] data, boolean bigEndian) {
+		return byteArrayToDoubleArray(data, 0, data.length, bigEndian);
+	}
+	
+	public static double[] byteArrayToDoubleArray(byte[] data, int offset, int len, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		DoubleBuffer doubleBuf = byteBuffer.asDoubleBuffer();
+		double[] array = new double[doubleBuf.remaining()];
+		doubleBuf.get(array);
+		
+		return array;
+	}
+	
+	public static float[] byteArrayToFloatArray(byte[] data, boolean bigEndian) {
+		return byteArrayToFloatArray(data, 0, data.length, bigEndian);
+	}
+	
+	public static float[] byteArrayToFloatArray(byte[] data, int offset, int len, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		FloatBuffer floatBuf = byteBuffer.asFloatBuffer();
+		float[] array = new float[floatBuf.remaining()];
+		floatBuf.get(array);
+		
+		return array;
 	}
 
 	public static int[] byteArrayToIntArray(byte[] data, boolean bigEndian) {
