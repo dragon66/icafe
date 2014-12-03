@@ -1,6 +1,8 @@
 ***************************
-Last modified on 11/24/2014
+Last modified on 12/03/2014
 ***************************
+03Dec2014  Fixed bug for IMGUtils getRGB() to fall back to BufferedImage.getRGB()
+03Dec2014  Added byteArrayToFloatArray() and byteArrayToDoubleArray() to ArrayUtils
 24Nov2014  Changed TIFFTweaker write(TIFFImage) to write(TIFFImage, RandomAccessOutputStream) 
 24Nov2014  Removed RandomAccessOutputStream from TIFFImage constructor
 22Nov2014  Removed unnecessary TIFFWriter argument from corresponding TIFFTweaker methods
