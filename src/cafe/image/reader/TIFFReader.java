@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    03Dec2014  Code clean and test showing float type raster image
  * WY    01Dec2014  Added support for less than 8 bits planar stripped image
  * WY    28Nov2014  Added support for 32 bits tiled image
  * WY    14Nov2014  Added support for tiled Palette Image
@@ -44,6 +45,7 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cafe.image.color.CMYKColorSpace;
@@ -669,82 +671,82 @@ public class TIFFReader extends ImageReader {
 						}						
 					}						
 				}
+				
 				cm = null;
-				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
-				if(planaryConfiguration == 2)
-					bandoff = new int[]{0, 0, 0};
-				else
-					bandoff = new int[]{0, 1, 2};
-				nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample};
-				transparent = false;
-				numOfBands = samplesPerPixel;
-				trans = Transparency.OPAQUE;
-				if(samplesPerPixel == 4) {
-					if(planaryConfiguration == 2)
-						bandoff = new int[]{0, 0, 0, 0};
-					else
-						bandoff = new int[]{0, 1, 2, 3};
-					nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample, bitsPerSample};
-					trans = Transparency.TRANSLUCENT;
-					transparent = true;
-				}
 				raster  = null;
 				
+				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
+				bandoff = new int[samplesPerPixel];
+				nBits = new int[samplesPerPixel];
+				numOfBands = samplesPerPixel;
+				
+				Arrays.fill(nBits, bitsPerSample);
+				
+				if(planaryConfiguration == 2)
+					for(int i = 0; i < samplesPerPixel; i++)
+						bandoff[i] = 0;
+				else
+					for(int i = 0; i < samplesPerPixel; i++)
+						bandoff[i] = i;
+				
+				transparent = false;			
+				trans = Transparency.OPAQUE;
+				
+				if(samplesPerPixel == 4) {
+					trans = Transparency.TRANSLUCENT;
+					transparent = true;
+				}			
+				
 				if(planaryConfiguration == 2) {					
-					int[] bankIndices = {0, 1, 2};
+					int[] bankIndices = new int[samplesPerPixel];
 					byte[][] rgb = new byte[samplesPerPixel][];
-					rgb[0] = ArrayUtils.subArray(pixels, 0, count[0]);
-					rgb[1] = ArrayUtils.subArray(pixels, count[0], count[1]);
-					rgb[2] = ArrayUtils.subArray(pixels, count[0] + count[1], count[2]);
 					
-					if(samplesPerPixel > 3) {
-						bankIndices = new int[]{0, 1, 2, 3};
-						rgb[3] = ArrayUtils.subArray(pixels, count[0] + count[1] + count[2], count[3]);
-					}
-		
+					int off = 0;
+					
+					for(int i = 0; i < samplesPerPixel; i++) {
+						rgb[i] = ArrayUtils.subArray(pixels, off, count[i]);
+						off += count[i];
+						bankIndices[i] = i;
+					}					
+					/*
+					 * Test showing 32 float type image
+					 * 
+					 * if(bitsPerSample == 32) {
+							Object[] shorts = new Object[samplesPerPixel];
+							for(int i = 0; i < samplesPerPixel; i++)
+								shorts[i] = ArrayUtils.byteArrayToFloatArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
+							db = new DataBufferFloat(new float[][] {(float[])shorts[0], (float[])shorts[1], (float[])shorts[2]}, ((float[])shorts[0]).length);
+							 // Create a TYPE_FLOAT sample model (specifying how the pixels are stored)
+					        SampleModel sampleModel = new BandedSampleModel(DataBuffer.TYPE_FLOAT, imageWidth, imageHeight, imageWidth, bankIndices, bandoff);
+					        raster = Raster.createWritableRaster(sampleModel, db, null);
+							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_FLOAT);						
+						} 
+					 */					
 					if(bitsPerSample == 16) {
 						short[][] shorts = new short[samplesPerPixel][];
-						shorts[0] = ArrayUtils.byteArrayToShortArray(rgb[0], endian == IOUtils.BIG_ENDIAN);
-						shorts[1] = ArrayUtils.byteArrayToShortArray(rgb[1], endian == IOUtils.BIG_ENDIAN);
-						shorts[2] = ArrayUtils.byteArrayToShortArray(rgb[2], endian == IOUtils.BIG_ENDIAN);
-						db = new DataBufferUShort(new short[][]{shorts[0], shorts[1], shorts[2]}, shorts[0].length);
-						if(samplesPerPixel > 3) {
-							shorts[3] = ArrayUtils.byteArrayToShortArray(rgb[3], endian == IOUtils.BIG_ENDIAN);
-							db = new DataBufferUShort(new short[][]{shorts[0], shorts[1], shorts[2], shorts[3]}, shorts[0].length);
-						}
+						for(int i = 0; i < samplesPerPixel; i++)
+							shorts[i] = ArrayUtils.byteArrayToShortArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
+						db = new DataBufferUShort(shorts, shorts[0].length);
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);						
 					} else if(bitsPerSample > 8 && bitsPerSample < 16) {
 						short[][] shorts = new short[samplesPerPixel][];
-						shorts[0] = (short[])(ArrayUtils.toNBits(bitsPerSample, rgb[0], imageWidth, true));
-						shorts[1] = (short[])(ArrayUtils.toNBits(bitsPerSample, rgb[1], imageWidth, true));
-						shorts[2] = (short[])(ArrayUtils.toNBits(bitsPerSample, rgb[2], imageWidth, true));
-						db = new DataBufferUShort(new short[][]{shorts[0], shorts[1], shorts[2]}, shorts[0].length);
-						if(samplesPerPixel > 3) {
-							shorts[3] = (short[])(ArrayUtils.toNBits(bitsPerSample, rgb[3], imageWidth, true));
-							db = new DataBufferUShort(new short[][]{shorts[0], shorts[1], shorts[2], shorts[3]}, shorts[0].length);
-						}
+						for(int i = 0; i < samplesPerPixel; i++)
+							shorts[i] = (short[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], imageWidth, true));
+						db = new DataBufferUShort(shorts, shorts[0].length);
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);						
 					} else if(bitsPerSample > 16) {
 						int[][] ints = new int[samplesPerPixel][];
-						ints[0] = (int[])(ArrayUtils.toNBits(bitsPerSample, rgb[0], samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN));
-						ints[1] = (int[])(ArrayUtils.toNBits(bitsPerSample, rgb[1], samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN));
-						ints[2] = (int[])(ArrayUtils.toNBits(bitsPerSample, rgb[2], samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN));
-						db = new DataBufferInt(new int[][]{ints[0], ints[1], ints[2]}, ints[0].length);
-						if(samplesPerPixel > 3) {
-							ints[3] = (int[])(ArrayUtils.toNBits(bitsPerSample, rgb[3], samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN));
-							db = new DataBufferInt(new int[][]{ints[0], ints[1], ints[2], ints[3]}, ints[0].length);
-						}
+						boolean bigEndian = false;
+						if(bitsPerSample%8 == 0) bigEndian = true;
+						for(int i = 0; i < samplesPerPixel; i++)
+							ints[i] = (int[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], samplesPerPixel*imageWidth, bigEndian));
+						db = new DataBufferInt(ints, ints[0].length);
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_INT);						
 					} else if(bitsPerSample < 8) {
 						byte[][] bytes = new byte[samplesPerPixel][];
-						bytes[0] = (byte[])(ArrayUtils.toNBits(bitsPerSample, rgb[0], imageWidth, true));
-						bytes[1] = (byte[])(ArrayUtils.toNBits(bitsPerSample, rgb[1], imageWidth, true));
-						bytes[2] = (byte[])(ArrayUtils.toNBits(bitsPerSample, rgb[2], imageWidth, true));
-						db = new DataBufferByte(new byte[][]{bytes[0], bytes[1], bytes[2]},	bytes[0].length);
-						if(samplesPerPixel > 3) {
-							bytes[3] = (byte[])(ArrayUtils.toNBits(bitsPerSample, rgb[3], imageWidth, true));
-							db = new DataBufferByte(new byte[][]{bytes[0], bytes[1], bytes[2], bytes[3]}, bytes[0].length);
-						}
+						for(int i = 0; i < samplesPerPixel; i++)
+							bytes[i] = (byte[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], imageWidth, true));
+						db = new DataBufferByte(bytes, bytes[0].length);
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);						
 					} else {
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);						
