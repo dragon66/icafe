@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    03Dec2014  Bug fix for getRGB() to fall back to BufferedImage.getRGB()
  * WY    26Nov2014  Changed rgb2bilevel() to take into account transparency
  * WY    03Nov2014  Added CMYK2RGB() to convert CMYK raster to RGB raster
  * WY    22Sep2014  Added guessImageType() to auto detect image type
@@ -588,7 +589,7 @@ public class IMGUtils {
 				}		
 				return rgbs;
 			default:
-				throw new UnsupportedOperationException("Unsupported DataBuffer transfer type: " + type);
+				return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 		}
 	}
 	
@@ -768,7 +769,7 @@ public class IMGUtils {
 				}			
 				return rgbs;
 			default:
-				throw new UnsupportedOperationException("Unsupported DataBuffer transfer type: " + type);
+				return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 		}
 	}
 	
