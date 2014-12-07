@@ -13,7 +13,8 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
- * WY    03Dec2014  Code clean and test showing float type raster image
+ * WY    07Dec2014  Added support for floating point sample data type
+ * WY    03Dec2014  Code clean and test showing float type raster images
  * WY    01Dec2014  Added support for less than 8 bits planar stripped image
  * WY    28Nov2014  Added support for 32 bits tiled image
  * WY    14Nov2014  Added support for tiled Palette Image
@@ -32,16 +33,21 @@ import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
+import java.awt.image.BandedSampleModel;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferDouble;
+import java.awt.image.DataBufferFloat;
 import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferUShort;
 import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
+import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
+import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.ArrayList;
@@ -56,6 +62,8 @@ import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.image.compression.packbits.Packbits;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.ByteField;
+import cafe.image.tiff.DoubleField;
+import cafe.image.tiff.FloatField;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.LongField;
 import cafe.image.tiff.RationalField;
@@ -162,6 +170,28 @@ public class TIFFReader extends ImageReader {
 		TiffFieldEnum.PlanarConfiguration e_planaryConfiguration = TiffFieldEnum.PlanarConfiguration.fromValue(planaryConfiguration);
 		System.out.println("Planary configuration: " + e_planaryConfiguration);
 		
+		TiffField<?> f_sampleFormat = ifd.getField(TiffTag.SAMPLE_FORMAT.getValue());
+		TiffField<?> f_sampleMaxValue = ifd.getField(TiffTag.S_MAX_SAMPLE_VALUE.getValue());
+		TiffField<?> f_sampleMinValue = ifd.getField(TiffTag.S_MIN_SAMPLE_VALUE.getValue());
+		
+		boolean floatSample = false;
+		if(f_sampleFormat != null && f_sampleFormat.getDataAsLong()[0] == 3) { // Floating point sample data type
+			floatSample = true;
+			double maxValue = (bitsPerSample <= 32)? Float.MAX_VALUE:Double.MAX_VALUE;
+			double minValue = (bitsPerSample <= 32)? Float.MIN_VALUE:Double.MIN_VALUE;
+			if(bitsPerSample <= 32 && f_sampleMaxValue != null) {
+				maxValue = ((float[])f_sampleMaxValue.getData())[0];
+			} else if(bitsPerSample > 32 && f_sampleMaxValue != null) {
+				maxValue = ((double[])f_sampleMaxValue.getData())[0];
+			}	
+			if(bitsPerSample <= 32 && f_sampleMinValue != null) {
+				minValue = ((float[])f_sampleMinValue.getData())[0];
+			} else if(bitsPerSample > 32 && f_sampleMinValue != null) {
+				minValue = ((double[])f_sampleMinValue.getData())[0];
+			}				
+			System.out.println("Sample MAX value: " + maxValue);
+			System.out.println("Sample MIN vlaue: " + minValue);
+		}
 		boolean transparent = false;
 		boolean isAssociatedAlpha = false;
 		int numOfBands = samplesPerPixel;
@@ -298,7 +328,7 @@ public class TIFFReader extends ImageReader {
 					transparent = true;
 				}				
 				if(bitsPerSample == 16) {
-					short[] spixels = ArrayUtils.byteArrayToShortArray(pixels, endian == IOUtils.BIG_ENDIAN);
+					short[] spixels = ArrayUtils.toShortArray(pixels, endian == IOUtils.BIG_ENDIAN);
 					db = new DataBufferUShort(spixels, spixels.length);
 					cm = new ComponentColorModel(CMYKColorSpace.getInstance(), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
 					if(planaryConfiguration == 2) {
@@ -679,15 +709,20 @@ public class TIFFReader extends ImageReader {
 				bandoff = new int[samplesPerPixel];
 				nBits = new int[samplesPerPixel];
 				numOfBands = samplesPerPixel;
-				
-				Arrays.fill(nBits, bitsPerSample);
+				int[] bankIndices = new int[samplesPerPixel];
+								
+				Arrays.fill(nBits, bitsPerSample <= 32 ? bitsPerSample : 32);
 				
 				if(planaryConfiguration == 2)
-					for(int i = 0; i < samplesPerPixel; i++)
+					for(int i = 0; i < samplesPerPixel; i++) {
 						bandoff[i] = 0;
+						bankIndices[i] = i;						
+					}
 				else
-					for(int i = 0; i < samplesPerPixel; i++)
+					for(int i = 0; i < samplesPerPixel; i++) {
 						bandoff[i] = i;
+						bankIndices[i] = 0; 
+					}
 				
 				transparent = false;			
 				trans = Transparency.OPAQUE;
@@ -697,83 +732,124 @@ public class TIFFReader extends ImageReader {
 					transparent = true;
 				}			
 				
-				if(planaryConfiguration == 2) {					
-					int[] bankIndices = new int[samplesPerPixel];
+				if(planaryConfiguration == 2) {				
 					byte[][] rgb = new byte[samplesPerPixel][];
 					
 					int off = 0;
+					int dataBufferType = DataBuffer.TYPE_BYTE;
 					
 					for(int i = 0; i < samplesPerPixel; i++) {
 						rgb[i] = ArrayUtils.subArray(pixels, off, count[i]);
 						off += count[i];
-						bankIndices[i] = i;
-					}					
-					/*
-					 * Test showing 32 float type image
-					 * 
-					 * if(bitsPerSample == 32) {
-							Object[] shorts = new Object[samplesPerPixel];
-							for(int i = 0; i < samplesPerPixel; i++)
-								shorts[i] = ArrayUtils.byteArrayToFloatArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
-							db = new DataBufferFloat(new float[][] {(float[])shorts[0], (float[])shorts[1], (float[])shorts[2]}, ((float[])shorts[0]).length);
-							 // Create a TYPE_FLOAT sample model (specifying how the pixels are stored)
-					        SampleModel sampleModel = new BandedSampleModel(DataBuffer.TYPE_FLOAT, imageWidth, imageHeight, imageWidth, bankIndices, bandoff);
-					        raster = Raster.createWritableRaster(sampleModel, db, null);
-							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_FLOAT);						
-						} 
-					 */					
-					if(bitsPerSample == 16) {
-						short[][] shorts = new short[samplesPerPixel][];
-						for(int i = 0; i < samplesPerPixel; i++)
-							shorts[i] = ArrayUtils.byteArrayToShortArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
-						db = new DataBufferUShort(shorts, shorts[0].length);
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);						
-					} else if(bitsPerSample > 8 && bitsPerSample < 16) {
-						short[][] shorts = new short[samplesPerPixel][];
-						for(int i = 0; i < samplesPerPixel; i++)
-							shorts[i] = (short[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], imageWidth, true));
-						db = new DataBufferUShort(shorts, shorts[0].length);
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);						
-					} else if(bitsPerSample > 16) {
-						int[][] ints = new int[samplesPerPixel][];
-						boolean bigEndian = false;
-						if(bitsPerSample%8 == 0) bigEndian = true;
-						for(int i = 0; i < samplesPerPixel; i++)
-							ints[i] = (int[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], samplesPerPixel*imageWidth, bigEndian));
-						db = new DataBufferInt(ints, ints[0].length);
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_INT);						
-					} else if(bitsPerSample < 8) {
-						byte[][] bytes = new byte[samplesPerPixel][];
-						for(int i = 0; i < samplesPerPixel; i++)
-							bytes[i] = (byte[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], imageWidth, true));
-						db = new DataBufferByte(bytes, bytes[0].length);
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);						
-					} else {
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);						
-						db = new DataBufferByte(rgb, rgb[0].length);
 					}
-					raster = Raster.createBandedRaster(db, imageWidth, imageHeight, imageWidth, bankIndices, bandoff, null);
 					
+					if(floatSample) { // Floating point sample data type
+						if(bitsPerSample == 16 || bitsPerSample == 32) {
+							float[][] floats = new float[samplesPerPixel][];
+							if(bitsPerSample == 16) {
+								for(int i = 0; i < samplesPerPixel; i++)
+									floats[i] = ArrayUtils.to16BitFloatArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
+							} else {
+								for(int i = 0; i < samplesPerPixel; i++)
+									floats[i] = ArrayUtils.toFloatArray(rgb[i], endian == IOUtils.BIG_ENDIAN);				
+							}
+							dataBufferType = DataBuffer.TYPE_FLOAT;
+							db = new DataBufferFloat(floats, floats[0].length);
+						} else if(bitsPerSample == 64) {
+							double[][] doubles = new double[samplesPerPixel][];
+							for(int i = 0; i < samplesPerPixel; i++)
+								doubles[i] = ArrayUtils.toDoubleArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
+							dataBufferType = DataBuffer.TYPE_DOUBLE;
+							db = new DataBufferDouble(doubles, doubles[0].length);
+						} else {
+							throw new UnsupportedOperationException("Unsupported floating point sample bit depth: " + bitsPerSample);
+						}
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, dataBufferType);						
+						// Create a TYPE_FLOAT sample model (specifying how the pixels are stored)
+				        SampleModel sampleModel = new BandedSampleModel(dataBufferType, imageWidth, imageHeight, imageWidth, bankIndices, bandoff);
+				        raster = Raster.createWritableRaster(sampleModel, db, null);							
+					} else { // Assume integral sample data type
+						if(bitsPerSample == 16) {
+							short[][] shorts = new short[samplesPerPixel][];
+							for(int i = 0; i < samplesPerPixel; i++)
+								shorts[i] = ArrayUtils.toShortArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
+							db = new DataBufferUShort(shorts, shorts[0].length);
+							dataBufferType = DataBuffer.TYPE_USHORT;
+						} else if(bitsPerSample > 8 && bitsPerSample < 16) {
+							short[][] shorts = new short[samplesPerPixel][];
+							for(int i = 0; i < samplesPerPixel; i++)
+								shorts[i] = (short[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], imageWidth, true));
+							db = new DataBufferUShort(shorts, shorts[0].length);
+							dataBufferType = DataBuffer.TYPE_USHORT;
+						} else if(bitsPerSample > 16) {
+							int[][] ints = new int[samplesPerPixel][];
+							boolean bigEndian = false;
+							if(bitsPerSample%8 == 0) bigEndian = true;
+							for(int i = 0; i < samplesPerPixel; i++)
+								ints[i] = (int[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], samplesPerPixel*imageWidth, bigEndian));
+							db = new DataBufferInt(ints, ints[0].length);
+							dataBufferType = DataBuffer.TYPE_INT;
+						} else if(bitsPerSample < 8) {
+							byte[][] bytes = new byte[samplesPerPixel][];
+							for(int i = 0; i < samplesPerPixel; i++)
+								bytes[i] = (byte[])(ArrayUtils.toNBits(bitsPerSample, rgb[i], imageWidth, true));
+							db = new DataBufferByte(bytes, bytes[0].length);
+							dataBufferType = DataBuffer.TYPE_BYTE;
+						} else {
+							db = new DataBufferByte(rgb, rgb[0].length);
+							dataBufferType = DataBuffer.TYPE_BYTE;
+						}
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, dataBufferType);						
+						raster = Raster.createBandedRaster(db, imageWidth, imageHeight, imageWidth, bankIndices, bandoff, null);
+					}
 				} else {
-					if(bitsPerSample < 8) {
-						Object tempArray = ArrayUtils.toNBits(bitsPerSample*samplesPerPixel, pixels, imageWidth, true);
-						cm = new DirectColorModel(bitsPerSample*samplesPerPixel, redMask[bitsPerSample], greenMask[bitsPerSample], blueMask[bitsPerSample]);
-						raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
-						raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
-					} else if(bitsPerSample == 8) {
-						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,	trans, DataBuffer.TYPE_BYTE);
-						db = new DataBufferByte(pixels, pixels.length);						
-						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
-					} else {
-						Object tempArray = ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN);
-						if(bitsPerSample <= 16) {
-							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
-						} else if(bitsPerSample == 32) { // A workaround for Java's ComponentColorModel bug with 32 bit sample
-							cm = new Int32ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent);
+					if(floatSample) {
+						if(bitsPerSample >= 16 && bitsPerSample <= 32) {
+							if(bitsPerSample % 8 == 0) {
+								float[] tempArray = null;
+								if(bitsPerSample == 16)
+									tempArray = ArrayUtils.to16BitFloatArray(pixels, endian == IOUtils.BIG_ENDIAN);
+								else if(bitsPerSample == 24)
+									tempArray = ArrayUtils.to24BitFloatArray(pixels, endian == IOUtils.BIG_ENDIAN);
+								else
+									tempArray = ArrayUtils.toFloatArray(pixels, endian == IOUtils.BIG_ENDIAN);
+								cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_FLOAT);
+								db = new DataBufferFloat(tempArray, tempArray.length);
+								// Create a TYPE_FLOAT sample model (specifying how the pixels are stored)
+								SampleModel sampleModel = new PixelInterleavedSampleModel(DataBuffer.TYPE_FLOAT, imageWidth, imageHeight, samplesPerPixel, imageWidth*samplesPerPixel, bandoff);
+								raster = Raster.createWritableRaster(sampleModel, db, null);							
+							} else
+								throw new UnsupportedOperationException("Unsupported bit depth: " + bitsPerSample);
+						} else if(bitsPerSample == 64) {
+							double[] tempArray = ArrayUtils.toDoubleArray(pixels, endian == IOUtils.BIG_ENDIAN);
+							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_DOUBLE);
+							db = new DataBufferDouble(tempArray, tempArray.length);
+							// Create a TYPE_FLOAT sample model (specifying how the pixels are stored)
+							SampleModel sampleModel = new PixelInterleavedSampleModel(DataBuffer.TYPE_DOUBLE, imageWidth, imageHeight, samplesPerPixel, imageWidth*samplesPerPixel, bandoff);
+							raster = Raster.createWritableRaster(sampleModel, db, null);
 						} else
-							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_INT);
-						raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
-						raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
+							throw new UnsupportedOperationException("Unsupported bit depth: " + bitsPerSample);
+					} else {
+						if(bitsPerSample < 8) {
+							Object tempArray = ArrayUtils.toNBits(bitsPerSample*samplesPerPixel, pixels, imageWidth, true);
+							cm = new DirectColorModel(bitsPerSample*samplesPerPixel, redMask[bitsPerSample], greenMask[bitsPerSample], blueMask[bitsPerSample]);
+							raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
+							raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
+						} else if(bitsPerSample == 8) {
+							cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,	trans, DataBuffer.TYPE_BYTE);
+							db = new DataBufferByte(pixels, pixels.length);						
+							raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
+						} else {
+							Object tempArray = ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN);
+							if(bitsPerSample <= 16) {
+								cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
+							} else if(bitsPerSample == 32) { // A workaround for Java's ComponentColorModel bug with 32 bit sample
+								cm = new Int32ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent);
+							} else
+								cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_INT);
+							raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
+							raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
+						}
 					}
 				}
 			
@@ -841,6 +917,31 @@ public class TIFFReader extends ImageReader {
 		TiffFieldEnum.PlanarConfiguration e_planaryConfiguration = TiffFieldEnum.PlanarConfiguration.fromValue(planaryConfiguration);
 		System.out.println("Planary configuration: " + e_planaryConfiguration);
 		
+		TiffField<?> f_sampleFormat = ifd.getField(TiffTag.SAMPLE_FORMAT.getValue());
+		TiffField<?> f_sampleMaxValue = ifd.getField(TiffTag.S_MAX_SAMPLE_VALUE.getValue());
+		TiffField<?> f_sampleMinValue = ifd.getField(TiffTag.S_MIN_SAMPLE_VALUE.getValue());
+		
+		boolean floatSample = false;
+		boolean isAssociatedAlpha = false;
+		
+		if(f_sampleFormat != null && f_sampleFormat.getDataAsLong()[0] == 3) { // Floating point sample data type
+			floatSample = true;
+			double maxValue = (bitsPerSample <= 32)? Float.MAX_VALUE:Double.MAX_VALUE;
+			double minValue = (bitsPerSample <= 32)? Float.MIN_VALUE:Double.MIN_VALUE;
+			if(bitsPerSample <= 32 && f_sampleMaxValue != null) {
+				maxValue = ((float[])f_sampleMaxValue.getData())[0];
+			} else if(bitsPerSample > 32 && f_sampleMaxValue != null) {
+				maxValue = ((double[])f_sampleMaxValue.getData())[0];
+			}	
+			if(bitsPerSample <= 32 && f_sampleMinValue != null) {
+				minValue = ((float[])f_sampleMinValue.getData())[0];
+			} else if(bitsPerSample > 32 && f_sampleMinValue != null) {
+				minValue = ((double[])f_sampleMinValue.getData())[0];
+			}				
+			System.out.println("Sample MAX value: " + maxValue);
+			System.out.println("Sample MIN vlaue: " + minValue);
+		}
+
 		int tilesAcross = (imageWidth + tileWidth - 1) / tileWidth;
 		int tilesDown = (imageHeight + tileLength - 1) / tileLength;
 		int tilesPerImage = tilesAcross * tilesDown;
@@ -891,7 +992,7 @@ public class TIFFReader extends ImageReader {
 							randIS.seek(tileOffsets[i]);
 							randIS.readFully(temp);
 							if(bitsPerSample == 16) {
-								raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp, endian == IOUtils.BIG_ENDIAN));
+								raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.toShortArray(temp, endian == IOUtils.BIG_ENDIAN));
 							} else {
 								DataBuffer tileDataBuffer = new DataBufferByte(temp, temp.length);
 								WritableRaster tileRaster = Raster.createPackedRaster(tileDataBuffer, tileWidth, tileLength, bitsPerSample, null);
@@ -924,7 +1025,7 @@ public class TIFFReader extends ImageReader {
 						decoder.setInput(temp);
 						decoder.decode(temp2, 0, bytes2Read);
 						if(bitsPerSample == 16) {
-							raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
+							raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.toShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
 						} else
 							raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp2);
 						xoff += tileWidth;
@@ -941,31 +1042,45 @@ public class TIFFReader extends ImageReader {
 			case RGB:
 				//Create a BufferedImage
 				//band offset, we have 3 bands if no extra sample is specified, otherwise 4
-				int[] bandoff = new int[]{0, 1, 2}; 
+				int[] bandoff = new int[samplesPerPixel];
+				int[] nBits = new int[samplesPerPixel];
+				Arrays.fill(nBits, bitsPerSample);
+				for(int i = 0; i < samplesPerPixel; i++) {
+					bandoff[i] = i; 
+				}
 				boolean transparent = false;
-				int trans = Transparency.OPAQUE;
-				int[] nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample};
+				int trans = Transparency.OPAQUE;				
 				// There is an extra sample (most probably alpha)
-				if(samplesPerPixel == 4) {
-					bandoff = new int[]{0, 1, 2, 3};
-					nBits = new int[]{bitsPerSample, bitsPerSample, bitsPerSample, bitsPerSample};
+				if(samplesPerPixel >= 4) {
 					trans = Transparency.TRANSLUCENT;
 					transparent = true;
 				}
 				
-				if(bitsPerSample < 8) {
-					cm = new DirectColorModel(bitsPerSample*samplesPerPixel, redMask[bitsPerSample], greenMask[bitsPerSample], blueMask[bitsPerSample]);
-				} else if(bitsPerSample == 16) {
-					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
-			                trans, DataBuffer.TYPE_USHORT);
-				} else if(bitsPerSample == 24) {
-					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
-			                trans, DataBuffer.TYPE_INT);
-				} else	if(bitsPerSample == 32) {
-					cm = new Int32ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent);
-				} else
-					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
-			                trans, DataBuffer.TYPE_BYTE);
+				if(floatSample) {
+					if(bitsPerSample == 64) {
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
+								trans, DataBuffer.TYPE_DOUBLE);
+					} else if(bitsPerSample >= 16 && bitsPerSample <= 32) {
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, false,
+								trans, DataBuffer.TYPE_FLOAT);			
+					}			
+				} else {
+					if(bitsPerSample < 8) {
+						cm = new DirectColorModel(bitsPerSample*samplesPerPixel, redMask[bitsPerSample], greenMask[bitsPerSample], blueMask[bitsPerSample]);
+					} else if(bitsPerSample == 16) {
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,
+				                trans, DataBuffer.TYPE_USHORT);
+					} else if(bitsPerSample == 24) {
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,
+				                trans, DataBuffer.TYPE_INT);
+					} else	if(bitsPerSample == 32) {
+						cm = new Int32ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent);
+					} else if(bitsPerSample == 64) {
+						cm = new Int32ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent);
+					} else
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha,
+				                trans, DataBuffer.TYPE_BYTE);
+				}
 				
 				raster = cm.createCompatibleWritableRaster(tileWidth*tilesAcross, tileLength*tilesDown);
 			
@@ -977,16 +1092,31 @@ public class TIFFReader extends ImageReader {
 								byte[] temp = new byte[tileByteCounts[i]];
 								randIS.seek(tileOffsets[i]);
 								randIS.readFully(temp);
-								if(bitsPerSample < 8) {
-									raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.toNBits(bitsPerSample*samplesPerPixel, temp, tileWidth, true));
-								} else if(bitsPerSample == 8) {
-									raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp);									
-								} else if(bitsPerSample % 8 == 0) {
-									Object tempArray = ArrayUtils.toNBits(bitsPerSample, temp, samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN);
-									raster.setDataElements(xoff, yoff, tileWidth, tileLength, tempArray);									
+								if(floatSample) {
+									Object tempArray = null;
+									if(bitsPerSample == 64)
+										tempArray = ArrayUtils.toDoubleArray(temp, endian == IOUtils.BIG_ENDIAN);
+									else if(bitsPerSample == 32) {
+										tempArray = ArrayUtils.toFloatArray(temp, endian == IOUtils.BIG_ENDIAN);
+									} else if(bitsPerSample == 24) {
+									    tempArray =	ArrayUtils.to24BitFloatArray(temp, endian == IOUtils.BIG_ENDIAN);
+									} else if(bitsPerSample == 16)
+										tempArray = ArrayUtils.to16BitFloatArray(temp, endian == IOUtils.BIG_ENDIAN);
+									else
+										throw new UnsupportedOperationException("Unsupported bit depth: " + bitsPerSample);
+									raster.setDataElements(xoff, yoff, tileWidth, tileLength, tempArray);	
 								} else {
-									Object tempArray = ArrayUtils.toNBits(bitsPerSample, temp, samplesPerPixel*tileWidth, true);
-									raster.setDataElements(xoff, yoff, tileWidth, tileLength, tempArray);
+									if(bitsPerSample < 8) {
+										raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.toNBits(bitsPerSample*samplesPerPixel, temp, tileWidth, true));
+									} else if(bitsPerSample == 8) {
+										raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp);									
+									} else if(bitsPerSample % 8 == 0) {
+										Object tempArray = ArrayUtils.toNBits(bitsPerSample, temp, samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN);
+										raster.setDataElements(xoff, yoff, tileWidth, tileLength, tempArray);									
+									} else {
+										Object tempArray = ArrayUtils.toNBits(bitsPerSample, temp, samplesPerPixel*tileWidth, true);
+										raster.setDataElements(xoff, yoff, tileWidth, tileLength, tempArray);
+									}
 								}
 								xoff += tileWidth;
 								tileCounter++;
@@ -1002,6 +1132,7 @@ public class TIFFReader extends ImageReader {
 							DataBuffer tileDatabuffer = null;
 							int[] bankIndices = {0, 1, 2};
 							bandoff = new int[]{0, 0, 0};
+							int dataBufferType = DataBuffer.TYPE_BYTE;
 							for(int i = 0; i < tilesPerImage; i++) {
 								rgb[0] = new byte[tileByteCounts[i]];
 								randIS.seek(tileOffsets[i]);
@@ -1014,20 +1145,56 @@ public class TIFFReader extends ImageReader {
 								rgb[2] = new byte[tileByteCounts[blueOff]];
 								randIS.seek(tileOffsets[blueOff]);
 								randIS.readFully(rgb[2]);
-								if(bitsPerSample == 16) {
-									tileDatabuffer = new DataBufferUShort(new short[][]{ArrayUtils.byteArrayToShortArray(rgb[0], endian == IOUtils.BIG_ENDIAN), 
-											ArrayUtils.byteArrayToShortArray(rgb[1], endian == IOUtils.BIG_ENDIAN), 
-											ArrayUtils.byteArrayToShortArray(rgb[2], endian == IOUtils.BIG_ENDIAN)},
-											tileWidth*tileLength);
-								} else if(bitsPerSample > 16) {
-									tileDatabuffer = new DataBufferInt(new int[][]{(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[0], samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN)), 
-											(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[1], samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN)), 
-											(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[2], samplesPerPixel*tileWidth, endian == IOUtils.BIG_ENDIAN))},
-											tileWidth*tileLength);
+								
+								if(floatSample) { // Floating point sample data type
+									if(bitsPerSample >= 16 && bitsPerSample <= 32) {
+										float[][] floats = new float[samplesPerPixel][];
+										if(bitsPerSample == 16) {
+											for(int j = 0; j < samplesPerPixel; j++)
+												floats[j] = ArrayUtils.to16BitFloatArray(rgb[j], endian == IOUtils.BIG_ENDIAN);
+										} else if(bitsPerSample == 24) {
+											for(int j = 0; j < samplesPerPixel; j++)
+												floats[j] = ArrayUtils.to24BitFloatArray(rgb[j], endian == IOUtils.BIG_ENDIAN);
+										} else if(bitsPerSample == 32) {
+											for(int j = 0; j < samplesPerPixel; j++)
+												floats[j] = ArrayUtils.toFloatArray(rgb[j], endian == IOUtils.BIG_ENDIAN);				
+										}										
+										tileDatabuffer = new DataBufferFloat(floats, floats[0].length);
+										dataBufferType = DataBuffer.TYPE_FLOAT;
+									} else if(bitsPerSample == 64) {
+										double[][] doubles = new double[samplesPerPixel][];
+										for(int j = 0; j < samplesPerPixel; j++)
+											doubles[j] = ArrayUtils.toDoubleArray(rgb[j], endian == IOUtils.BIG_ENDIAN);
+										tileDatabuffer = new DataBufferDouble(doubles, doubles[0].length);
+										dataBufferType = DataBuffer.TYPE_DOUBLE;										
+									} else {
+										throw new UnsupportedOperationException("Unsupported floating point sample bit depth: " + bitsPerSample);
+									}
+									// Create a TYPE_FLOAT sample model (specifying how the pixels are stored)
+									SampleModel sampleModel = new BandedSampleModel(dataBufferType, tileWidth, tileLength, tileWidth, bankIndices, bandoff);
+									tileRaster = Raster.createWritableRaster(sampleModel, tileDatabuffer, null);
 								} else {
-									tileDatabuffer = new DataBufferByte(rgb, rgb[0].length);
+									if(bitsPerSample == 16) {
+										tileDatabuffer = new DataBufferUShort(new short[][]{ArrayUtils.toShortArray(rgb[0], endian == IOUtils.BIG_ENDIAN), 
+												ArrayUtils.toShortArray(rgb[1], endian == IOUtils.BIG_ENDIAN), 
+												ArrayUtils.toShortArray(rgb[2], endian == IOUtils.BIG_ENDIAN)},
+												tileWidth*tileLength);
+									} else if(bitsPerSample > 16 && bitsPerSample <= 32) {
+										tileDatabuffer = new DataBufferInt(new int[][]{(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[0], tileWidth, endian == IOUtils.BIG_ENDIAN)), 
+												(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[1], tileWidth, endian == IOUtils.BIG_ENDIAN)), 
+												(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[2], tileWidth, endian == IOUtils.BIG_ENDIAN))},
+												tileWidth*tileLength);
+									} else if(bitsPerSample == 64) { // Have to convert to 32 bit since there is no DataBuffer.TYPE_LONG
+										tileDatabuffer = new DataBufferInt(new int[][]{ArrayUtils.to32BitsLongArray(rgb[0], endian == IOUtils.BIG_ENDIAN), 
+												ArrayUtils.to32BitsLongArray(rgb[1], endian == IOUtils.BIG_ENDIAN), 
+												ArrayUtils.to32BitsLongArray(rgb[2], endian == IOUtils.BIG_ENDIAN)},
+												tileWidth*tileLength);
+									} else {
+										tileDatabuffer = new DataBufferByte(rgb, rgb[0].length);
+									}
+									
+									tileRaster = Raster.createBandedRaster(tileDatabuffer, tileWidth, tileLength, tileWidth, bankIndices, bandoff, null);
 								}
-								tileRaster = Raster.createBandedRaster(tileDatabuffer, tileWidth, tileLength, tileWidth, bankIndices, bandoff, null);
 								raster.setRect(xoff, yoff, tileRaster);
 								xoff += tileWidth;
 								tileCounter++;
@@ -1035,8 +1202,8 @@ public class TIFFReader extends ImageReader {
 									xoff = 0;
 									yoff += tileLength;
 									tileCounter = 0;
-								}
-							}							
+								}								
+							}
 						}
 						break;
 					case PACKBITS:
@@ -1047,7 +1214,7 @@ public class TIFFReader extends ImageReader {
 							byte[] temp2 = new byte[bytes2Read];
 							Packbits.unpackbits(temp, temp2);
 							if(bitsPerSample == 16) {
-								raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
+								raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.toShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
 							} else
 								raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp2);
 							xoff += tileWidth;
@@ -1077,7 +1244,7 @@ public class TIFFReader extends ImageReader {
 						decoder.setInput(temp);
 						decoder.decode(temp2, 0, bytes2Read);
 						if(bitsPerSample == 16) {
-							raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.byteArrayToShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
+							raster.setDataElements(xoff, yoff, tileWidth, tileLength, ArrayUtils.toShortArray(temp2, endian == IOUtils.BIG_ENDIAN));
 						} else
 							raster.setDataElements(xoff, yoff, tileWidth, tileLength, temp2);
 						xoff += tileWidth;
@@ -1138,7 +1305,7 @@ public class TIFFReader extends ImageReader {
 		System.out.println("Total number of fields for IFD " + id +": " + no_of_fields);
 		offset += 2;
 		
-		for (int i=0;i<no_of_fields;i++)
+		for (int i = 0;i < no_of_fields; i++)
 		{
 			System.out.println("TiffField "+i+" =>");
 			randIS.seek(offset);
@@ -1254,6 +1421,38 @@ public class TIFFReader extends ImageReader {
 					}	
 					tiffIFD.addField(new RationalField(tag, ldata));
 					System.out.println("TiffField value: " + StringUtils.rationalArrayToString(ldata, true));
+					break;
+				case FLOAT:
+					float[] fdata = new float[field_length];
+					if(field_length == 1) {
+						randIS.seek(offset);
+						fdata[0] = randIS.readFloat();
+						offset += 4;
+					} else {
+						randIS.seek(offset);
+						toOffset = randIS.readInt();
+						offset += 4;
+						for (int j=0;j<field_length; j++){
+							randIS.seek(toOffset);
+							fdata[j] = randIS.readFloat();
+							toOffset += 4;
+						}
+					}
+					tiffIFD.addField(new FloatField(tag, fdata));
+					System.out.println("TiffField value: " + Arrays.toString(fdata));			
+					break;
+				case DOUBLE:
+					double[] ddata = new double[field_length];
+					randIS.seek(offset);
+					toOffset = randIS.readInt();
+					offset += 4;
+					for (int j=0;j<field_length; j++){
+						randIS.seek(toOffset);
+						ddata[j] = randIS.readDouble();
+						toOffset += 8;
+					}
+					tiffIFD.addField(new DoubleField(tag, ddata));
+					System.out.println("Field value: " + Arrays.toString(ddata));						
 					break;
 				default:
 					offset += 4;
