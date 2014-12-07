@@ -1402,7 +1402,7 @@ public class TIFFReader extends ImageReader {
 							toOffset += 4;
 						}
 					}	
-					System.out.println("TiffField value: " + StringUtils.longArrayToString(ldata, true));
+					System.out.println("TiffField value: " + StringUtils.longArrayToString(ldata, 0, 10, true));
 					tiffIFD.addField(new LongField(tag, ldata));
 					break;
 				case RATIONAL:
