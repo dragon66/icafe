@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    07Dec2014  Changed method names for byte array to other array types conversion
+ * WY    07Dec2014  Added new methods to work with floating point TIFF images
  * WY    03Dec2014  Added byteArrayToFloatArray() and byteArrayToDoubleArray()
  * WY    25Nov2014  Added removeDuplicates() to sort and remove duplicates from int arrays
  * WY    12Nov2014  Changed the argument sequence for flipEndian()
@@ -35,6 +37,7 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 
 /**
@@ -45,6 +48,18 @@ import java.nio.ShortBuffer;
  */
 public class ArrayUtils 
 {
+	// Bit mask 0 - 32 bits (inclusive)
+	private static final int[] MASK = { 0x000,
+					    0x1, 0x3, 0x7, 0xf,
+					    0x1f, 0x3f, 0x7f, 0xff,
+					    0x1ff, 0x3ff, 0x7ff, 0xfff,
+				        0x1fff, 0x3fff, 0x7fff, 0xffff,
+				        0x1ffff, 0x3ffff, 0x7ffff, 0xfffff,
+				        0x1fffff, 0x3fffff, 0x7fffff, 0xffffff,
+				        0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff,
+				        0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff // 32 bits				    
+		       };
+	
 	public static void bubbleSort(int[] array) {
 	    int n = array.length;
 	    boolean doMore = true;
@@ -85,11 +100,74 @@ public class ArrayUtils
 	    }
 	}
 	
-	public static double[] byteArrayToDoubleArray(byte[] data, boolean bigEndian) {
-		return byteArrayToDoubleArray(data, 0, data.length, bigEndian);
+	public static float[] to16BitFloatArray(byte[] data, boolean bigEndian) {
+		short[] shorts = (short[])toNBits(16, data, Integer.MAX_VALUE, bigEndian);
+		float[] floats = new float[shorts.length];
+	
+		for(int i = 0; i < floats.length; i++) {
+			floats[i] = toFloat(shorts[i]);
+		}
+		
+		return floats;
 	}
 	
-	public static double[] byteArrayToDoubleArray(byte[] data, int offset, int len, boolean bigEndian) {
+	/*
+	 * Tries to convert 24 bit floating point sample to 32 bit float data.
+	 * Up to now, there has been no way to do it correctly and there might be no
+	 * correct way to do this because 24 bit is not an IEEE floating point type.
+	 * 24 bit floating point images appear too dark using this conversion.
+	 */	
+	public static float[] to24BitFloatArray(byte[] data, boolean bigEndian) {
+		int[] ints = (int[])toNBits(24, data, Integer.MAX_VALUE, bigEndian);
+		float[] floats = new float[ints.length];
+	
+		for(int i = 0; i < floats.length; i++) {
+			/**
+			int bits = ints[i]<<8;
+			int sign     = ((bits & 0x80000000) == 0) ? 1 : -1;
+	        int exponent = ((bits & 0x7f800000) >> 23);
+	        int mantissa =  (bits & 0x007fffff);
+
+	        mantissa |= 0x00800000;
+	      
+	        floats[i] = (float)(sign * mantissa * Math.pow(2, exponent-150));
+	        */
+			floats[i] = Float.intBitsToFloat(ints[i]<<8);
+		}
+		
+		return floats;
+	}
+	
+	// Convert byte array to long array, then to integer array discarding the higher bits
+	public static int[] to32BitsLongArray(byte[] data, boolean bigEndian) {
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		LongBuffer longBuf = byteBuffer.asLongBuffer();
+		long[] array = new long[longBuf.remaining()];
+		longBuf.get(array);
+		
+		int[] iArray = new int[array.length];
+		
+		int i = 0;
+		
+		for(long l : array) {
+			iArray[i++] = (int)l;
+		}
+		
+		return iArray;
+	}
+	
+	public static double[] toDoubleArray(byte[] data, boolean bigEndian) {
+		return toDoubleArray(data, 0, data.length, bigEndian);
+	}
+	
+	public static double[] toDoubleArray(byte[] data, int offset, int len, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
 		
@@ -106,11 +184,11 @@ public class ArrayUtils
 		return array;
 	}
 	
-	public static float[] byteArrayToFloatArray(byte[] data, boolean bigEndian) {
-		return byteArrayToFloatArray(data, 0, data.length, bigEndian);
+	public static float[] toFloatArray(byte[] data, boolean bigEndian) {
+		return toFloatArray(data, 0, data.length, bigEndian);
 	}
 	
-	public static float[] byteArrayToFloatArray(byte[] data, int offset, int len, boolean bigEndian) {
+	public static float[] toFloatArray(byte[] data, int offset, int len, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
 		
@@ -122,16 +200,16 @@ public class ArrayUtils
 		
 		FloatBuffer floatBuf = byteBuffer.asFloatBuffer();
 		float[] array = new float[floatBuf.remaining()];
-		floatBuf.get(array);
+		floatBuf.get(array);		
 		
 		return array;
 	}
 
-	public static int[] byteArrayToIntArray(byte[] data, boolean bigEndian) {
-		return byteArrayToIntArray(data, 0, data.length, bigEndian);
+	public static int[] toIntArray(byte[] data, boolean bigEndian) {
+		return toIntArray(data, 0, data.length, bigEndian);
 	}
 	
-	public static int[] byteArrayToIntArray(byte[] data, int offset, int len, boolean bigEndian) {
+	public static int[] toIntArray(byte[] data, int offset, int len, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
 		
@@ -148,11 +226,32 @@ public class ArrayUtils
 		return array;
 	}
 	
-	public static short[] byteArrayToShortArray(byte[] data, boolean bigEndian) {
-		return byteArrayToShortArray(data, 0, data.length, bigEndian);		
+	public static long[] toLongArray(byte[] data, boolean bigEndian) {
+		return toLongArray(data, 0, data.length, bigEndian);
 	}
 	
-	public static short[] byteArrayToShortArray(byte[] data, int offset, int len, boolean bigEndian) {
+	public static long[] toLongArray(byte[] data, int offset, int len, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		LongBuffer longBuf = byteBuffer.asLongBuffer();
+		long[] array = new long[longBuf.remaining()];
+		longBuf.get(array);
+		
+		return array;
+	}
+	
+	public static short[] toShortArray(byte[] data, boolean bigEndian) {
+		return toShortArray(data, 0, data.length, bigEndian);		
+	}
+	
+	public static short[] toShortArray(byte[] data, int offset, int len, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
 		
@@ -168,7 +267,7 @@ public class ArrayUtils
 		
 		return array;
 	}
-	 
+	
 	/**
      * Since Set doesn't allow duplicates add() return false
      * if we try to add duplicates into Set and this property
@@ -188,7 +287,7 @@ public class ArrayUtils
         
         return false;
     }
-
+	 
 	public static byte[] concat(byte[] first, byte[] second) {
 		
 		int firstLen = first.length;
@@ -209,7 +308,7 @@ public class ArrayUtils
     
 		return result;
     }
-	
+
 	public static byte[] concat(byte[] first, byte[]... rest) {
   	  
 		int totalLength = first.length;	  
@@ -266,7 +365,7 @@ public class ArrayUtils
     
 		return result;
     }
-
+	
 	public static <T> T[] concat(T[] first, T[]... rest) {
 	  
 		int totalLength = first.length;	  
@@ -290,7 +389,7 @@ public class ArrayUtils
 		return result;
 	}
 
-   	/** 
+	/** 
 	 * Concatenates two arrays to a new one with type newType
 	 * 
      * @param first the first array to be concatenated
@@ -331,8 +430,8 @@ public class ArrayUtils
     
 		return result;
     }
-    
-    public static int findEqualOrLess(int[] a, int key) {
+
+   	public static int findEqualOrLess(int[] a, int key) {
     	return findEqualOrLess(a, 0, a.length, key);
     }
     
@@ -372,7 +471,7 @@ public class ArrayUtils
     public static <T> int findEqualOrLess(T[] a, T key, Comparator<? super T> c) {
     	return findEqualOrLess(a, 0, a.length, key, c);
     }
-   	
+    
     /**
      * Flip the endian of the input byte-compacted array
      * 
@@ -386,7 +485,7 @@ public class ArrayUtils
      * @return a byte array with the endian flipped
      */     
    	public static byte[] flipEndian(byte[] input, int offset, int len, int bits, int scanLineStride, boolean bigEndian) {
-   		int temp = 0;
+   		long value = 0;
    		int bits_remain = 0;
    		int temp_byte = 0;
    		int empty_bits = 8;
@@ -395,25 +494,19 @@ public class ArrayUtils
    		
    		int strideCounter = 0;
    		
-   		// Bit mask 0 - 32 bits
-   		int[] MASK = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff,
-   				      0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff,
-   				      0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff,
-   				      0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff};
-   		
    		int end = offset + len;
    		int bufIndex = 0;
     	 
-   		int temp1 = bits;
+   		int temp = bits;
     	boolean bigEndianOut = !bigEndian;
     	
    	  	loop:
    	  	while(true) {  			
    	   		
 			if(!bigEndian)
-				temp = (temp_byte >> (8-bits_remain));
+				value = (temp_byte >> (8-bits_remain));
 			else				
-				temp = (temp_byte & MASK[bits_remain]); 
+				value = (temp_byte & MASK[bits_remain]); 
 				
 			while (bits > bits_remain)
 			{
@@ -424,9 +517,9 @@ public class ArrayUtils
 				temp_byte = input[offset++]&0xff;
 				
 				if(bigEndian)
-					temp = ((temp<<8)|temp_byte);
+					value = ((value<<8)|temp_byte);
 				else
-					temp |= (temp_byte<<bits_remain);
+					value |= (temp_byte<<bits_remain);
 				
 				bits_remain += 8;
 			}
@@ -434,45 +527,43 @@ public class ArrayUtils
 			bits_remain -= bits;
 			
 			if(bigEndian)
-				temp = (temp>>(bits_remain));		
+				value = (value>>(bits_remain));		
 	        
-			int value = (temp&MASK[bits]);	
-		
-	   	  	//////////////////////// Write bits bit length value in opposite endian	    	
+		  	//////////////////////// Write bits bit length value in opposite endian	    	
 	    	if(bigEndianOut) {
-	    		temp1 = bits-empty_bits;
-	    		output[bufIndex] |= ((value>>>temp1)&MASK[empty_bits]);
+	    		temp = bits-empty_bits;
+	    		output[bufIndex] |= ((value>>>temp)&MASK[empty_bits]);
 	    		
-	    		while(temp1 > 8)
+	    		while(temp > 8)
 				{
-					output[++bufIndex] |= ((value>>>(temp1-8))&MASK[8]);
-					temp1 -= 8;
+					output[++bufIndex] |= ((value>>>(temp-8))&MASK[8]);
+					temp -= 8;
 				} 
 	    		
-	    		if(temp1 > 0) {
-	    			output[++bufIndex] |= ((value&MASK[temp1])<<(8-temp1));
-	    			temp1 -= 8;
+	    		if(temp > 0) {
+	    			output[++bufIndex] |= ((value&MASK[temp])<<(8-temp));
+	    			temp -= 8;
 	    		}
 	       	} else { // Little endian
-	       		temp1 = bits;
+	       		temp = bits;
 				output[bufIndex] |= ((value&MASK[empty_bits])<<(8-empty_bits));
 				value >>= empty_bits;
-		        temp1 -= empty_bits;
+		        temp -= empty_bits;
 		        // If the code is longer than the empty_bits
-				while(temp1 > 8) {
+				while(temp > 8) {
 					output[++bufIndex] |= (value&0xff);
 					value >>= 8;
-					temp1 -= 8;
+					temp -= 8;
 				}
 				
-		        if(temp1 > 0)
+		        if(temp > 0)
 				{
-		        	output[++bufIndex] |= (value&MASK[temp1]);
-	    			temp1 -= 8;
+		        	output[++bufIndex] |= (value&MASK[temp]);
+	    			temp -= 8;
 				}
 			}
 	    	
-	    	empty_bits = -temp1;
+	    	empty_bits = -temp;
 			
 	    	if(++strideCounter%scanLineStride == 0) {
 				empty_bits = 0;
@@ -483,12 +574,41 @@ public class ArrayUtils
 		return output;
 	}
    	
+   	// From http://stackoverflow.com/questions/6162651/half-precision-floating-point-in-java
+   	// returns all higher 16 bits as 0 for all results
+   	public static int fromFloat(float fval)
+   	{
+   	    int fbits = Float.floatToIntBits(fval);
+   	    int sign = fbits >>> 16 & 0x8000;          // sign only
+   	    int val = (fbits & 0x7fffffff) + 0x1000; // rounded value
+
+   	    if(val >= 0x47800000)               // might be or become NaN/Inf
+   	    {                                     // avoid Inf due to rounding
+   	        if( (fbits & 0x7fffffff) >= 0x47800000)
+   	        {                                 // is or must become NaN/Inf
+   	            if(val < 0x7f800000)        // was value but too large
+   	                return sign | 0x7c00;     // make it +/-Inf
+   	            return sign | 0x7c00 |        // remains +/-Inf or NaN
+   	                (fbits & 0x007fffff) >>> 13; // keep NaN (and Inf) bits
+   	        }
+   	        return sign | 0x7bff;             // unrounded not quite Inf
+   	    }
+   	    if(val >= 0x38800000)               // remains normalized value
+   	        return sign | val - 0x38000000 >>> 13; // exp - 127 + 15
+   	    if(val < 0x33000000)                // too small for subnormal
+   	        return sign;                      // becomes +/-0
+   	    val = (fbits & 0x7fffffff) >>> 23;  // tmp exp for subnormal calc
+   	    return sign | ((fbits & 0x7fffff | 0x800000) // add subnormal bit
+   	         + (0x800000 >>> val - 102)     // round depending on cut off
+   	      >>> 126 - val);   // div by 2^(1-(exp-127+15)) and >> 13 | exp=0
+   	}
+   	
     // Insertion sort
     public static void insertionsort(int[] array)
     {
 	   insertionsort(array, 0, array.length-1);
-    } 	
-
+    }
+   	
     public static void insertionsort(int[] array, int start, int end)
     {
 	   int j;
@@ -501,8 +621,8 @@ public class ArrayUtils
 		   // Move temp to the right place
 		   array[j] = temp;
 	   }
-    }
-    
+    } 	
+
     // Insertion sort
     public static <T extends Comparable<? super T>> void insertionsort(T[] array, int start, int end)
     {
@@ -518,7 +638,7 @@ public class ArrayUtils
 	   }
     }
     
-   	// From Effective Java 2nd Edition. 
+    // From Effective Java 2nd Edition. 
    	public static List<Integer> intArrayAsList(final int[] a) 
    	{
    		if (a == null)
@@ -538,8 +658,8 @@ public class ArrayUtils
    			}
    		};
    	}
-
-    public static byte[] intArrayToByteArray(int[] data, boolean bigEndian) {
+    
+   	public static byte[] intArrayToByteArray(int[] data, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 4);
 		
@@ -565,7 +685,7 @@ public class ArrayUtils
 	        (byte)(value >>> 24)	            		            
 	        };
 	}
-    
+
     public static byte[] intToByteArrayMM(int value) {
     	return new byte[] {
 	        (byte)(value >>> 24),
@@ -573,8 +693,26 @@ public class ArrayUtils
 	        (byte)(value >>> 8),
 	        (byte)value};
 	}
-	
-	/**
+    
+    public static byte[] longArrayToByteArray(long[] data, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 8);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+        
+		LongBuffer longBuffer = byteBuffer.asLongBuffer();
+        longBuffer.put(data);
+
+        byte[] array = byteBuffer.array();
+
+		return array;
+	}
+    
+    /**
 	 * Packs all or part of the input byte array which uses "bits" bits to use all 8 bits.
 	 * 
 	 * @param input input byte array
@@ -613,8 +751,8 @@ public class ArrayUtils
 		
 		return packedBytes;
 	}
-	
-	/**
+    
+  	/**
 	 * Packs all or part of the input byte array which uses "bits" bits to use all 8 bits.
 	 * <p>
 	 * We assume len is a multiplication of stride. The parameter stride controls the packing
@@ -663,13 +801,13 @@ public class ArrayUtils
 		
 		return packedBytes;
 	}
-
+	
 	// Quick sort
     public static void quicksort(int[] array) {
 	   quicksort (array, 0, array.length - 1);
     }
-    
-    public static void quicksort (int[] array, int start, int end) {
+
+	public static void quicksort (int[] array, int start, int end) {
 	   int inner = start;
 	   int outer = end;
 	   int mid = (start + end) / 2;
@@ -706,7 +844,7 @@ public class ArrayUtils
 	   if ((mid - 1) > start) quicksort(array, start, mid - 1);
  	   if (end > (mid + 1)) quicksort(array, mid + 1, end);
     }
-
+    
     // Quick sort
     public static <T extends Comparable<? super T>> void quicksort (T[] array, int low, int high) {
     	int i = low, j = high;
@@ -743,7 +881,7 @@ public class ArrayUtils
 		if (i < high)
 			quicksort(array, i, high);
 	}
-    
+
     // Based on java2novice.com example
     /**
      * Remove duplicate elements from an int array
@@ -777,7 +915,7 @@ public class ArrayUtils
         
         return output;
     }
-
+    
     // Shell sort
     public static void shellsort(int[] array)
     {
@@ -826,7 +964,7 @@ public class ArrayUtils
 	   }
     }
 
-	public static byte[] shortArrayToByteArray(short[] data, boolean bigEndian) {
+    public static byte[] shortArrayToByteArray(short[] data, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 2);
 		
@@ -844,16 +982,16 @@ public class ArrayUtils
 		return array;
 	}
 
-    public static byte[] shortToByteArray(short value) {
+	public static byte[] shortToByteArray(short value) {
 		 return new byte[] {
 				 (byte)value, (byte)(value >>> 8)};
 	}
-	 
-	public static byte[] shortToByteArrayMM(short value) {
+
+    public static byte[] shortToByteArrayMM(short value) {
 		 return new byte[] {
 				 (byte)(value >>> 8), (byte)value};
 	}
-	
+	 
 	public static byte[] subArray(byte[] src, int offset, int len) {
 		if(offset == 0 && len == src.length) return src;
 		if((offset < 0 || offset >= src.length) || (offset + len > src.length))
@@ -876,25 +1014,54 @@ public class ArrayUtils
 	   array[b] = temp;
     }
 	
+	// From http://stackoverflow.com/questions/6162651/half-precision-floating-point-in-java
+	// Converts integer to float ignores the higher 16 bits
+	public static float toFloat(int lbits) {
+		// ignores the higher 16 bits
+	    int mant = lbits & 0x03ff;            // 10 bits mantissa
+	    int exp = lbits & 0x7c00;             // 5 bits exponent
+	   
+	    if(exp == 0x7c00 ) {                  // NaN/Inf
+	        exp = 0x3fc00;                    // -> NaN/Inf
+	    } else if(exp != 0) {                 // normalized value	   
+	        exp += 0x1c000;                   // exp - 15 + 127
+	        if( mant == 0 && exp > 0x1c400)   // smooth transition
+	            return Float.intBitsToFloat(
+	            		( lbits & 0x8000) << 16
+	                    | exp << 13 | 0x3ff);
+	    } else if(mant != 0) {                // && exp==0 -> subnormal
+	    	exp = 0x1c400;                    // make it normal
+	        do {
+	            mant <<= 1;                   // mantissa * 2
+	            exp -= 0x400;                 // decrease exp by 1
+	        } while((mant & 0x400) == 0);     // while not normal
+	        mant &= 0x3ff;                    // discard subnormal bit
+	    }                                     // else +/-0 -> +/-0
+	   
+	    return Float.intBitsToFloat(          // combine all parts
+	        ( lbits & 0x8000 ) << 16          // sign  << ( 31 - 15 )
+	        | ( exp | mant ) << 13 );         // value << ( 23 - 10 )
+	}
+	
 	/**
-	 * Convert an input byte array to nBits data array using the smallest data type which
-	 * can hold the nBits data. Each data type contains only one data element
+	 * Converts an input byte array to nBits data array using the smallest data type which
+	 * can hold the nBits data. Each data type contains only one data element.
 	 * 
 	 * @param nBits number of bits for the data element
 	 * @param input the input array for the data elements
 	 * @param stride scan line stride used to discard remaining bits 
-	 * @param bigEndian the packing order of the bits
+	 * @param bigEndian the packing order of the bits. True if bigEndian, otherwise false.
 	 * 
 	 * @return an array of the smallest data type which can hold the nBits data
 	 */
 	public static Object toNBits(int nBits, byte[] input, int stride, boolean bigEndian) {
-		int temp = 0;
+		int value = 0;
    		int bits_remain = 0;
    		int temp_byte = 0;
    		
    		byte[] byteOutput = null;
    		short[] shortOutput = null;
-   		int[] intOutput = null;   		
+   		int[] intOutput = null;
    		Object output = null;
    		
    		int outLen = (input.length*8 + nBits - 1)/nBits;
@@ -911,13 +1078,7 @@ public class ArrayUtils
    		} else {
    			throw new IllegalArgumentException("nBits exceeds limit - maximum 32");
    		}
-   		// Bit mask 0 - 32 bits
-   		int[] MASK = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff,
-   				      0x1fff, 0x3fff, 0x7fff, 0xffff, 0x1ffff, 0x3ffff, 0x7ffff, 0xfffff,
-   				      0x1fffff, 0x3fffff, 0x7fffff, 0xffffff, 0x1ffffff, 0x3ffffff, 0x7ffffff,
-   				      0xfffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff // 32 bits
-   				    };
-   		
+   			
    		int offset = 0;
     	int index = 0;
     	
@@ -927,9 +1088,9 @@ public class ArrayUtils
    	  	while(true) {  			
    	   		
 			if(!bigEndian)
-				temp = (temp_byte >> (8-bits_remain));
+				value = (temp_byte >> (8-bits_remain));
 			else				
-				temp = (temp_byte & MASK[bits_remain]); 
+				value = (temp_byte & MASK[bits_remain]); 
 				
 			while (nBits > bits_remain)
 			{
@@ -940,9 +1101,9 @@ public class ArrayUtils
 				temp_byte = input[offset++]&0xff;
 				
 				if(bigEndian)
-					temp = ((temp<<8)|temp_byte);
+					value = ((value<<8)|temp_byte);
 				else
-					temp |= (temp_byte<<bits_remain);
+					value |= (temp_byte<<bits_remain);
 				
 				bits_remain += 8;
 			}
@@ -950,21 +1111,31 @@ public class ArrayUtils
 			bits_remain -= nBits;
 			
 			if(bigEndian)
-				temp = (temp>>(bits_remain));			
+				value = (value>>(bits_remain));			
 	        
-			int value = (temp&MASK[nBits]);
+			value &= MASK[nBits];
 			
 			if(++strideCounter%stride == 0) {
-				bits_remain = 0;				
+				bits_remain = 0; // Discard the remaining bits			
 			}
 		
-			if(nBits <= 8)
-	   	  		byteOutput[index++] = (byte)value;
+			if(nBits <= 8) byteOutput[index++] = (byte)value;
 			else if(nBits <= 16) shortOutput[index++] = (short)value;
 			else intOutput[index++] = value;
-   	  	}
+	  	}
    		
 		return output;
+	}
+	
+	public static double[] toPrimitive(Double[] doubles) {
+		double[] dArray = new double[doubles.length];
+		int i = 0;
+		
+		for (double d : doubles) {
+			dArray[i++] = d;
+		}
+		
+		return dArray;
 	}
 	
 	public static float[] toPrimitive(Float[] floats) {
@@ -982,11 +1153,33 @@ public class ArrayUtils
 		int[] ints = new int[integers.length];
 		int i = 0;
 		
-		for (Integer n : integers) {
+		for (int n : integers) {
 			ints[i++] = n;
 		}
 		
 		return ints;
+	}
+	
+	public static long[] toPrimitive(Long[] longs) {
+		long[] lArray = new long[longs.length];
+		int i = 0;
+		
+		for (long l : longs) {
+			lArray[i++] = l;
+		}
+		
+		return lArray;
+	}
+	
+	public static short[] toPrimitive(Short[] shorts) {
+		short[] sArray = new short[shorts.length];
+		int i = 0;
+		
+		for (short s : shorts) {
+			sArray[i++] = s;
+		}
+		
+		return sArray;
 	}
    	
    	private ArrayUtils(){} // Prevents instantiation
