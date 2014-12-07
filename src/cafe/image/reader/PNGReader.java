@@ -402,7 +402,7 @@ public class PNGReader extends ImageReader
 			 return spixels;
 		 }
 		 
-		 return ArrayUtils.byteArrayToShortArray(pixBytes, true);
+		 return ArrayUtils.toShortArray(pixBytes, true);
 	 }
  	 
  	 private short[] generate16BitRGBInterlacedPixels(byte[] compr_data, boolean fullAlpha) throws Exception
@@ -534,7 +534,7 @@ public class PNGReader extends ImageReader
 				 }
 			 }
 		 } else
-			 spixels = ArrayUtils.byteArrayToShortArray(pixBytes, true);
+			 spixels = ArrayUtils.toShortArray(pixBytes, true);
 		 
 		 return spixels;		 
 	 }
@@ -1070,7 +1070,7 @@ public class PNGReader extends ImageReader
 				   bpixels = process_grayscaleAlphaInterlacedImage(compr_data);
 			   // Create a BufferedImage. WARNING: this create a custom type BufferedImage
 			   if(bitsPerPixel == 16) {
-				   spixels = ArrayUtils.byteArrayToShortArray(bpixels, true);
+				   spixels = ArrayUtils.toShortArray(bpixels, true);
 				   if(hasGamma && renderingIntent == -1 && !hasICCP) correctGamma(spixels, width, height, 1, 1);
 				   db = new DataBufferUShort(spixels, spixels.length);
 				   int[] off = {0, 1};//band offset, we have only one band start at 0
