@@ -1304,7 +1304,7 @@ public class TIFFTweaker {
 										for(int k = 0; k < off.length; k++) {
 											image2.seek(off[k]);
 											byte[] buf = new byte[counts[k]];
-											image2.readFully(buf);											
+											image2.readFully(buf);										
 											buf = ArrayUtils.flipEndian(buf, 0, buf.length, bitsPerSample, samplesPerPixel*getRowWidth(currIFD), readEndian == IOUtils.BIG_ENDIAN);
 											//short[] sbuf = ArrayUtils.byteArrayToShortArray(buf, readEndian == IOUtils.BIG_ENDIAN);
 											//buf = ArrayUtils.shortArrayToByteArray(sbuf, writeEndian == IOUtils.BIG_ENDIAN);
@@ -1637,11 +1637,52 @@ public class TIFFTweaker {
 						}
 					}				
 					break;
+				case FLOAT:
+					float[] fdata = new float[field_length];
+					if(field_length == 1) {
+					  rin.seek(offset);
+					  fdata[0] = rin.readFloat();
+					  offset += 4;
+					}
+					else {
+						rin.seek(offset);
+						int toOffset = rin.readInt();
+						offset += 4;
+						for (int j=0;j<field_length; j++){
+							rin.seek(toOffset);
+							fdata[j] = rin.readFloat();
+							toOffset += 4;
+						}
+					}
+					
+					tiffIFD.addField(new FloatField(tag, fdata));
+					
+					System.out.print(indent);
+					System.out.println("Field value: " + Arrays.toString(fdata));
+						
+					break;
+				case DOUBLE:
+					double[] ddata = new double[field_length];
+					rin.seek(offset);
+					int toOffset = rin.readInt();
+					offset += 4;
+					for (int j=0;j<field_length; j++){
+						rin.seek(toOffset);
+						ddata[j] = rin.readDouble();
+						toOffset += 8;
+					}
+						
+					tiffIFD.addField(new DoubleField(tag, ddata));
+					
+					System.out.print(indent);
+					System.out.println("Field value: " + Arrays.toString(ddata));
+						
+					break;
 				case RATIONAL:
 					int len = 2*field_length;
 					ldata = new int[len];	
 					rin.seek(offset);
-					int toOffset = rin.readInt();
+					toOffset = rin.readInt();
 					offset += 4;					
 					for (int j=0;j<len; j+=2){
 						rin.seek(toOffset);
