@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    08Dec2014  Fixed bug for flipEndian() with more than 32 bit sample data 
  * WY    07Dec2014  Changed method names for byte array to other array types conversion
  * WY    07Dec2014  Added new methods to work with floating point TIFF images
  * WY    03Dec2014  Added byteArrayToFloatArray() and byteArrayToDoubleArray()
@@ -487,7 +488,7 @@ public class ArrayUtils
    	public static byte[] flipEndian(byte[] input, int offset, int len, int bits, int scanLineStride, boolean bigEndian) {
    		long value = 0;
    		int bits_remain = 0;
-   		int temp_byte = 0;
+   		long temp_byte = 0; // Must make this long, otherwise will give wrong result for bits > 32
    		int empty_bits = 8;
    		
    		byte[] output = new byte[input.length];
@@ -527,16 +528,16 @@ public class ArrayUtils
 			bits_remain -= bits;
 			
 			if(bigEndian)
-				value = (value>>(bits_remain));		
+				value = (value>>bits_remain);		
 	        
-		  	//////////////////////// Write bits bit length value in opposite endian	    	
+		  	// Write bits bit length value in opposite endian	    	
 	    	if(bigEndianOut) {
 	    		temp = bits-empty_bits;
-	    		output[bufIndex] |= ((value>>>temp)&MASK[empty_bits]);
+	    		output[bufIndex] |= ((value>>temp)&MASK[empty_bits]);
 	    		
 	    		while(temp > 8)
 				{
-					output[++bufIndex] |= ((value>>>(temp-8))&MASK[8]);
+					output[++bufIndex] |= ((value>>(temp-8))&MASK[8]);
 					temp -= 8;
 				} 
 	    		
@@ -639,7 +640,7 @@ public class ArrayUtils
     }
     
     // From Effective Java 2nd Edition. 
-   	public static List<Integer> intArrayAsList(final int[] a) 
+   	public static List<Integer> asList(final int[] a) 
    	{
    		if (a == null)
    			throw new NullPointerException();
@@ -659,7 +660,7 @@ public class ArrayUtils
    		};
    	}
     
-   	public static byte[] intArrayToByteArray(int[] data, boolean bigEndian) {
+   	public static byte[] toByteArray(int[] data, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 4);
 		
@@ -677,7 +678,7 @@ public class ArrayUtils
 		return array;
 	}
 
-    public static byte[] intToByteArray(int value) {
+    public static byte[] toByteArray(int value) {
 		return new byte[] {
 	        (byte)value,
 	        (byte)(value >>> 8),
@@ -686,7 +687,7 @@ public class ArrayUtils
 	        };
 	}
 
-    public static byte[] intToByteArrayMM(int value) {
+    public static byte[] toByteArrayMM(int value) {
     	return new byte[] {
 	        (byte)(value >>> 24),
 	        (byte)(value >>> 16),
@@ -694,7 +695,7 @@ public class ArrayUtils
 	        (byte)value};
 	}
     
-    public static byte[] longArrayToByteArray(long[] data, boolean bigEndian) {
+    public static byte[] toByteArray(long[] data, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 8);
 		
@@ -964,7 +965,7 @@ public class ArrayUtils
 	   }
     }
 
-    public static byte[] shortArrayToByteArray(short[] data, boolean bigEndian) {
+    public static byte[] toByteArray(short[] data, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 2);
 		
@@ -982,12 +983,12 @@ public class ArrayUtils
 		return array;
 	}
 
-	public static byte[] shortToByteArray(short value) {
+	public static byte[] toByteArray(short value) {
 		 return new byte[] {
 				 (byte)value, (byte)(value >>> 8)};
 	}
 
-    public static byte[] shortToByteArrayMM(short value) {
+    public static byte[] toByteArrayMM(short value) {
 		 return new byte[] {
 				 (byte)(value >>> 8), (byte)value};
 	}
