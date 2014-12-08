@@ -102,7 +102,7 @@ public class Chunk implements Comparable<Chunk> {
 	{
 		CRC32 crc32 = new CRC32();
 		 
-		crc32.update(ArrayUtils.intToByteArrayMM(chunkValue));
+		crc32.update(ArrayUtils.toByteArrayMM(chunkValue));
 		crc32.update(data);
 		 
 		return crc32.getValue();
@@ -112,7 +112,7 @@ public class Chunk implements Comparable<Chunk> {
 	{
 		CRC32 crc32 = new CRC32();
 		 
-		crc32.update(ArrayUtils.intToByteArrayMM(chunkValue));
+		crc32.update(ArrayUtils.toByteArrayMM(chunkValue));
 		crc32.update(data, offset, length);
 		 
 		return crc32.getValue();
