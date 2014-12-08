@@ -1255,6 +1255,14 @@ public class TIFFTweaker {
 								tiffField = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());								
 								if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
 								
+								int planaryConfiguration = 1;
+								
+								tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+								if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];										
+								
+								int scanLineStride = getRowWidth(currIFD);
+								if(planaryConfiguration == 1) scanLineStride *= samplesPerPixel;
+								
 								// Need to uncompress the data, reorder the byte sequence, and compress the data again
 								switch(compression) { // Predictor seems to work for LZW, DEFLATE as is! Need more test though!
 									case LZW: // Tested
@@ -1274,7 +1282,7 @@ public class TIFFTweaker {
 											image2.readFully(buf);
 											byte[] buf2 = new byte[uncompressedStripByteCounts[k]];
 											Packbits.unpackbits(buf, buf2);
-											ArrayUtils.flipEndian(buf2, 0, buf2.length, bitsPerSample, samplesPerPixel*getRowWidth(currIFD), readEndian == IOUtils.BIG_ENDIAN);
+											ArrayUtils.flipEndian(buf2, 0, buf2.length, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
 											// Compress the data
 											buf2 = new byte[buf.length + (buf.length + 127)/128];
 											int bytesCompressed = Packbits.packbits(buf, buf2);
@@ -1284,11 +1292,6 @@ public class TIFFTweaker {
 										}
 										break;
 									case NONE:										
-										int planaryConfiguration = 1;
-										
-										tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
-										if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];										
-										
 										// In case we only have one strip/tile but StripByteCounts contains wrong value
 										// If there is only one strip/samplesPerPixel strips for PlanaryConfiguration = 2
 										if(planaryConfiguration == 1 && off.length == 1 || planaryConfiguration == 2 && off.length == samplesPerPixel)
@@ -1303,7 +1306,7 @@ public class TIFFTweaker {
 											image2.seek(off[k]);
 											byte[] buf = new byte[counts[k]];
 											image2.readFully(buf);										
-											buf = ArrayUtils.flipEndian(buf, 0, buf.length, bitsPerSample, samplesPerPixel*getRowWidth(currIFD), readEndian == IOUtils.BIG_ENDIAN);
+											buf = ArrayUtils.flipEndian(buf, 0, buf.length, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
 											merged.write(buf);
 											temp[k] = offset;
 											offset += buf.length;
@@ -1333,7 +1336,7 @@ public class TIFFTweaker {
 										} catch (Exception e) {
 											e.printStackTrace();
 										}
-										buf = ArrayUtils.flipEndian(decompressed, 0, bytesDecompressed, bitsPerSample, samplesPerPixel*getRowWidth(currIFD), readEndian == IOUtils.BIG_ENDIAN);
+										buf = ArrayUtils.flipEndian(decompressed, 0, bytesDecompressed, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
 										// Compress the data
 										try {
 											encoder.initialize();
