@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    09Dec2014  Added support for LSB2MSB FillOrder for RGB image
  * WY    07Dec2014  Added support for floating point sample data type
  * WY    03Dec2014  Code clean and test showing float type raster images
  * WY    01Dec2014  Added support for less than 8 bits planar stripped image
@@ -173,6 +174,10 @@ public class TIFFReader extends ImageReader {
 		TiffField<?> f_sampleFormat = ifd.getField(TiffTag.SAMPLE_FORMAT.getValue());
 		TiffField<?> f_sampleMaxValue = ifd.getField(TiffTag.S_MAX_SAMPLE_VALUE.getValue());
 		TiffField<?> f_sampleMinValue = ifd.getField(TiffTag.S_MIN_SAMPLE_VALUE.getValue());
+		
+		int fillOrder = 1;
+		TiffField<?> f_fillOrder = ifd.getField(TiffTag.FILL_ORDER.getValue());
+		if(f_fillOrder != null) fillOrder = f_fillOrder.getDataAsLong()[0];
 		
 		boolean floatSample = false;
 		if(f_sampleFormat != null && f_sampleFormat.getDataAsLong()[0] == 3) { // Floating point sample data type
@@ -655,7 +660,7 @@ public class TIFFReader extends ImageReader {
 							randIS.seek(stripOffsets[i]);
 							randIS.readFully(pixels, offset, bytes2Read);
 							offset += bytes2Read;
-						}
+						}		
 						break;
 					case PACKBITS:
 						for(int i = 0; i < stripByteCounts.length; i++) {
@@ -701,6 +706,9 @@ public class TIFFReader extends ImageReader {
 						}						
 					}						
 				}
+				
+				// Deals with 8-bit LSB2MSB fill order (rare and erroneous)
+				if(fillOrder == 2) IMGUtils.reverseBits(pixels);
 				
 				cm = null;
 				raster  = null;
