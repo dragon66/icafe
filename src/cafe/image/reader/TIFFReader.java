@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    10Dec2014  Fixed bug for bitsPerSample%8 != 0 case to assume BIG_ENDIAN  
  * WY    09Dec2014  Added support for LSB2MSB FillOrder for RGB image
  * WY    07Dec2014  Added support for floating point sample data type
  * WY    03Dec2014  Code clean and test showing float type raster images
@@ -707,8 +708,8 @@ public class TIFFReader extends ImageReader {
 					}						
 				}
 				
-				// Deals with 8-bit LSB2MSB fill order (rare and erroneous)
-				if(fillOrder == 2) IMGUtils.reverseBits(pixels);
+				// Deals with LSB2MSB fill order (rare and erroneous)
+				if(fillOrder == 2) ArrayUtils.reverseBits(pixels);
 				
 				cm = null;
 				raster  = null;
@@ -848,7 +849,7 @@ public class TIFFReader extends ImageReader {
 							db = new DataBufferByte(pixels, pixels.length);						
 							raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
 						} else {
-							Object tempArray = ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, endian == IOUtils.BIG_ENDIAN);
+							Object tempArray = ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, (bitsPerSample%8 == 0)?endian == IOUtils.BIG_ENDIAN:true);
 							if(bitsPerSample <= 16) {
 								cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
 							} else if(bitsPerSample == 32) { // A workaround for Java's ComponentColorModel bug with 32 bit sample
@@ -1188,9 +1189,10 @@ public class TIFFReader extends ImageReader {
 												ArrayUtils.toShortArray(rgb[2], endian == IOUtils.BIG_ENDIAN)},
 												tileWidth*tileLength);
 									} else if(bitsPerSample > 16 && bitsPerSample <= 32) {
-										tileDatabuffer = new DataBufferInt(new int[][]{(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[0], tileWidth, endian == IOUtils.BIG_ENDIAN)), 
-												(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[1], tileWidth, endian == IOUtils.BIG_ENDIAN)), 
-												(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[2], tileWidth, endian == IOUtils.BIG_ENDIAN))},
+										boolean bigEndian = (bitsPerSample%8 == 0)?endian == IOUtils.BIG_ENDIAN:true;
+										tileDatabuffer = new DataBufferInt(new int[][]{(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[0], tileWidth, bigEndian)), 
+												(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[1], tileWidth, bigEndian)), 
+												(int[])(ArrayUtils.toNBits(bitsPerSample, rgb[2], tileWidth, bigEndian))},
 												tileWidth*tileLength);
 									} else if(bitsPerSample == 64) { // Have to convert to 32 bit since there is no DataBuffer.TYPE_LONG
 										tileDatabuffer = new DataBufferInt(new int[][]{ArrayUtils.to32BitsLongArray(rgb[0], endian == IOUtils.BIG_ENDIAN), 
