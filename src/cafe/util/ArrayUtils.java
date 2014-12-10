@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    10Dec2014  Moved reverseBits() from IMGUtils to here along with BIT_REVERSE_TABLE
  * WY    08Dec2014  Fixed bug for flipEndian() with more than 32 bit sample data 
  * WY    07Dec2014  Changed method names for byte array to other array types conversion
  * WY    07Dec2014  Added new methods to work with floating point TIFF images
@@ -59,7 +60,64 @@ public class ArrayUtils
 				        0x1fffff, 0x3fffff, 0x7fffff, 0xffffff,
 				        0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff,
 				        0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff // 32 bits				    
-		       };
+					};
+	
+	// Bit reverse table to work with TIFF FillOrder field.
+	private static final byte[] BIT_REVERSE_TABLE =	{
+	   (byte)0x00, (byte)0x80, (byte)0x40, (byte)0xc0, (byte)0x20, (byte)0xa0, (byte)0x60, (byte)0xe0,
+	   (byte)0x10, (byte)0x90, (byte)0x50, (byte)0xd0, (byte)0x30, (byte)0xb0, (byte)0x70, (byte)0xf0,
+	   (byte)0x08, (byte)0x88, (byte)0x48, (byte)0xc8, (byte)0x28, (byte)0xa8, (byte)0x68, (byte)0xe8,
+	   (byte)0x18, (byte)0x98, (byte)0x58, (byte)0xd8, (byte)0x38, (byte)0xb8, (byte)0x78, (byte)0xf8,
+	   (byte)0x04, (byte)0x84, (byte)0x44, (byte)0xc4, (byte)0x24, (byte)0xa4, (byte)0x64, (byte)0xe4,
+	   (byte)0x14, (byte)0x94, (byte)0x54, (byte)0xd4, (byte)0x34, (byte)0xb4, (byte)0x74, (byte)0xf4,
+	   (byte)0x0c, (byte)0x8c, (byte)0x4c, (byte)0xcc, (byte)0x2c, (byte)0xac, (byte)0x6c, (byte)0xec,
+	   (byte)0x1c, (byte)0x9c, (byte)0x5c, (byte)0xdc, (byte)0x3c, (byte)0xbc, (byte)0x7c, (byte)0xfc,
+	   (byte)0x02, (byte)0x82, (byte)0x42, (byte)0xc2, (byte)0x22, (byte)0xa2, (byte)0x62, (byte)0xe2,
+	   (byte)0x12, (byte)0x92, (byte)0x52, (byte)0xd2, (byte)0x32, (byte)0xb2, (byte)0x72, (byte)0xf2,
+	   (byte)0x0a, (byte)0x8a, (byte)0x4a, (byte)0xca, (byte)0x2a, (byte)0xaa, (byte)0x6a, (byte)0xea,
+	   (byte)0x1a, (byte)0x9a, (byte)0x5a, (byte)0xda, (byte)0x3a, (byte)0xba, (byte)0x7a, (byte)0xfa,
+	   (byte)0x06, (byte)0x86, (byte)0x46, (byte)0xc6, (byte)0x26, (byte)0xa6, (byte)0x66, (byte)0xe6,
+	   (byte)0x16, (byte)0x96, (byte)0x56, (byte)0xd6, (byte)0x36, (byte)0xb6, (byte)0x76, (byte)0xf6,
+	   (byte)0x0e, (byte)0x8e, (byte)0x4e, (byte)0xce, (byte)0x2e, (byte)0xae, (byte)0x6e, (byte)0xee,
+	   (byte)0x1e, (byte)0x9e, (byte)0x5e, (byte)0xde, (byte)0x3e, (byte)0xbe, (byte)0x7e, (byte)0xfe,
+	   (byte)0x01, (byte)0x81, (byte)0x41, (byte)0xc1, (byte)0x21, (byte)0xa1, (byte)0x61, (byte)0xe1,
+	   (byte)0x11, (byte)0x91, (byte)0x51, (byte)0xd1, (byte)0x31, (byte)0xb1, (byte)0x71, (byte)0xf1,
+	   (byte)0x09, (byte)0x89, (byte)0x49, (byte)0xc9, (byte)0x29, (byte)0xa9, (byte)0x69, (byte)0xe9,
+	   (byte)0x19, (byte)0x99, (byte)0x59, (byte)0xd9, (byte)0x39, (byte)0xb9, (byte)0x79, (byte)0xf9,
+	   (byte)0x05, (byte)0x85, (byte)0x45, (byte)0xc5, (byte)0x25, (byte)0xa5, (byte)0x65, (byte)0xe5,
+	   (byte)0x15, (byte)0x95, (byte)0x55, (byte)0xd5, (byte)0x35, (byte)0xb5, (byte)0x75, (byte)0xf5,
+	   (byte)0x0d, (byte)0x8d, (byte)0x4d, (byte)0xcd, (byte)0x2d, (byte)0xad, (byte)0x6d, (byte)0xed,
+	   (byte)0x1d, (byte)0x9d, (byte)0x5d, (byte)0xdd, (byte)0x3d, (byte)0xbd, (byte)0x7d, (byte)0xfd,
+	   (byte)0x03, (byte)0x83, (byte)0x43, (byte)0xc3, (byte)0x23, (byte)0xa3, (byte)0x63, (byte)0xe3,
+	   (byte)0x13, (byte)0x93, (byte)0x53, (byte)0xd3, (byte)0x33, (byte)0xb3, (byte)0x73, (byte)0xf3,
+	   (byte)0x0b, (byte)0x8b, (byte)0x4b, (byte)0xcb, (byte)0x2b, (byte)0xab, (byte)0x6b, (byte)0xeb,
+	   (byte)0x1b, (byte)0x9b, (byte)0x5b, (byte)0xdb, (byte)0x3b, (byte)0xbb, (byte)0x7b, (byte)0xfb,
+	   (byte)0x07, (byte)0x87, (byte)0x47, (byte)0xc7, (byte)0x27, (byte)0xa7, (byte)0x67, (byte)0xe7,
+	   (byte)0x17, (byte)0x97, (byte)0x57, (byte)0xd7, (byte)0x37, (byte)0xb7, (byte)0x77, (byte)0xf7,
+	   (byte)0x0f, (byte)0x8f, (byte)0x4f, (byte)0xcf, (byte)0x2f, (byte)0xaf, (byte)0x6f, (byte)0xef,
+	   (byte)0x1f, (byte)0x9f, (byte)0x5f, (byte)0xdf, (byte)0x3f, (byte)0xbf, (byte)0x7f, (byte)0xff
+	};
+	
+	// From Effective Java 2nd Edition. 
+   	public static List<Integer> asList(final int[] a) 
+   	{
+   		if (a == null)
+   			throw new NullPointerException();
+   		return new AbstractList<Integer>() {// Concrete implementation built atop skeletal implementation
+   			public Integer get(int i) {
+   				return a[i]; 
+   			}
+   			
+   			@Override public Integer set(int i, Integer val) {
+   				int oldVal = a[i];
+   				a[i] = val; 
+   				return oldVal;
+   			}
+   			public int size() {
+   				return a.length;
+   			}
+   		};
+   	}
 	
 	public static void bubbleSort(int[] array) {
 	    int n = array.length;
@@ -101,174 +159,6 @@ public class ArrayUtils
 	    }
 	}
 	
-	public static float[] to16BitFloatArray(byte[] data, boolean bigEndian) {
-		short[] shorts = (short[])toNBits(16, data, Integer.MAX_VALUE, bigEndian);
-		float[] floats = new float[shorts.length];
-	
-		for(int i = 0; i < floats.length; i++) {
-			floats[i] = toFloat(shorts[i]);
-		}
-		
-		return floats;
-	}
-	
-	/*
-	 * Tries to convert 24 bit floating point sample to 32 bit float data.
-	 * Up to now, there has been no way to do it correctly and there might be no
-	 * correct way to do this because 24 bit is not an IEEE floating point type.
-	 * 24 bit floating point images appear too dark using this conversion.
-	 */	
-	public static float[] to24BitFloatArray(byte[] data, boolean bigEndian) {
-		int[] ints = (int[])toNBits(24, data, Integer.MAX_VALUE, bigEndian);
-		float[] floats = new float[ints.length];
-	
-		for(int i = 0; i < floats.length; i++) {
-			/**
-			int bits = ints[i]<<8;
-			int sign     = ((bits & 0x80000000) == 0) ? 1 : -1;
-	        int exponent = ((bits & 0x7f800000) >> 23);
-	        int mantissa =  (bits & 0x007fffff);
-
-	        mantissa |= 0x00800000;
-	      
-	        floats[i] = (float)(sign * mantissa * Math.pow(2, exponent-150));
-	        */
-			floats[i] = Float.intBitsToFloat(ints[i]<<8);
-		}
-		
-		return floats;
-	}
-	
-	// Convert byte array to long array, then to integer array discarding the higher bits
-	public static int[] to32BitsLongArray(byte[] data, boolean bigEndian) {
-		ByteBuffer byteBuffer = ByteBuffer.wrap(data);
-		
-		if (bigEndian) {
-			byteBuffer.order(ByteOrder.BIG_ENDIAN);
-		} else {
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-		
-		LongBuffer longBuf = byteBuffer.asLongBuffer();
-		long[] array = new long[longBuf.remaining()];
-		longBuf.get(array);
-		
-		int[] iArray = new int[array.length];
-		
-		int i = 0;
-		
-		for(long l : array) {
-			iArray[i++] = (int)l;
-		}
-		
-		return iArray;
-	}
-	
-	public static double[] toDoubleArray(byte[] data, boolean bigEndian) {
-		return toDoubleArray(data, 0, data.length, bigEndian);
-	}
-	
-	public static double[] toDoubleArray(byte[] data, int offset, int len, boolean bigEndian) {
-		
-		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
-		
-		if (bigEndian) {
-			byteBuffer.order(ByteOrder.BIG_ENDIAN);
-		} else {
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-		
-		DoubleBuffer doubleBuf = byteBuffer.asDoubleBuffer();
-		double[] array = new double[doubleBuf.remaining()];
-		doubleBuf.get(array);
-		
-		return array;
-	}
-	
-	public static float[] toFloatArray(byte[] data, boolean bigEndian) {
-		return toFloatArray(data, 0, data.length, bigEndian);
-	}
-	
-	public static float[] toFloatArray(byte[] data, int offset, int len, boolean bigEndian) {
-		
-		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
-		
-		if (bigEndian) {
-			byteBuffer.order(ByteOrder.BIG_ENDIAN);
-		} else {
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-		
-		FloatBuffer floatBuf = byteBuffer.asFloatBuffer();
-		float[] array = new float[floatBuf.remaining()];
-		floatBuf.get(array);		
-		
-		return array;
-	}
-
-	public static int[] toIntArray(byte[] data, boolean bigEndian) {
-		return toIntArray(data, 0, data.length, bigEndian);
-	}
-	
-	public static int[] toIntArray(byte[] data, int offset, int len, boolean bigEndian) {
-		
-		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
-		
-		if (bigEndian) {
-			byteBuffer.order(ByteOrder.BIG_ENDIAN);
-		} else {
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-		
-		IntBuffer intBuf = byteBuffer.asIntBuffer();
-		int[] array = new int[intBuf.remaining()];
-		intBuf.get(array);
-		
-		return array;
-	}
-	
-	public static long[] toLongArray(byte[] data, boolean bigEndian) {
-		return toLongArray(data, 0, data.length, bigEndian);
-	}
-	
-	public static long[] toLongArray(byte[] data, int offset, int len, boolean bigEndian) {
-		
-		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
-		
-		if (bigEndian) {
-			byteBuffer.order(ByteOrder.BIG_ENDIAN);
-		} else {
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-		
-		LongBuffer longBuf = byteBuffer.asLongBuffer();
-		long[] array = new long[longBuf.remaining()];
-		longBuf.get(array);
-		
-		return array;
-	}
-	
-	public static short[] toShortArray(byte[] data, boolean bigEndian) {
-		return toShortArray(data, 0, data.length, bigEndian);		
-	}
-	
-	public static short[] toShortArray(byte[] data, int offset, int len, boolean bigEndian) {
-		
-		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
-		
-		if (bigEndian) {
-			byteBuffer.order(ByteOrder.BIG_ENDIAN);
-		} else {
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-		
-		ShortBuffer shortBuf = byteBuffer.asShortBuffer();
-		short[] array = new short[shortBuf.remaining()];
-		shortBuf.get(array);
-		
-		return array;
-	}
-	
 	/**
      * Since Set doesn't allow duplicates add() return false
      * if we try to add duplicates into Set and this property
@@ -288,7 +178,7 @@ public class ArrayUtils
         
         return false;
     }
-	 
+	
 	public static byte[] concat(byte[] first, byte[] second) {
 		
 		int firstLen = first.length;
@@ -309,7 +199,7 @@ public class ArrayUtils
     
 		return result;
     }
-
+	
 	public static byte[] concat(byte[] first, byte[]... rest) {
   	  
 		int totalLength = first.length;	  
@@ -389,7 +279,7 @@ public class ArrayUtils
 		
 		return result;
 	}
-
+	
 	/** 
 	 * Concatenates two arrays to a new one with type newType
 	 * 
@@ -432,11 +322,11 @@ public class ArrayUtils
 		return result;
     }
 
-   	public static int findEqualOrLess(int[] a, int key) {
+	public static int findEqualOrLess(int[] a, int key) {
     	return findEqualOrLess(a, 0, a.length, key);
     }
-    
-    /**
+	
+	/**
      * Find the index of the element which is equal or less than the key.
      * The array must be sorted in ascending order.
      *
@@ -457,8 +347,8 @@ public class ArrayUtils
     	// The index of the element which is either equal or less than the key
     	return index;    	
     }
-    
-    public static <T> int findEqualOrLess(T[] a, int fromIndex, int toIndex, T key, Comparator<? super T> c) {
+	
+	public static <T> int findEqualOrLess(T[] a, int fromIndex, int toIndex, T key, Comparator<? super T> c) {
     	int index = Arrays.binarySearch(a, fromIndex, toIndex, key, c);
     	
     	// -index - 1 is the insertion point if not found
@@ -468,12 +358,12 @@ public class ArrayUtils
     	
     	return index;    	
     }
-    
-    public static <T> int findEqualOrLess(T[] a, T key, Comparator<? super T> c) {
+	
+	public static <T> int findEqualOrLess(T[] a, T key, Comparator<? super T> c) {
     	return findEqualOrLess(a, 0, a.length, key, c);
     }
-    
-    /**
+	
+	/**
      * Flip the endian of the input byte-compacted array
      * 
      * @param input the input byte array which is byte compacted
@@ -574,8 +464,8 @@ public class ArrayUtils
    		
 		return output;
 	}
-   	
-   	// From http://stackoverflow.com/questions/6162651/half-precision-floating-point-in-java
+	
+	// From http://stackoverflow.com/questions/6162651/half-precision-floating-point-in-java
    	// returns all higher 16 bits as 0 for all results
    	public static int fromFloat(float fval)
    	{
@@ -603,14 +493,24 @@ public class ArrayUtils
    	         + (0x800000 >>> val - 102)     // round depending on cut off
    	      >>> 126 - val);   // div by 2^(1-(exp-127+15)) and >> 13 | exp=0
    	}
-   	
-    // Insertion sort
+	
+	/**
+  	 * Since nonzero-length array is always mutable, we should return
+  	 * a clone of the underlying array as BIT_REVERSE_TABLE.clone().
+  	 *
+  	 * @return the byte reverse table.
+  	 */
+  	public static byte[] getBitReverseTable() {
+  		return BIT_REVERSE_TABLE;
+  	}
+	 
+	// Insertion sort
     public static void insertionsort(int[] array)
     {
 	   insertionsort(array, 0, array.length-1);
     }
-   	
-    public static void insertionsort(int[] array, int start, int end)
+
+	public static void insertionsort(int[] array, int start, int end)
     {
 	   int j;
 
@@ -622,9 +522,9 @@ public class ArrayUtils
 		   // Move temp to the right place
 		   array[j] = temp;
 	   }
-    } 	
-
-    // Insertion sort
+    }
+	
+	// Insertion sort
     public static <T extends Comparable<? super T>> void insertionsort(T[] array, int start, int end)
     {
 	   int j;
@@ -638,82 +538,8 @@ public class ArrayUtils
 		   array[j] = temp;
 	   }
     }
-    
-    // From Effective Java 2nd Edition. 
-   	public static List<Integer> asList(final int[] a) 
-   	{
-   		if (a == null)
-   			throw new NullPointerException();
-   		return new AbstractList<Integer>() {// Concrete implementation built atop skeletal implementation
-   			public Integer get(int i) {
-   				return a[i]; 
-   			}
-   			
-   			@Override public Integer set(int i, Integer val) {
-   				int oldVal = a[i];
-   				a[i] = val; 
-   				return oldVal;
-   			}
-   			public int size() {
-   				return a.length;
-   			}
-   		};
-   	}
-    
-   	public static byte[] toByteArray(int[] data, boolean bigEndian) {
-		
-		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 4);
-		
-		if (bigEndian) {
-			byteBuffer.order(ByteOrder.BIG_ENDIAN);
-		} else {
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-        
-		IntBuffer intBuffer = byteBuffer.asIntBuffer();
-        intBuffer.put(data);
-
-        byte[] array = byteBuffer.array();
-
-		return array;
-	}
-
-    public static byte[] toByteArray(int value) {
-		return new byte[] {
-	        (byte)value,
-	        (byte)(value >>> 8),
-	        (byte)(value >>> 16),
-	        (byte)(value >>> 24)	            		            
-	        };
-	}
-
-    public static byte[] toByteArrayMM(int value) {
-    	return new byte[] {
-	        (byte)(value >>> 24),
-	        (byte)(value >>> 16),
-	        (byte)(value >>> 8),
-	        (byte)value};
-	}
-    
-    public static byte[] toByteArray(long[] data, boolean bigEndian) {
-		
-		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 8);
-		
-		if (bigEndian) {
-			byteBuffer.order(ByteOrder.BIG_ENDIAN);
-		} else {
-			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		}
-        
-		LongBuffer longBuffer = byteBuffer.asLongBuffer();
-        longBuffer.put(data);
-
-        byte[] array = byteBuffer.array();
-
-		return array;
-	}
-    
-    /**
+	
+	/**
 	 * Packs all or part of the input byte array which uses "bits" bits to use all 8 bits.
 	 * 
 	 * @param input input byte array
@@ -752,8 +578,8 @@ public class ArrayUtils
 		
 		return packedBytes;
 	}
-    
-  	/**
+
+   	/**
 	 * Packs all or part of the input byte array which uses "bits" bits to use all 8 bits.
 	 * <p>
 	 * We assume len is a multiplication of stride. The parameter stride controls the packing
@@ -802,13 +628,13 @@ public class ArrayUtils
 		
 		return packedBytes;
 	}
-	
-	// Quick sort
+    
+    // Quick sort
     public static void quicksort(int[] array) {
 	   quicksort (array, 0, array.length - 1);
     }
-
-	public static void quicksort (int[] array, int start, int end) {
+    
+    public static void quicksort (int[] array, int start, int end) {
 	   int inner = start;
 	   int outer = end;
 	   int mid = (start + end) / 2;
@@ -882,7 +708,7 @@ public class ArrayUtils
 		if (i < high)
 			quicksort(array, i, high);
 	}
-
+    
     // Based on java2novice.com example
     /**
      * Remove duplicate elements from an int array
@@ -916,13 +742,19 @@ public class ArrayUtils
         
         return output;
     }
-    
+   	
+   	// Reverse the bit order (bit sex) of a byte array
+	public static void reverseBits(byte[] input) {
+		for(int i = input.length - 1; i >= 0; i--)
+			input[i] = BIT_REVERSE_TABLE[input[i]&0xff];
+	}
+   	
     // Shell sort
     public static void shellsort(int[] array)
     {
 	   shellsort(array, 0, array.length-1);
     }
-
+   	
     public static void shellsort(int[] array, int start, int end)
     {
 	   int mid = (start + end)/2;
@@ -943,7 +775,7 @@ public class ArrayUtils
 		   mid = (start + mid)/2;
 	   }
     }
-
+   	
     // Shell sort
     public static <T extends Comparable<? super T>> void shellsort(T[] array, int start, int end)
     {
@@ -963,9 +795,144 @@ public class ArrayUtils
 		   }
 		   mid = (start + mid)/2;
 	   }
-    }
+    } 	
 
-    public static byte[] toByteArray(short[] data, boolean bigEndian) {
+    public static byte[] subArray(byte[] src, int offset, int len) {
+		if(offset == 0 && len == src.length) return src;
+		if((offset < 0 || offset >= src.length) || (offset + len > src.length))
+			throw new IllegalArgumentException("Copy range out of array bounds");
+		byte[] dest = new byte[len];
+		System.arraycopy(src, offset, dest, 0, len);
+		
+		return dest;
+	}
+    
+    private static final void swap(int[] array, int a, int b) {
+	   int temp = array[a];
+	   array[a] = array[b];
+	   array[b] = temp;
+    }
+    
+    private static final <T extends Comparable<? super T>> void swap(T[] array, int a, int b) {
+	   T temp = array[a];
+	   array[a] = array[b];
+	   array[b] = temp;
+    }
+    
+   	public static float[] to16BitFloatArray(byte[] data, boolean bigEndian) {
+		short[] shorts = (short[])toNBits(16, data, Integer.MAX_VALUE, bigEndian);
+		float[] floats = new float[shorts.length];
+	
+		for(int i = 0; i < floats.length; i++) {
+			floats[i] = toFloat(shorts[i]);
+		}
+		
+		return floats;
+	}
+
+    /*
+	 * Tries to convert 24 bit floating point sample to 32 bit float data.
+	 * Up to now, there has been no way to do it correctly and there might be no
+	 * correct way to do this because 24 bit is not an IEEE floating point type.
+	 * 24 bit floating point images appear too dark using this conversion.
+	 */	
+	public static float[] to24BitFloatArray(byte[] data, boolean bigEndian) {
+		int[] ints = (int[])toNBits(24, data, Integer.MAX_VALUE, bigEndian);
+		float[] floats = new float[ints.length];
+	
+		for(int i = 0; i < floats.length; i++) {
+			/**
+			int bits = ints[i]<<8;
+			int sign     = ((bits & 0x80000000) == 0) ? 1 : -1;
+	        int exponent = ((bits & 0x7f800000) >> 23);
+	        int mantissa =  (bits & 0x007fffff);
+
+	        mantissa |= 0x00800000;
+	      
+	        floats[i] = (float)(sign * mantissa * Math.pow(2, exponent-150));
+	        */
+			floats[i] = Float.intBitsToFloat(ints[i]<<8);
+		}
+		
+		return floats;
+	}
+
+    // Convert byte array to long array, then to integer array discarding the higher bits
+	public static int[] to32BitsLongArray(byte[] data, boolean bigEndian) {
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		LongBuffer longBuf = byteBuffer.asLongBuffer();
+		long[] array = new long[longBuf.remaining()];
+		longBuf.get(array);
+		
+		int[] iArray = new int[array.length];
+		
+		int i = 0;
+		
+		for(long l : array) {
+			iArray[i++] = (int)l;
+		}
+		
+		return iArray;
+	}
+    
+    public static byte[] toByteArray(int value) {
+		return new byte[] {
+	        (byte)value,
+	        (byte)(value >>> 8),
+	        (byte)(value >>> 16),
+	        (byte)(value >>> 24)	            		            
+	        };
+	}
+    
+    public static byte[] toByteArray(int[] data, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 4);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+        
+		IntBuffer intBuffer = byteBuffer.asIntBuffer();
+        intBuffer.put(data);
+
+        byte[] array = byteBuffer.array();
+
+		return array;
+	}
+    
+  	public static byte[] toByteArray(long[] data, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 8);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+        
+		LongBuffer longBuffer = byteBuffer.asLongBuffer();
+        longBuffer.put(data);
+
+        byte[] array = byteBuffer.array();
+
+		return array;
+	}
+	
+	public static byte[] toByteArray(short value) {
+		 return new byte[] {
+				 (byte)value, (byte)(value >>> 8)};
+	}
+
+	public static byte[] toByteArray(short[] data, boolean bigEndian) {
 		
 		ByteBuffer byteBuffer = ByteBuffer.allocate(data.length * 2);
 		
@@ -982,40 +949,42 @@ public class ArrayUtils
 
 		return array;
 	}
-
-	public static byte[] toByteArray(short value) {
-		 return new byte[] {
-				 (byte)value, (byte)(value >>> 8)};
+    
+    public static byte[] toByteArrayMM(int value) {
+    	return new byte[] {
+	        (byte)(value >>> 24),
+	        (byte)(value >>> 16),
+	        (byte)(value >>> 8),
+	        (byte)value};
 	}
 
     public static byte[] toByteArrayMM(short value) {
 		 return new byte[] {
 				 (byte)(value >>> 8), (byte)value};
 	}
-	 
-	public static byte[] subArray(byte[] src, int offset, int len) {
-		if(offset == 0 && len == src.length) return src;
-		if((offset < 0 || offset >= src.length) || (offset + len > src.length))
-			throw new IllegalArgumentException("Copy range out of array bounds");
-		byte[] dest = new byte[len];
-		System.arraycopy(src, offset, dest, 0, len);
-		
-		return dest;
+    
+    public static double[] toDoubleArray(byte[] data, boolean bigEndian) {
+		return toDoubleArray(data, 0, data.length, bigEndian);
 	}
 	
-	private static final void swap(int[] array, int a, int b) {
-	   int temp = array[a];
-	   array[a] = array[b];
-	   array[b] = temp;
-    }
-	
-	private static final <T extends Comparable<? super T>> void swap(T[] array, int a, int b) {
-	   T temp = array[a];
-	   array[a] = array[b];
-	   array[b] = temp;
-    }
-	
-	// From http://stackoverflow.com/questions/6162651/half-precision-floating-point-in-java
+	public static double[] toDoubleArray(byte[] data, int offset, int len, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		DoubleBuffer doubleBuf = byteBuffer.asDoubleBuffer();
+		double[] array = new double[doubleBuf.remaining()];
+		doubleBuf.get(array);
+		
+		return array;
+	}
+
+    // From http://stackoverflow.com/questions/6162651/half-precision-floating-point-in-java
 	// Converts integer to float ignores the higher 16 bits
 	public static float toFloat(int lbits) {
 		// ignores the higher 16 bits
@@ -1042,6 +1011,69 @@ public class ArrayUtils
 	    return Float.intBitsToFloat(          // combine all parts
 	        ( lbits & 0x8000 ) << 16          // sign  << ( 31 - 15 )
 	        | ( exp | mant ) << 13 );         // value << ( 23 - 10 )
+	}
+
+    public static float[] toFloatArray(byte[] data, boolean bigEndian) {
+		return toFloatArray(data, 0, data.length, bigEndian);
+	}
+
+    public static float[] toFloatArray(byte[] data, int offset, int len, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		FloatBuffer floatBuf = byteBuffer.asFloatBuffer();
+		float[] array = new float[floatBuf.remaining()];
+		floatBuf.get(array);		
+		
+		return array;
+	}
+
+	public static int[] toIntArray(byte[] data, boolean bigEndian) {
+		return toIntArray(data, 0, data.length, bigEndian);
+	}
+
+    public static int[] toIntArray(byte[] data, int offset, int len, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		IntBuffer intBuf = byteBuffer.asIntBuffer();
+		int[] array = new int[intBuf.remaining()];
+		intBuf.get(array);
+		
+		return array;
+	}
+	 
+	public static long[] toLongArray(byte[] data, boolean bigEndian) {
+		return toLongArray(data, 0, data.length, bigEndian);
+	}
+	
+	public static long[] toLongArray(byte[] data, int offset, int len, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		LongBuffer longBuf = byteBuffer.asLongBuffer();
+		long[] array = new long[longBuf.remaining()];
+		longBuf.get(array);
+		
+		return array;
 	}
 	
 	/**
@@ -1181,6 +1213,27 @@ public class ArrayUtils
 		}
 		
 		return sArray;
+	}
+	
+	public static short[] toShortArray(byte[] data, boolean bigEndian) {
+		return toShortArray(data, 0, data.length, bigEndian);		
+	}
+	
+	public static short[] toShortArray(byte[] data, int offset, int len, boolean bigEndian) {
+		
+		ByteBuffer byteBuffer = ByteBuffer.wrap(data, offset, len);
+		
+		if (bigEndian) {
+			byteBuffer.order(ByteOrder.BIG_ENDIAN);
+		} else {
+			byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		}
+		
+		ShortBuffer shortBuf = byteBuffer.asShortBuffer();
+		short[] array = new short[shortBuf.remaining()];
+		shortBuf.get(array);
+		
+		return array;
 	}
    	
    	private ArrayUtils(){} // Prevents instantiation
