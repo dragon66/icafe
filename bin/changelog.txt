@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/07/2014
+Last modified on 12/10/2014
 ***************************
+10Dec2014  Moved reverseBits() from IMGUtils to ArrayUtils
 07Dec2014  Added methods to ArrayUtils to work with floating point TIFF image sample
 07Dec2014  Changed methods names for various byte array to other array type conversion
 03Dec2014  Fixed bug for IMGUtils getRGB() to fall back to BufferedImage.getRGB()
