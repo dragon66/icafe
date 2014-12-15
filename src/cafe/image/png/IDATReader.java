@@ -56,6 +56,7 @@ public class IDATReader implements Reader {
 	public void read() throws IOException {		
 		// Inflate compressed data
 		BufferedInputStream bin = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(byteOutput.toByteArray())));
-		this.rawData = IOUtils.inputStreamToByteArray(bin); 
+		this.rawData = IOUtils.inputStreamToByteArray(bin);
+		bin.close();
 	}
 }
