@@ -44,7 +44,6 @@ public class IOUtils {
 			bout.write(buf, 0, len);
 		}
 		
-		is.close();
 		bout.close();
 		 
 		return bout.toByteArray();
