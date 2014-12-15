@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    15Dec2014  Added insertTiffImage() to insert TIFF image into existing TIFF
  * WY    15Dec2014  Added append() to append new pages to the end of existing TIFF
  * WY    24Nov2014  Changed removePages() to remove the actual pages from the arguments
  * WY    24Nov2014  Changed write(TIFFImage) to write(TIFFImage, RandomAccessOutputStream)
@@ -97,14 +98,14 @@ import static cafe.image.writer.TIFFWriter.*;
  * @version 1.0 03/28/2014
  */
 public class TIFFTweaker {
+	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage ... images) throws IOException {
+		append(rin, rout, null, images);
+	}
+	
 	//
 	// Append an array of BufferedImage to the end of the existing TIFF image
 	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, ImageMeta[] imageMeta, BufferedImage ... images) throws IOException {
 		insertPages(rin, rout, getPageCount(rin), imageMeta, images);
-	}
-	
-	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage ... images) throws IOException {
-		append(rin, rout, null, images);
 	}
 	
 	/**
@@ -1110,6 +1111,225 @@ public class TIFFTweaker {
 		}
 		
 		writeToStream(rout, firstIFDOffset);
+	}
+	
+	public static void insertTiffImage(RandomAccessInputStream image1, RandomAccessInputStream image2, int pageNumber, RandomAccessOutputStream rout) throws IOException {
+		List<IFD> ifds1 = new ArrayList<IFD>();
+		int offset1 = copyHeader(image1, rout);
+		// Read IFDs for the first image
+		readIFDs(null, null, TiffTag.class, ifds1, offset1, image1);
+		// Sanity check
+		if(pageNumber < 0) pageNumber = 0;
+		else if(pageNumber > ifds1.size()) pageNumber = ifds1.size();
+		// Remove page number field if any and put in place holder
+		for(int i = 0; i < ifds1.size(); i++) {
+			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			// Place holder, to be updated afterwards
+			ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0}));
+		}
+		int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, image1, rout);
+		short writeEndian = rout.getEndian();
+		List<IFD> ifds2 = new ArrayList<IFD>();
+		readIFDs(ifds2, image2);
+		for(int j = 0; j < ifds2.size(); j++) {
+			ifds2.get(j).removeField(TiffTag.PAGE_NUMBER.getValue());
+			// Place holder, to be updated afterwards
+			ifds2.get(j).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0})); 
+		}
+		List<IFD> newList = new ArrayList<IFD>(ifds1.size() + ifds2.size());
+		short readEndian = image2.getEndian();
+		if(readEndian == writeEndian) // Copy as is
+			offset = copyPages(ifds2, offset, image2, rout);
+		else {
+			// Need to check BitsPerSample to see if we are dealing with images with BitsPerSample > 8
+			IFD prevIFD = null;
+			for(int j = 0; j < ifds2.size(); j++) {
+				IFD currIFD = ifds2.get(j);
+				int bitsPerSample = 1; // Default
+				TiffField<?> f_bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE.getValue());
+				if(f_bitsPerSample != null) bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
+				if(bitsPerSample <= 8) { // Just copy data
+					offset = copyPageData(currIFD, offset, image2, rout);							
+				} else if(bitsPerSample%8 == 0) {
+					/*
+					 * TIFF viewers seem to have problem interpreting data with more than 8 BitsPerSample.
+					 * Most of the viewers interpret BitsPerSample%8 == 0 according to the  endianess of the image,
+					 * but think other bit depth like 12 bits always as big endian. For now we only flip the
+					 * endian for BitsPerSample%8 == 0 as needed and leave the other bit depth images as is.
+					 */
+					// Flip the byte sequence of the data
+					ImageDecoder decoder = null;
+					ImageEncoder encoder = null;
+					// Original image data start from these offsets.
+					TiffField<?> stripOffSets = currIFD.removeField(TiffTag.STRIP_OFFSETS.getValue());							
+					if(stripOffSets == null)
+						stripOffSets = currIFD.removeField(TiffTag.TILE_OFFSETS.getValue());									
+					TiffField<?> stripByteCounts = currIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue());							
+					if(stripByteCounts == null)
+						stripByteCounts = currIFD.getField(TiffTag.TILE_BYTE_COUNTS.getValue());
+					/* 
+					 * Make sure this will work in the case when neither STRIP_OFFSETS nor TILE_OFFSETS presents.
+					 * Not sure if this will ever happen for TIFF. JPEG EXIF data do not contain these fields. 
+					 */
+					if(stripOffSets != null) { 
+						int[] counts = stripByteCounts.getDataAsLong();		
+						int[] off = stripOffSets.getDataAsLong();
+						int[] temp = new int[off.length];
+								
+						int[] uncompressedStripByteCounts = getUncompressedStripByteCounts(currIFD, off.length);
+								
+						// We are going to write the image data first
+						rout.seek(offset);
+								
+						TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION.getValue());
+						int tiffCompression = 1;
+						if(tiffField != null)
+							tiffCompression = tiffField.getDataAsLong()[0];
+						TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(tiffCompression);
+								
+						int samplesPerPixel = 1;
+						tiffField = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());								
+						if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
+								
+						int planaryConfiguration = 1;
+								
+						tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+						if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];										
+						
+						int scanLineStride = getRowWidth(currIFD);
+						if(planaryConfiguration == 1) scanLineStride *= samplesPerPixel;
+								
+						// Need to uncompress the data, reorder the byte sequence, and compress the data again
+						switch(compression) { // Predictor seems to work for LZW, DEFLATE as is! Need more test though!
+							case LZW: // Tested
+								decoder = new LZWTreeDecoder(8, true);
+								encoder = new LZWTreeEncoder(rout, 8, 4096, null); // 4K buffer	
+								break;
+							case DEFLATE:
+							case DEFLATE_ADOBE: // Tested
+								decoder = new DeflateDecoder();
+								encoder = new DeflateEncoder(rout, 4096, 4, null); // 4K buffer	
+								break;
+							case PACKBITS:
+								// Not tested
+								for(int k = 0; k < off.length; k++) {
+									image2.seek(off[k]);
+									byte[] buf = new byte[counts[k]];
+									image2.readFully(buf);
+									byte[] buf2 = new byte[uncompressedStripByteCounts[k]];
+									Packbits.unpackbits(buf, buf2);
+									ArrayUtils.flipEndian(buf2, 0, buf2.length, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
+									// Compress the data
+									buf2 = new byte[buf.length + (buf.length + 127)/128];
+									int bytesCompressed = Packbits.packbits(buf, buf2);
+									rout.write(buf2, 0, bytesCompressed);
+									temp[k] = offset;
+									offset += bytesCompressed; // DONE!
+								}
+								break;
+							case NONE:										
+								// In case we only have one strip/tile but StripByteCounts contains wrong value
+								// If there is only one strip/samplesPerPixel strips for PlanaryConfiguration = 2
+								if(planaryConfiguration == 1 && off.length == 1 || planaryConfiguration == 2 && off.length == samplesPerPixel)
+								{
+									int[] totalBytes2Read = getBytes2Read(currIFD);
+										
+									for(int k = 0; k < off.length; k++)
+										counts[k] = totalBytes2Read[k];					
+								}
+								// Read the data, reorder the byte sequence and write back the data
+								for(int k = 0; k < off.length; k++) {
+									image2.seek(off[k]);
+									byte[] buf = new byte[counts[k]];
+									image2.readFully(buf);										
+									buf = ArrayUtils.flipEndian(buf, 0, buf.length, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
+									rout.write(buf);
+									temp[k] = offset;
+									offset += buf.length;
+								}										
+								break;
+							default: // Fall back to simple copy, at least won't break the whole output image
+								for(int l = 0; l < off.length; l++) {
+									image2.seek(off[l]);
+									byte[] buf = new byte[counts[l]];
+									image2.readFully(buf);
+									rout.write(buf);
+									temp[l] = offset;
+									offset += buf.length;
+								}
+								break;
+						}
+						if(decoder != null) {
+							for(int k = 0; k < off.length; k++) {
+								image2.seek(off[k]);
+								byte[] buf = new byte[counts[k]];
+								image2.readFully(buf);
+								decoder.setInput(buf);
+								int bytesDecompressed = 0;
+								byte[] decompressed = new byte[uncompressedStripByteCounts[k]];
+								try {
+									bytesDecompressed = decoder.decode(decompressed, 0, uncompressedStripByteCounts[k]);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								buf = ArrayUtils.flipEndian(decompressed, 0, bytesDecompressed, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
+								// Compress the data
+								try {
+									encoder.initialize();
+									encoder.encode(buf, 0, buf.length);
+									encoder.finish();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+								temp[k] = offset;
+								offset += encoder.getCompressedDataLen(); // DONE!
+							}
+						}
+						if(currIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()) != null)
+							stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
+						else
+							stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
+						currIFD.addField(stripOffSets);		
+					} else { // Just copy since in this case TIFF viewers tend to think the data is always in TIFF LZW packing format
+						offset = copyPageData(currIFD, offset, image2, rout);
+					}
+					if(prevIFD != null) // Link this IFD with previous one if any
+						prevIFD.setNextIFDOffset(rout, offset);
+					// Then write the IFD
+					offset = currIFD.write(rout, offset);							
+					prevIFD = currIFD;
+				}					
+			}
+		}
+		if(pageNumber == 0) {
+			ifds2.get(ifds2.size() - 1).setNextIFDOffset(rout, ifds1.get(0).getStartOffset());
+			newList.addAll(ifds2);
+			newList.addAll(ifds1);
+		} else {
+			if(pageNumber == ifds1.size()) {
+				ifds1.get(ifds1.size() - 1).setNextIFDOffset(rout, ifds2.get(0).getStartOffset());
+				newList.addAll(ifds1);
+				newList.addAll(ifds2);
+			} else {
+				ifds1.get(pageNumber - 1).setNextIFDOffset(rout, ifds2.get(0).getStartOffset());
+				ifds2.get(ifds2.size() - 1).setNextIFDOffset(rout, ifds1.get(pageNumber).getStartOffset());
+				newList.addAll(ifds1.subList(0, pageNumber));
+				newList.addAll(ifds2);
+				newList.addAll(ifds1.subList(pageNumber, ifds1.size()));
+			}
+		}
+		int maxPageNumber = newList.size();
+		// Reset pageNumber and total pages
+		for(int i = 0; i < maxPageNumber; i++) {
+			offset = newList.get(i).getField(TiffTag.PAGE_NUMBER.getValue()).getDataOffset();
+			rout.seek(offset);
+			rout.writeShort((short)i); // Update page number for this page
+			rout.writeShort((short)maxPageNumber); // Update total page number
+		}			
+		// Figure out the first IFD offset
+		int firstIFDOffset = newList.get(0).getStartOffset();
+		// And write the IFDs
+		writeToStream(rout, firstIFDOffset); // DONE!	
 	}
 	
 	/**
