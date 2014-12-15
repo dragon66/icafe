@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =======================================================================
+ * WY    15Dec2014  Added removeChild() method
  * WY    24Nov2014  Added getChild() method
  * WY    02Apr2014  Added setNextIFDOffset() to work with the case of non-contiguous IFDs
  * WY    30Mar2014  Added children map, changed write() method to write child nodes as well.
@@ -37,6 +38,19 @@ import cafe.io.RandomAccessOutputStream;
  */
 public final class IFD {
 		
+	/**
+	 * Create a children map for sub IFDs. A sub IFD is associated with a tag of the current IFD
+	 * which serves as pointer to the sub IFD.
+	 */	 
+	private Map<Tag, IFD> children = new HashMap<Tag, IFD>();
+	
+	/** Create a fields map to hold all of the fields for this IFD */
+	private Map<Short, TiffField<?>> tiffFields = new HashMap<Short, TiffField<?>>();
+
+	private int endOffset;
+	
+	private int startOffset;
+	
 	public IFD() {}
 	
 	// Copy constructor
@@ -47,7 +61,7 @@ public final class IFD {
 		this.startOffset = other.startOffset;
 		this.endOffset = other.endOffset;
 	}
-
+	
 	public void addChild(Tag tag, IFD child) {
 		children.put(tag, child);
 	}
@@ -87,16 +101,18 @@ public final class IFD {
 		return startOffset;
 	}
 	
-	/** Remove a specific field associated with the given tag */
-	public TiffField<?> removeField(short tag) {
-		return tiffFields.remove(tag);
-	}
-	
 	/** Remove all the entries from the IDF fields map */
 	public void removeAllFields() {
 		tiffFields.clear();
 	}
 	
+	public IFD removeChild(Tag tag) {
+		return children.remove(tag);
+	}
+	/** Remove a specific field associated with the given tag */
+	public TiffField<?> removeField(short tag) {
+		return tiffFields.remove(tag);
+	}
 	/**
 	 * Set the next IFD offset pointer
 	 * <p>
@@ -111,7 +127,6 @@ public final class IFD {
 		os.seek(endOffset - 4);
 		os.writeInt(nextOffset);
 	}
-	
 	/** Write this IFD and all the children, if any, to the output stream
 	 * 
 	 * @param os RandomAccessOutputStream
@@ -165,14 +180,4 @@ public final class IFD {
 			
 		return toOffset;
 	}
-	
-	/**
-	 * Create a children map for sub IFDs. A sub IFD is associated with a tag of the current IFD
-	 * which serves as pointer to the sub IFD.
-	 */	 
-	private Map<Tag, IFD> children = new HashMap<Tag, IFD>();
-	/** Create a fields map to hold all of the fields for this IFD */
-	private Map<Short, TiffField<?>> tiffFields = new HashMap<Short, TiffField<?>>();
-	private int endOffset;
-	private int startOffset;
 }
