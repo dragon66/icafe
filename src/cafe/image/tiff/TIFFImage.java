@@ -20,21 +20,18 @@ import cafe.io.RandomAccessInputStream;
 import cafe.io.RandomAccessOutputStream;
 
 /**
- * TIFF image wrapper to manipulate IFD fields
+ * TIFF image wrapper to manipulate pages and fields
  * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 05/23/2014
  */
 public class TIFFImage implements Iterable<IFD> {
+	// Define fields
 	private int numOfPages;
 	private int workingPage;
 	private List<IFD> ifds;
 	private RandomAccessInputStream rin;
 
-	public TIFFImage() {
-		ifds = new ArrayList<IFD>();
-	}
-	
 	public TIFFImage(RandomAccessInputStream rin) throws IOException {
 		ifds = new ArrayList<IFD>();
 		this.rin = rin;
@@ -45,16 +42,6 @@ public class TIFFImage implements Iterable<IFD> {
 	
 	public void addField(TiffField<?> field) {
 		ifds.get(workingPage).addField(field);
-	}
-	
-	public void addPage(IFD page) {
-		ifds.add(page);
-		numOfPages++;
-	}
-	
-	public void addPage(int index, IFD page) {
-		ifds.add(index, page);
-		numOfPages++;
 	}
 	
 	public TiffField<?> getField(short tag) {
@@ -92,7 +79,8 @@ public class TIFFImage implements Iterable<IFD> {
 	}
 	
 	public void write(RandomAccessOutputStream out) throws IOException {
-		if(numOfPages > 1) { // Reset pageNumber if we have more than 1 pages
+		// Reset pageNumber if we have more than 1 pages
+		if(numOfPages > 1) { 
 			for(int i = 0; i < ifds.size(); i++) {
 				ifds.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
 				ifds.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(numOfPages - 1)}));
