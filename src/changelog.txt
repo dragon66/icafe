@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/10/2014
+Last modified on 12/15/2014
 ***************************
+15Dec2014  Added append() to TIFFTweaker to append new pages to the end of TIFF image
 10Dec2014  Moved reverseBits() from IMGUtils to ArrayUtils
 07Dec2014  Added methods to ArrayUtils to work with floating point TIFF image sample
 07Dec2014  Changed methods names for various byte array to other array type conversion
