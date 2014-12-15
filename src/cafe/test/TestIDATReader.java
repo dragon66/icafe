@@ -12,7 +12,9 @@ public class TestIDATReader {
 	
 	public static void main(String[] args) throws IOException {
 		IDATReader reader = new IDATReader();
-		reader.addChunk(new IDATBuilder().data(new byte[] {1,2,3}).data(new byte[] {4,5,6}).build());
+		IDATBuilder builder = new IDATBuilder().data(new byte[] {1,2,3}).data(new byte[] {4,5,6});
+		builder.setFinish(true);
+		reader.addChunk(builder.build());
 		System.out.println(StringUtils.byteArrayToHexString(reader.getData()));
 	}
 }
