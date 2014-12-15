@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    15Dec2014  Added append() to append new pages to the end of existing TIFF
  * WY    24Nov2014  Changed removePages() to remove the actual pages from the arguments
  * WY    24Nov2014  Changed write(TIFFImage) to write(TIFFImage, RandomAccessOutputStream)
  * WY    22Nov2014  Removed unnecessary TIFFWriter argument from corresponding methods
@@ -96,6 +97,28 @@ import static cafe.image.writer.TIFFWriter.*;
  * @version 1.0 03/28/2014
  */
 public class TIFFTweaker {
+	//
+	// Append an array of BufferedImage to the end of the existing TIFF image
+	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, ImageMeta[] imageMeta, BufferedImage ... images) throws IOException {
+		insertPages(rin, rout, getPageCount(rin), imageMeta, images);
+	}
+	
+	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage ... images) throws IOException {
+		append(rin, rout, null, images);
+	}
+	
+	/**
+	 * Append TIFF Frames to the end of the original TIFF image
+	 * 
+	 * @param frames an array of TIFFFrame to be appended
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @throws IOException
+	 */
+	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, TIFFFrame ... frames) throws IOException {
+		insertPages(rin, rout, getPageCount(rin), frames);
+	}
+	
 	/**
 	 * Read an input TIFF and write it to a new TIFF.
 	 * The EXIF and GPS information, if present, are preserved.
@@ -588,10 +611,22 @@ public class TIFFTweaker {
 		return totalBytes2Read;
 	}
 	
+	/**
+	 * Get the total number of pages for the TIFF image
+	 * 
+	 * @param rin RandomAccessInputStream to read the image
+	 * @return total number of pages for the image
+	 * @throws IOException
+	 */
 	public static int getPageCount(RandomAccessInputStream rin) throws IOException {
+		// Keep track of the current stream pointer
+		long streamPointer = rin.getStreamPointer();
+		// Go the the stream head
+		rin.seek(STREAM_HEAD);
 		List<IFD> list = new ArrayList<IFD>();
 		readIFDs(list, rin);
-		rin.seek(STREAM_HEAD); // Reset pointer to the stream head
+		// Reset stream pointer
+		rin.seek(streamPointer); 
 		
 		return list.size();
 	}
@@ -849,7 +884,7 @@ public class TIFFTweaker {
 	 * Insert a single page into a TIFF image
 	 * 
 	 * @param image a BufferedImage to insert
-	 * @param index index (relative to the existing pages) to insert the page
+	 * @param pageNumber page number (relative to the existing pages) to insert the page
 	 * @param rout RandomAccessOutputStream to write new image
 	 * @param ifds a list of IFDs for all the existing and inserted pages
 	 * @param writeOffset stream offset to insert this page
@@ -858,10 +893,10 @@ public class TIFFTweaker {
 	 * 
 	 * @return stream offset after inserting this page
 	 */
-	public static int insertPage(BufferedImage image, int index, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
+	public static int insertPage(BufferedImage image, int pageNumber, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
 		// Sanity check
-		if(index < 0) index = 0;
-		else if(index > ifds.size()) index = ifds.size();		
+		if(pageNumber < 0) pageNumber = 0;
+		else if(pageNumber > ifds.size()) pageNumber = ifds.size();		
 		
 		// Grab image pixels in ARGB format
 		int imageWidth = image.getWidth();
@@ -869,8 +904,8 @@ public class TIFFTweaker {
 		int[] pixels = IMGUtils.getRGB(image);//image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
 		
 		try {
-			writeOffset = writer.writePage(pixels, index, ifds.size(), imageWidth, imageHeight, rout, writeOffset);
-			ifds.add(index, writer.getIFD());
+			writeOffset = writer.writePage(pixels, pageNumber, ifds.size(), imageWidth, imageHeight, rout, writeOffset);
+			ifds.add(pageNumber, writer.getIFD());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	
@@ -878,21 +913,25 @@ public class TIFFTweaker {
 		return writeOffset;
 	}
 	
+	// Insert images into existing TIFF image using default writer parameters
 	public static void insertPages(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, BufferedImage... images) throws IOException {
 		insertPages(rin, rout, pageNumber, null, images);
 	}
 	
 	/**
-	 * Insert pages into a TIFF image
+	 * Insert pages into a TIFF image. If knowledge of total pages for the
+	 * original image is desirable, call {@link #getPageCount(RandomAccessInputStream) getPageCount}
+	 * first.
 	 * 
 	 * @param images a number of BufferedImage to insert
-	 * @param pageNumber first page number
-	 * @param rin RandomAccessInputStream to read old image
+	 * @param pageNumber page offset to start page insertion
+	 * @param rin RandomAccessInputStream to read original image
 	 * @param rout RandomAccessOutputStream to write new image
 	 * @param writer TIFFWriter instance
 	 * @throws IOException
 	 */
 	public static void insertPages(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, ImageMeta[] imageMeta, BufferedImage... images) throws IOException {
+		rin.seek(STREAM_HEAD);
 		int offset = copyHeader(rin, rout);
 		
 		List<IFD> list = new ArrayList<IFD>();
@@ -982,7 +1021,19 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);
 	}
 	
+	/**
+	 * Insert TIFFFrames into existing TIFF image. If knowledge of total pages for the
+	 * original image is desirable, call {@link #getPageCount(RandomAccessInputStream) getPageCount}
+	 * first.
+	 * 
+	 * @param rin RandomAccessInputStream for the original image
+	 * @param rout RandomAccessOutputStream to write new image
+	 * @param pageNumber page offset to start page insertion
+	 * @param frames an array of TIFFFrame
+	 * @throws IOException
+	 */	
 	public static void insertPages(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, TIFFFrame ... frames) throws IOException {
+		rin.seek(STREAM_HEAD);
 		int offset = copyHeader(rin, rout);
 		
 		List<IFD> list = new ArrayList<IFD>();
