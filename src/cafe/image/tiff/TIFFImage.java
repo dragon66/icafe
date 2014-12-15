@@ -32,7 +32,7 @@ public class TIFFImage implements Iterable<IFD> {
 	private RandomAccessInputStream rin;
 
 	public TIFFImage() {
-		ifds= new ArrayList<IFD>();
+		ifds = new ArrayList<IFD>();
 	}
 	
 	public TIFFImage(RandomAccessInputStream rin) throws IOException {

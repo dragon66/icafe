@@ -196,7 +196,7 @@ public class GIFTweaker {
 	 * @param outputFilePrefix optional prefix for the output image
 	 * @throws Exception
 	 * 
-	 * @deprecated use {@link #splitFramesEx2(InputStream, ImageWriter, String) splitFramesEx2} instead.
+	 * @deprecated Use {@link #splitFramesEx2(InputStream, ImageWriter, String) splitFramesEx2} instead.
 	 */
 	@Deprecated
 	public static void splitFramesEx(InputStream is, ImageWriter writer, String outputFilePrefix) throws Exception {
