@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    17Dec2014  Bug fix for rgb2bilevelDither() to bypass transparent pixels
  * WY    03Dec2014  Bug fix for getRGB() to fall back to BufferedImage.getRGB()
  * WY    26Nov2014  Changed rgb2bilevel() to take into account transparency
  * WY    03Nov2014  Added CMYK2RGB() to convert CMYK raster to RGB raster
@@ -168,12 +169,13 @@ public class IMGUtils {
 	 * Dither gray-scale image using Floyd-Steinberg error diffusion
 	 *
 	 * @param gray input gray-scale image array - also as output BW image array
+	 * @param mask a mask array for transparent pixels - 0 transparent, 1 opaque
 	 * @param width image width
 	 * @param height image height
 	 * @param threshold gray-scale threshold to convert to BW image
 	 * @param err_limit limit of the error (range 0-255 inclusive)
 	 */	
-	public static void dither_FloydSteinberg(byte[] gray, int width, int height, int threshold, int err_limit)
+	public static void dither_FloydSteinberg(byte[] gray, byte[] mask, int width, int height, int threshold, int err_limit)
 	{
 		// Define error arrays
 		// Errors for the current line
@@ -191,7 +193,12 @@ public class IMGUtils {
 			
 		for (int row = 0, index = 0; row < height; row++)
 		{
-			for (int col = 0; col < width; index++, col++) {				
+			for (int col = 0; col < width; index++, col++) {
+				if(mask[index] == 0) { 
+					// make transparency color white (Assume WHITE_IS_ZERO)
+					gray[index] = 0; 
+					continue; 
+				}
 				// Diffuse errors
 				int intensity = (gray[index]&0xff) + thisErr[col + 1];
 				if (intensity > 255) intensity = 255;
@@ -1053,12 +1060,12 @@ public class IMGUtils {
 		// Calculate threshold
 		int threshold = (sum/pixels.length);
 		
-		// Reduce gray-scale to BW
+		// Reduce gray-scale to BW - we assume PhotoMetric.WHITE_IS_ZERO
 		for(int l = 0; l < pixels.length; l++) {
 			if((pixels[l]&0xff) <= threshold) {
-				pixels[l] = 1;
+				pixels[l] = 1; // Black
 			} else {
-				pixels[l] = 0;
+				pixels[l] = 0; // White
 			}
 		}	
 		
@@ -1077,11 +1084,16 @@ public class IMGUtils {
 	public static byte[] rgb2bilevelDither(int[] rgb, int imageWidth, int imageHeight, int err_limit) {
 		// RGB to gray-scale
 		byte[] pixels = new byte[rgb.length];
+		byte[] mask = new byte[rgb.length];
 		int sum = 0;
 		
+		Arrays.fill(mask, (byte)0x01);
+		
 		for(int i = 0; i < rgb.length; i++) {
-			if((rgb[i] >>> 24) < 0x80) pixels[i] = (byte)0xff; // Dealing with transparency color
-			else
+			if((rgb[i] >>> 24) < 0x80) {
+				pixels[i] = (byte)0xff; // Dealing with transparency color
+				mask[i] = 0x00;
+			} else
 				pixels[i] = (byte)(((rgb[i]>>16)&0xff)*0.2126 + ((rgb[i]>>8)&0xff)*0.7152 + (rgb[i]&0xff)*0.0722);
 			sum += (pixels[i]&0xff);
 		}
@@ -1089,7 +1101,7 @@ public class IMGUtils {
 		// Calculate threshold
 		int threshold = (sum/pixels.length);
 		
-		IMGUtils.dither_FloydSteinberg(pixels, imageWidth, imageHeight, threshold, err_limit);
+		IMGUtils.dither_FloydSteinberg(pixels, mask, imageWidth, imageHeight, threshold, err_limit);
 		
 		return pixels;
 	}
