@@ -9,11 +9,12 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * TIFFTeaker.java
+ * TIFFTweaker.java
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
- * WY    15Dec2014  Added insertTiffImage() to insert TIFF image into existing TIFF
+ * WY    17Dec2014  Changed TIFFFrame to ImageFrame due to rename of TIFFFrame
+ * WY    15Dec2014  Added insertTiffImage() to insert one TIFF image into another
  * WY    15Dec2014  Added append() to append new pages to the end of existing TIFF
  * WY    24Nov2014  Changed removePages() to remove the actual pages from the arguments
  * WY    24Nov2014  Changed write(TIFFImage) to write(TIFFImage, RandomAccessOutputStream)
@@ -71,6 +72,7 @@ import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.image.compression.lzw.LZWTreeEncoder;
 import cafe.image.compression.packbits.Packbits;
 import cafe.image.core.ImageMeta;
+import cafe.image.core.ImageFrame;
 import cafe.image.jpeg.Marker;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
@@ -109,14 +111,14 @@ public class TIFFTweaker {
 	}
 	
 	/**
-	 * Append TIFF Frames to the end of the original TIFF image
+	 * Append ImageFrames to the end of the original TIFF image
 	 * 
-	 * @param frames an array of TIFFFrame to be appended
+	 * @param frames an array of ImageFrame to be appended
 	 * @param rin RandomAccessInputStream for the input image
 	 * @param rout RandomAccessOutputStream for the output image
 	 * @throws IOException
 	 */
-	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, TIFFFrame ... frames) throws IOException {
+	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, ImageFrame ... frames) throws IOException {
 		insertPages(rin, rout, getPageCount(rin), frames);
 	}
 	
@@ -1023,17 +1025,17 @@ public class TIFFTweaker {
 	}
 	
 	/**
-	 * Insert TIFFFrames into existing TIFF image. If knowledge of total pages for the
+	 * Insert ImageFrames into existing TIFF image. If knowledge of total pages for the
 	 * original image is desirable, call {@link #getPageCount(RandomAccessInputStream) getPageCount}
 	 * first.
 	 * 
 	 * @param rin RandomAccessInputStream for the original image
 	 * @param rout RandomAccessOutputStream to write new image
 	 * @param pageNumber page offset to start page insertion
-	 * @param frames an array of TIFFFrame
+	 * @param frames an array of ImageFrame
 	 * @throws IOException
 	 */	
-	public static void insertPages(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, TIFFFrame ... frames) throws IOException {
+	public static void insertPages(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, ImageFrame ... frames) throws IOException {
 		rin.seek(STREAM_HEAD);
 		int offset = copyHeader(rin, rout);
 		
@@ -2313,7 +2315,7 @@ public class TIFFTweaker {
 		return FIRST_WRITE_OFFSET;
 	}
 	
-	public static void writeMultipageTIFF(RandomAccessOutputStream rout, BufferedImage[] images) throws IOException {
+	public static void writeMultipageTIFF(RandomAccessOutputStream rout, BufferedImage ... images) throws IOException {
 		writeMultipageTIFF(rout, null, images);
 	}
 	
@@ -2364,7 +2366,15 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);
 	}
 	
-	public static void writeMultipageTIFF(RandomAccessOutputStream rout, TIFFFrame[] frames) throws IOException {
+	/**
+	 * Write an array of ImageFrames as a multiple page TIFF.
+	 *  
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @param frames an array of ImageFrame
+	 * 
+	 * @throws IOException
+	 */
+	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageFrame ... frames) throws IOException {
 		// Write header first
 		writeHeader(IOUtils.BIG_ENDIAN, rout);
 		// Write pages
