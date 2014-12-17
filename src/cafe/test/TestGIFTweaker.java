@@ -70,7 +70,7 @@ public class TestGIFTweaker {
 		  	default:
 		}
 		  
-		writer.setImageMeta(builder.indexedColor(false).grayscale(false).bilevel(false).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
+		writer.setImageMeta(builder.applyDither(true).ditherThreshold(18).hasAlpha(true).build());
 		
 		FileInputStream is = new FileInputStream(args[0]);
 		

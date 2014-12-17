@@ -38,6 +38,7 @@ import cafe.image.compression.ccitt.G42DEncoder;
 import cafe.image.compression.deflate.DeflateEncoder;
 import cafe.image.compression.lzw.LZWTreeEncoder;
 import cafe.image.compression.packbits.Packbits;
+import cafe.image.core.ColorType;
 import cafe.image.core.ImageMeta;
 import cafe.image.core.ImageType;
 import cafe.image.options.ImageOptions;
@@ -263,7 +264,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 		JPEGWriter jpgWriter = new JPEGWriter();
 		
 		ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
-		builder.grayscale(grayscale);
+		builder.colorType(ColorType.GRAY_SCALE);
 		
 		JPEGOptions jpegOptions = new JPEGOptions();
 		
@@ -597,9 +598,9 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 			compression = tiffOptions.getTiffCompression();
 		}
 		// Start writing image data				
-		if(meta.isIndexedColor()) {
+		if(meta.getColorType() == ColorType.INDEXED) {
 			writeIndexed(pixels, imageWidth, imageHeight, compression);
-		} else if(meta.isBilevel()) {
+		} else if(meta.getColorType() == ColorType.BILEVEL) {
 			if(meta.isApplyDither()) {
 				writeBilevel(IMGUtils.rgb2bilevelDither(pixels, imageWidth, imageHeight, meta.getDitherThreshold()), imageWidth, imageHeight, compression);
 			} else 
@@ -609,9 +610,9 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 			if(compression == Compression.JPG) {
 				if(getImageMeta().hasAlpha())
 					System.out.println("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
-				jpegCompress(pixels, imageWidth, imageHeight, meta.isGrayScale());			
+				jpegCompress(pixels, imageWidth, imageHeight, meta.getColorType() == ColorType.GRAY_SCALE);			
 			} else {
-				if(meta.isGrayScale()) {
+				if(meta.getColorType() == ColorType.GRAY_SCALE) {
 					if(meta.hasAlpha()) {
 						writeGrayScale(IMGUtils.rgb2grayscaleA(pixels), imageWidth, imageHeight, compression, true);
 					} else {

@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
+import cafe.image.core.ColorType;
 import cafe.image.core.ImageMeta;
 import cafe.image.core.ImageType;
 import cafe.image.options.ImageOptions;
@@ -228,9 +229,9 @@ public class PNGWriter extends ImageWriter {
 		
 		boolean noAlpha = !imageMeta.hasAlpha();
 		// Determine type of image to write
-		if(imageMeta.isIndexedColor()) {
+		if(imageMeta.getColorType() == ColorType.INDEXED) {
 			writeIndexed(pixels, imageWidth, imageHeight, os);
-		} else if(imageMeta.isGrayScale()) {
+		} else if(imageMeta.getColorType() == ColorType.GRAY_SCALE) {
 			if(noAlpha) {
 				writeGrayScale(IMGUtils.rgb2grayscale(pixels), imageWidth, imageHeight, false, os);
 			} else

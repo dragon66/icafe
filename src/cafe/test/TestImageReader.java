@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
 import cafe.image.ImageIO;
+import cafe.image.core.ColorType;
 import cafe.image.core.ImageMeta;
 import cafe.image.core.ImageType;
 import cafe.image.options.JPEGOptions;
@@ -82,7 +83,7 @@ public class TestImageReader {
 		  }
 		  
 		  t1 = System.currentTimeMillis();
-		  ImageIO.write(img, fo, imageType, builder.indexedColor(false).grayscale(false).bilevel(false).applyDither(true).ditherThreshold(18).hasAlpha(true).build());			
+		  ImageIO.write(img, fo, imageType, builder.colorType(ColorType.FULL_COLOR).applyDither(true).ditherThreshold(18).hasAlpha(true).build());			
 		  t2 = System.currentTimeMillis();
 		
 		  fo.close();
