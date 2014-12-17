@@ -6,6 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * ImageMeta.java
+ *
+ * Who   Date       Description
+ * ====  =======    ==================================================
+ * WY    17Dec2014  Replaced different color type fields with ColorType
  */
 
 package cafe.image.core;
@@ -19,135 +27,12 @@ import cafe.util.Builder;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 11/06/2012
  */
-public class ImageMeta {
-	// Internal meta data builder
-	public static class ImageMetaBuilder implements Builder<ImageMeta> {
-		// Parameters - initialized to default values
-		// Common parameters for all image formats
-		private int width = 0;
-		private int height = 0;
-		private int bitsPerPixel = 0;
-	    // IndexedColor related variables 
-		private boolean indexedColor =  false;
-		private boolean grayScale = false;
-		private boolean bilevel = false;
-	    private int rgbColorPalette[];
-	    private byte componentColorPalette[][]; // For RGBA separate components
-	    // Whether alpha channel is included or not
-	    private boolean hasAlpha = false;
-	    private boolean applyDither = false;
-	    private int ditherThreshold = 255;
-	    // Transparency related variables
-	    private boolean transparent = false;
-	    private int transparentColor;
-	 	    
-	    // Additional format-specific parameters
-	    private ImageOptions imageOptions;
-		
-	    public ImageMetaBuilder() {	}
-	    
-	    public ImageMetaBuilder bilevel(boolean bilevel) {
-	    	this.bilevel = bilevel;
-	    	return this;
-	    }
-	    
-	    public ImageMetaBuilder bitsPerPixel(int bitsPerPixel) {
-			this.bitsPerPixel = bitsPerPixel;
-			return this; 
-		}
-		
-	    public ImageMeta build() {
-		   return new ImageMeta(this);
-		}
-	    
-	    public ImageMetaBuilder rgbColorPalette(int[] rgbColorPalette) {
-			this.rgbColorPalette = rgbColorPalette;
-			return this;
-		}
-	    
-	    public ImageMetaBuilder componentColorPalette(byte[][] componentPalette) {
-	    	this.componentColorPalette = componentPalette;
-	    	return this;
-	    }
-	    
-	    public ImageMetaBuilder grayscale(boolean grayScale) {
-			this.grayScale = grayScale;
-			return this;
-		}
-	    		
-	    public ImageMetaBuilder hasAlpha(boolean hasAlpha) {
-			this.hasAlpha = hasAlpha;
-			return this;
-		}
-	    
-	    public ImageMetaBuilder applyDither(boolean applyDither) {
-	    	this.applyDither = applyDither;
-	    	return this;
-	    }
-	    
-	    public ImageMetaBuilder ditherThreshold(int ditherThreshold) {
-	    	this.ditherThreshold = ditherThreshold;
-	    	return this;
-	    }
-	    
-		public ImageMetaBuilder height(int height) {
-	    	this.height = height;
-	    	return this;
-	    }
-		
-		public ImageMetaBuilder imageOptions(ImageOptions imageOptions) {
-			this.imageOptions = imageOptions;
-			return this;
-		}
-		
-		public ImageMetaBuilder indexedColor(boolean indexedColor) {
-			this.indexedColor = indexedColor;
-			return this;
-		}
-		
-		public ImageMetaBuilder transparent(boolean transparent) {
-			this.transparent = transparent;
-			return this;
-		}
-		
-		/**
-	     * ImageReader can reset this ImageBuilder to read another image.
-	     */
-	    public void reset() {
-	    	this.width = 0;
-	    	this.height = 0;
-	      	this.bitsPerPixel = 0;
-	    	this.indexedColor = false;
-	    	this.grayScale = false;
-	    	this.bilevel = false;
-	    	this.rgbColorPalette = null;
-	    	this.componentColorPalette = null;
-	    	this.hasAlpha = false;
-	    	this.applyDither = false;
-	    	this.ditherThreshold = 255;
-	    	this.transparent = false;
-	    	this.transparentColor = 0;
-	    	this.imageOptions = null;
-	    }
-		
-		public ImageMetaBuilder transparentColor(int transparentColor) {
-			this.transparentColor = transparentColor;
-			return this;
-		}
-		
-		public ImageMetaBuilder width(int width) {
-	    	this.width = width; 
-	    	return this; 
-	    }		
-	} // End of internal builder
-	
+public class ImageMeta {	
 	// final fields
 	private final int width;
 	private final int height;	
 	private final int bitsPerPixel;
-    private final boolean indexedColor;
-    private final boolean grayScale;
-    private final boolean bilevel;
+    private final ColorType colorType;
     private final int rgbColorPalette[];
     private final byte componentColorPalette[][];
     private final boolean hasAlpha;
@@ -164,9 +49,7 @@ public class ImageMeta {
 		width = builder.width;
 		height = builder.height;
 		bitsPerPixel = builder.bitsPerPixel;
-		indexedColor = builder.indexedColor;
-		grayScale = builder.grayScale;
-		bilevel = builder.bilevel;
+		colorType = builder.colorType;
 		rgbColorPalette = builder.rgbColorPalette;
 		componentColorPalette = builder.componentColorPalette;
 		hasAlpha = builder.hasAlpha;
@@ -221,16 +104,8 @@ public class ImageMeta {
     	return ditherThreshold;
     }
     
-    public boolean isBilevel() {
-    	return bilevel;
-    }    
-    
-    public boolean isIndexedColor() {
-    	return indexedColor;
-    }
-    
-    public boolean isGrayScale() {
-    	return grayScale;
+    public ColorType getColorType() {
+    	return colorType;
     }
     
 	/**
@@ -241,4 +116,110 @@ public class ImageMeta {
 	public boolean isTransparent() {
 		return transparent;
 	}
+	
+	// Internal meta data builder
+	public static class ImageMetaBuilder implements Builder<ImageMeta> {
+		// Parameters - initialized to default values
+		// Common parameters for all image formats
+		private int width = 0;
+		private int height = 0;
+		private int bitsPerPixel = 0;
+	    private ColorType colorType = ColorType.FULL_COLOR;
+	    private int rgbColorPalette[];
+	    private byte componentColorPalette[][]; // For RGBA separate components
+	    // Whether alpha channel is included or not
+	    private boolean hasAlpha = false;
+	    private boolean applyDither = false;
+	    private int ditherThreshold = 255;
+	    // Transparency related variables
+	    private boolean transparent = false;
+	    private int transparentColor;
+	 	    
+	    // Additional format-specific parameters
+	    private ImageOptions imageOptions;
+		
+	    public ImageMetaBuilder() {	}
+	    
+	    public ImageMetaBuilder colorType(ColorType colorType) {
+	    	this.colorType = colorType;
+	    	return this;
+	    }
+	    
+	    public ImageMetaBuilder bitsPerPixel(int bitsPerPixel) {
+			this.bitsPerPixel = bitsPerPixel;
+			return this; 
+		}
+		
+	    public ImageMeta build() {
+		   return new ImageMeta(this);
+		}
+	    
+	    public ImageMetaBuilder rgbColorPalette(int[] rgbColorPalette) {
+			this.rgbColorPalette = rgbColorPalette;
+			return this;
+		}
+	    
+	    public ImageMetaBuilder componentColorPalette(byte[][] componentPalette) {
+	    	this.componentColorPalette = componentPalette;
+	    	return this;
+	    }
+		    		
+	    public ImageMetaBuilder hasAlpha(boolean hasAlpha) {
+			this.hasAlpha = hasAlpha;
+			return this;
+		}
+	    
+	    public ImageMetaBuilder applyDither(boolean applyDither) {
+	    	this.applyDither = applyDither;
+	    	return this;
+	    }
+	    
+	    public ImageMetaBuilder ditherThreshold(int ditherThreshold) {
+	    	this.ditherThreshold = ditherThreshold;
+	    	return this;
+	    }
+	    
+		public ImageMetaBuilder height(int height) {
+	    	this.height = height;
+	    	return this;
+	    }
+		
+		public ImageMetaBuilder imageOptions(ImageOptions imageOptions) {
+			this.imageOptions = imageOptions;
+			return this;
+		}
+		
+		public ImageMetaBuilder transparent(boolean transparent) {
+			this.transparent = transparent;
+			return this;
+		}
+		
+		/**
+	     * ImageReader can reset this ImageBuilder to read another image.
+	     */
+	    public void reset() {
+	    	this.width = 0;
+	    	this.height = 0;
+	      	this.bitsPerPixel = 0;
+	    	this.colorType = ColorType.FULL_COLOR;
+	    	this.rgbColorPalette = null;
+	    	this.componentColorPalette = null;
+	    	this.hasAlpha = false;
+	    	this.applyDither = false;
+	    	this.ditherThreshold = 255;
+	    	this.transparent = false;
+	    	this.transparentColor = 0;
+	    	this.imageOptions = null;
+	    }
+		
+		public ImageMetaBuilder transparentColor(int transparentColor) {
+			this.transparentColor = transparentColor;
+			return this;
+		}
+		
+		public ImageMetaBuilder width(int width) {
+	    	this.width = width; 
+	    	return this; 
+	    }		
+	} // End of internal builder
 }
