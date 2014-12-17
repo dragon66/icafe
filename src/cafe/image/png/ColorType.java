@@ -22,10 +22,10 @@ import java.util.Map;
 public enum ColorType {	
 	// Image color types
 	GRAY_SCALE(0, "Gray-scale: each pixel is a grayscale sample."),
-	TRUE_COLOR(2, "True-color: each pixel is an R,G,B triple."),
+	TRUE_COLOR(2, "True-color: each pixel is a R,G,B triple."),
 	INDEX_COLOR(3, "Index-color: each pixel is a palette index; a PLTE chunk must appear."), 
 	GRAY_SCALE_WITH_ALPHA(4, "Gray-scale-with-alpha: each pixel is a grayscale sample, followed by an alpha sample."), 
-	TRUE_COLOR_WITH_ALPHA(6, "True-color-with-alpha: each pixel is an R,G,B triple, followed by an alpha sample."), 
+	TRUE_COLOR_WITH_ALPHA(6, "True-color-with-alpha: each pixel is a R,G,B triple, followed by an alpha sample."), 
     
 	UNKNOWN(999, "UNKNOWN"); // We don't know this color type
 	
