@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cafe.image.core.ColorType;
+import cafe.image.core.ImageFrame;
 import cafe.image.core.ImageMeta;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
@@ -19,7 +21,6 @@ import cafe.image.options.TIFFOptions;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.RationalField;
 import cafe.image.tiff.ShortField;
-import cafe.image.tiff.TIFFFrame;
 import cafe.image.tiff.TIFFTweaker;
 import cafe.image.tiff.TiffFieldEnum.Compression;
 import cafe.image.tiff.IFD;
@@ -55,11 +56,11 @@ public class TestTIFFTweaker {
 				rout.close();
 			} else if(args[1].equalsIgnoreCase("writemultipage") || args[1].equalsIgnoreCase("insertpage")) {
 				File[] files = FileUtils.listFilesMatching(new File(args[2]), args[3]);
-				TIFFFrame[] frames = new TIFFFrame[files.length];				
+				ImageFrame[] frames = new ImageFrame[files.length];				
 				for(int i = 0; i < files.length; i++) {
 					FileInputStream fin = new FileInputStream(files[i]);
 					BufferedImage image = javax.imageio.ImageIO.read(fin);
-					frames[i] = new TIFFFrame(image);
+					frames[i] = new ImageFrame(image);
 					fin.close();
 				}				
 				
@@ -71,7 +72,7 @@ public class TestTIFFTweaker {
 				tiffOptions.setDeflateCompressionLevel(6);
 				builder.imageOptions(tiffOptions);
 				
-				frames[0].setFrameMeta(builder.grayscale(true).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
+				frames[0].setFrameMeta(builder.colorType(ColorType.GRAY_SCALE).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
 				
 				tiffOptions = new TIFFOptions(tiffOptions); // Copy constructor		
 				tiffOptions.setTiffCompression(Compression.DEFLATE);
@@ -81,7 +82,7 @@ public class TestTIFFTweaker {
 				tiffOptions = new TIFFOptions(tiffOptions);				
 				tiffOptions.setTiffCompression(Compression.CCITTFAX4);
 				
-				ImageMeta meta = builder.bilevel(true).imageOptions(tiffOptions).build();
+				ImageMeta meta = builder.colorType(ColorType.BILEVEL).ditherThreshold(50).imageOptions(tiffOptions).build();
 				
 				for(int i = 2; i < frames.length; i++)
 					frames[i].setFrameMeta(meta);
