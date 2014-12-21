@@ -26,7 +26,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
-import cafe.image.core.ImageType;
+import cafe.image.ImageType;
 import cafe.image.gif.GIFFrame;
 import cafe.image.util.IMGUtils;
 

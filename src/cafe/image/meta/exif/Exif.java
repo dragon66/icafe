@@ -25,8 +25,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cafe.image.ImageIO;
-import cafe.image.core.ImageMeta;
-import cafe.image.core.ImageType;
+import cafe.image.ImageMeta;
+import cafe.image.ImageType;
 import cafe.image.jpeg.Marker;
 import cafe.image.options.JPEGOptions;
 import cafe.image.tiff.ASCIIField;

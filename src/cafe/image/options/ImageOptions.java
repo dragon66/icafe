@@ -10,7 +10,7 @@
 
 package cafe.image.options;
 
-import cafe.image.core.ImageType;
+import cafe.image.ImageType;
 
 public abstract class ImageOptions {
 	public abstract ImageType getImageType();

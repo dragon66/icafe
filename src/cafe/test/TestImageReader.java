@@ -11,10 +11,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
+import cafe.image.ColorType;
 import cafe.image.ImageIO;
-import cafe.image.core.ColorType;
-import cafe.image.core.ImageMeta;
-import cafe.image.core.ImageType;
+import cafe.image.ImageMeta;
+import cafe.image.ImageType;
 import cafe.image.options.JPEGOptions;
 import cafe.image.options.PNGOptions;
 import cafe.image.options.TIFFOptions;

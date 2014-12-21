@@ -6,8 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import cafe.image.ImageIO;
-import cafe.image.core.ImageMeta;
-import cafe.image.core.ImageType;
+import cafe.image.ImageMeta;
+import cafe.image.ImageType;
 import cafe.image.gif.GIFFrame;
 import cafe.image.gif.GIFTweaker;
 import cafe.image.options.JPEGOptions;

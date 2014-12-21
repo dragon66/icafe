@@ -10,8 +10,8 @@
 
 package cafe.image.options;
 
+import cafe.image.ImageType;
 import cafe.image.bmp.BmpCompression;
-import cafe.image.core.ImageType;
 
 public class BMPOptions extends ImageOptions {
 	// Image alignment

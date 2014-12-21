@@ -14,8 +14,8 @@ import java.io.*;
 import java.awt.*;
 import java.awt.image.*;
 
-import cafe.image.core.ImageMeta;
-import cafe.image.core.ImageType;
+import cafe.image.ImageMeta;
+import cafe.image.ImageType;
 import cafe.image.util.IMGUtils;
 
 /** 

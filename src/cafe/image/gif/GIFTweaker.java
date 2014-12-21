@@ -40,7 +40,8 @@ import java.util.List;
 
 
 //import cafe.image.core.ImageMeta;
-import cafe.image.core.ImageType;
+
+import cafe.image.ImageType;
 import cafe.image.reader.GIFReader;
 import cafe.image.writer.GIFWriter;
 import cafe.image.writer.ImageWriter;

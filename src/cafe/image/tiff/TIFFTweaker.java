@@ -64,6 +64,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import cafe.image.ImageFrame;
+import cafe.image.ImageMeta;
 import cafe.image.compression.ImageDecoder;
 import cafe.image.compression.ImageEncoder;
 import cafe.image.compression.deflate.DeflateDecoder;
@@ -71,8 +73,6 @@ import cafe.image.compression.deflate.DeflateEncoder;
 import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.image.compression.lzw.LZWTreeEncoder;
 import cafe.image.compression.packbits.Packbits;
-import cafe.image.core.ImageMeta;
-import cafe.image.core.ImageFrame;
 import cafe.image.jpeg.Marker;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;

@@ -25,9 +25,9 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import cafe.image.core.ColorType;
-import cafe.image.core.ImageMeta;
-import cafe.image.core.ImageType;
+import cafe.image.ColorType;
+import cafe.image.ImageMeta;
+import cafe.image.ImageType;
 import cafe.image.options.ImageOptions;
 import cafe.image.options.PNGOptions;
 import cafe.image.png.Chunk;

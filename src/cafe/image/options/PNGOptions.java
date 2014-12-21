@@ -10,7 +10,7 @@
 
 package cafe.image.options;
 
-import cafe.image.core.ImageType;
+import cafe.image.ImageType;
 import cafe.image.png.Filter;
 
 public class PNGOptions extends ImageOptions {

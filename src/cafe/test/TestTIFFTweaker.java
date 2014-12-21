@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import cafe.image.core.ColorType;
-import cafe.image.core.ImageFrame;
-import cafe.image.core.ImageMeta;
+import cafe.image.ColorType;
+import cafe.image.ImageFrame;
+import cafe.image.ImageMeta;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.options.TIFFOptions;

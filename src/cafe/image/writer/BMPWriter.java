@@ -10,8 +10,8 @@
 
 package cafe.image.writer;
 
-import cafe.image.core.ColorType;
-import cafe.image.core.ImageType;
+import cafe.image.ColorType;
+import cafe.image.ImageType;
 import cafe.image.util.IMGUtils;
 
 import java.io.*; 

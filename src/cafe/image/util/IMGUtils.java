@@ -43,7 +43,7 @@ import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.util.Arrays;
 
-import cafe.image.core.ImageType;
+import cafe.image.ImageType;
 import cafe.util.IntHashtable;
 
 /** 

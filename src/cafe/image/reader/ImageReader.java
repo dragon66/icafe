@@ -13,7 +13,7 @@ package cafe.image.reader;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-import cafe.image.core.ImageMeta;
+import cafe.image.ImageMeta;
 /** 
  * Abstract base class for image readers.
  *

@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.util.*;
 
 import cafe.image.ImageIO;
-import cafe.image.core.ImageType;
+import cafe.image.ImageType;
 
 /**
  * TestPNGEncoder creates a PNG file that shows an analog clock

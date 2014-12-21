@@ -53,8 +53,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import cafe.image.ImageIO;
+import cafe.image.ImageType;
 import cafe.image.writer.ImageWriter;
-import cafe.image.core.ImageType;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.iptc.IPTCDataSet;
