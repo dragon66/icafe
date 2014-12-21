@@ -26,8 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 
-import cafe.image.core.ImageMeta;
-import cafe.image.core.ImageType;
 import cafe.image.reader.ImageReader;
 import cafe.image.writer.ImageWriter;
 import cafe.image.util.IMGUtils;
