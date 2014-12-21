@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/20/2014
+Last modified on 12/21/2014
 ***************************
+21Dec2014  Added similar fields and methods as GIFFrame to GIFOptions
 20Dec2014  Moved classes in cafe.image.core package to cafe.image package
 17Dec2014  Added ColorType to cafe.image.core package
 17Dec2014  Renamed TIFFFrame to ImageFrame and moved to cafe.image.core package
