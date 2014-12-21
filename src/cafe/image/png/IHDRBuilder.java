@@ -20,21 +20,21 @@ import cafe.util.Builder;
  */
 public class IHDRBuilder extends ChunkBuilder implements Builder<Chunk> {
 	/*
-	 * Color   Allowed    Interpretation
-   	 * FieldType    Bit Depths
+	 * Color   Allowed         Interpretation
+   	 * Type    Bit Depths
    	 *
-   	 *	0      1,2,4,8,16  Each pixel is a grayscale sample.
+   	 *	0      1, 2, 4, 8, 16  Each pixel is a grayscale sample.
      *
-   	 *	2      8,16        Each pixel is an R,G,B triple.
+   	 *	2      8, 16           Each pixel is an R,G,B triple.
      *
-   	 *	3      1,2,4,8     Each pixel is a palette index;
-     *                     a PLTE chunk must appear.
+   	 *	3      1, 2, 4, 8      Each pixel is a palette index;
+     *                         a PLTE chunk must appear.
      *
-   	 *	4      8,16        Each pixel is a grayscale sample,
-     *                     followed by an alpha sample.
+   	 *	4      8, 16           Each pixel is a grayscale sample,
+     *                         followed by an alpha sample.
      *
-   	 *	6      8,16        Each pixel is an R,G,B triple,
-     *                     followed by an alpha sample.
+   	 *	6      8, 16           Each pixel is an R,G,B triple,
+     *                         followed by an alpha sample.
 	 */
 	private int width = 0;
 	private int height = 0;
