@@ -26,12 +26,13 @@ public class GIFFrame {
 	private int frameWidth;
 	private int frameHeight;
 	private int delay;
-	private int disposalMethod;
-	private int userInputFlag;
-	private int transparencyFlag;
+	private int disposalMethod = DISPOSAL_UNSPECIFIED;
+	private int userInputFlag = USER_INPUT_NONE;
+	private int transparencyFlag = TRANSPARENCY_INDEX_NONE;
+	
 	// The transparent color value in RRGGBB format.
 	// The highest order byte has no effect.
-	private int transparentColor = -1; // Default no transparent color
+	private int transparentColor = TRANSPARENCY_COLOR_NONE; // Default no transparent color
 	
 	public static final int DISPOSAL_UNSPECIFIED = 0;
 	public static final int DISPOSAL_LEAVE_AS_IS = 1;
@@ -43,6 +44,8 @@ public class GIFFrame {
 	
 	public static final int TRANSPARENCY_INDEX_NONE = 0;
 	public static final int TRANSPARENCY_INDEX_SET = 1;
+	
+	public static final int TRANSPARENCY_COLOR_NONE = -1;
 	
 	public GIFFrame(BufferedImage frame) {
 		this(frame, 0, 0, 0, GIFFrame.DISPOSAL_UNSPECIFIED);
@@ -57,7 +60,7 @@ public class GIFFrame {
 	}
 	
 	public GIFFrame(BufferedImage frame, int leftPosition, int topPosition, int delay, int disposalMethod) {
-		this(frame, leftPosition, topPosition, delay, disposalMethod, 0, 0, -1);
+		this(frame, leftPosition, topPosition, delay, disposalMethod, USER_INPUT_NONE, TRANSPARENCY_INDEX_NONE, TRANSPARENCY_COLOR_NONE);
 	}
 	
 	public GIFFrame(BufferedImage frame, int leftPosition, int topPosition, int delay, int disposalMethod, int userInputFlag, int transparencyFlag, int transparentColor) {
