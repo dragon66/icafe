@@ -1,6 +1,8 @@
 ***************************
-Last modified on 12/17/2014
+Last modified on 12/20/2014
 ***************************
+20Dec2014  Moved classes in cafe.image.core package to cafe.image package
+17Dec2014  Added ColorType to cafe.image.core package
 17Dec2014  Renamed TIFFFrame to ImageFrame and moved to cafe.image.core package
 15Dec2014  Added insertTiffImage() to insert TIFF image into existing TIFF
 15Dec2014  Added append() to TIFFTweaker to append new pages to the end of TIFF image
