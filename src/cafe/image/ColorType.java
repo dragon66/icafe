@@ -8,7 +8,7 @@
  * Any modifications to this file must keep this entire header intact.
  */
 
-package cafe.image.core;
+package cafe.image;
 
 /** 
  * Image color types
