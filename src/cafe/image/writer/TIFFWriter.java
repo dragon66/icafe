@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    22Dec2014  Fixed regression bug when migrating to ColorType 
  * WY    05Jun2014  Added support for CMYK image and ICC_Profile
  * WY    24Mar2014  Added JPEG compression for GrayScale image
  * WY    19Mar2014  Added JPEG compression for RGB image
@@ -264,7 +265,9 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 		JPEGWriter jpgWriter = new JPEGWriter();
 		
 		ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
-		builder.colorType(ColorType.GRAY_SCALE);
+		
+		if(grayscale)
+			builder.colorType(ColorType.GRAY_SCALE);
 		
 		JPEGOptions jpegOptions = new JPEGOptions();
 		
