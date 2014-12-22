@@ -32,8 +32,7 @@ public class TestGIFTweaker {
 		for(int i = 0; i < files.length; i++) {
 			FileInputStream fin = new FileInputStream(files[i]);
 			BufferedImage image = javax.imageio.ImageIO.read(fin);
-			GIFFrame frame = new GIFFrame(image, 100, GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND);
-			images[i] = frame;
+			images[i] = new GIFFrame(image, 100, GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND);
 			fin.close();
 		}
 		
