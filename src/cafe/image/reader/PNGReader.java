@@ -27,7 +27,7 @@ import java.io.*;
 import java.util.zip.InflaterInputStream;
 
 import cafe.image.png.ChunkType;
-import cafe.image.png.ColorType;
+import cafe.image.png.ColorFormat;
 import cafe.image.png.Filter;
 import cafe.image.png.PNGDescriptor;
 import cafe.io.IOUtils;
@@ -96,7 +96,7 @@ public class PNGReader extends ImageReader
 	 }
 	 
 	 /* Define header variables */
-	 private byte color_type;
+	 private byte color_format;
 	 private byte compression;
 	 private byte filter_method; 
 
@@ -1018,7 +1018,7 @@ public class PNGReader extends ImageReader
 		 DataBuffer db = null;
 		 ColorModel cm = null;
 		 
-		 switch (ColorType.fromInt(color_type))
+		 switch (ColorFormat.fromInt(color_format))
 		 {
 		   case GRAY_SCALE:
 			   //Create a BufferedImage			   			  
@@ -1318,7 +1318,7 @@ public class PNGReader extends ImageReader
 		  System.out.println("image width: "+width);
 		  System.out.println("image height: "+height);
 		  System.out.println("image bit depth: "+bitsPerPixel);
-		  System.out.println(ColorType.fromInt(color_type));
+		  System.out.println(ColorFormat.fromInt(color_format));
 	  	  System.out.println("image compression: "+ compression + " - " + PNGDescriptor.getCompressionTypeDescrition(compression));
 		  System.out.println("image filter method: " + filter_method + " - " + PNGDescriptor.getFilterTypeDescription(filter_method));
 		  System.out.println("image interlace method: " + interlace_method + " - " + PNGDescriptor.getInterlaceTypeDescription(interlace_method));
@@ -1348,9 +1348,9 @@ public class PNGReader extends ImageReader
 			  		alpha = new byte[data_len];
 			  		is.read(alpha, 0, data_len);
 			  		IOUtils.readUnsignedIntMM(is);// CRC
-			  		if(color_type == 3)
+			  		if(color_format == 3)
 			  			adjust_PLTE();
-			  		else if(color_type == 0) {
+			  		else if(color_format == 0) {
 			  			if(bitsPerPixel == 1)
 			  				adjust_grayscale_PLTE(BLACK_WHITE_PALETTE);
 			  			else if(bitsPerPixel == 2)
@@ -1360,7 +1360,7 @@ public class PNGReader extends ImageReader
 			  			else if(bitsPerPixel == 8)
 			  				adjust_grayscale_PLTE(EIGHT_BIT_COLOR_PALETTE);
 			  		}						 
-			  		else if(color_type == 2)
+			  		else if(color_format == 2)
 			  			System.out.println("full color transparent image!");
 			  		break;
 			  	}
@@ -1436,13 +1436,13 @@ public class PNGReader extends ImageReader
 		  * The maximum for each is 2^31-1 in order to accommodate 
 		  * languages that have difficulty with unsigned 4-byte values. 
 		  *************************************************************
-		  *    Color    Allowed    Interpretation
-		  *    Attribute    Bit Depths
-		  *    0       1,2,4,8,16  Each pixel is a grayscale sample.
-		  *    2       8,16        Each pixel is an R,G,B triple.
-		  *    3       1,2,4,8     Each pixel is a palette index; a PLTE chunk must appear.
-		  *    4       8,16        Each pixel is a grayscale sample, followed by an alpha sample.
-		  *    6       8,16        Each pixel is an R,G,B triple, followed by an alpha sample.
+		  *    Color      Allowed         Interpretation
+		  *    Attribute  Bit Depths
+		  *    0          1, 2, 4, 8, 16  Each pixel is a grayscale sample.
+		  *    2          8, 16           Each pixel is a R,G,B triple.
+		  *    3          1, 2, 4, 8      Each pixel is a palette index; a PLTE chunk must appear.
+		  *    4          8, 16           Each pixel is a grayscale sample, followed by an alpha sample.
+		  *    6          8, 16           Each pixel is a R,G,B triple, followed by an alpha sample.
 		  ***************************************************************************************
 		  */
 		 /** We are expecting IHDR */
@@ -1458,7 +1458,7 @@ public class PNGReader extends ImageReader
 		 height = IOUtils.readIntMM(hdr, 4);
 
 		 bitsPerPixel = hdr[8];
-		 color_type = hdr[9];
+		 color_format = hdr[9];
 		 compression = hdr[10];
 		 filter_method = hdr[11];
 		 interlace_method = hdr[12];
