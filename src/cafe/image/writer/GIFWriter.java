@@ -59,6 +59,8 @@ public class GIFWriter extends ImageWriter {
 	private static int MASK[] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
 	
 	private static Dimension getLogicalScreenSize(BufferedImage[] images) {
+		// Determine the logical screen dimension assuming all the frames have the same
+		// left and top coordinates (0, 0)
 		int logicalScreenWidth = 0;
 		int logicalScreenHeight = 0;
 		
@@ -73,6 +75,8 @@ public class GIFWriter extends ImageWriter {
 	}
 	
 	private static Dimension getLogicalScreenSize(GIFFrame[] frames) {
+		// Determine the logical screen dimension given all the frames with different
+		// left and top coordinates.
 		int logicalScreenWidth = 0;
 		int logicalScreenHeight = 0;
 		
@@ -260,6 +264,14 @@ public class GIFWriter extends ImageWriter {
 		os.close();
     }
 
+    /**
+     * Writes an array of BufferedImage as an animated GIF
+     * 
+     * @param images an array of BufferedImage
+     * @param delays delays in millisecond for each frame
+     * @param os OutputStream for the animated GIF
+     * @throws Exception
+     */
     public void writeAnimatedGIF(BufferedImage[] images, int[] delays, OutputStream os) throws Exception {
     	// Header first
     	writeHeader(os, true);
@@ -285,6 +297,13 @@ public class GIFWriter extends ImageWriter {
 		os.close();    	
     }
     
+    /**
+     * Writes an array of GIFFrame as an animated GIF
+     * 
+     * @param frames an array of GIFFrame
+     * @param os OutputStream for the animated GIF
+     * @throws Exception
+     */
     public void writeAnimatedGIF(GIFFrame[] frames, OutputStream os) throws Exception {
     	// Header first
     	writeHeader(os, true);
@@ -318,6 +337,13 @@ public class GIFWriter extends ImageWriter {
 		os.close();    	
     }
     
+    /**
+     * Writes a list of GIFFrame as an animated GIF
+     * 
+     * @param frames a list of GIFFrame
+     * @param os OutputStream for the animated GIF
+     * @throws Exception
+     */
     public void writeAnimatedGIF(List<GIFFrame> frames, OutputStream os) throws Exception {
     	writeAnimatedGIF(frames.toArray(new GIFFrame[0]), os);
     }
