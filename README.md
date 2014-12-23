@@ -44,12 +44,13 @@ Image convertion and management:
    * Remove EXIF data and other insignificant APPn segments from JPEG.
    * Insert EXIF data into TIFF.
    * Read EXIF data embedded in TIFF.
-- JPEG ICC Profile support
-   * Insert ICC profile to JPEG.
-   * Extract ICC profile from JPEG.
+- JPEG and TIFF ICC Profile support
+   * Insert ICC profile to JPEG and TIFF.
+   * Extract ICC profile from JPEG and TIFF.
 - PNG chunk manipulation
    * Remove chunks from or add chunks to existing PNG.
    * Extract text chunk from PNG.
+   * Extract ICC profile from PNG.
    * Merge or split IDAT chunks.
 
 
