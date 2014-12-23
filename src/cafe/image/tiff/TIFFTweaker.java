@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    22Dec2014  Added insertICCProfile() to insert ICC_Profile into TIFF image
  * WY    17Dec2014  Changed TIFFFrame to ImageFrame due to rename of TIFFFrame
  * WY    15Dec2014  Added insertTiffImage() to insert one TIFF image into another
  * WY    15Dec2014  Added append() to append new pages to the end of existing TIFF
@@ -52,6 +53,7 @@ package cafe.image.tiff;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.io.EOFException;
 import java.io.File;
@@ -822,6 +824,46 @@ public class TIFFTweaker {
 		}
 			
 		return counts;
+	}
+	
+	/**
+	 * Inserts ICC_Profile into TIFF page
+	 * 
+	 * @param icc_profile byte array holding the ICC_Profile
+	 * @param pageNumber page number to insert the ICC_Profile
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @throws Exception
+	 */
+	public static void insertICCProfile(byte[] icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws Exception {
+		int offset = copyHeader(rin, rout);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		workingPage.addField(new UndefinedField(TiffTag.ICC_PROFILE.getValue(), icc_profile));
+		
+		offset = copyPages(ifds, offset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();	
+
+		writeToStream(rout, firstIFDOffset);	
+	}
+	
+	/**
+	 * Inserts ICC_Profile into TIFF page
+	 * 
+	 * @param icc_profile ICC_Profile
+	 * @param pageNumber page number to insert the ICC_Profile
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @throws Exception
+	 */
+	public static void insertICCProfile(ICC_Profile icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws Exception {
+		insertICCProfile(icc_profile.getData(), pageNumber, rin, rout);
 	}
 	
 	/**
