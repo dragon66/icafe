@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    23Dec2014  Added extractICCProfile() to extract ICC_Profile from TIFF image
  * WY    22Dec2014  Added insertICCProfile() to insert ICC_Profile into TIFF image
  * WY    17Dec2014  Changed TIFFFrame to ImageFrame due to rename of TIFFFrame
  * WY    15Dec2014  Added insertTiffImage() to insert one TIFF image into another
@@ -494,6 +495,33 @@ public class TIFFTweaker {
 		}
 		
 		return writeOffset;
+	}
+	
+	/**
+	 * Extracts ICC_Profile from certain page of TIFF if any
+	 * 
+	 * @param pageNumber page number from which to extract ICC_Profile
+	 * @param rin RandomAccessInputStream for the input TIFF
+	 * @return a byte array for the extracted ICC_Profile or null if none exists
+	 * @throws Exception
+	 */
+	public static byte[] extractICCProfile(int pageNumber, RandomAccessInputStream rin) throws Exception {
+		// Read pass image header
+		int offset = readHeader(rin);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		TiffField<?> f_iccProfile = workingPage.getField(TiffTag.ICC_PROFILE.getValue());
+		if(f_iccProfile != null && f_iccProfile.getType() == FieldType.UNDEFINED) {
+			return ((UndefinedField)f_iccProfile).getData();
+		}
+		
+		return null;
 	}
 	
 	public static void finishInsert(RandomAccessOutputStream rout, List<IFD> list) throws IOException {
