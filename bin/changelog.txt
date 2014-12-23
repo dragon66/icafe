@@ -1,6 +1,8 @@
 ***************************
-Last modified on 12/21/2014
+Last modified on 12/22/2014
 ***************************
+22Dec2014  Added insertICCProfile() to TIFFTweaker to insert ICC_Profile
+22Dec2014  Added read_ICCP_chunk() to PNGTweaker
 21Dec2014  Renamed ColorType in cafe.image.png package to ColorFormat
 21Dec2014  Added similar fields and methods as GIFFrame to GIFOptions
 20Dec2014  Moved classes in cafe.image.core package to cafe.image package
