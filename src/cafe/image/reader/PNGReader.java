@@ -125,6 +125,7 @@ public class PNGReader extends ImageReader
 	  */
 	 private byte renderingIntent = -1; // Comes from sRGB chunk	 
 	 private boolean hasICCP = false; // Comes from iCCP chunk
+	 private byte[] icc_profile;
 	
 	 private void adjust_grayscale_PLTE(int[] palette) {
 		 System.out.println("Transparent grayscale image!");
@@ -800,6 +801,10 @@ public class PNGReader extends ImageReader
 		 return bytesPerScanLine;
 	 }
 	 
+	 public byte[] getICCProfile() {
+		 return icc_profile;
+	 }
+	 
 	 private int getPadding(int block_width) {		 
 		 //
 		 int padding = 0;
@@ -820,6 +825,10 @@ public class PNGReader extends ImageReader
 		 }
 		 
 		 return padding;
+	 }
+	 
+	 public boolean hasICCProfile() {
+		 return hasICCP;
 	 }
 
 	 private byte[] process_grayscaleAlphaImage(byte[] compr_data) throws Exception {
@@ -1381,7 +1390,10 @@ public class PNGReader extends ImageReader
 			  		break;
 			  	}
 			  	case ICCP:
-			  		hasICCP = true;					   
+			  		hasICCP = true;
+			  		icc_profile = readICCProfile(is, data_len);
+			  		IOUtils.readUnsignedIntMM(is);
+			  		break;
 			  	default:
 			  	{
 			  		is.skip(data_len);
@@ -1409,6 +1421,22 @@ public class PNGReader extends ImageReader
 		 } else
 			 createGammaTable(gamma, displayExponent);
 		 IOUtils.readUnsignedIntMM(is);// CRC
+	 }
+	 
+	 private byte[] readICCProfile(InputStream is, int data_len) throws Exception {
+		 byte[] buf = new byte[data_len];
+		 IOUtils.read(is, buf);
+		 int profileName_len = 0;
+		 while(buf[profileName_len] != 0) profileName_len++;
+ 		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
+ 		
+ 		 InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, data_len - profileName_len - 2));
+ 		 System.out.println("ICCProfile name: " + profileName);
+ 		 
+ 		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
+ 		 System.out.println("ICCProfile length: " + icc_profile.length);
+ 		 
+ 		 return icc_profile;
 	 }
 	 
 	 private void read_IDAT(InputStream is, int data_len, ByteArrayOutputStream compr_data) throws Exception
