@@ -6,6 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * PNGTweaker.java
+ *
+ * Who   Date       Description
+ * ====  =========  =====================================================
+ * WY    22Dec2014  Added read_ICCP_chunk() to read ICC_Profile chunk
+ * WY    22Dec2014  dump_text_chunks() now calls read_text_chunks()
  */
 
 package cafe.image.png;
@@ -57,145 +66,8 @@ public class PNGTweaker {
    	}
 	
 	// Dump text chunks
-   	public static void dump_text_chunks(InputStream is) throws IOException
-    {
-   		//Local variables for reading chunks
-   		int data_len = 0;
-   		int chunk_value = 0;
-   		byte[] buf = null;
-
-   		long signature = IOUtils.readLongMM(is);
-
-   		if (signature != SIGNATURE)
-   		{
-   			System.out.println("--- NOT A PNG IMAGE ---");
-   			return;
-   		}
-
-   		/** Read header */
-   		/** We are expecting IHDR */
-   		if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue()))
-   		{
-   			System.out.println("--- NOT A PNG IMAGE ---");
-   			return;
-   		}
-
-   		buf = new byte[13+4];//13 plus 4 bytes CRC
-   		IOUtils.read(is, buf, 0, 17);
-
-   		while (true)
-   		{
-   			data_len = IOUtils.readIntMM(is);
-   			chunk_value = IOUtils.readIntMM(is);
-   			//System.out.println("chunk type: 0x"+Integer.toHexString(chunk_type));
-
-   			if (chunk_value == ChunkType.IEND.getValue())
-   			{
-   				System.out.println("End of Image");
-   				IOUtils.readIntMM(is);//CRC
-   				break;
-   			}
- 			  
-   			ChunkType chunk = ChunkType.fromInt(chunk_value);
-
-   			switch (chunk)
-   			{
-   				case ZTXT:
-   				{  
-   					System.out.println("zTXt chunk:");
-   					buf = new byte[data_len];
-   					IOUtils.read(is, buf);
-   					int keyword_len = 0;
-   					while(buf[keyword_len]!=0) keyword_len++;
-   					System.out.print(new String(buf,0,keyword_len,"UTF-8")+": ");
-   					InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf,keyword_len+2, data_len-keyword_len-2));
-   					InputStreamReader ir = new InputStreamReader(ii,"UTF-8");
-   					BufferedReader br = new BufferedReader(ir);                       
-   					String read = null;
-   					while((read=br.readLine()) != null) {
-   						System.out.println(read);
-   					}
-   					br.close();
-   					System.out.println("**********************");
-   					IOUtils.skipFully(is, 4);
-   					break;
-   				}
-
-   				case TEXT:
-   				{
-   					System.out.println("tEXt chunk:");
-   					buf = new byte[data_len];
-   					IOUtils.read(is, buf);
-   					int keyword_len = 0;
-   					while(buf[keyword_len]!=0) keyword_len++;
-   					System.out.print(new String(buf,0,keyword_len,"UTF-8")+": ");
-   					System.out.println(new String(buf,keyword_len+1,data_len-keyword_len-1,"UTF-8"));
-   					System.out.println("**********************");
-   					IOUtils.skipFully(is, 4);
-   					break;
-   				}
-
-   				case ITXT:
-   				{
-   					// System.setOut(new PrintStream(new File("TextChunk.txt"),"UTF-8"));
-   					/**
-   					 * Keyword:             1-79 bytes (character string)
-   					 * Null separator:      1 byte
-   					 * Compression flag:    1 byte
-   					 * Compression method:  1 byte
-   					 * Language tag:        0 or more bytes (character string)
-   					 * Null separator:      1 byte
-   					 * Translated keyword:  0 or more bytes
-   					 * Null separator:      1 byte
-   					 * Text:                0 or more bytes
-   					 */
-   					System.out.println("iTXt chunk:");
-   					buf = new byte[data_len];
-   					IOUtils.read(is, buf);
-   					int keyword_len = 0;
-   					int trans_keyword_len = 0;
-   					int lang_flg_len = 0;
-   					boolean compr = false;
-   					while(buf[keyword_len]!=0) keyword_len++;
-   					System.out.print(new String(buf,0,keyword_len,"UTF-8"));
-   					if(buf[++keyword_len]==1) compr = true;
-   					keyword_len++;//Skip the compression method byte.
-   					while(buf[++keyword_len]!=0) lang_flg_len++;
-   					//////////////////////
-   					System.out.print("(");
-   					if(lang_flg_len>0)
-   						System.out.print(new String(buf,keyword_len-lang_flg_len, lang_flg_len, "UTF-8"));
-   					while(buf[++keyword_len]!=0) trans_keyword_len++;
-   					if(trans_keyword_len>0)
-   						System.out.print(" "+new String(buf,keyword_len-trans_keyword_len, trans_keyword_len, "UTF-8"));
-   					System.out.print("): ");
-   					/////////////////////// End of keyword. 					   
-   					if(compr) {//Compressed text
-   						InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf,keyword_len+1, data_len-keyword_len-1));
-   						InputStreamReader ir = new InputStreamReader(ii,"UTF-8");
-   						BufferedReader br = new BufferedReader(ir);                       
-   						String read = null; 						   
-   						while((read=br.readLine()) != null) {
-   							System.out.println(read);
-   						} 						   
-   						br.close();
-   					} else {//Uncompressed text
-   						System.out.println(new String(buf,keyword_len+1,data_len-keyword_len-1,"UTF-8"));						   
-   					}
-   					// End of text.
-   					System.out.println("**********************"); 					   
-   					IOUtils.skipFully(is, 4); 					   
-   					break;
-   				}			   
- 	
-   				default:
-   				{
-   					buf = new byte[data_len+4];
-   					IOUtils.read(is, buf,0, data_len+4);
-   					break;
-   				}
-   			}
-   		}
+   	public static void dump_text_chunks(InputStream is) throws IOException {
+   		System.out.println(read_text_chunks(is));
     }
 
   	public static void insertChunk(Chunk customChunk, InputStream is, OutputStream os) throws IOException
@@ -242,6 +114,69 @@ public class PNGTweaker {
 
    		return chunks;
    	}
+  	
+  	public static byte[] read_ICCP_chunk(InputStream is) throws IOException {
+  		//Local variables for reading chunks
+        int data_len = 0;
+        int chunk_value = 0;
+        byte[] buf = null;
+    
+        long signature = IOUtils.readLongMM(is);
+
+        if (signature != SIGNATURE)
+        {
+        	return null;
+        }
+
+        /** Read header */
+        /** We are expecting IHDR */
+        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue()))
+        {
+        	return null;
+        }
+
+        buf = new byte[13+4];//13 plus 4 bytes CRC
+        IOUtils.read(is, buf, 0, 17);
+
+        while (true)
+        {
+            data_len = IOUtils.readIntMM(is);
+            chunk_value = IOUtils.readIntMM(is);
+      
+            if (chunk_value == ChunkType.IEND.getValue()) {
+                IOUtils.readIntMM(is);//CRC
+                break;
+            }
+              
+ 			ChunkType chunk = ChunkType.fromInt(chunk_value);
+ 			   			 
+            switch (chunk)
+            {
+            	case ICCP:
+            		 buf = new byte[data_len];
+            		 IOUtils.read(is, buf);
+            		 int profileName_len = 0;
+            		 while(buf[profileName_len] != 0) profileName_len++;
+             		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
+             		
+             		 InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, data_len - profileName_len - 2));
+             		 System.out.println("ICCProfile name: " + profileName);
+             		 
+             		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
+             		 System.out.println("ICCProfile length: " + icc_profile.length);
+             		 
+             		 IOUtils.skipFully(is, 4); // Skip CRC
+             		 
+             		 return icc_profile;
+            	default:
+            		buf = new byte[data_len+4];
+            		IOUtils.read(is, buf,0, data_len+4);
+            		break;
+            }
+        }
+        
+        return null;  		
+  	}
   	
   	public static String read_text_chunks(File file) throws IOException {
   		return read_text_chunks(new FileInputStream(file));
