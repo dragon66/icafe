@@ -29,32 +29,32 @@ public class TestImageReader {
 
 	 public static void main(String args[]) throws Exception
 	 {
-		  long t1 = System.currentTimeMillis();
-		  BufferedImage img = ImageIO.read(new File(args[0]));
-		  System.out.println(img.getColorModel());
-		  System.out.println(img.getRaster());
-		  System.out.println(img.getSampleModel());
-		  long t2 = System.currentTimeMillis();
-		
-		  System.out.println("decoding time "+(t2-t1)+"ms");
+		 long t1 = System.currentTimeMillis();
+		 BufferedImage img = ImageIO.read(new File(args[0]));
+		 System.out.println(img.getColorModel());
+		 System.out.println(img.getRaster());
+		 System.out.println(img.getSampleModel());
+		 long t2 = System.currentTimeMillis();
+		 
+		 System.out.println("decoding time "+(t2-t1)+"ms");
 			
-		  final JFrame jframe = new JFrame("Image Reader");
+		 final JFrame jframe = new JFrame("Image Reader");
 
-		  jframe.addWindowListener(new WindowAdapter(){
-			  public void windowClosing(WindowEvent evt)
-			  {
-				  jframe.dispose();
-				  System.exit(0);
-			  }
-		  });
+		 jframe.addWindowListener(new WindowAdapter(){
+			 public void windowClosing(WindowEvent evt)
+			 {
+				 jframe.dispose();
+				 System.exit(0);
+			 }
+		 });
 		  
-		  ImageType imageType = ImageType.JPG;
+		 ImageType imageType = ImageType.JPG;
 		  
-		  FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
+		 FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
 				
-		  ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
+		 ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
 		  
-		  switch(imageType) {
+		 switch(imageType) {
 		  	case TIFF:// Set TIFF-specific options
 		  		 TIFFOptions tiffOptions = new TIFFOptions();
 		  		 tiffOptions.setApplyPredictor(true);
@@ -80,19 +80,19 @@ public class TestImageReader {
 		  		builder.imageOptions(jpegOptions);
 		  		break;
 		  	default:
-		  }
+		 }
 		  
-		  t1 = System.currentTimeMillis();
-		  ImageIO.write(img, fo, imageType, builder.colorType(ColorType.FULL_COLOR).applyDither(true).ditherThreshold(18).hasAlpha(true).build());			
-		  t2 = System.currentTimeMillis();
+		 t1 = System.currentTimeMillis();
+		 ImageIO.write(img, fo, imageType, builder.colorType(ColorType.FULL_COLOR).applyDither(true).ditherThreshold(18).hasAlpha(true).build());			
+		 t2 = System.currentTimeMillis();
 		
-		  fo.close();
+		 fo.close();
 		
-		  System.out.println(imageType + " writer "+ "(encoding time "+(t2-t1)+"ms)");
+		 System.out.println(imageType + " writer "+ "(encoding time "+(t2-t1)+"ms)");
 		
-		  JLabel theLabel = new JLabel(new ImageIcon(img));
-		  jframe.getContentPane().add(new JScrollPane(theLabel));
-		  jframe.setSize(400,400);
-		  jframe.setVisible(true);
+		 JLabel theLabel = new JLabel(new ImageIcon(img));
+		 jframe.getContentPane().add(new JScrollPane(theLabel));
+		 jframe.setSize(400,400);
+		 jframe.setVisible(true);
 	 }
 }
