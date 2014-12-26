@@ -1,8 +1,8 @@
 ***************************
 Last modified on 12/25/2014
 ***************************
-24Dec2014  Added ICCP chunk support for RGB image to PNGReader
-24Dec2014  Rename CMYK2RGB() in IMGUtils to iccp2rgbRaster()
+25Dec2014  Added ICCP chunk support for RGB image to PNGReader
+25Dec2014  Rename CMYK2RGB() in IMGUtils to iccp2rgbRaster()
 23Dec2014  Added ICCPBuilder to create PNG ICC_Profile chunk
 23Dec2014  Added extractICCProfile() to TIFFTweaker to extract ICC_Profile
 22Dec2014  Added insertICCProfile() to TIFFTweaker to insert ICC_Profile
