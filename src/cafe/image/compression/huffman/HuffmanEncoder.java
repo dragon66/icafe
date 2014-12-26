@@ -41,8 +41,7 @@ public class HuffmanEncoder implements ImageEncoder {
 	
 	private OutputStream os;
 	
-	private static final short mask[] = 
-	{
+	private static final short mask[] = {
 		0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff, 0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff
 	};
 	
@@ -143,8 +142,7 @@ public class HuffmanEncoder implements ImageEncoder {
 	}
 	
    	// Flush the buffer as needed
-   	private void flush_buf(int len) throws Exception
-   	{   		
+   	private void flush_buf(int len) throws Exception {   		
    		os.write(bytes_buf, 0, len);		
    		// Reset the bytes buffer index
    		bufIndex = 0;
@@ -166,8 +164,7 @@ public class HuffmanEncoder implements ImageEncoder {
    	}
 	
 	// Translate codes into bytes
-    private void send_code_to_buffer(int code, int codeLen)throws Exception
-	{
+    private void send_code_to_buffer(int code, int codeLen)throws Exception {
     	if(empty_bits == 0) {
     		if (++bufIndex >= buf_length)
 				flush_buf(buf_length);

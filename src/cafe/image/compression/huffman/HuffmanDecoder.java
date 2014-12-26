@@ -16,9 +16,9 @@ import java.io.*;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 04/20/2007
  */
-public class HuffmanDecoder
-{
-	private static final int DNL  = 0xDC; // Define number of lines
+public class HuffmanDecoder {
+	// Define number of lines
+	private static final int DNL  = 0xDC; 
    
 	private InputStream is;
 	
@@ -31,47 +31,42 @@ public class HuffmanDecoder
 	private int ZZ[] = new int[64];
 
 	// CCITT Rec. T.81(1992 E) Annex F, Page 109, Figure F.16
-	public HuffmanDecoder(InputStream is, HuffmanTbl ht)
-	{
+	public HuffmanDecoder(InputStream is, HuffmanTbl ht) {
 		this.is = is;
-		this.VALPTR = ht.getValPTRTable();
+		this.VALPTR  = ht.getValPTRTable();
 		this.MINCODE = ht.getMinCodeTable();
 		this.MAXCODE = ht.getMaxCodeTable();
 		this.HUFFVAL = ht.getValueTable();
 	}
 
-	private int DECODE()
-    {
+	private int DECODE() {
 		int CODE, I = 1, J;
 		CODE = NEXTBIT();
     
-	    while (CODE > MAXCODE[I])
-	    {
+	    while (CODE > MAXCODE[I]) {
 		   I++;
-		   CODE = (CODE<<1)+NEXTBIT();
+		   CODE = (CODE<<1) + NEXTBIT();
 	    }
 
-        J = VALPTR[I]+CODE-MINCODE[I]; 
+        J = VALPTR[I] + CODE - MINCODE[I];
+        
         return (HUFFVAL[J]&0xff);
 	}
 	
 	// CCITT Rec. T.81(1992 E) Annex F, Page 106, Figure F.13
-	public void decode_AC_coefficients()
-    {
-		int K=1;
+	public void decode_AC_coefficients() {
+		int K = 1;
 		int RS, SSSS, R;
 	    
-		while (true)
-		{
+		while (true) {
 			RS = DECODE();
 			SSSS = (RS%16);
 			R = (RS>>4);
             
 			if (SSSS == 0)
 			{
-				if (R==15)
-				{
-					K+=16;
+				if (R == 15) {
+					K += 16;
 					continue;
 				}
 				
@@ -90,8 +85,8 @@ public class HuffmanDecoder
 	// CCITT Rec. T.81(1992 E) Annex F, Page 107, Figure F.14
     private void decode_ZZ(int K, int SSSS)
     {
-		ZZ[K]=RECEIVE(SSSS);
-		ZZ[K]=EXTEND(ZZ[K],SSSS);
+		ZZ[K] = RECEIVE(SSSS);
+		ZZ[K] = EXTEND(ZZ[K],SSSS);
     }
     
 	// CCITT Rec. T.81(1992 E) Annex F, Page 105, Figure F.12
@@ -99,8 +94,7 @@ public class HuffmanDecoder
     {
 		int Vt = (1<<(T-1));
 
-		if (V<Vt)
-		{
+		if (V < Vt) {
 			Vt = ((-1)<<T)+1;
 			V += Vt; 
 		}
@@ -109,27 +103,22 @@ public class HuffmanDecoder
     }
 	
 	// CCITT Rec. T.81(1992 E) Annex F, Page 111, Figure F.18
-	private int NEXTBIT()
-	{
-		int BIT, B=0, B2;
+	private int NEXTBIT() {
+		int BIT, B = 0, B2;
 
-		if (CNT==0)
+		if (CNT == 0)
 		{
 			B = NEXTBYTE();
 			CNT = 8;
 
-			if (B==0xFF) 
-			{
+			if (B == 0xFF) {
 				B2 = NEXTBYTE();
 				
-				if (B2!=0)
-				{
-					if (B2==DNL)
-					{
+				if (B2 != 0) {
+					if (B2==DNL) {
 						// do_DNL();
 						// terminate scan;
-					}
-					else; // showError();
+					} else; // showError();
 				}
 			}
 		}
@@ -141,31 +130,27 @@ public class HuffmanDecoder
 		return BIT;
 	}
 	
-	private int NEXTBYTE() 
-	{
+	private int NEXTBYTE() {
         int readByte;
 		
-		try
-        {
+		try {
         	readByte = is.read();
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
 			System.out.println("Error reading NEXTBYTE...");
 			return -1;
         }
+		
 		return readByte;
 	}
 
 	// CCITT Rec. T.81(1992 E) Annex F, Page 110, Figure F.17
 	private int RECEIVE(int SSSS)
 	{
-		int I=0,V=0;
+		int I = 0, V = 0;
 
-		while (I!=SSSS)
-		{
+		while (I != SSSS) {
 			I++;
-			V= (V<<1)+NEXTBIT();
+			V= (V<<1) + NEXTBIT();
 		}
 
 		return V;

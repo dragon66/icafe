@@ -24,9 +24,9 @@ public class HuffmanTbl
 	private int EHUFCO[]   = new int[257];
 	private int EHUFSI[]   = new int[257];
 	// Decoder tables
-	private int MAXCODE[]= new int[16];
+	private int MAXCODE[] = new int[16];
 	private int MINCODE[] = new int[16];
-	private int VALPTR[]  =new int[16];
+	private int VALPTR[]  = new int[16];
 	//////////////////////////////////////
 	private int LASTK = 0;// no use for the decoder 
 
@@ -40,8 +40,7 @@ public class HuffmanTbl
 	}
 	
 	// Generation of table of Huffman codes (CCITT Rec. T.81(1993 E) Annex C, Page 52, Figure C.2) 
-	private void generate_code_table()
-	{
+	private void generate_code_table() {
 		int k = 0, code = 0;
 		int size = HUFFSIZE[0];
       
@@ -60,18 +59,15 @@ public class HuffmanTbl
 	}  
    
 	// Generate decoder tables (CCITT Rec. T.81(1993 E) Annex F, Page 108, Figure F.15)
-	private void generate_decoder_tables()
-	{
+	private void generate_decoder_tables() {
 		int I = -1, J = 0;
 
-		while (true)
-		{
+		while (true) {
 			if (++I > 15) return;
 		    
 			if (BITS[I] == 0) 
 			   MAXCODE[I] = -1;
-	        else
-		    {
+	        else {
            	   VALPTR[I] = J;
 		       MINCODE[I] = HUFFCODE[J];
                J += ((BITS[I]-1)&0xff);
@@ -81,13 +77,10 @@ public class HuffmanTbl
 	}
 	
 	// Generation of table of Huffman code size (CCITT Rec. T.81(1993 E) Annex C, Page 51, Figure C.1) 
-	private void generate_size_table()
-	{
+	private void generate_size_table() {
 		int i = 1, j = 1, k = 0;
-		while (i <= 16)
-		{
-			while (j <= (BITS[i-1]&0xff))
-			{
+		while (i <= 16) {
+			while (j <= (BITS[i-1]&0xff)) {
 				HUFFSIZE[k++] = i;
 				j++;
 			}
@@ -98,15 +91,13 @@ public class HuffmanTbl
 		LASTK = k;//the last index of the node
 	}
 	
-	public void generateDecoderTables()
-	{
+	public void generateDecoderTables()	{
 		generate_size_table();
 		generate_code_table();
 		generate_decoder_tables();
 	}
 	
-	public void generateEncoderTables()
-	{
+	public void generateEncoderTables()	{
 		generate_size_table();
 		generate_code_table();
 		order_codes();
@@ -141,8 +132,7 @@ public class HuffmanTbl
 	}
 	
 	// Order the code and size tables
-	private void order_codes()
-	{
+	private void order_codes() {
 		int k = 0;
 		int i;
 		
