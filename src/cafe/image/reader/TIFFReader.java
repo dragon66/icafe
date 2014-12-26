@@ -336,7 +336,7 @@ public class TIFFReader extends ImageReader {
 				if(bitsPerSample == 16) {
 					short[] spixels = ArrayUtils.toShortArray(pixels, endian == IOUtils.BIG_ENDIAN);
 					db = new DataBufferUShort(spixels, spixels.length);
-					cm = new ComponentColorModel(CMYKColorSpace.getInstance(), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
+					cm = new ComponentColorModel(colorSpace, nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
 					if(planaryConfiguration == 2) {
 						bandoff = new int[]{0, count[0]*8/bitsPerSample, (count[0] + count[1])*8/bitsPerSample, (count[0] + count[1] + count[2])*8/bitsPerSample};
 						int[] bankIndices = new int[]{0, 0, 0, 0};
@@ -349,7 +349,7 @@ public class TIFFReader extends ImageReader {
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
 					}
 					if(profile != null) {
-						raster = IMGUtils.CMYK2RGB(raster, cm);
+						raster = IMGUtils.iccp2rgbRaster(raster, cm);
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, raster.getTransferType());
 					}
 				} else {
@@ -366,7 +366,7 @@ public class TIFFReader extends ImageReader {
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandoff, null);
 					}
 					if(profile != null) {
-						raster = IMGUtils.CMYK2RGB(raster, cm);
+						raster = IMGUtils.iccp2rgbRaster(raster, cm);
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
 					}				
 				}
