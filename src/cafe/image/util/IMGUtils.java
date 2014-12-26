@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    24Dec2014  Rename CMYK2RGB() to iccp2rgbRaster()
  * WY    17Dec2014  Bug fix for rgb2bilevelDither() to bypass transparent pixels
  * WY    03Dec2014  Bug fix for getRGB() to fall back to BufferedImage.getRGB()
  * WY    26Nov2014  Changed rgb2bilevel() to take into account transparency
@@ -149,19 +150,20 @@ public class IMGUtils {
 	}
 	
 	/**
-	 * Convert CMYK raster to RGB raster w/o alpha
+	 * Convert ICC_ColorSpace raster to RGB raster w/o alpha
 	 * 
-	 * @param raster WritableRaster for CMYK ICC_Profile ColorSpace
-	 * @param cm ColorModel for CMYK ICC_Profile ColorSpace
+	 * @param raster WritableRaster for ICC_Profile ColorSpace
+	 * @param cm ColorModel for ICC_Profile ColorSpace
 	 * @return WritableRaster for RGB ColorSpace
 	 */
-	public static WritableRaster CMYK2RGB(WritableRaster raster, ColorModel cm) {
+	public static WritableRaster iccp2rgbRaster(WritableRaster raster, ColorModel cm) {
 		ColorSpace sRGB = ColorSpace.getInstance(ColorSpace.CS_sRGB);
 		ColorConvertOp cco = new ColorConvertOp(cm.getColorSpace(), sRGB, null);
 		WritableRaster rgbRaster = null;		
-		BufferedImage cmykImage = new BufferedImage(cm, raster, false, null);
+		BufferedImage iccpImage = new BufferedImage(cm, raster, false, null);
 		// Filter on BufferedImage to keep alpha channel
-		rgbRaster = cco.filter(cmykImage, null).getRaster();
+		rgbRaster = cco.filter(iccpImage, null).getRaster();
+		
 		return rgbRaster;
 	}
 	
