@@ -6,20 +6,28 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * PNGReader.java
+ *
+ * Who   Date       Description
+ * ====  =========  ==========================================================
+ * WY    25Dec2014  Added iCCP chunk support for RGB images 
  */
 
 package cafe.image.reader;
 
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
+import java.awt.color.ICC_ColorSpace;
+import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.awt.image.DataBufferUShort;
-import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
@@ -30,6 +38,7 @@ import cafe.image.png.ChunkType;
 import cafe.image.png.ColorFormat;
 import cafe.image.png.Filter;
 import cafe.image.png.PNGDescriptor;
+import cafe.image.util.IMGUtils;
 import cafe.io.IOUtils;
 import cafe.util.ArrayUtils;
 
@@ -229,7 +238,8 @@ public class PNGReader extends ImageReader
 	 }
 
 	 // Gamma correction for int type image data
-	 private void correctGamma(int[] image, int width, int height)
+	 @SuppressWarnings("unused")
+	private void correctGamma(int[] image, int width, int height)
 	 {
 		 int p_index = 0;
 		 for (int i = 0; i < height; i++)
@@ -240,6 +250,22 @@ public class PNGReader extends ImageReader
 				 byte green = gammaTable[((image[p_index]&0x00ff00)>>8)];
 				 byte blue = gammaTable[(image[p_index]&0x0000ff)];
 				 image[p_index] = ((image[p_index]&0xff000000)|((red&0xff)<<16)|((green&0xff)<<8)|(blue&0xff));
+			 }
+		 }
+	 }
+	 
+	 // Gamma correction for component type image data
+	 private void correctGamma(byte[] image, int width, int height, boolean hasAlpha)
+	 {
+		 int index = 0;
+		 for (int i = 0; i < height; i++)
+		 {
+			 for (int j = 0; j < width; j++, index += 3)
+			 {
+				 image[index] = gammaTable[image[index]&0xff];
+				 image[index + 1] = gammaTable[image[index + 1]&0xff];
+				 image[index + 2] = gammaTable[image[index + 2]&0xff];
+				 if(hasAlpha) index++;
 			 }
 		 }
 	 }
@@ -540,18 +566,19 @@ public class PNGReader extends ImageReader
 		 return spixels;		 
 	 }
  	
-	 private int[] generate8BitRGBInterlacedPixels(byte[] compr_data, boolean fullAlpha) throws Exception
+	 private byte[] generate8BitRGBInterlacedPixels(byte[] compr_data, boolean fullAlpha) throws Exception
 	 {
  		 int bytesPerPixel = 0;
 		 int p_index = 0;
 		 byte[] pix_interlaced;
-		 int[] ipixels = new int[width*height];
+		 byte[] bpixels = new byte[width*height*3];
 				
 		 if (fullAlpha)
 			 bytesPerPixel = 4;
 		 else 
 			 bytesPerPixel = 3;
 	
+		 if(fullAlpha || alpha != null) bpixels = new byte[width*height*4];
 		 ////////////////////////////////////////////////////////////////////////////////////////////////
 		 // Wrap an InflaterInputStream with a bufferedInputStream to speed up reading
 	  	 BufferedInputStream bis = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compr_data)));
@@ -570,65 +597,63 @@ public class PNGReader extends ImageReader
 			 
 			 if (fullAlpha) {
 				for(int j = 0, k = 0; j < block_height; j++) {
-					for (int i = 0; i < block_width; i++, p_index += x_inc) {
-						ipixels[p_index] = (((pix_interlaced[k++]&0xff)<<16)|((pix_interlaced[k++]&0xff)<<8)|(pix_interlaced[k++]&0xff)|((pix_interlaced[k++]&0xff)<<24));
+					for (int i = 0; i < block_width; i++, p_index += x_inc, k += 4) {
+						System.arraycopy(pix_interlaced, k, bpixels, p_index<<2, 4);
 					}
 					p_index = ((j+1)*y_inc+y_start)*width + x_start;
 				}
 			 } else if(alpha != null) {
 				for(int j = 0, k = 0; j < block_height; j++) {
-					for (int i = 0; i < block_width; i++, p_index += x_inc){
+					for (int i = 0; i < block_width; i++, p_index += x_inc, k += 3){
+						int offset = p_index<<2;
+						System.arraycopy(pix_interlaced, k, bpixels, offset, 3);
 						if((pix_interlaced[k]==alpha[1])&&(pix_interlaced[k+1]==alpha[3])&&(pix_interlaced[k+2]==alpha[5]))
-							ipixels[p_index] = ((0x00<<24)|((pix_interlaced[k++]&0xff)<<16)|((pix_interlaced[k++]&0xff)<<8)|(pix_interlaced[k++]&0xff));
+							bpixels[offset + 3] = 0x00;
 						else
-							ipixels[p_index] = ((0xff<<24)|((pix_interlaced[k++]&0xff)<<16)|((pix_interlaced[k++]&0xff)<<8)|(pix_interlaced[k++]&0xff));
+							bpixels[offset + 3] = (byte)0xff;
 					}
 					p_index = ((j+1)*y_inc+y_start)*width + x_start;
 				}
 			 } else {
 				for(int j = 0, k = 0; j < block_height; j++) {
-					for (int i = 0; i < block_width; i++, p_index += x_inc) {
-						ipixels[p_index] = ((0xff<<24)|((pix_interlaced[k++]&0xff)<<16)|((pix_interlaced[k++]&0xff)<<8)|(pix_interlaced[k++]&0xff));
+					for (int i = 0; i < block_width; i++, p_index += x_inc, k += 3) {
+						System.arraycopy(pix_interlaced, k, bpixels, 3*p_index, 3);
 				 	}
 			 		p_index = ((j+1)*y_inc+y_start)*width + x_start;
 	 			}
 			 }		 
 		 }
 		 
-		 return ipixels;
+		 return bpixels;
 	 }
 
-	 private int[] generate8BitRGBPixels(byte[] compr_data, boolean fullAlpha) throws Exception
-	 {
- 		 int[] ipixels = new int[width*height];
-			 
-		 byte[] pixBytes = deflateRGBPixels(compr_data, fullAlpha);
-		 
+	 private byte[] generate8BitRGBPixels(byte[] compr_data, boolean fullAlpha) throws Exception
+	 {				 
+ 		 byte[] pixBytes = deflateRGBPixels(compr_data, fullAlpha);
+ 		 
+ 		 if(alpha == null)
+ 			 return pixBytes;
+ 		 
 		 int image_size = width * height;
 		 
-		 if (fullAlpha) {			 
-		     for (int i = 0, j = 0; i < image_size; i++) {
- 		          ipixels[i] = (((pixBytes[j++]&0xff)<<16)|((pixBytes[j++]&0xff)<<8)|(pixBytes[j++]&0xff)|((pixBytes[j++]&0xff)<<24));
-		     }		     
-		 } else if(alpha != null) {
-			 int _alpha = 0xff000000;
-			 
-			 for (int i = 0, j = 0; i < image_size; i++) {
-				 
-                 if((pixBytes[j]==alpha[1])&&(pixBytes[j+1]==alpha[3])&&(pixBytes[j+2]==alpha[5])) {
-				     _alpha = 0x00000000;	
-                 }
-                 
-                 ipixels[i] = (_alpha|((pixBytes[j++]&0xff)<<16)|((pixBytes[j++]&0xff)<<8)|(pixBytes[j++]&0xff));
-			     _alpha = 0xff000000;
-			 }			 
-		 } else {			 
-			 for (int i = 0, j = 0; i < image_size; i++) {
-                 ipixels[i] = ((0xff<<24)|((pixBytes[j++]&0xff)<<16)|((pixBytes[j++]&0xff)<<8)|(pixBytes[j++]&0xff));
-			 }			 
-		 }
+		 // Deal with single color transparency
+		 byte[] bpixels = new byte[image_size*height*4];
+	
+		 for(int i = 0, index = 0; i < pixBytes.length;) {
+			 byte red = pixBytes[i++];
+			 byte green = pixBytes[i++];
+			 byte blue = pixBytes[i++];
+			 bpixels[index++] = red;
+			 bpixels[index++] = green;
+			 bpixels[index++] = blue;
+			 if(red == alpha[1] && green == alpha[3] && blue == alpha[5]) {
+				 bpixels[index++] = 0x00;							   
+			 } else {
+				 bpixels[index++] = (byte)0xff;
+			 }
+		 }	
 		 
-		 return ipixels;
+		 return bpixels;
 	 }
 	 
 	 private void generateGrayscaleInterlacedPixels(byte[] pixels, byte[] pix_interlaced, int block_width, int block_height, int padding, int p_index, int x_start, int y_start, int x_inc, int y_inc) {
@@ -1021,11 +1046,13 @@ public class PNGReader extends ImageReader
 	 private BufferedImage process_IDAT(byte[] compr_data) throws Exception
 	 {	
 		 byte[] bpixels = null;
-		 int[] ipixels = null;
 		 short[] spixels = null;
 		 WritableRaster raster = null;
 		 DataBuffer db = null;
 		 ColorModel cm = null;
+		 
+		 ColorSpace colorSpace = ColorSpace.getInstance(ColorSpace.CS_sRGB);		
+		 if(hasICCP) colorSpace = new ICC_ColorSpace(ICC_Profile.getInstance(icc_profile));
 		 
 		 switch (ColorFormat.fromInt(color_format))
 		 {
@@ -1105,38 +1132,52 @@ public class PNGReader extends ImageReader
 						   correctGamma(spixels, width, height, 3, 1);
 					   else
 						   correctGamma(spixels, width, height, 3, 0);
-				   }
+				   } 
+				   int[] off = {0, 1, 2}; //band offset, we have 3 bands
+				   int numOfBands = 3;
+				   boolean hasAlpha = false;
+				   int trans = Transparency.OPAQUE;
+				   int[] nBits = {16, 16, 16};	
 				   if(alpha != null) { // Deal with single color transparency
-					   db = new DataBufferUShort(spixels, spixels.length);
-					   int[] off = {0, 1, 2, 3}; //band offset, we have 4 bands
-					   int numOfBands = 4;
-					   int trans = Transparency.TRANSLUCENT;
-					   int[] nBits = {16, 16, 16, 16};						
-					   raster = Raster.createInterleavedRaster(db, width, height, width*numOfBands, numOfBands, off, null);
-					   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, true, false,
-				                trans, DataBuffer.TYPE_USHORT);
-				   } else {
-					   db = new DataBufferUShort(spixels, spixels.length);
-					   int[] off = {0, 1, 2}; //band offset, we have 3 bands
-					   int numOfBands = 3;
-					   int trans = Transparency.OPAQUE;
-					   int[] nBits = {16, 16, 16};						
-					   raster = Raster.createInterleavedRaster(db, width, height, width*numOfBands, numOfBands, off, null);
-					   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, false, false,
-				                trans, DataBuffer.TYPE_USHORT);
+					   off = new int[] {0, 1, 2, 3}; //band offset, we have 4 bands
+					   numOfBands = 4;
+					   hasAlpha = true;
+					   trans = Transparency.TRANSLUCENT;
+					   nBits = new int[] {16, 16, 16, 16};						
 				   }
+				   db = new DataBufferUShort(spixels, spixels.length);
+				   raster = Raster.createInterleavedRaster(db, width, height, width*numOfBands, numOfBands, off, null);
+				   cm = new ComponentColorModel(colorSpace, nBits, hasAlpha, false, trans, DataBuffer.TYPE_USHORT);
+				   if(hasICCP) {
+					   raster = IMGUtils.iccp2rgbRaster(raster, cm);
+					   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, hasAlpha, false, trans, DataBuffer.TYPE_USHORT);
+				   }					 
 			   } else {
 				   if(interlace_method==NON_INTERLACED)
-					   ipixels = generate8BitRGBPixels(compr_data, false);
+					   bpixels = generate8BitRGBPixels(compr_data, false);
 			       else if(interlace_method==ADAM7)
-			    	   ipixels = generate8BitRGBInterlacedPixels(compr_data, false);
+			    	   bpixels = generate8BitRGBInterlacedPixels(compr_data, false);
 				   if(hasGamma && renderingIntent == -1 && !hasICCP)
-						 correctGamma(ipixels, width, height);
-				   //Create a BufferedImage
-				   db = new DataBufferInt(ipixels, ipixels.length);
-				   // We have to use 4 samples to account for single pixel transparency
-				   raster = Raster.createPackedRaster(db, width, height, width,  new int[] {0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000}, null);
-				   cm = new DirectColorModel(32, 0x00FF0000, 0x0000ff00, 0x000000ff, 0xff000000);
+						 correctGamma(bpixels, width, height, alpha != null);
+				   int[] off = {0, 1, 2}; //band offset, we have 3 bands
+				   int numOfBands = 3;
+				   boolean hasAlpha = false;
+				   int trans = Transparency.OPAQUE;
+				   int[] nBits = {8, 8, 8};
+				   db = new DataBufferByte(bpixels, bpixels.length);
+				   if(alpha != null) { // Deal with single color transparency
+					   off = new int[] {0, 1, 2, 3}; //band offset, we have 4 bands
+					   numOfBands = 4;
+					   hasAlpha = true;
+					   trans = Transparency.TRANSLUCENT;
+					   nBits = new int[] {8, 8, 8, 8};
+				   }
+				   raster = Raster.createInterleavedRaster(db, width, height, width*numOfBands, numOfBands, off, null);
+				   cm = new ComponentColorModel(colorSpace, nBits, hasAlpha, false, trans, DataBuffer.TYPE_BYTE);
+				   if(hasICCP) {
+					   raster = IMGUtils.iccp2rgbRaster(raster, cm);
+					   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, hasAlpha, false, trans, DataBuffer.TYPE_BYTE);
+				   }
 			   }
 			   return new BufferedImage(cm, raster, false, null);
 		   case TRUE_COLOR_WITH_ALPHA:
@@ -1153,19 +1194,31 @@ public class PNGReader extends ImageReader
 				   int trans = Transparency.TRANSLUCENT;
 				   int[] nBits = {16, 16, 16, 16};						
 				   raster = Raster.createInterleavedRaster(db, width, height, width*numOfBands, numOfBands, off, null);
-				   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, true, false,
-			                trans, DataBuffer.TYPE_USHORT);
+				   cm = new ComponentColorModel(colorSpace, nBits, true, false, trans, DataBuffer.TYPE_USHORT);
+				   if(hasICCP) {
+					   raster = IMGUtils.iccp2rgbRaster(raster, cm);
+					   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, true, false, trans, DataBuffer.TYPE_USHORT);
+				   }
 			   } else {
 				   if(interlace_method==NON_INTERLACED)
-					   ipixels = generate8BitRGBPixels(compr_data, true);
+					   bpixels = generate8BitRGBPixels(compr_data, true);
 			       else if(interlace_method==ADAM7)
-			    	   ipixels = generate8BitRGBInterlacedPixels(compr_data, true);
+			    	   bpixels = generate8BitRGBInterlacedPixels(compr_data, true);
 				   if(hasGamma && renderingIntent == -1 && !hasICCP)
-						 correctGamma(ipixels, width, height);
+						 correctGamma(bpixels, width, height, true); 
 				   //Create a BufferedImage
-				   db = new DataBufferInt(ipixels, ipixels.length);
-				   raster = Raster.createPackedRaster(db, width, height, width,  new int[] {0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000}, null);
-				   cm = new DirectColorModel(32, 0x00FF0000, 0x0000ff00, 0x000000ff, 0xff000000);
+				   int[] off = {0, 1, 2, 3}; //band offset, we have 3 bands
+				   int numOfBands = 4;
+				   boolean hasAlpha = true;
+				   int trans = Transparency.TRANSLUCENT;
+				   int[] nBits = {8, 8, 8, 8};
+				   db = new DataBufferByte(bpixels, bpixels.length);
+				   raster = Raster.createInterleavedRaster(db, width, height, width*numOfBands, numOfBands, off, null);
+				   cm = new ComponentColorModel(colorSpace, nBits, hasAlpha, false, trans, DataBuffer.TYPE_BYTE);
+				   if(hasICCP) {
+					   raster = IMGUtils.iccp2rgbRaster(raster, cm);
+					   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), nBits, hasAlpha, false, trans, DataBuffer.TYPE_BYTE);
+				   }
 			   }
 			   return new BufferedImage(cm, raster, false, null);
 		   case INDEX_COLOR:
@@ -1423,22 +1476,6 @@ public class PNGReader extends ImageReader
 		 IOUtils.readUnsignedIntMM(is);// CRC
 	 }
 	 
-	 private byte[] readICCProfile(InputStream is, int data_len) throws Exception {
-		 byte[] buf = new byte[data_len];
-		 IOUtils.read(is, buf);
-		 int profileName_len = 0;
-		 while(buf[profileName_len] != 0) profileName_len++;
- 		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
- 		
- 		 InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, data_len - profileName_len - 2));
- 		 System.out.println("ICCProfile name: " + profileName);
- 		 
- 		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
- 		 System.out.println("ICCProfile length: " + icc_profile.length);
- 		 
- 		 return icc_profile;
-	 }
-	 
 	 private void read_IDAT(InputStream is, int data_len, ByteArrayOutputStream compr_data) throws Exception
 	 {
  		 byte[] buf = new byte[data_len];
@@ -1515,5 +1552,21 @@ public class PNGReader extends ImageReader
 		 }		 
 		 renderingIntent = (byte)IOUtils.read(is);
 		 IOUtils.readUnsignedIntMM(is);// CRC
+	 }
+	 
+	 private byte[] readICCProfile(InputStream is, int data_len) throws Exception {
+		 byte[] buf = new byte[data_len];
+		 IOUtils.read(is, buf);
+		 int profileName_len = 0;
+		 while(buf[profileName_len] != 0) profileName_len++;
+ 		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
+ 		
+ 		 InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, data_len - profileName_len - 2));
+ 		 System.out.println("ICCProfile name: " + profileName);
+ 		 
+ 		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
+ 		 System.out.println("ICCProfile length: " + icc_profile.length);
+ 		 
+ 		 return icc_profile;
 	 }
 }
