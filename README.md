@@ -7,9 +7,9 @@ Read format support:
 ----------------------
 - Windows BITMAP
 - CompuServe GIF - Backed by a from-scratch tree-based LZW decoder (no hash, no string table, quick and clean); transparency support; Frame extraction for animated GIF. 
-- ZSoft's PCX - Hard to find decoder for this dinosaur type of image 
+- ZSoft's PCX - Hard to find decoder for this dinosaur type of image.
 - Truevision TGA - Support all kinds of scan line mode, bit depth, and even transparency (alpha channel)
-- Portable Network Graphics (PNG) - Support both 8 bit and 16 bit, all color depth; single color or alpha channel support; gamma support
+- Portable Network Graphics (PNG) - Support both 8 bit and 16 bit, all color depth; single color transparency and alpha channel support; gamma support, ICC_Profile support.
 - Adobe  TIFF - Support for RGB, Palette, CMYK, YCbCr Color image with LZW, Deflate, and Packbits compression. Support for both stripped and tiled format TIFF (From 1 bitPerPixel up to 64 bitPerPixel). Floating point samples are also supported (Half precision - 16 bit, single precision - 32 bit, double precision - 64 bit). Binary formats and JPEG compression are still under development.
 - IJG JPEG - Currently delegate to Java ImageIO - under development.
 
@@ -50,9 +50,10 @@ Image convertion and management:
 - PNG chunk manipulation
    * Remove chunks from or add chunks to existing PNG.
    * Extract text chunk from PNG.
+   * Insert text chunk to PNG.
    * Extract ICC profile from PNG.
+   * Insert ICC_Profile to PNG.
    * Merge or split IDAT chunks.
-
 
 Suggestions? custom requirements? email me: yuwen_66@yahoo.com
 
