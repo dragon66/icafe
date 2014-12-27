@@ -34,6 +34,7 @@ import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.zip.InflaterInputStream;
 
+import cafe.image.meta.icc.ICCProfile;
 import cafe.image.png.ChunkType;
 import cafe.image.png.ColorFormat;
 import cafe.image.png.Filter;
@@ -1565,7 +1566,9 @@ public class PNGReader extends ImageReader
  		 System.out.println("ICCProfile name: " + profileName);
  		 
  		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
- 		 System.out.println("ICCProfile length: " + icc_profile.length);
+ 		 
+ 		 if(debug)
+ 			 ICCProfile.showProfile(icc_profile);
  		 
  		 return icc_profile;
 	 }

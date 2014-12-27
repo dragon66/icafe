@@ -29,6 +29,7 @@ public class TestImageReader {
 
 	 public static void main(String args[]) throws Exception
 	 {
+		 System.setProperty("debug", args[1]);
 		 long t1 = System.currentTimeMillis();
 		 BufferedImage img = ImageIO.read(new File(args[0]));
 		 System.out.println(img.getColorModel());

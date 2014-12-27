@@ -56,10 +56,18 @@ public class ICCProfile {
 	}
 	public static final int TAG_TABLE_OFFSET = 128;
 	
+	public static void showProfile(byte[] icc_profile) {
+		if(icc_profile != null && icc_profile.length > 0) {
+			ICCProfile profile = new ICCProfile(icc_profile);
+			profile.showHeader();
+			profile.showTagTable();
+		}
+	}
 	private ICCProfileHeader header;
 	private ProfileTagTable tagTable;
-	private byte[] data;
 		
+	private byte[] data;
+	
 	public ICCProfile(byte[] profile) {
 		this.data = profile;
 		loadProfile();
