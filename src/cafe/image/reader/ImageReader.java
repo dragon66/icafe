@@ -29,12 +29,20 @@ public abstract class ImageReader
 	protected int bytesPerScanLine = 0;
     protected int rgbColorPalette[] = null;
     
+    protected boolean debug;
+    // Instance initializer block
+    {
+    	String debugString = System.getProperty("debug", "false");
+    	Boolean debugObject = Boolean.valueOf(debugString);
+    	debug = debugObject.booleanValue();
+    }
+    
     protected ImageMeta meta = ImageMeta.DEFAULT_IMAGE_META;
     
-    // Entry method, to be implemented by specific ImageReader subclass
-    public abstract BufferedImage read(InputStream is) throws Exception;
-        
-	public ImageMeta getImageMeta() {
+    public ImageMeta getImageMeta() {
 		return meta;
 	}
+        
+	// Entry method, to be implemented by specific ImageReader subclass
+    public abstract BufferedImage read(InputStream is) throws Exception;
 } 
