@@ -10,9 +10,10 @@
 
 package cafe.image.png;
 
-import java.io.UnsupportedEncodingException;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.zip.DeflaterOutputStream;
 
-import cafe.util.ArrayUtils;
 import cafe.util.Builder;
 
 /**
@@ -36,20 +37,27 @@ public class ICCPBuilder extends ChunkBuilder implements Builder<Chunk> {
 	}
 	
 	public ICCPBuilder name(String name) {
-		this.profileName = name.trim() + '\0';
+		this.profileName = name.trim().replaceAll("\\s+", " ");
 		return this;		
 	}
 
 	@Override
 	protected byte[] buildData() {
-		byte[] nameBytes = null;
-		
+		StringBuilder sb = new StringBuilder(this.profileName);
+		sb.append('\0'); // Null separator
+		sb.append('\0'); // Compression method	
+		ByteArrayOutputStream bo = new ByteArrayOutputStream(1024);	
 		try {
-			nameBytes = profileName.getBytes("iso-8859-1");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			bo.write(sb.toString().getBytes("iso-8859-1"));		
+			DeflaterOutputStream ds = new DeflaterOutputStream(bo);
+			BufferedOutputStream bout = new BufferedOutputStream(ds);
+			bout.write(profileData);
+			bout.flush();
+			bout.close();
+		} catch(Exception ex) { 
+			ex.printStackTrace();
 		}
 		
-		return ArrayUtils.concat(nameBytes, profileData);
-	}	
+		return bo.toByteArray();				
+	}
 }
