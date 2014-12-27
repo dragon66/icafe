@@ -38,6 +38,7 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.zip.InflaterInputStream;
 
+import cafe.image.meta.icc.ICCProfile;
 import cafe.io.IOUtils;
 import cafe.util.ArrayUtils;
 /**
@@ -620,6 +621,11 @@ public class PNGTweaker {
         {
         	chunk.write(os);
         }
+  	}
+  	
+  	public static void showICCProfile(InputStream is) throws IOException {
+  		byte[] icc_profile = read_ICCP_chunk(is);
+  		ICCProfile.showProfile(icc_profile);
   	}
   	
   	public static void snoop(InputStream is) throws IOException {
