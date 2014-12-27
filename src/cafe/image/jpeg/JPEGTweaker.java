@@ -250,8 +250,8 @@ public class JPEGTweaker {
 		}	
 	}
 	
-	// Extract a thumbnail image from JFIF/APP0, Exif APP1 and/or Adobe APP13 segment if any
-	public static void extractThumbnail(InputStream is, String pathToThumbnail) throws IOException {
+	// Extract a thumbnail images from JFIF/APP0, Exif APP1 and/or Adobe APP13 segment if any
+	public static void extractThumbnails(InputStream is, String pathToThumbnail) throws IOException {
 		// Flag when we are done
 		boolean finished = false;
 		int length = 0;	
