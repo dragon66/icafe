@@ -1590,11 +1590,7 @@ public class JPEGTweaker {
 	
 	public static void showICCProfile(InputStream is) throws IOException {
 		byte[] icc_profile = extractICCProfile(is);
-		if(icc_profile != null && icc_profile.length > 0) {
-			ICCProfile profile = new ICCProfile(icc_profile);
-			profile.showHeader();
-			profile.showTagTable();
-		}
+		ICCProfile.showProfile(icc_profile);
 	}
 	
 	@SuppressWarnings("unused")
