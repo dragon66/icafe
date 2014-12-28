@@ -1,6 +1,8 @@
 ***************************
-Last modified on 12/25/2014
+Last modified on 12/27/2014
 ***************************
+27Dec2014  Added Snoopy to cafe.image.meta package to read image metadata
+27Dec2014  Changed scope of the abstract ImageWriter.write() to protected
 25Dec2014  Added ICCP chunk support for RGB image to PNGReader
 25Dec2014  Rename CMYK2RGB() in IMGUtils to iccp2rgbRaster()
 23Dec2014  Added ICCPBuilder to create PNG ICC_Profile chunk
