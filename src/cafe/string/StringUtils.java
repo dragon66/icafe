@@ -6,6 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * StringUtils.java
+ *
+ * Who   Date       Description
+ * ====  =========  ==============================================================
+ * WY    28Dec2014  Added isInCharset() to test if a String can be encoded with
+ * 					certain character set.
  */
 
 package cafe.string;
@@ -14,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.*;
@@ -507,6 +517,22 @@ public class StringUtils
 		buffer.append(HEXES[(value & 0x0000000F)]);
 		
 		return buffer.toString();
+	}
+	
+	public static boolean isInCharset(String input, String encoding){
+		Charset charset = null;
+		try {
+			// May throw different unchecked exceptions
+			charset = Charset.forName(encoding);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	    // Convert input into byte array and encode it again using the
+	    // same character set and see if we get the same string
+	    String output = new String(input.getBytes(charset), charset);
+	    
+	    return output.equals(input);
 	}
 	
 	/**
