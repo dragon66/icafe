@@ -38,7 +38,6 @@ import cafe.image.tiff.Tag;
 import cafe.image.tiff.TiffFieldEnum;
 import cafe.image.tiff.TiffField;
 import cafe.image.tiff.TiffTag;
-import cafe.image.util.IMGUtils;
 import cafe.image.writer.ImageWriter;
 import cafe.io.IOUtils;
 import cafe.io.MemoryCacheRandomAccessOutputStream;
@@ -237,7 +236,7 @@ public class Exif {
 		// This is amazing. We can actually keep track of how many bytes have been written to
 		// the underlying stream by JPEGWriter
 		long startOffset = randOS.getStreamPointer();
-		jpgWriter.write(IMGUtils.getRGB(thumbNail), thumbnailWidth, thumbnailHeight, randOS);
+		jpgWriter.write(thumbNail, randOS);
 		long finishOffset = randOS.getStreamPointer();			
 		int totalOut = (int)(finishOffset - startOffset);
 		if(flavor == Exif.EXIF_FLAVOR_JPG) {// Update fields
