@@ -249,7 +249,7 @@ public class GIFWriter extends ImageWriter {
     }
 
     // The entry point for all the image writers
-    public void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {	
+    protected void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {	
     	// Write GIF header
 		writeHeader(os, true);
 		// Set logical screen size

@@ -404,7 +404,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 	 * Write a self-contained single page TIFF image
 	 */
 	@Override
-	public void write(int[] pixels, int imageWidth, int imageHeight,
+	protected void write(int[] pixels, int imageWidth, int imageHeight,
 			OutputStream os) throws Exception {
 		// Wrap OutputStream with a RandomAccessOutputStream	
 		randomOS = new FileCacheRandomAccessOutputStream(os);

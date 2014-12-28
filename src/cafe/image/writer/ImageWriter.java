@@ -91,6 +91,6 @@ public abstract class ImageWriter
 	 * @param os OutputSteam to write the image
 	 * @throws Exception
 	 */
-	public abstract void write(int[] pixels, int imageWidth, 
+	protected abstract void write(int[] pixels, int imageWidth, 
 	                 int imageHeight, OutputStream os) throws Exception;	
 }

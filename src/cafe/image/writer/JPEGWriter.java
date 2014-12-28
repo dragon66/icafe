@@ -193,7 +193,7 @@ public class JPEGWriter extends ImageWriter {
 		huffman_values[1][1] = JPEGConsts.getACChrominanceValues();	
 	}
 	
-	public void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {	
+	protected void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {	
 		// Read ImageMeta and set parameters
 		processImageMeta();	
 		// Start of image marker
