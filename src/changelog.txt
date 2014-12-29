@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/28/2014
+Last modified on 12/29/2014
 ***************************
+29Dec2014  Added BMPTweaker to read BMP image metadata
 28Dec2014  Added snoop() to GIFTweaker to read GIF image metadata
 27Dec2014  Added Snoopy to cafe.image.meta package to read image metadata
 27Dec2014  Changed scope of the abstract ImageWriter.write() to protected
