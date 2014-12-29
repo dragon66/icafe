@@ -160,11 +160,11 @@ public class GIFTweaker {
 				int func = is.read();
 				int len = is.read();
 				
-				System.out.print("Extension block (length: " + len + ") - ");
+				System.out.print("Extension block (length: " + len + ", function 0x" + Integer.toHexString(func) +")");
 	
 				if (func == 0xf9) // Graphic Control Label - identifies the current block as a Graphic Control Extension
 				{
-					System.out.println("Graphic control block (function: 0xf9)");
+					System.out.println(" - Graphic control block");
 					System.out.println("<<Start of graphic control block>>");
 					int packedFields = is.read();
 					// Determine the disposal method
@@ -200,10 +200,18 @@ public class GIFTweaker {
 					}
 					System.out.println("<<End of graphic control block>>");
 				} else if(func == 0xff) { // Application label
-					System.out.println("Application block (function: 0xff)");
+					System.out.println(" - Application block");
 					IOUtils.skipFully(is, len);
 					len = is.read(); // Block terminator
-				} 				
+				} else if(func == 0xfe) { // Comment block
+					System.out.println(" - Comment block");
+					byte[] comment = new byte[len];
+					IOUtils.readFully(is, comment);
+					System.out.println("Comment: " + new String(comment));
+					len = is.read();
+				} else {
+					System.out.println();
+				}
 				// GIF87a specification mentions the repetition of multiple length
 				// blocks while GIF89a gives no specific description. For safety, here
 				// a while loop is used to check for block terminator!
