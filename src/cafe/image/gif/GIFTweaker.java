@@ -9,10 +9,11 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * GIFFWriter.java
+ * GIFTweaker.java
  *
  * Who   Date       Description
  * ====  =========  ====================================================================
+ * WY    28Dec2014  Added snoop() to show GIF image metadata 
  * WY    18Nov2014  Fixed bug with splitFramesEx() disposal method "RESTORE_TO_PREVIOUS" 
  * WY    17Nov2014  Added writeAnimatedGIF(GIFFrame) to work with GIFFrame
  * WY    03Oct2014  Added splitFramesEx2() to split animated GIFs into separate images
@@ -41,10 +42,14 @@ import java.util.List;
 
 //import cafe.image.core.ImageMeta;
 
+
+
 import cafe.image.ImageType;
+import cafe.image.options.GIFOptions;
 import cafe.image.reader.GIFReader;
 import cafe.image.writer.GIFWriter;
 import cafe.image.writer.ImageWriter;
+import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 
 /**
@@ -133,6 +138,132 @@ public class GIFTweaker {
 		return true;
 	}
 	
+	private static boolean readFrame(InputStream is, DataTransferObject DTO) throws Exception {
+		// Need to reset some of the fields
+		int disposalMethod = -1;
+		boolean transparent = false;
+		int transparent_color = -1;
+		// End of fields reset
+	   
+		int image_separator = 0;
+	
+		do {		   
+			image_separator = is.read();
+			    
+			if(image_separator == -1 || image_separator == 0x3b) { // End of stream 
+				System.out.println("<<END OF STREAM>>");
+				return false;
+			}
+			    
+			if (image_separator == 0x21) // (!) Extension Block
+			{
+				int func = is.read();
+				int len = is.read();
+				
+				System.out.print("Extension block (length: " + len + ") - ");
+	
+				if (func == 0xf9) // Graphic Control Label - identifies the current block as a Graphic Control Extension
+				{
+					System.out.println("Graphic control block (function: 0xf9)");
+					System.out.println("<<Start of graphic control block>>");
+					int packedFields = is.read();
+					// Determine the disposal method
+					disposalMethod = ((packedFields&0x1c)>>2);
+					switch(disposalMethod) {
+						case GIFOptions.DISPOSAL_UNSPECIFIED:
+							System.out.println("Frame disposal method: UNSPECIFIED");
+							break;
+						case GIFOptions.DISPOSAL_LEAVE_AS_IS:
+							System.out.println("Frame disposal method: LEAVE_AS_IS");
+							break;
+						case GIFOptions.DISPOSAL_RESTORE_TO_BACKGROUND:
+							System.out.println("Frame disposal method: RESTORE_TO_BACKGROUND");
+							break;
+						case GIFOptions.DISPOSAL_RESTORE_TO_PREVIOUS:
+							System.out.println("Frame disposal method: RESTORE_TO_PREVIOUS");
+							break;
+						default:
+							System.out.println("Invalid GIF frame disposal method: " + disposalMethod);
+					}
+					// Check for transparent color flag
+					if((packedFields&0x01) == 0x01)
+					{
+						IOUtils.skipFully(is, 2);
+						transparent = true;
+						System.out.println("Transparent GIF");					 
+						transparent_color = is.read();
+						System.out.println("Transparent color index: " + transparent_color);
+						len = is.read();// len=0, block terminator!
+					} else {
+						IOUtils.skipFully(is, 3);
+						len = is.read();// len=0, block terminator!
+					}
+					System.out.println("<<End of graphic control block>>");
+				} else if(func == 0xff) { // Application label
+					System.out.println("Application block (function: 0xff)");
+					IOUtils.skipFully(is, len);
+					len = is.read(); // Block terminator
+				} 				
+				// GIF87a specification mentions the repetition of multiple length
+				// blocks while GIF89a gives no specific description. For safety, here
+				// a while loop is used to check for block terminator!
+				while(len != 0) 
+				{
+					IOUtils.skipFully(is, len);
+					len = is.read();// len=0, block terminator!
+				} 
+			}
+		} while(image_separator != 0x2c); // ","
+		
+		System.out.println("<<Start of new frame>>");
+		
+		readImageDescriptor(is, DTO);
+		
+		System.out.println("Image left position: " + ((DTO.imageDescriptor[0]&0xff)|((DTO.imageDescriptor[1]&0xff)<<8)));
+		System.out.println("Image top position: " + ((DTO.imageDescriptor[2]&0xff)|((DTO.imageDescriptor[3]&0xff)<<8)));
+		System.out.println("Image width: " + ((DTO.imageDescriptor[4]&0xff)|((DTO.imageDescriptor[5]&0xff)<<8)));
+		System.out.println("Image height: " + ((DTO.imageDescriptor[6]&0xff)|((DTO.imageDescriptor[7]&0xff)<<8)));
+		
+		int colorsUsed = 1 << ((DTO.logicalScreenDescriptor[4]&0x07)+1);
+		
+		byte[] localPalette = null;
+		
+		if((DTO.imageDescriptor[8]&0x80) == 0x80) {
+			// A local color map is present
+			System.out.println("A local color map is present");
+			int bitsPerPixel = (DTO.imageDescriptor[8]&0x07)+1;
+			System.out.println("BitsPerPixel: " + bitsPerPixel);
+			colorsUsed = (1<<bitsPerPixel);
+			System.out.println("Colors used in local palette: " + colorsUsed);
+
+			localPalette = new byte[3*colorsUsed];
+		    is.read(localPalette);
+		}		
+	
+		if(localPalette == null) localPalette = DTO.globalPalette;
+		
+		if (transparent && transparent_color < colorsUsed) {
+			int redIndex = transparent_color*3;
+			System.out.println("Transparent color: " + StringUtils.intToHexStringMM(localPalette[redIndex]&0xff<<16
+					                                   |localPalette[redIndex + 1]&0xff<<8
+					                                   |localPalette[redIndex + 2]&0xff));
+		}
+			
+		if((DTO.imageDescriptor[8]&0x40) == 0x40) 
+			System.out.println("Interlaced image"); 
+		
+		System.out.println("LZW Minimum Code Size: " + is.read());
+		
+		int len = 0;
+		
+		while((len = is.read()) > 0) {
+			byte[] block = new byte[len];
+			is.read(block);
+		}
+		
+		return true;
+	}
+	
 	private static void readGlobalPalette(InputStream is, int num_of_color, DataTransferObject DTO) throws IOException {
 		 DTO.globalPalette = new byte[num_of_color*3];
 		 is.read(DTO.globalPalette);
@@ -151,6 +282,52 @@ public class GIFTweaker {
 	private static void readLSD(InputStream is, DataTransferObject DTO) throws IOException {
 		DTO.logicalScreenDescriptor = new byte[7];
 		is.read(DTO.logicalScreenDescriptor);
+	}
+	
+	public static void snoop(InputStream is) throws Exception {
+		// Create a new data transfer object to hold data
+		DataTransferObject DTO = new DataTransferObject();
+		
+		readHeader(is, DTO);
+		readLSD(is, DTO);
+		
+		System.out.println("... GIF snoop starts ...");
+		System.out.println("<<Start of lobal parameters>>");
+		System.out.print(new String(DTO.header, 0, 3)); // GIF signature
+		System.out.println(new String(DTO.header, 3, 3)); // GIF version
+		System.out.println("Logical screen width: " + (short)((DTO.logicalScreenDescriptor[0]&0xff)|((DTO.logicalScreenDescriptor[1]&0xff)<<8)));
+		System.out.println("Logical screen_height: " + (short)((DTO.logicalScreenDescriptor[2]&0xff)|((DTO.logicalScreenDescriptor[3]&0xff)<<8)));
+		
+		// Packed byte
+		if((DTO.logicalScreenDescriptor[4]&0x80) == 0x80) 
+		{
+			// A global color map is present 
+			System.out.println("A global color map is present");
+			int bitsPerPixel = (DTO.logicalScreenDescriptor[4]&0x07)+1;
+			int colorsUsed = (1 << bitsPerPixel);
+			System.out.println("Colors used in global palette: " + colorsUsed);
+			
+			readGlobalPalette(is, colorsUsed, DTO);			
+		}
+		
+		System.out.println("Color resolution: " + (DTO.logicalScreenDescriptor[4]>>4&0x07 + 1));
+		System.out.println("Global color map sorted: " + ((DTO.logicalScreenDescriptor[4]>>3&0x01) == 1));
+		System.out.println("Background color index: " + DTO.logicalScreenDescriptor[5]);
+		System.out.println("Aspect ration: " + DTO.logicalScreenDescriptor[6]);
+		System.out.println("<<End of global parameters>>");
+		System.out.println("*********************************************************");
+		
+		// Time to read frames one by one
+		int frameCount = 0;
+		
+		while(readFrame(is, DTO)) {
+			System.out.println("<<End of frame #" + frameCount + ">>");
+			System.out.println("*********************************************************");
+			frameCount++;	
+		}
+		
+		System.out.println("Total number of frames: " + frameCount);
+		System.out.println("... GIF snoop ends ...");
 	}
 	
 	/**
