@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 
 import cafe.image.ImageType;
+import cafe.image.bmp.BMPTweaker;
 import cafe.image.gif.GIFTweaker;
 import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.png.PNGTweaker;
@@ -56,6 +57,9 @@ public class Snoopy {
 				break;
 			case GIF:
 				GIFTweaker.snoop(pushBackStream);
+				break;
+			case BMP:
+				BMPTweaker.snoop(pushBackStream);
 				break;
 			default:
 				System.out.println("snooping is not implemented for image type: " + imageType);
