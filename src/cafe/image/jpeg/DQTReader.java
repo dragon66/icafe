@@ -59,18 +59,17 @@ public class DQTReader implements Reader {
 			len--;
 		    int QT_precision = (QT_info>>4)&0x0f;
 		    int QT_index=(QT_info&0x0f);
+		    int numOfValues = 64 << QT_precision;
 		    
-		    short[] out = (QT_precision == 0)?new short[64] : new short[128];
+		    short[] out = new short[64];
 		   
 		    // Read QT tables
     	    // 8 bit For precision value of 0
 		   	if(QT_precision == 0) {
-				for (int j = 0; j < 64; j++)
-			    {
+				for (int j = 0; j < 64; j++) {
 					out[j] = data[de_zig_zag_order[j] + offset];			
 			    }
-			} else { // 16 bit big-endian for precision value of 1
-								
+			} else { // 16 bit big-endian for precision value of 1								
 				for (int j = 0; j < 64; j++) {
 					out[j] = (IOUtils.readShortMM(data, offset + de_zig_zag_order[j]<<1));	
 				}				
@@ -78,8 +77,8 @@ public class DQTReader implements Reader {
 		   	
 		   	qTables.add(new QTable(QT_precision, QT_index, out));
 		
-			len -= (QT_precision == 0)?64:128;
-			offset += (QT_precision == 0)?64:128;
+			len -= numOfValues;
+			offset += numOfValues;
 		}
 	}	
 }
