@@ -13,10 +13,14 @@
  *
  * Who   Date       Description
  * ====  =======    ==================================================
+ * WY    30Dec2014  Added new meta data fields hasICCP, containsThumbnail,
+ *                  icc_profile, and thumbnails
  * WY    17Dec2014  Replaced different color type fields with ColorType
  */
 
 package cafe.image;
+
+import java.awt.image.BufferedImage;
 
 import cafe.image.options.ImageOptions;
 import cafe.util.Builder;
@@ -27,11 +31,11 @@ import cafe.util.Builder;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 11/06/2012
  */
-public class ImageMeta {	
+public class ImageMeta {
 	// final fields
-	private final int width;
-	private final int height;	
-	private final int bitsPerPixel;
+	private final int width;	
+	private final int height;
+    private final int bitsPerPixel;
     private final ColorType colorType;
     private final int rgbColorPalette[];
     private final byte componentColorPalette[][];
@@ -40,8 +44,13 @@ public class ImageMeta {
     private final int ditherThreshold;
     private final boolean transparent;
     private final int transparentColor;
+    private final boolean hasICCP;
+    private final byte icc_profile[];
+    private final boolean containsThumbnail;    
+    private final BufferedImage thumbnails[];
+    
     private final ImageOptions imageOptions;
-
+    
     // DEFAULT_IMAGE_META is immutable given the fact the arrays it contains are empty
     public static final ImageMeta DEFAULT_IMAGE_META = new ImageMetaBuilder().build();
     
@@ -57,19 +66,35 @@ public class ImageMeta {
 		ditherThreshold = builder.ditherThreshold;
 		transparentColor = builder.transparentColor;
 		transparent = builder.transparent;
+		hasICCP = builder.hasICCP;
+		icc_profile = builder.icc_profile;
+		containsThumbnail = builder.containsThumbnail;
+		thumbnails = builder.thumbnails;		
 		imageOptions = builder.imageOptions;
 	}
+    
+    public boolean containsThumbnail() {
+    	return containsThumbnail;
+    }
     
     public int getBitsPerPixel() {
     	return bitsPerPixel;
     }
     
-    public int[] getRGBColorPalette() {
-    	return rgbColorPalette;
+    public ColorType getColorType() {
+    	return colorType;
     }
     
     public byte[][] getComponentColorPalette() {
     	return componentColorPalette;
+    }
+	
+	public int getDitherThreshold() {
+    	return ditherThreshold;
+    }
+    
+    public byte[] getICCProfile() {
+    	return icc_profile;
     }
     
     public int getImageHeight() {
@@ -79,9 +104,17 @@ public class ImageMeta {
     public ImageOptions getImageOptions() {
     	return imageOptions;
     }
-	
-	public int getImageWidth() {
+    
+    public int getImageWidth() {
     	return width;
+    }
+    
+    public int[] getRGBColorPalette() {
+    	return rgbColorPalette;
+    }
+    
+    public BufferedImage[] getThumbnails() {
+    	return thumbnails;
     }
     
     public int getTransparentColor() {
@@ -96,18 +129,14 @@ public class ImageMeta {
 		return hasAlpha;
 	}
     
-    public boolean isApplyDither() {
+    public boolean hasICCP() {
+    	return hasICCP;
+    }
+    
+	public boolean isApplyDither() {
     	return isApplyDither;
     }
-    
-    public int getDitherThreshold() {
-    	return ditherThreshold;
-    }
-    
-    public ColorType getColorType() {
-    	return colorType;
-    }
-    
+	
 	/**
 	 * Specifies whether or not single-color transparency is set. If true,
 	 * the subsequent call to getTransparentColor will get the transparent
@@ -134,14 +163,18 @@ public class ImageMeta {
 	    // Transparency related variables
 	    private boolean transparent = false;
 	    private int transparentColor;
+	    private boolean hasICCP = false;
+	    private byte icc_profile[];
+	    private boolean containsThumbnail = false;
+	    private BufferedImage thumbnails[];
 	 	    
 	    // Additional format-specific parameters
 	    private ImageOptions imageOptions;
 		
 	    public ImageMetaBuilder() {	}
 	    
-	    public ImageMetaBuilder colorType(ColorType colorType) {
-	    	this.colorType = colorType;
+	    public ImageMetaBuilder applyDither(boolean applyDither) {
+	    	this.applyDither = applyDither;
 	    	return this;
 	    }
 	    
@@ -154,23 +187,18 @@ public class ImageMeta {
 		   return new ImageMeta(this);
 		}
 	    
-	    public ImageMetaBuilder rgbColorPalette(int[] rgbColorPalette) {
-			this.rgbColorPalette = rgbColorPalette;
-			return this;
-		}
+	    public ImageMetaBuilder colorType(ColorType colorType) {
+	    	this.colorType = colorType;
+	    	return this;
+	    }
 	    
 	    public ImageMetaBuilder componentColorPalette(byte[][] componentPalette) {
 	    	this.componentColorPalette = componentPalette;
 	    	return this;
 	    }
-		    		
-	    public ImageMetaBuilder hasAlpha(boolean hasAlpha) {
-			this.hasAlpha = hasAlpha;
-			return this;
-		}
 	    
-	    public ImageMetaBuilder applyDither(boolean applyDither) {
-	    	this.applyDither = applyDither;
+	    public ImageMetaBuilder containsThumbnail(boolean containsThumbnail) {
+	    	this.containsThumbnail = containsThumbnail;
 	    	return this;
 	    }
 	    
@@ -179,21 +207,31 @@ public class ImageMeta {
 	    	return this;
 	    }
 	    
-		public ImageMetaBuilder height(int height) {
+	    public ImageMetaBuilder hasAlpha(boolean hasAlpha) {
+			this.hasAlpha = hasAlpha;
+			return this;
+		}
+		    		
+	    public ImageMetaBuilder hasICCP(boolean hasICCP) {
+	    	this.hasICCP = hasICCP;
+	    	return this;
+	    }
+	    
+	    public ImageMetaBuilder height(int height) {
 	    	this.height = height;
 	    	return this;
 	    }
-		
-		public ImageMetaBuilder imageOptions(ImageOptions imageOptions) {
+	    
+	    public ImageMetaBuilder iccProfile(byte[] icc_profile) {
+	    	this.icc_profile = icc_profile;
+	    	return this;
+	    }
+	    
+	    public ImageMetaBuilder imageOptions(ImageOptions imageOptions) {
 			this.imageOptions = imageOptions;
 			return this;
 		}
-		
-		public ImageMetaBuilder transparent(boolean transparent) {
-			this.transparent = transparent;
-			return this;
-		}
-		
+	    
 		/**
 	     * ImageReader can reset this ImageBuilder to read another image.
 	     */
@@ -209,8 +247,27 @@ public class ImageMeta {
 	    	this.ditherThreshold = 255;
 	    	this.transparent = false;
 	    	this.transparentColor = 0;
+	    	this.hasICCP = false;
+	    	this.icc_profile = null;
+	    	this.containsThumbnail = false;
+	    	this.thumbnails = null;
 	    	this.imageOptions = null;
 	    }
+		
+		public ImageMetaBuilder rgbColorPalette(int[] rgbColorPalette) {
+			this.rgbColorPalette = rgbColorPalette;
+			return this;
+		}
+		
+		public ImageMetaBuilder thumbnails(BufferedImage[] thumbnails) {
+	    	this.thumbnails = thumbnails;
+	    	return this;
+	    }
+		
+		public ImageMetaBuilder transparent(boolean transparent) {
+			this.transparent = transparent;
+			return this;
+		}
 		
 		public ImageMetaBuilder transparentColor(int transparentColor) {
 			this.transparentColor = transparentColor;
@@ -221,5 +278,5 @@ public class ImageMeta {
 	    	this.width = width; 
 	    	return this; 
 	    }		
-	} // End of internal builder
+	} // End of internal builder	
 }
