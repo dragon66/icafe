@@ -1297,7 +1297,7 @@ public class JPEGTweaker {
 			System.out.println("Quantization table #" + table.getIndex() + ":");
 			
 		   	if(QT_precision == 0) {
-				for (int j = 0; j<64; j++)
+				for (int j = 0; j < 64; j++)
 			    {
 					if (j != 0 && j%8 == 0) {
 						System.out.println();
