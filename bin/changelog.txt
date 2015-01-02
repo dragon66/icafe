@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/30/2014
+Last modified on 01/02/2015
 ***************************
+02Jan2015  Added getFrameCount() and getFrames() to ImageReader
 30Dec2014  Added new fields - hasICCP, containsThumbnail etc. to ImageMeta
 29Dec2014  Added BMPTweaker to read BMP image metadata
 28Dec2014  Added snoop() to GIFTweaker to read GIF image metadata
