@@ -99,10 +99,12 @@ public class TIFFReader extends ImageReader {
 	private static final int[] redMask =   {0x00, 0x04, 0x30, 0x1c0, 0xf00};
 	private static final int[] greenMask = {0x00, 0x02, 0x0c, 0x038, 0x0f0};
 	private static final int[] blueMask =  {0x00, 0x01, 0x03, 0x007, 0x00f};
+	
+	private static final int bufLen = 40960; // 40K read buffer
 	 
 	public BufferedImage read(InputStream is) throws Exception
 	{
-		randIS = new FileCacheRandomAccessInputStream(is);
+		randIS = new FileCacheRandomAccessInputStream(is, bufLen);
 		if(!readHeader(randIS)) return null;
 		 
 		int offset = randIS.readInt();
