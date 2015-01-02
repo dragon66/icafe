@@ -59,7 +59,7 @@ public class DHTReader implements Reader {
 		{
 			int HT_info = data[offset++];
 			
-			int HT_class = (HT_info>>4)&0x0f;// 0=DC table, 1=AC table
+			int HT_class = (HT_info>>4)&0x01;// 0=DC table, 1=AC table
 			int HT_destination_id = (HT_info&0x0f);// Huffman tables number
 			byte[] bits = new byte[16];
 			byte[] values;
