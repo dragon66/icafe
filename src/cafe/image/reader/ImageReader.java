@@ -6,12 +6,21 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * ImageReader.java
+ *
+ * Who   Date       Description
+ * ====  =========  ===============================================================
+ * WY    02Jan2015  Added getFrames() and getFrameCount() for multiple frame images 
  */
 
 package cafe.image.reader;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.List;
 
 import cafe.image.ImageMeta;
 /** 
@@ -38,6 +47,14 @@ public abstract class ImageReader
     }
     
     protected ImageMeta meta = ImageMeta.DEFAULT_IMAGE_META;
+    
+    public int getFrameCount() {
+    	return -1;
+    }
+    
+    public List<BufferedImage> getFrames() {
+    	return null;
+    }
     
     public ImageMeta getImageMeta() {
 		return meta;

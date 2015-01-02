@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==========================================================
+ * WY    02Jan2015  Added getFrames() and getFrameCount() for animated GIF 
  * WY    18Nov2014  Fixed getFrameAsBufferedImageEx() bug with disposal method 
  *                  "RESTORE_TO_PREVIOUS" 
  * WY    03Oct2014  Added getFrameAsBufferedImageEx()
@@ -33,6 +34,8 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.io.IOUtils;
@@ -48,42 +51,7 @@ import cafe.io.IOUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.1 03/16/2012
  */
-public class GIFReader extends ImageReader
-{	
-	private static class GifHeader
-	{
-		private byte  signature[] = new byte[3];
-		private byte  version[] = new byte[3];
-
-		private short screen_width;
-		private short screen_height;
-		private byte  flags;
-		private byte  bgcolor;
-		@SuppressWarnings("unused")
-		private byte  aspectRatio;
-  
-		void readHeader(InputStream is) throws Exception
-		{
-			int nindex = 0;
-			byte bhdr[] = new byte[13];
-
-			IOUtils.readFully(is,bhdr,0,13);
-	
-			for(int i = 0; i < 3; i++)
-				signature[i] = bhdr[nindex++];
-	      
-			for(int i = 0; i < 3; i++)
-				version[i] = bhdr[nindex++];
-	      
-			screen_width = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
-			screen_height = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
-			flags = bhdr[nindex++];
-			bgcolor = bhdr[nindex++];
-			aspectRatio = bhdr[nindex++];
-			// The end
-		}
-	}
-   
+public class GIFReader extends ImageReader {	   
 	private GifHeader gifHeader;
 	private int flags;
 	private int flags2;
@@ -97,6 +65,7 @@ public class GIFReader extends ImageReader
 	private int logicalScreenHeight;
 	private Color backgroundColor = new Color(255, 255, 255);
 	private int[] globalColorPalette;
+	private List<BufferedImage> frames; // To keep track of all the frames
 	
 	// BufferedImage with the width and height of the logical screen to draw frames upon
 	BufferedImage baseImage;
@@ -169,6 +138,7 @@ public class GIFReader extends ImageReader
 	 * @return a BufferedImage for the GIF image or current frame in case of animated GIF
 	 * @throws Exception
 	 */
+	//TODO make this private
 	public BufferedImage getFrameAsBufferedImage(InputStream is) throws Exception {
 		// Read frame into a byte array
 		byte[] pixels = readFrame(is);
@@ -189,6 +159,7 @@ public class GIFReader extends ImageReader
 	 * @return java BufferedImage or null if there is no more frames
 	 * @throws Exception
 	 */
+	//TODO make this private
 	public BufferedImage getFrameAsBufferedImageEx(InputStream is) throws Exception {
 		// This single call will trigger the reading of the global scope data
 		BufferedImage bi = getFrameAsBufferedImage(is);
@@ -225,6 +196,26 @@ public class GIFReader extends ImageReader
 		}	
 		
 		return clone;
+	}
+	
+	/**
+	 * Get the total number of frames read by this GIFReader.
+	 *  
+	 * @return number of frames read by this GIFReader or -1 if not read yet
+	 */
+	public int getFrameCount() {
+		if(frames != null) // We have already read the image
+			return frames.size();
+		return -1; // We haven't read the image yet
+	}
+	
+	/**
+	 * Get the total frames read by this GIFRreader.
+	 * 
+	 * @return a list of the total frames read by this GIFRreader or null if not read yet
+	 */
+	public List<BufferedImage> getFrames() {
+		return frames;
 	}
 
 	public int getImageX() {
@@ -340,8 +331,7 @@ public class GIFReader extends ImageReader
 		return decodeLZW(is);
 	}
     
-	private void readGlobalPalette(InputStream is,int num_of_color) throws Exception
-	{
+	private void readGlobalPalette(InputStream is,int num_of_color) throws Exception {
 		int index1 = 0;
 		int bytes2read = num_of_color*3;
 		byte brgb[] = new byte[bytes2read];  
@@ -393,13 +383,18 @@ public class GIFReader extends ImageReader
 		   	return true;
 	}
     
-	public BufferedImage read(InputStream is) throws Exception
-	{    
-		return getFrameAsBufferedImage(is);
+	public BufferedImage read(InputStream is) throws Exception {
+		frames = new ArrayList<BufferedImage>();
+		BufferedImage bi = null;
+		
+		while((bi = getFrameAsBufferedImage(is)) != null) {
+			frames.add(bi);
+		}
+		
+		return frames.get(0);
 	}
     
-	private void readImageDescriptor(InputStream is) throws Exception 
-	{	 	
+	private void readImageDescriptor(InputStream is) throws Exception {	 	
 		int nindex = 0;
 		byte ides[] = new byte[9];
 	
@@ -412,8 +407,7 @@ public class GIFReader extends ImageReader
 		flags2 = ides[nindex++];
 	}
     
-	private void readLocalPalette(InputStream is,int num_of_color) throws Exception
-	{
+	private void readLocalPalette(InputStream is,int num_of_color) throws Exception	{
 		int index1 = 0;
 		int bytes2read = num_of_color*3;
 		byte brgb[] = new byte[bytes2read];  
@@ -423,5 +417,37 @@ public class GIFReader extends ImageReader
 			
 		for(int i = 0; i < num_of_color; i++)
 			rgbColorPalette[i] = ((255<<24)|((brgb[index1++]&0xff)<<16)|((brgb[index1++]&0xff)<<8)|(brgb[index1++]&0xff));
+	}
+	
+	private static class GifHeader {
+		private byte  signature[] = new byte[3];
+		private byte  version[] = new byte[3];
+
+		private short screen_width;
+		private short screen_height;
+		private byte  flags;
+		private byte  bgcolor;
+		@SuppressWarnings("unused")
+		private byte  aspectRatio;
+  
+		void readHeader(InputStream is) throws Exception {
+			int nindex = 0;
+			byte bhdr[] = new byte[13];
+
+			IOUtils.readFully(is,bhdr,0,13);
+	
+			for(int i = 0; i < 3; i++)
+				signature[i] = bhdr[nindex++];
+	      
+			for(int i = 0; i < 3; i++)
+				version[i] = bhdr[nindex++];
+	      
+			screen_width = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
+			screen_height = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
+			flags = bhdr[nindex++];
+			bgcolor = bhdr[nindex++];
+			aspectRatio = bhdr[nindex++];
+			// The end
+		}
 	}
 }
