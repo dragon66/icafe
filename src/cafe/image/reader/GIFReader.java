@@ -130,15 +130,30 @@ public class GIFReader extends ImageReader {
 	}
    
 	/**
-	 * Creates a BufferedImage for the current frame. For animated GIF, the frame may only
-	 * occupy part of the logical screen and may also rely on transparency and previous
-	 * frames to work properly.
-	 *  
+	 * Gets the current frame as a BufferedImage. The frames created this may assume
+	 * different sizes and are intended to be located at different positions in the
+	 * case of an animated GIF. Therefore, the frames may only occupy part of the
+	 * logical screen and may also rely on transparency and previous frames to work properly.
+	 * <p>
+	 * Note: do not mix this method with {@link #read(InputStream) read} 
+	 *       or {@link #getFrameAsBufferedImageEx(InputStream) getFrameAsBufferedImageEx}.
+	 *       Use them separately.
+	 * <p> One way to use this method to retrieve all the frames from an animated GIF:
+	 * <pre>
+	 * {@code
+	 * GIFReader reader = new GIFReader();
+	 * InputStream is = new FileInputStream(new File(pathToImage));
+	 * List<BufferedImage> frames = new ArrayList<BufferedImage>();
+	 * BufferedImage bi = null; 
+	 * while((bi = reader.getFrameAsBufferedImage(is) != null)
+	 * 	frames.add(bi);
+	 * }
+	 * </pre>
+	 * 
 	 * @param is InputStream for the GIF/Animated GIF
-	 * @return a BufferedImage for the GIF image or current frame in case of animated GIF
+	 * @return a BufferedImage for the image or current frame in case of animated GIF
 	 * @throws Exception
 	 */
-	//TODO make this private
 	public BufferedImage getFrameAsBufferedImage(InputStream is) throws Exception {
 		// Read frame into a byte array
 		byte[] pixels = readFrame(is);
@@ -153,13 +168,23 @@ public class GIFReader extends ImageReader {
 	}
 	
 	/**
-	 * Creates a frame as a BufferedImage the same size as the logical screen
+	 * Gets the current frame as a BufferedImage the same size as the logical screen.
+	 * Graphic Control Extension and Image Descriptor parameters are taken into account
+	 * When creating the frame. The resulting frame is actually a "composite" one or a
+	 * snapshot as seen in an animated GIF. Such frames may not be the same as the frames
+	 * created by {@link #getFrameAsBufferedImage(InputStream) getFrameAsBufferedImage}
+	 * which could be of different sizes and may also have to rely on the previous frames
+	 * to look the same as the frames created here.
 	 *  
-	 * @param is input stream for the image - single frame of multiple frame animated GIF
+	 * <p>
+	 * Note: do not mix this method with {@link #read(InputStream) read} 
+	 *       or {@link #getFrameAsBufferedImage(InputStream) getFrameAsBufferedImage}.
+	 *       Use them separately.
+	 *  
+	 * @param is input stream for the image - single frame or multiple frame animated GIF
 	 * @return java BufferedImage or null if there is no more frames
 	 * @throws Exception
 	 */
-	//TODO make this private
 	public BufferedImage getFrameAsBufferedImageEx(InputStream is) throws Exception {
 		// This single call will trigger the reading of the global scope data
 		BufferedImage bi = getFrameAsBufferedImage(is);
