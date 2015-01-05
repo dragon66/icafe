@@ -17,7 +17,7 @@ import cafe.util.Reader;
 public class SOSReader implements Reader {
 	//
 	private Segment segment;
-	private SOF0Reader reader;
+	private SOFReader reader;
 	
 	int Ss, Se, Ah_Al, Ah, Al;
 	
@@ -31,7 +31,7 @@ public class SOSReader implements Reader {
 		read();
 	}
 	
-	public SOSReader(Segment segment, SOF0Reader reader) throws IOException {
+	public SOSReader(Segment segment, SOFReader reader) throws IOException {
 		//
 		if(segment.getMarker() != Marker.SOS) {
 			throw new IllegalArgumentException("Not a valid SOS segment!");
@@ -75,7 +75,7 @@ public class SOSReader implements Reader {
 		Al = Ah_Al&0x0f;
 	}
 	
-	public void setSOF0Reader(SOF0Reader reader) {
+	public void setSOFReader(SOFReader reader) {
 		this.reader = reader;
 	}
 }
