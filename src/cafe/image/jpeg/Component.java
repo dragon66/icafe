@@ -11,7 +11,7 @@
 package cafe.image.jpeg;
 
 /**
- * JPEG Color component
+ * Encapsulates a JPEG sample component
  *  
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 10/09/2013
