@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    05Jan2015  Enhanced to show information for all SOFX and SOS segments
  * WY    07Oct2014  Revised readAPP1() to show Adobe XMP information
  * WY    02Oct2014  Renamed extractExifThumbnail() to extractThumbnail()
  * WY    02Oct2014  Removed readExif()
@@ -73,10 +74,7 @@ import cafe.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -1326,21 +1324,19 @@ public class JPEGTweaker {
 		System.out.println("**********************************");
 	}
 	
-	private static void readSOF0(InputStream is, Map<String, Segment> segmentMap) throws IOException 
+	private static SOFReader readSOF(InputStream is, Marker marker) throws IOException 
 	{		
 		int len = IOUtils.readUnsignedShortMM(is);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		Segment segment = new Segment(Marker.SOF0, len, buf);		
-		SOF0Reader reader = new SOF0Reader(segment);
-		
-		segmentMap.put(Marker.SOF0.name(), segment);		
+		Segment segment = new Segment(marker, len, buf);		
+		SOFReader reader = new SOFReader(segment);
 		
 		System.out.println("Data length: " + len);		
 		System.out.println("Precision: " + reader.getPrecision());
-		System.out.println("Image height: " + reader.getImageHeight());
-		System.out.println("Image width: " + reader.getImageWidth());
+		System.out.println("Image height: " + reader.getFrameHeight());
+		System.out.println("Image width: " + reader.getFrameWidth());
 		System.out.println("# of Components: " + reader.getNumOfComponents());
 		System.out.println(" (1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)");		
 		    
@@ -1353,28 +1349,22 @@ public class JPEGTweaker {
 		}
 		
 		System.out.println("**********************************");
+		
+		return reader;
 	}	
 	
 	// This method is very slow if not wrapped in some kind of cache stream but it works for multiple
 	// SOSs in case of progressive JPEG
-	private static short readSOS(InputStream is, Map<String, Segment> segmentMap) throws IOException 
+	private static short readSOS(InputStream is, SOFReader sofReader) throws IOException 
 	{
 		int len = IOUtils.readUnsignedShortMM(is);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		Segment sof = segmentMap.get(Marker.SOF0.name());
-		
-		if(sof == null) {
-			System.out.println("<<No SOF0 found, skip remaining SOS!>>");
-			return Marker.EOI.getValue(); 
-		}
-		
 		Segment segment = new Segment(Marker.SOS, len, buf);	
-		SOF0Reader sof0Reader = new SOF0Reader(sof);
-		new SOSReader(segment, sof0Reader);
+		new SOSReader(segment, sofReader);
 		
-		Component[] components = sof0Reader.getComponents();
+		Component[] components = sofReader.getComponents();
 		
 		for(Component component : components) {
 			System.out.println("Component ID: " + component.getId());
@@ -1653,7 +1643,10 @@ public class JPEGTweaker {
 		List<HTable> m_acTables = new ArrayList<HTable>(4);	
 		List<HTable> m_dcTables = new ArrayList<HTable>(4);
 		
-		Map<String, Segment> segmentMap = new HashMap<String, Segment>();
+		// Each SOFReader is associated with a single SOF segment
+		// Usually there is only one SOF segment, but for hierarchical
+		// JPEG, there could be more than one SOF
+		List<SOFReader> readers = new ArrayList<SOFReader>();
 		
 		boolean finished = false;
 		int length = 0;	
@@ -1708,11 +1701,23 @@ public class JPEGTweaker {
 						marker = IOUtils.readShortMM(is);
 						break;
 					case SOF0:
-						readSOF0(is, segmentMap);
+					case SOF1:
+					case SOF2:
+					case SOF3:
+					case SOF5:
+					case SOF6:
+					case SOF7:
+					case SOF9:
+					case SOF10:
+					case SOF11:
+					case SOF13:
+					case SOF14:
+					case SOF15:
+						readers.add(readSOF(is, emarker));
 						marker = IOUtils.readShortMM(is);
 						break;
-					case SOS:						
-						marker = readSOS(is, segmentMap);
+					case SOS:					
+						marker = readSOS(is, readers.get(readers.size() - 1));
 						break;
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
