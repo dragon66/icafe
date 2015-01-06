@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    06Jan2015  Enhancement to decode multipage TIFF 
  * WY    10Dec2014  Fixed bug for bitsPerSample%8 != 0 case to assume BIG_ENDIAN  
  * WY    09Dec2014  Added support for LSB2MSB FillOrder for RGB image
  * WY    07Dec2014  Added support for floating point sample data type
@@ -95,13 +96,14 @@ import cafe.util.ArrayUtils;
 public class TIFFReader extends ImageReader {
 	private RandomAccessInputStream randIS = null;
 	private List<IFD> list = new ArrayList<IFD>();
+	private List<BufferedImage> frames = new ArrayList<BufferedImage>();
 	private int endian = IOUtils.BIG_ENDIAN;
 	private static final int[] redMask =   {0x00, 0x04, 0x30, 0x1c0, 0xf00};
 	private static final int[] greenMask = {0x00, 0x02, 0x0c, 0x038, 0x0f0};
 	private static final int[] blueMask =  {0x00, 0x01, 0x03, 0x007, 0x00f};
 	
 	private static final int bufLen = 40960; // 40K read buffer
-	 
+		 
 	public BufferedImage read(InputStream is) throws Exception
 	{
 		randIS = new FileCacheRandomAccessInputStream(is, bufLen);
@@ -111,14 +113,19 @@ public class TIFFReader extends ImageReader {
 		
 		int ifd = 0;
 				
-		while (offset != 0)
-		{
+		while (offset != 0)	{
 			offset = readIFD(ifd++, offset);
 		}
-		BufferedImage bi =  decode(list.get(0));
+		
+		try {
+			for(IFD page : list) {
+				frames.add(decode(page));
+			}
+		} catch(Exception ex) {ex.printStackTrace();}
+		
 		randIS.close();
 		
-		return bi;
+		return frames.get(0);
 	}
 	 
 	private BufferedImage decode(IFD ifd) throws Exception {
@@ -1280,6 +1287,14 @@ public class TIFFReader extends ImageReader {
 		return null;
 	}
 	 
+	public int getFrameCount() {
+    	return frames.size();
+    }
+    
+    public List<BufferedImage> getFrames() {
+    	return frames;
+    }
+    
 	private boolean readHeader(RandomAccessInputStream randIS) throws IOException {
 		// First 2 bytes determine the byte order of the file
 		endian = randIS.readShort();
