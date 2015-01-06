@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    06Jan2015  Added reverse() to reverse array elements
  * WY    10Dec2014  Moved reverseBits() from IMGUtils to here along with BIT_REVERSE_TABLE
  * WY    08Dec2014  Fixed bug for flipEndian() with more than 32 bit sample data 
  * WY    07Dec2014  Changed method names for byte array to other array types conversion
@@ -747,6 +748,15 @@ public class ArrayUtils
 	public static void reverseBits(byte[] input) {
 		for(int i = input.length - 1; i >= 0; i--)
 			input[i] = BIT_REVERSE_TABLE[input[i]&0xff];
+	}
+	
+	// Reverse the array
+	public static <T> void reverse(T[] data) {
+	    for (int left = 0, right = data.length - 1; left < right; left++, right--) {
+	        T temp = data[left];
+	        data[left]  = data[right];
+	        data[right] = temp;
+	    }
 	}
    	
     // Shell sort
