@@ -117,9 +117,13 @@ public class TIFFReader extends ImageReader {
 			offset = readIFD(ifd++, offset);
 		}
 		
+		BufferedImage frame = null;
+		
 		try {
 			for(IFD page : list) {
-				frames.add(decode(page));
+				frame = decode(page);
+				if(frame != null)
+					frames.add(frame);
 			}
 		} catch(Exception ex) {ex.printStackTrace();}
 		
