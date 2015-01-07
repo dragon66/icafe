@@ -65,6 +65,7 @@ public class IMGUtils {
 	private static byte[] TIFF_MM = {0x4d, 0x4d, 0x00, 0x2a}; //MM.*
 	private static byte[] JPG = {(byte)0xff, (byte)0xd8, (byte)0xff};
 	private static byte[] PCX = {0x0a};
+	private static byte[] JPG2000 = {0x00, 0x00, 0x00, 0x0C};
 		
 	/**
 	 * Check the color depth of the image and if the color depth is within 8 bits, (i.e.,
@@ -740,7 +741,7 @@ public class IMGUtils {
 		// Read the first 4 bytes
 		byte[] magicNumber = new byte[4];
 		is.read(magicNumber);
-		ImageType imageType = null;
+		ImageType imageType = ImageType.UNKNOWN;
 		// Check image type
 		if(Arrays.equals(magicNumber, TIFF_II) || Arrays.equals(magicNumber, TIFF_MM))
 			imageType = ImageType.TIFF;
@@ -754,7 +755,9 @@ public class IMGUtils {
 			imageType = ImageType.BMP;
 		else if(magicNumber[0] == PCX[0])
 			imageType = ImageType.PCX;
-		else if(magicNumber[1] == 0 || magicNumber[1] == 1) {
+		else if(Arrays.equals(magicNumber, JPG2000)) {
+			imageType = ImageType.JPG2000;
+		} else if(magicNumber[1] == 0 || magicNumber[1] == 1) {
 			switch(magicNumber[2]) {
 				case 0:
 				case 1:
@@ -767,8 +770,9 @@ public class IMGUtils {
 				case 33:
 					imageType = ImageType.TGA;					
 			}
-		} else
-			System.out.println("Unknown format!");
+		} else {
+			System.out.println("Unknown format!");		
+		}
 		
 		is.unread(magicNumber);// reset stream pointer
 		

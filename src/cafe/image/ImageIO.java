@@ -74,7 +74,7 @@ public final class ImageIO {
 		ImageType imageType = IMGUtils.guessImageType(pushBackStream);
 		BufferedImage bi = null;		
 		
-		if(imageType != null) {
+		if(imageType != ImageType.UNKNOWN) {
 			bi = getReader(imageType).read(pushBackStream);
 		}
 		

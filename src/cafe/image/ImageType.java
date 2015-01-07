@@ -71,6 +71,25 @@ public enum ImageType {
 		}
 	},
 	
+	JPG2000("Jpeg2000") {
+		@Override
+		public String getExtension() {
+			return "jp2";
+		}
+		@Override
+		public ImageReader getReader() { 
+			throw new UnsupportedOperationException(
+					"JPG2000 reader is not implemented."
+				);
+		}
+		@Override
+		public ImageWriter getWriter() { 
+			throw new UnsupportedOperationException(
+					"JPG2000 writer is not implemented."
+				); 
+		}
+	},
+	
     BMP("Bitmap") { 
 		@Override
 		public String getExtension() {
@@ -132,6 +151,26 @@ public enum ImageType {
 			throw new UnsupportedOperationException(
 				"PCX writer is not implemented."
 			);
+		}
+	},
+	
+	UNKNOWN("Unknown") {
+		@Override
+		public String getExtension() {
+			return null;
+		}
+
+		@Override
+		public ImageReader getReader() { 
+			throw new UnsupportedOperationException(
+					"No reader for unknown image type."
+				);
+		}
+		@Override
+		public ImageWriter getWriter() { 
+			throw new UnsupportedOperationException(
+					"No writer for unknown image type."
+				); 
 		}
 	};
     
