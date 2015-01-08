@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    08Jan2015  Better exception handling to resume from failed frame decoding 
  * WY    06Jan2015  Enhancement to decode multipage TIFF 
  * WY    10Dec2014  Fixed bug for bitsPerSample%8 != 0 case to assume BIG_ENDIAN  
  * WY    09Dec2014  Added support for LSB2MSB FillOrder for RGB image
@@ -124,16 +125,19 @@ public class TIFFReader extends ImageReader {
 		
 		BufferedImage frame = null;
 		
-		try {
-			for(IFD page : list) {
+		for(IFD page : list) {
+			try {
 				frame = decode(page);
-				if(frame != null)
-					frames.add(frame);
+			} catch(Exception ex) {
+				ex.printStackTrace();
+				continue;
 			}
-		} catch(Exception ex) {ex.printStackTrace();}
+			if(frame != null)
+				frames.add(frame);
+		}		
 		
 		randIS.close();
-		
+
 		return frames.get(0);
 	}
 	 
