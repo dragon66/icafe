@@ -12,6 +12,7 @@ package cafe.util;
 
 import java.security.ProtectionDomain;
 import java.security.CodeSource;
+import java.util.Arrays;
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -174,6 +175,21 @@ public class LangUtils
 		}
 		
 		return getLoadedClassLocation(cls);
+	}
+	
+	// A convenience way to call main of other classes.
+	// Based on something I am not sure where I got it.
+	public static void invokeMain(String... args) {
+		try {
+		    Class<?> c = Class.forName(args[0]);
+			Class<String[]> argTypes = String[].class;
+			Method main = c.getDeclaredMethod("main", argTypes);
+	  	    Object mainArgs = Arrays.copyOfRange(args, 1, args.length);
+		    System.out.format("invoking %s.main()%n", c.getName());
+		    main.invoke(null, mainArgs);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	/**
