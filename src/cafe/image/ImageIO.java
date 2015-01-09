@@ -48,11 +48,28 @@ public final class ImageIO {
 		return imgType.getReader();
 	}
 	
-	public static ImageReader getReader(PushbackInputStream is) {
+	/**
+	 * Creates an ImageReader for the image specified by the PushbackInputStream.
+	 * The PushbackInputStream will be used to figure out image type and create
+	 * corresponding ImageReader. The same PushbackInputStream is supposed to be
+	 * used by the ImageReader to read the image.
+	 * <p>
+	 * Note: The reason we are using a PushbackInputStream is that image type
+	 * probing will eat some bytes of the input stream. After the image type
+	 * probing, we will have to push back the bytes previous read. We could
+	 * have used a RandomAccessInputStream interface, but not all image types
+	 * require random access while reading. In those cases, using a RandomAccessInputStream
+	 * will degrade performance as well as require more memory. This is especially
+	 * true when file cache based RandomAccessInputStream implementation is used.  
+	 *  
+	 * @param pushBackInputStream A PushbackInputStream wrapper for the image input stream
+	 * @return An ImageReader instance for the input image or null if none exists
+	 */	
+	public static ImageReader getReader(PushbackInputStream pushBackInputStream) {
 		ImageType imageType = ImageType.UNKNOWN;
 		
 		try {
-			imageType = IMGUtils.guessImageType(is);
+			imageType = IMGUtils.guessImageType(pushBackInputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -84,13 +101,16 @@ public final class ImageIO {
 	}
 	
 	/**
+	 * Read the image or the first frame of the image as a BufferedImage
+	 * from the InputStream for the image.
+	 * 
 	 * @param is InputStream for the image
 	 * @return BufferedImage or null
 	 * @throws Exception
 	 */
 	public static BufferedImage read(InputStream is) throws Exception {
 		// 4 byte as image magic number
-		PushbackInputStream pushBackStream = new PushbackInputStream(is, 4); 
+		PushbackInputStream pushBackStream = new PushbackInputStream(is, IMAGE_MAGIC_NUMBER_LEN); 
 		ImageType imageType = IMGUtils.guessImageType(pushBackStream);
 		BufferedImage bi = null;		
 		
