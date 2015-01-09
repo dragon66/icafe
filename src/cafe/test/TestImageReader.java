@@ -4,7 +4,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.PushbackInputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -19,6 +21,7 @@ import cafe.image.options.JPEGOptions;
 import cafe.image.options.PNGOptions;
 import cafe.image.options.TIFFOptions;
 import cafe.image.png.Filter;
+import cafe.image.reader.ImageReader;
 import cafe.image.tiff.TiffFieldEnum.PhotoMetric;
 import cafe.image.tiff.TiffFieldEnum.Compression;
 
@@ -30,11 +33,22 @@ public class TestImageReader {
 	 public static void main(String args[]) throws Exception
 	 {
 		 System.setProperty("debug", args[1]);
+		 
 		 long t1 = System.currentTimeMillis();
-		 BufferedImage img = ImageIO.read(new File(args[0]));
+		 
+		 FileInputStream fin = new FileInputStream(new File(args[0]));
+		 PushbackInputStream pushBackStream = new PushbackInputStream(fin, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		 ImageReader reader = ImageIO.getReader(pushBackStream);
+		 BufferedImage img = reader.read(pushBackStream);
+		 
+		 pushBackStream.close();
+		 
+		 System.out.println("Total frames read: " + reader.getFrameCount());
+		
 		 System.out.println(img.getColorModel());
 		 System.out.println(img.getRaster());
 		 System.out.println(img.getSampleModel());
+		
 		 long t2 = System.currentTimeMillis();
 		 
 		 System.out.println("decoding time "+(t2-t1)+"ms");

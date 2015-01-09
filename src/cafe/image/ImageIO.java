@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    08Jan2015  Added getReader(PushbackInputStream)
  * WY    22Sep2014  Added read() to detect image type and read image
  * WY    24Sep2014  Added write() to write Image
  */
@@ -22,6 +23,7 @@ package cafe.image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
@@ -31,6 +33,9 @@ import cafe.image.writer.ImageWriter;
 import cafe.image.util.IMGUtils;
 
 public final class ImageIO {
+	// Image header magic number length
+	// We may need to bump this to 8 later
+	public static final int IMAGE_MAGIC_NUMBER_LEN = 4; 
 	
 	/**
 	 * ImageReader factory
@@ -41,7 +46,22 @@ public final class ImageIO {
 	public static ImageReader getReader(ImageType imgType)
 	{
 		return imgType.getReader();
-	}	
+	}
+	
+	public static ImageReader getReader(PushbackInputStream is) {
+		ImageType imageType = ImageType.UNKNOWN;
+		
+		try {
+			imageType = IMGUtils.guessImageType(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if(imageType != ImageType.UNKNOWN)
+			return getReader(imageType);
+		
+		return null;			
+	}
 	
 	/**
 	 * ImageWriter factory
