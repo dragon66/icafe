@@ -1,7 +1,9 @@
 ***************************
-Last modified on 01/05/2015
+Last modified on 01/06/2015
 ***************************
+06Jan2015  Enhancement to read multipage TIFF images
 05Jan2015  Enhancement for JPEGTweaker to show all SOFX and SOS segments
+02Jan2015  Enhancement to read animated GIF images
 02Jan2015  Added getFrameCount() and getFrames() to ImageReader
 30Dec2014  Added new fields - hasICCP, containsThumbnail etc. to ImageMeta
 29Dec2014  Added BMPTweaker to read BMP image metadata
