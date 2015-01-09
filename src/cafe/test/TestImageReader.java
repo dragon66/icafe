@@ -32,7 +32,8 @@ public class TestImageReader {
 
 	 public static void main(String args[]) throws Exception
 	 {
-		 System.setProperty("debug", args[1]);
+		 if(args.length > 1)
+			System.setProperty("debug", args[1]);
 		 
 		 long t1 = System.currentTimeMillis();
 		 
