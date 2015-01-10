@@ -43,7 +43,7 @@ public class GeoUtils {
 	     int npol = xp.length;
 	     
 	     for (i = 0, j = npol-1; i < npol; j = i++) {
-	           if ((((yp[i]<=y) && (y<yp[j])) ||((yp[j]<=y) && (y<yp[i]))) &&
+	    	 if(((yp[i] > y) != (yp[j] > y)) &&	          
 	                (x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))
 	              c = !c;
 	     }
@@ -51,17 +51,29 @@ public class GeoUtils {
 	     return c;
 	}
 	
+	/**
+	 * W. Randolph Franklin - Point Inclusion in Polygon Test
+	 * 
+	 * @param x x coordinate of the test point. 
+	 * @param y y-coordinate of the test point. 
+	 * @param xp array containing the x coordinates of the polygon's vertices. 
+	 * @param yp array containing the y-coordinates of the polygon's vertices.
+	 * 
+	 * @return true if (x, y) inside the polygon, otherwise false.
+	 * 
+	 * @see <a href = "http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html">pnpoly</a>
+	 */
 	public static boolean isInsidePoly(float x, float y, float[] xp, float[] yp)
 	{
 		int i, j;
 		boolean c = false;
 		int npol = xp.length;
 		
-		for (i = 0, j = npol-1; i < npol; j = i++) {
-			if ((((yp[i]<=y) && (y<yp[j])) ||((yp[j]<=y) && (y<yp[i]))) &&
-					(x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))
-				c = !c;
-		}
+		 for (i = 0, j = npol-1; i < npol; j = i++) {
+	    	 if(((yp[i] > y) != (yp[j] > y)) &&	          
+	                (x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))
+	              c = !c;
+	     }
      
 		return c;
 	}
@@ -72,11 +84,11 @@ public class GeoUtils {
 		boolean c = false;
 		int npol = xp.length;
 		
-		for (i = 0, j = npol-1; i < npol; j = i++) {
-			if ((((yp[i]<=y) && (y<yp[j])) ||((yp[j]<=y) && (y<yp[i]))) &&
-					(x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))
-				c = !c;
-		}
+		 for (i = 0, j = npol-1; i < npol; j = i++) {
+	    	 if(((yp[i] > y) != (yp[j] > y)) &&	          
+	                (x < (xp[j] - xp[i]) * (y - yp[i]) / (yp[j] - yp[i]) + xp[i]))
+	              c = !c;
+	     }
      
 		return c;
 	}   
