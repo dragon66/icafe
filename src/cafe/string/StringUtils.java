@@ -13,12 +13,15 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    10Jan2015  Added showXML() and printNode() to show XML document
  * WY    28Dec2014  Added isInCharset() to test if a String can be encoded with
  * 					certain character set.
  */
 
 package cafe.string;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -27,6 +30,21 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.*;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Text;
+import org.xml.sax.SAXException;
 /**
  * String utility class  
  *
@@ -644,6 +662,76 @@ public class StringUtils
 	public static short parseShort(String s, int radix) {
 		return Short.parseShort(s, radix);
 	}
+	
+	public static void printNode(Node node, String indent) {
+		switch(node.getNodeType()) {
+	        case Node.DOCUMENT_NODE: {
+	            Node child = node.getFirstChild();
+	            while(child != null) {
+	            	printNode(child, indent);
+	            	child = child.getNextSibling();
+	            }
+	            break;
+	        } 
+	        case Node.DOCUMENT_TYPE_NODE: {
+	            DocumentType doctype = (DocumentType) node;
+	            System.out.println("<!DOCTYPE " + doctype.getName() + ">");
+	            break;
+	        }
+	        case Node.ELEMENT_NODE: { // Element node
+	            Element ele = (Element) node;
+	            System.out.print(indent + "<" + ele.getTagName());
+	            NamedNodeMap attrs = ele.getAttributes(); 
+	            for(int i = 0; i < attrs.getLength(); i++) {
+	                Node a = attrs.item(i);
+	                System.out.print(" " + a.getNodeName() + "='" + 
+	                          StringUtils.escapeXML(a.getNodeValue()) + "'");
+	            }
+	            System.out.println(">");
+
+	            String newindent = indent + "    ";
+	            Node child = ele.getFirstChild();
+	            while(child != null) {
+	            	printNode(child, newindent);
+	            	child = child.getNextSibling();
+	            }
+
+	            System.out.println(indent + "</" + ele.getTagName() + ">");
+	            break;
+	        }
+	        case Node.TEXT_NODE: {
+	            Text textNode = (Text)node;
+	            String text = textNode.getData().trim();
+	            if ((text != null) && text.length() > 0)
+	                System.out.println(indent + StringUtils.escapeXML(text));
+	            break;
+	        }
+	        case Node.PROCESSING_INSTRUCTION_NODE: {
+	            ProcessingInstruction pi = (ProcessingInstruction)node;
+	            System.out.println(indent + "<?" + pi.getTarget() +
+	                               " " + pi.getData() + "?>");
+	            break;
+	        }
+	        case Node.ENTITY_REFERENCE_NODE: {
+	            System.out.println(indent + "&" + node.getNodeName() + ";");
+	            break;
+	        }
+	        case Node.CDATA_SECTION_NODE: {           // Output CDATA sections
+	            CDATASection cdata = (CDATASection)node;
+	            System.out.println(indent + "<" + "![CDATA[" + cdata.getData() +
+	                        "]]" + ">");
+	            break;
+	        }
+	        case Node.COMMENT_NODE: {
+	        	Comment c = (Comment)node;
+	            System.out.println(indent + "<!--" + c.getData() + "-->");
+	            break;
+	        }
+	        default:
+	            System.err.println("Unknown node: " + node.getClass().getName());
+	            break;
+		}
+	}
 
 	public static String quoteRegexReplacement(String replacement)
 	{
@@ -849,6 +937,32 @@ public class StringUtils
 		buffer.append(HEXES[(value & 0x000F)]);
 		
 		return buffer.toString();
+	}
+	
+	public static void showXML(byte[] xml) {
+		//Get the DOM Builder Factory
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		//Get the DOM Builder
+		DocumentBuilder builder = null;
+		try {
+			builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		//Load and Parse the XML document
+		//document contains the complete XML as a Tree.
+		Document document = null;
+		try {
+			try {
+				document = builder.parse(new ByteArrayInputStream(xml), "UTF-8");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (SAXException e) {
+			e.printStackTrace();
+		}
+		
+		printNode(document,"");
 	}
 	
 	/**
