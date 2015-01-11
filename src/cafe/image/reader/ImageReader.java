@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.List;
 
 import cafe.image.ImageMeta;
+
 /** 
  * Abstract base class for image readers.
  *
