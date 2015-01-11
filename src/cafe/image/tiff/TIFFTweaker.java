@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    10Jan2015  Added showICCProfile() and showPhotoshop()
  * WY    23Dec2014  Added extractICCProfile() to extract ICC_Profile from TIFF image
  * WY    22Dec2014  Added insertICCProfile() to insert ICC_Profile into TIFF image
  * WY    17Dec2014  Changed TIFFFrame to ImageFrame due to rename of TIFFFrame
@@ -81,6 +82,8 @@ import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.GPSTag;
 import cafe.image.meta.exif.InteropTag;
+import cafe.image.meta.icc.ICCProfile;
+import cafe.image.meta.photoshop.IRBReader;
 import cafe.image.util.IMGUtils;
 import cafe.image.writer.TIFFWriter;
 import cafe.io.FileCacheRandomAccessInputStream;
@@ -107,12 +110,6 @@ public class TIFFTweaker {
 		append(rin, rout, null, images);
 	}
 	
-	//
-	// Append an array of BufferedImage to the end of the existing TIFF image
-	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, ImageMeta[] imageMeta, BufferedImage ... images) throws IOException {
-		insertPages(rin, rout, getPageCount(rin), imageMeta, images);
-	}
-	
 	/**
 	 * Append ImageFrames to the end of the original TIFF image
 	 * 
@@ -123,6 +120,12 @@ public class TIFFTweaker {
 	 */
 	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, ImageFrame ... frames) throws IOException {
 		insertPages(rin, rout, getPageCount(rin), frames);
+	}
+	
+	//
+	// Append an array of BufferedImage to the end of the existing TIFF image
+	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, ImageMeta[] imageMeta, BufferedImage ... images) throws IOException {
+		insertPages(rin, rout, getPageCount(rin), imageMeta, images);
 	}
 	
 	/**
@@ -524,6 +527,10 @@ public class TIFFTweaker {
 		return null;
 	}
 	
+	public static byte[] extractICCProfile(RandomAccessInputStream rin) throws Exception {
+		return extractICCProfile(0, rin);
+	}
+	
 	public static void finishInsert(RandomAccessOutputStream rout, List<IFD> list) throws IOException {
 		// Reset pageNumber and total pages
 		for(int i = 0; i < list.size(); i++) {
@@ -855,46 +862,6 @@ public class TIFFTweaker {
 	}
 	
 	/**
-	 * Inserts ICC_Profile into TIFF page
-	 * 
-	 * @param icc_profile byte array holding the ICC_Profile
-	 * @param pageNumber page number to insert the ICC_Profile
-	 * @param rin RandomAccessInputStream for the input image
-	 * @param rout RandomAccessOutputStream for the output image
-	 * @throws Exception
-	 */
-	public static void insertICCProfile(byte[] icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws Exception {
-		int offset = copyHeader(rin, rout);
-		// Read the IFDs into a list first
-		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
-		
-		if(pageNumber < 0 || pageNumber >= ifds.size())
-			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
-		
-		IFD workingPage = ifds.get(pageNumber);
-		workingPage.addField(new UndefinedField(TiffTag.ICC_PROFILE.getValue(), icc_profile));
-		
-		offset = copyPages(ifds, offset, rin, rout);
-		int firstIFDOffset = ifds.get(0).getStartOffset();	
-
-		writeToStream(rout, firstIFDOffset);	
-	}
-	
-	/**
-	 * Inserts ICC_Profile into TIFF page
-	 * 
-	 * @param icc_profile ICC_Profile
-	 * @param pageNumber page number to insert the ICC_Profile
-	 * @param rin RandomAccessInputStream for the input image
-	 * @param rout RandomAccessOutputStream for the output image
-	 * @throws Exception
-	 */
-	public static void insertICCProfile(ICC_Profile icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws Exception {
-		insertICCProfile(icc_profile.getData(), pageNumber, rin, rout);
-	}
-	
-	/**
 	 * Insert EXIF data with optional thumbnail IFD
 	 * 
 	 * @param rin input image stream
@@ -954,6 +921,46 @@ public class TIFFTweaker {
 	}
 	
 	/**
+	 * Inserts ICC_Profile into TIFF page
+	 * 
+	 * @param icc_profile byte array holding the ICC_Profile
+	 * @param pageNumber page number to insert the ICC_Profile
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @throws Exception
+	 */
+	public static void insertICCProfile(byte[] icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws Exception {
+		int offset = copyHeader(rin, rout);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		workingPage.addField(new UndefinedField(TiffTag.ICC_PROFILE.getValue(), icc_profile));
+		
+		offset = copyPages(ifds, offset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();	
+
+		writeToStream(rout, firstIFDOffset);	
+	}
+	
+	/**
+	 * Inserts ICC_Profile into TIFF page
+	 * 
+	 * @param icc_profile ICC_Profile
+	 * @param pageNumber page number to insert the ICC_Profile
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @throws Exception
+	 */
+	public static void insertICCProfile(ICC_Profile icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws Exception {
+		insertICCProfile(icc_profile.getData(), pageNumber, rin, rout);
+	}
+	
+	/**
 	 * Insert a single page into a TIFF image
 	 * 
 	 * @param image a BufferedImage to insert
@@ -989,6 +996,97 @@ public class TIFFTweaker {
 	// Insert images into existing TIFF image using default writer parameters
 	public static void insertPages(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, BufferedImage... images) throws IOException {
 		insertPages(rin, rout, pageNumber, null, images);
+	}
+	
+	/**
+	 * Insert ImageFrames into existing TIFF image. If knowledge of total pages for the
+	 * original image is desirable, call {@link #getPageCount(RandomAccessInputStream) getPageCount}
+	 * first.
+	 * 
+	 * @param rin RandomAccessInputStream for the original image
+	 * @param rout RandomAccessOutputStream to write new image
+	 * @param pageNumber page offset to start page insertion
+	 * @param frames an array of ImageFrame
+	 * @throws IOException
+	 */	
+	public static void insertPages(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, ImageFrame ... frames) throws IOException {
+		rin.seek(STREAM_HEAD);
+		int offset = copyHeader(rin, rout);
+		
+		List<IFD> list = new ArrayList<IFD>();
+		List<IFD> insertedList = new ArrayList<IFD>(frames.length);
+		
+		// Read the IFDs into a list first
+		readIFDs(null, null, TiffTag.class, list, offset, rin);
+		
+		if(pageNumber < 0) pageNumber = 0;
+		else if(pageNumber > list.size()) pageNumber = list.size();
+		
+		int minPageNumber = pageNumber;
+		
+		int maxPageNumber = list.size() + frames.length;
+		
+		int writeOffset = FIRST_WRITE_OFFSET;
+		
+		TIFFWriter writer = new TIFFWriter(); 
+		
+		for(int i = 0; i < frames.length; i++) {
+			// Retrieve image dimension
+			BufferedImage frame = frames[i].getFrame();
+			ImageMeta meta = frames[i].getFrameMeta();
+			int imageWidth = frame.getWidth();
+			int imageHeight = frame.getHeight();
+			// Grab image pixels in ARGB format and write image
+			int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+			
+			try {
+				writer.setImageMeta(meta);
+				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
+				insertedList.add(writer.getIFD());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// Reset pageNumber for the existing pages
+		for(int i = 0; i < minPageNumber; i++) {
+			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)maxPageNumber}));
+		}
+		
+		for(int i = minPageNumber; i < list.size(); i++) {
+			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)(i + frames.length), (short)maxPageNumber}));
+		}
+		
+		if(list.size() == 1) { // Make the original image one page of the new multiple page TIFF
+			if(list.get(0).removeField(TiffTag.SUBFILE_TYPE.getValue()) == null)
+				list.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE.getValue());
+			list.get(0).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{3}));
+		}
+		
+		// Copy pages
+		writeOffset = copyPages(list, writeOffset, rin, rout);
+		// Re-link the IFDs
+		// Internally link inserted IFDs first
+		for(int i = 0; i < frames.length - 1; i++) {
+			insertedList.get(i).setNextIFDOffset(rout, insertedList.get(i+1).getStartOffset());
+		}
+		// Link first inserted image IFD with the old previous one
+		if(minPageNumber != 0) // Not added at the head
+			list.get(minPageNumber - 1).setNextIFDOffset(rout, insertedList.get(0).getStartOffset());
+		if(minPageNumber != list.size()) // Link the last inserted image with the old next one
+			insertedList.get(insertedList.size() - 1).setNextIFDOffset(rout, list.get(minPageNumber).getStartOffset());
+		
+		int firstIFDOffset = 0;
+			
+		if(minPageNumber == 0) {
+			firstIFDOffset = insertedList.get(0).getStartOffset();			
+		} else {
+			firstIFDOffset = list.get(0).getStartOffset();
+		}
+		
+		writeToStream(rout, firstIFDOffset);
 	}
 	
 	/**
@@ -1075,97 +1173,6 @@ public class TIFFTweaker {
 		// Re-link the IFDs
 		// Internally link inserted IFDs first
 		for(int i = 0; i < images.length - 1; i++) {
-			insertedList.get(i).setNextIFDOffset(rout, insertedList.get(i+1).getStartOffset());
-		}
-		// Link first inserted image IFD with the old previous one
-		if(minPageNumber != 0) // Not added at the head
-			list.get(minPageNumber - 1).setNextIFDOffset(rout, insertedList.get(0).getStartOffset());
-		if(minPageNumber != list.size()) // Link the last inserted image with the old next one
-			insertedList.get(insertedList.size() - 1).setNextIFDOffset(rout, list.get(minPageNumber).getStartOffset());
-		
-		int firstIFDOffset = 0;
-			
-		if(minPageNumber == 0) {
-			firstIFDOffset = insertedList.get(0).getStartOffset();			
-		} else {
-			firstIFDOffset = list.get(0).getStartOffset();
-		}
-		
-		writeToStream(rout, firstIFDOffset);
-	}
-	
-	/**
-	 * Insert ImageFrames into existing TIFF image. If knowledge of total pages for the
-	 * original image is desirable, call {@link #getPageCount(RandomAccessInputStream) getPageCount}
-	 * first.
-	 * 
-	 * @param rin RandomAccessInputStream for the original image
-	 * @param rout RandomAccessOutputStream to write new image
-	 * @param pageNumber page offset to start page insertion
-	 * @param frames an array of ImageFrame
-	 * @throws IOException
-	 */	
-	public static void insertPages(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, ImageFrame ... frames) throws IOException {
-		rin.seek(STREAM_HEAD);
-		int offset = copyHeader(rin, rout);
-		
-		List<IFD> list = new ArrayList<IFD>();
-		List<IFD> insertedList = new ArrayList<IFD>(frames.length);
-		
-		// Read the IFDs into a list first
-		readIFDs(null, null, TiffTag.class, list, offset, rin);
-		
-		if(pageNumber < 0) pageNumber = 0;
-		else if(pageNumber > list.size()) pageNumber = list.size();
-		
-		int minPageNumber = pageNumber;
-		
-		int maxPageNumber = list.size() + frames.length;
-		
-		int writeOffset = FIRST_WRITE_OFFSET;
-		
-		TIFFWriter writer = new TIFFWriter(); 
-		
-		for(int i = 0; i < frames.length; i++) {
-			// Retrieve image dimension
-			BufferedImage frame = frames[i].getFrame();
-			ImageMeta meta = frames[i].getFrameMeta();
-			int imageWidth = frame.getWidth();
-			int imageHeight = frame.getHeight();
-			// Grab image pixels in ARGB format and write image
-			int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-			
-			try {
-				writer.setImageMeta(meta);
-				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
-				insertedList.add(writer.getIFD());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		// Reset pageNumber for the existing pages
-		for(int i = 0; i < minPageNumber; i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
-			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)maxPageNumber}));
-		}
-		
-		for(int i = minPageNumber; i < list.size(); i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
-			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)(i + frames.length), (short)maxPageNumber}));
-		}
-		
-		if(list.size() == 1) { // Make the original image one page of the new multiple page TIFF
-			if(list.get(0).removeField(TiffTag.SUBFILE_TYPE.getValue()) == null)
-				list.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE.getValue());
-			list.get(0).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{3}));
-		}
-		
-		// Copy pages
-		writeOffset = copyPages(list, writeOffset, rin, rout);
-		// Re-link the IFDs
-		// Internally link inserted IFDs first
-		for(int i = 0; i < frames.length - 1; i++) {
 			insertedList.get(i).setNextIFDOffset(rout, insertedList.get(i+1).getStartOffset());
 		}
 		// Link first inserted image IFD with the old previous one
@@ -1798,7 +1805,7 @@ public class TIFFTweaker {
 		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		
 		return writeOffset;
-	}
+	}	
 	
 	private static int readHeader(RandomAccessInputStream rin) throws IOException {
 		int offset = 0;
@@ -1897,19 +1904,23 @@ public class TIFFTweaker {
 				case BYTE:
 				case UNDEFINED:
 					byte[] data = new byte[field_length];
-					if(field_length <= 4) {
-						rin.seek(offset);
+					rin.seek(offset);
+					if(field_length <= 4) {						
 						rin.readFully(data, 0, field_length);					   
-					}
-					else {
-						rin.seek(offset);
+					} else {
 						rin.seek(rin.readInt());
 						rin.readFully(data, 0, field_length);
 					}
 					System.out.print(indent);
 					if(ftag == ExifTag.EXIF_VERSION || ftag == ExifTag.FLASH_PIX_VERSION)
 						System.out.println("Field value: " + new String(data));
-					else
+					else if(ftag == TiffTag.ICC_PROFILE) {
+						showICCProfile(data);
+					} else if(ftag == TiffTag.PHOTOSHOP) {
+						showPhtoshop(data);
+					} else if(ftag == TiffTag.XMP) {
+						StringUtils.showXML(data);
+					} else
 						System.out.println("Field value: " + StringUtils.byteArrayToHexString(data, 0, 10));
 					offset += 4;					
 					tiffIFD.addField((ftype == FieldType.BYTE)?new ByteField(tag, data):new UndefinedField(tag, data));
@@ -2315,6 +2326,18 @@ public class TIFFTweaker {
 		return pagesRetained;
 	}
 	
+	private static void showICCProfile(byte[] icc_profile) {
+		ICCProfile.showProfile(icc_profile);
+	}
+	
+	private static void showPhtoshop(byte[] data) {
+		try {
+			new IRBReader(data).read();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void snoop(RandomAccessInputStream rin) throws IOException	{	
 		System.out.println("*** TIFF snooping starts ***");
 		int offset = readHeader(rin);
@@ -2389,6 +2412,50 @@ public class TIFFTweaker {
 		writeMultipageTIFF(rout, null, images);
 	}
 	
+	/**
+	 * Write an array of ImageFrames as a multiple page TIFF.
+	 *  
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @param frames an array of ImageFrame
+	 * 
+	 * @throws IOException
+	 */
+	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageFrame ... frames) throws IOException {
+		// Write header first
+		writeHeader(IOUtils.BIG_ENDIAN, rout);
+		// Write pages
+		int writeOffset = FIRST_WRITE_OFFSET;
+		int pageNumber = 0;
+		int maxPageNumber = frames.length;
+		List<IFD> list = new ArrayList<IFD>(frames.length);
+		TIFFWriter writer = new TIFFWriter();
+		// Grab image pixels in ARGB format and write image
+		for(int i = 0; i < frames.length; i++) {
+			// Retrieve image dimension
+			BufferedImage frame = frames[i].getFrame();
+			ImageMeta meta = frames[i].getFrameMeta();
+			int imageWidth = frame.getWidth();
+			int imageHeight = frame.getHeight();
+			int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+			
+			try {
+				writer.setImageMeta(meta);
+				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
+				list.add(writer.getIFD());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// Link the IFDs
+		for(int i = 0; i < frames.length - 1; i++)
+			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
+				
+		int firstIFDOffset = list.get(0).getStartOffset();
+		
+		writeToStream(rout, firstIFDOffset);
+	}
+	
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageMeta[] imageMeta, BufferedImage ... images) throws IOException {
 		// Write header first
 		writeHeader(IOUtils.BIG_ENDIAN, rout);
@@ -2429,50 +2496,6 @@ public class TIFFTweaker {
 		
 		// Link the IFDs
 		for(int i = 0; i < images.length - 1; i++)
-			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
-				
-		int firstIFDOffset = list.get(0).getStartOffset();
-		
-		writeToStream(rout, firstIFDOffset);
-	}
-	
-	/**
-	 * Write an array of ImageFrames as a multiple page TIFF.
-	 *  
-	 * @param rout RandomAccessOutputStream for the output image
-	 * @param frames an array of ImageFrame
-	 * 
-	 * @throws IOException
-	 */
-	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageFrame ... frames) throws IOException {
-		// Write header first
-		writeHeader(IOUtils.BIG_ENDIAN, rout);
-		// Write pages
-		int writeOffset = FIRST_WRITE_OFFSET;
-		int pageNumber = 0;
-		int maxPageNumber = frames.length;
-		List<IFD> list = new ArrayList<IFD>(frames.length);
-		TIFFWriter writer = new TIFFWriter();
-		// Grab image pixels in ARGB format and write image
-		for(int i = 0; i < frames.length; i++) {
-			// Retrieve image dimension
-			BufferedImage frame = frames[i].getFrame();
-			ImageMeta meta = frames[i].getFrameMeta();
-			int imageWidth = frame.getWidth();
-			int imageHeight = frame.getHeight();
-			int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-			
-			try {
-				writer.setImageMeta(meta);
-				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
-				list.add(writer.getIFD());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		// Link the IFDs
-		for(int i = 0; i < frames.length - 1; i++)
 			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
 				
 		int firstIFDOffset = list.get(0).getStartOffset();
