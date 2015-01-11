@@ -37,7 +37,8 @@ Image convertion and management:
    * Remove thumbnails from JPEG image.
    * Extract thumbnails from JPEG (the extracted thumbnail is either in JPEG or TIFF format depending on whether or not it is in JPEG or Raw format and the inserted thumbnail could be completely different from the original image).
    * Insert thumbnail to TIFF image.
-   * Extract thumbnail from TIFF image.
+   * Extract thumbnail(as normal TIFF page) from TIFF image.
+   * Extract Photoshop thumbnail from Photoshop tag
 - JPEG and TIFF EXIF data manipulation
    * Insert EXIF data into JPEG.
    * Extract EXIF data from JPEG.
