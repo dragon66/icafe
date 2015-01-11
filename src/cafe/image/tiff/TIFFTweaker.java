@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    11Jan2015  Added extractThumbnail() to extract Photoshop thumbnail
  * WY    10Jan2015  Added showICCProfile() and showPhotoshop()
  * WY    23Dec2014  Added extractICCProfile() to extract ICC_Profile from TIFF image
  * WY    22Dec2014  Added insertICCProfile() to insert ICC_Profile into TIFF image
@@ -84,6 +85,7 @@ import cafe.image.meta.exif.GPSTag;
 import cafe.image.meta.exif.InteropTag;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.photoshop.IRBReader;
+import cafe.image.meta.photoshop.IRBThumbnail;
 import cafe.image.util.IMGUtils;
 import cafe.image.writer.TIFFWriter;
 import cafe.io.FileCacheRandomAccessInputStream;
@@ -520,8 +522,8 @@ public class TIFFTweaker {
 		
 		IFD workingPage = ifds.get(pageNumber);
 		TiffField<?> f_iccProfile = workingPage.getField(TiffTag.ICC_PROFILE.getValue());
-		if(f_iccProfile != null && f_iccProfile.getType() == FieldType.UNDEFINED) {
-			return ((UndefinedField)f_iccProfile).getData();
+		if(f_iccProfile != null) {
+			return (byte[])f_iccProfile.getData();
 		}
 		
 		return null;
@@ -529,6 +531,35 @@ public class TIFFTweaker {
 	
 	public static byte[] extractICCProfile(RandomAccessInputStream rin) throws Exception {
 		return extractICCProfile(0, rin);
+	}
+	
+	public static IRBThumbnail extractThumbnail(RandomAccessInputStream rin) throws Exception {
+		return extractThumbnail(0, rin);
+	}
+	
+	public static IRBThumbnail extractThumbnail(int pageNumber, RandomAccessInputStream rin) throws Exception {
+		// Read pass image header
+		int offset = readHeader(rin);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP.getValue());
+		if(f_photoshop != null) {
+			byte[] data = (byte[])f_photoshop.getData();
+			IRBReader reader = new IRBReader(data);
+			reader.read();
+			if(reader.containsThumbnail()) {
+				IRBThumbnail thumbnail = reader.getThumbnail();
+				return thumbnail;					
+			}		
+		}
+		
+		return null;
 	}
 	
 	public static void finishInsert(RandomAccessOutputStream rout, List<IFD> list) throws IOException {

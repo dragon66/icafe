@@ -13,9 +13,10 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    10Jan2015  Revised extractThumbnails() to use IRBReader and IRBThumbnail
  * WY    05Jan2015  Enhanced to show information for all SOFX and SOS segments
  * WY    07Oct2014  Revised readAPP1() to show Adobe XMP information
- * WY    02Oct2014  Renamed extractExifThumbnail() to extractThumbnail()
+ * WY    02Oct2014  Renamed extractExifThumbnail() to extractThumbnails()
  * WY    02Oct2014  Removed readExif()
  * WY    01Oct2014  Added code to read APP13 thumbnail
  * WY    29Sep2014  Added insertICCProfile(InputStream, OutputStream, ICCProfile)
@@ -59,7 +60,7 @@ import cafe.image.writer.ImageWriter;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.photoshop.IRBReader;
-import cafe.image.meta.photoshop.ImageResourceID;
+import cafe.image.meta.photoshop.IRBThumbnail;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.TIFFTweaker;
 import cafe.image.tiff.TiffField;
@@ -384,92 +385,22 @@ public class JPEGTweaker {
 						byte[] data = new byte[length-2];
 						IOUtils.readFully(is, data, 0, length-2);						
 						int i = 0;
-						boolean done = false;
 						
 						while(data[i] != 0) i++;
 						
 						if(new String(data, 0, i++).equals("Photoshop 3.0")) {
-							while((i+4) < data.length && !done) {
-								String _8bim = new String(data, i, 4);
-								i += 4;			
-								if(_8bim.equals("8BIM")) {
-									short id = IOUtils.readShortMM(data, i);
-									i += 2;
-									int nameLen = (data[i++]&0xff);
-									i += nameLen;
-									if((nameLen%2) == 0) i++;
-									int size = IOUtils.readIntMM(data, i);
-									i += 4;
-									
-									ImageResourceID eId =ImageResourceID.fromShort(id); 
-									
-									switch (eId) {										
-										case THUMBNAIL_RESOURCE_PS4:
-										case THUMBNAIL_RESOURCE_PS5:
-											String outpath = "";
-											if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
-												outpath = pathToThumbnail + "photoshop_thumbnail";
-											else
-												outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_photoshop_t";
-											int thumbnailFormat = IOUtils.readIntMM(data, i); //1 = kJpegRGB. Also supports kRawRGB (0).
-											i += 4;
-											int width = IOUtils.readIntMM(data, i);
-											i += 4;
-											int height = IOUtils.readIntMM(data, i);
-											i += 4;
-											// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-											int widthBytes = IOUtils.readIntMM(data, i);
-											i += 4;
-											// Total size = widthbytes * height * planes
-											int totalSize = IOUtils.readIntMM(data, i);
-											i += 4;
-											// Size after compression. Used for consistency check.
-											int sizeAfterCompression = IOUtils.readIntMM(data, i);
-											i += 4;
-											IOUtils.readShortMM(data, i); // Bits per pixel. = 24
-											i += 2;
-											IOUtils.readShortMM(data, i); // Number of planes. = 1
-											i += 2; 	
-											// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
-											if(thumbnailFormat == 1) {
-												// Note: Not sure whether or not this will create wrong color JPEG
-												// if it's written by Photoshop 4.0!
-												OutputStream fout = new FileOutputStream(outpath + ".jpg");
-									    		fout.write(data, i, sizeAfterCompression);
-									    		fout.close();
-											} else if(thumbnailFormat == 0) {
-												// kRawRGB - NOT tested yet!
-												//Create a BufferedImage
-												DataBuffer db = new DataBufferByte(ArrayUtils.subArray(data, i, totalSize), totalSize);
-												int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
-												if(eId == ImageResourceID.THUMBNAIL_RESOURCE_PS4)
-													off = new int[]{2, 1, 0}; // RGB band offset for BGR for photoshop4.0 BGR format
-												int numOfBands = 3;
-												int trans = Transparency.OPAQUE;
-													
-												WritableRaster raster = Raster.createInterleavedRaster(db, width, height, widthBytes, numOfBands, off, null);
-												ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, trans, DataBuffer.TYPE_BYTE);
-										   		BufferedImage bi = new BufferedImage(cm, raster, false, null);
-												// Create a new writer to write the image
-												ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
-												FileOutputStream fout = new FileOutputStream(outpath + ".jpg");
-												try {
-													writer.write(bi, fout);
-												} catch (Exception e) {
-													e.printStackTrace();
-												}
-												fout.close();								
-											}
-											i += sizeAfterCompression; 
-											if(size%2 != 0) i++;
-											done = true;
-											break;										
-										default:							
-											i += size;
-											if(size%2 != 0) i++;
-									}					
-								}
-							}
+							IRBReader reader = new IRBReader(ArrayUtils.subArray(data, i, data.length - i));
+							reader.read();
+							if(reader.containsThumbnail()) {
+								IRBThumbnail thumbnail = reader.getThumbnail();
+								// Create output path
+								String outpath = "";
+								if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
+									outpath = pathToThumbnail + "photoshop_thumbnail";
+								else
+									outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_photoshop_t";
+								thumbnail.write(outpath);								
+							}							
 						}				
 				    	marker = IOUtils.readShortMM(is);
 				    	break;
