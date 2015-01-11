@@ -28,9 +28,19 @@ import cafe.util.Reader;
  */
 public class IRBReader implements Reader {
 	private byte[] data;
+	private boolean containsThumbnail;
+	private IRBThumbnail thumbnail;
 	
 	public IRBReader(byte[] data) {
 		this.data = data;
+	}
+	
+	public boolean containsThumbnail() {
+		return containsThumbnail;
+	}
+	
+	public IRBThumbnail getThumbnail()  {
+		return thumbnail;
 	}
 	
 	@Override
@@ -182,14 +192,15 @@ public class IRBReader implements Reader {
 						if(size%2 != 0) i++;
 						break;
 					case THUMBNAIL_RESOURCE_PS4:
-					case THUMBNAIL_RESOURCE_PS5:	
+					case THUMBNAIL_RESOURCE_PS5:
+						containsThumbnail = true;
 						int thumbnailFormat = IOUtils.readIntMM(data, i); //1 = kJpegRGB. Also supports kRawRGB (0).
 						i += 4;
 						switch (thumbnailFormat) {
-							case 1:
+							case IRBThumbnail.FORMAT_KJpegRGB:
 								System.out.println("Thumbnail format: KJpegRGB");
 								break;
-							case 0:
+							case IRBThumbnail.FORMAT_KRawRGB:
 								System.out.println("Thumbnail format: KRawRGB");
 								break;
 						}
@@ -216,10 +227,16 @@ public class IRBReader implements Reader {
 						i += 2;
 						short numOfPlanes = IOUtils.readShortMM(data, i); // Number of planes. = 1
 						System.out.println("Number of planes: "  + numOfPlanes);
-						i += 2; 	
+						i += 2;
+						byte[] thumbnailData = null;
+						if(thumbnailFormat == IRBThumbnail.FORMAT_KJpegRGB)
+							thumbnailData = ArrayUtils.subArray(data, i, sizeAfterCompression);
+						else if(thumbnailFormat == IRBThumbnail.FORMAT_KRawRGB)
+							thumbnailData = ArrayUtils.subArray(data, i, totalSize);
 						// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
 						i += sizeAfterCompression; 
 						if(size%2 != 0) i++;
+						thumbnail = new IRBThumbnail(eId, thumbnailFormat, width, height, widthBytes, totalSize, sizeAfterCompression, bitsPerPixel, numOfPlanes, thumbnailData);
 						break;
 					case VERSION_INFO:
 						System.out.println("Version: " + StringUtils.byteArrayToHexString(ArrayUtils.subArray(data, i, 4)));
