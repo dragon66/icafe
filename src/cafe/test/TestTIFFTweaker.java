@@ -6,6 +6,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +52,13 @@ public class TestTIFFTweaker {
 				IRBThumbnail thumbnail = TIFFTweaker.extractThumbnail(rin);
 				if(thumbnail != null)
 					thumbnail.write("thumbnail");
+			} else if(args[1].equalsIgnoreCase("extractICCProfile")) {
+				byte[] icc_profile = TIFFTweaker.extractICCProfile(rin);
+				if(icc_profile != null) {
+					OutputStream iccOut = new FileOutputStream(new File("ICCProfile.icc"));
+					iccOut.write(icc_profile);
+					iccOut.close();
+				}
 			} else if(args[1].equalsIgnoreCase("retainpage")) {
 				int pageCount = TIFFTweaker.getPageCount(rin);
 				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
