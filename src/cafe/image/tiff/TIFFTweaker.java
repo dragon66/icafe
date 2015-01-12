@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    12Jan2015  Added showIPTC() to show IPTC private tag information
  * WY    11Jan2015  Added extractThumbnail() to extract Photoshop thumbnail
  * WY    10Jan2015  Added showICCProfile() and showPhotoshop()
  * WY    23Dec2014  Added extractICCProfile() to extract ICC_Profile from TIFF image
@@ -84,6 +85,7 @@ import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.GPSTag;
 import cafe.image.meta.exif.InteropTag;
 import cafe.image.meta.icc.ICCProfile;
+import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.meta.photoshop.IRBReader;
 import cafe.image.meta.photoshop.IRBThumbnail;
 import cafe.image.util.IMGUtils;
@@ -1951,6 +1953,8 @@ public class TIFFTweaker {
 						showPhtoshop(data);
 					} else if(ftag == TiffTag.XMP) {
 						StringUtils.showXML(data);
+					} else if(ftag == TiffTag.IPTC) {
+						showIPTC(data);
 					} else
 						System.out.println("Field value: " + StringUtils.byteArrayToHexString(data, 0, 10));
 					offset += 4;					
@@ -2054,6 +2058,8 @@ public class TIFFTweaker {
 							tiffIFD.removeField(ExifTag.EXIF_INTEROPERABILITY_OFFSET.getValue());
 							e.printStackTrace();
 						}
+					} else if (ftag == TiffTag.IPTC) {
+						showIPTC(ArrayUtils.toByteArray(ldata, rin.getEndian() == IOUtils.BIG_ENDIAN));						
 					} else if (ftag == TiffTag.SUB_IFDS) {						
 						for(int ifd = 0; ifd < ldata.length; ifd++) {
 							System.out.print(indent);
@@ -2359,6 +2365,30 @@ public class TIFFTweaker {
 	
 	private static void showICCProfile(byte[] icc_profile) {
 		ICCProfile.showProfile(icc_profile);
+	}
+	
+	private static void showIPTC(byte[] iptc) {
+		List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
+		int i = 0;
+		int tagMarker = iptc[i];
+	
+		while (tagMarker == 0x1c) {
+			i++;
+			int recordNumber = iptc[i++];
+			int tag = iptc[i++];
+			int recordSize = IOUtils.readUnsignedShortMM(iptc, i);
+			i += 2;
+			list.add(new IPTCDataSet(recordNumber, tag, recordSize, iptc, i));
+			i += recordSize;
+			
+			tagMarker = iptc[i];							
+		}
+		
+		if(i%2 != 0) i++;
+			
+		for(IPTCDataSet dataSet : list) {
+			dataSet.print();
+		}
 	}
 	
 	private static void showPhtoshop(byte[] data) {
