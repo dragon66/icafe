@@ -11,10 +11,7 @@
 package cafe.image.meta.photoshop;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import cafe.image.meta.iptc.IPTCDataSet;
+import cafe.image.meta.iptc.IPTCReader;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
@@ -87,28 +84,10 @@ public class IRBReader implements Reader {
 						   (Size specifier) 2 bytes  data length (< 32768 bytes) or length of ...
 						   (Size specifier)  ...     data length (> 32767 bytes only)
 						   (Data)            ...     (its length is specified before)
-						 */					
-						int tagMarker = data[i];
-						List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
-						
-						while (tagMarker == 0x1c) {
-							i++;
-							int recordNumber = data[i++];
-							int tag = data[i++];
-							int recordSize = IOUtils.readUnsignedShortMM(data, i);
-							i += 2;
-							list.add(new IPTCDataSet(recordNumber, tag, recordSize, data, i));
-							i += recordSize;
-							
-							tagMarker = data[i];							
-						}
-						
+						 */
+						new IPTCReader(ArrayUtils.subArray(data, i, size)).read();
+						i += size;
 						if(size%2 != 0) i++;
-							
-						for(IPTCDataSet iptc : list) {
-							iptc.print();
-						}
-						
 						break;
 					case JPEG_QUALITY: // PhotoShop Save As Quality
 						// index 0: Quality level
