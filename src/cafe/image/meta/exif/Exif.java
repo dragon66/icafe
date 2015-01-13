@@ -148,6 +148,11 @@ public class Exif extends Metadata {
 		return null;
 	}
 	
+	@Override
+	public void show() {
+		
+	}
+	
 	/** 
 	 * Write the EXIF data to the OutputStream
 	 * 
@@ -261,5 +266,5 @@ public class Exif extends Metadata {
 			randOS.seek(thumbNailIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()).getDataOffset());
 			randOS.writeInt(totalOut);
 		}
-	}
+	}	
 }

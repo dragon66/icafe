@@ -19,7 +19,7 @@ import java.io.OutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/12/2015
  */
-public class Metadata {
+public abstract class Metadata {
 	private MetadataType type;
 	private byte[] data;
 	
@@ -35,6 +35,9 @@ public class Metadata {
 	public MetadataType getType() {
 		return type;
 	}
+	
+	// Dumps the content of the Metadata
+	public abstract void show();
 
 	/**
 	 * Writes the metadata out to the output stream
@@ -44,5 +47,5 @@ public class Metadata {
 	 */
 	public void write(OutputStream out) throws IOException {
 		out.write(data);
-	}
+	}	
 }

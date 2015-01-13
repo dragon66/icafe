@@ -39,13 +39,13 @@ public class ICCProfile extends Metadata {
 	
 	private ICCProfileHeader header;
 	private ProfileTagTable tagTable;
+	private boolean loaded;
 	
 	public static void showProfile(byte[] icc_profile) {
 		if(icc_profile != null && icc_profile.length > 0) {
 			ICCProfile profile = new ICCProfile(icc_profile);
 			profile.loadProfile();
-			profile.showHeader();
-			profile.showTagTable();
+			profile.show();
 		}
 	}
 	
@@ -239,6 +239,7 @@ public class ICCProfile extends Metadata {
 		byte[] data = getData();
 		readHeader(data);
 		readTagTable(data);
+		loaded = true;
 	}
 	
 	private void readHeader(byte[] data) {
@@ -264,6 +265,14 @@ public class ICCProfile extends Metadata {
 	
 	private void readTagTable(byte[] data) {
 		tagTable.read(data);
+	}
+	
+	@Override
+	public void show() {
+		if(!loaded)
+			loadProfile();
+		showHeader();
+		showTagTable();
 	}
 	
 	private void showHeader() {
