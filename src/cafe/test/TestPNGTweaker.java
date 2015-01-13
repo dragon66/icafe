@@ -33,7 +33,7 @@ public class TestPNGTweaker {
         Chunk authorChunk = builder.build();
         builder.keyword("Software").text("PNGTweaker 1.0");
         Chunk softwareChunk = builder.build();
-        builder.keyword("Copyright").text("Copyright 2014 Wen Yu\nat Actuate Inc.");
+        builder.keyword("Copyright").text("Copyright 2015 Wen Yu (yuwen_66@yahoo.com).");
         Chunk copyrightChunk = builder.build();
         
         Chunk[] chunks = new Chunk[] {authorChunk, softwareChunk, copyrightChunk};
