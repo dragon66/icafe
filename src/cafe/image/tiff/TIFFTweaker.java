@@ -85,7 +85,7 @@ import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.GPSTag;
 import cafe.image.meta.exif.InteropTag;
 import cafe.image.meta.icc.ICCProfile;
-import cafe.image.meta.iptc.IPTCDataSet;
+import cafe.image.meta.iptc.IPTCReader;
 import cafe.image.meta.photoshop.IRBReader;
 import cafe.image.meta.photoshop.IRBThumbnail;
 import cafe.image.util.IMGUtils;
@@ -2368,27 +2368,11 @@ public class TIFFTweaker {
 	}
 	
 	private static void showIPTC(byte[] iptc) {
-		List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
-		int i = 0;
-		int tagMarker = iptc[i];
-	
-		while (tagMarker == 0x1c) {
-			i++;
-			int recordNumber = iptc[i++];
-			int tag = iptc[i++];
-			int recordSize = IOUtils.readUnsignedShortMM(iptc, i);
-			i += 2;
-			list.add(new IPTCDataSet(recordNumber, tag, recordSize, iptc, i));
-			i += recordSize;
-			
-			tagMarker = iptc[i];							
-		}
-		
-		if(i%2 != 0) i++;
-			
-		for(IPTCDataSet dataSet : list) {
-			dataSet.print();
-		}
+		try {
+			new IPTCReader(iptc).read();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
 	}
 	
 	private static void showPhtoshop(byte[] data) {
