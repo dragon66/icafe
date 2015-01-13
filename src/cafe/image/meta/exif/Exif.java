@@ -19,6 +19,7 @@
 package cafe.image.meta.exif;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,6 +29,8 @@ import cafe.image.ImageIO;
 import cafe.image.ImageMeta;
 import cafe.image.ImageType;
 import cafe.image.jpeg.Marker;
+import cafe.image.meta.Metadata;
+import cafe.image.meta.MetadataType;
 import cafe.image.options.JPEGOptions;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.IFD;
@@ -50,7 +53,7 @@ import cafe.io.WriteStrategyMM;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/08/2014
  */
-public class Exif {
+public class Exif extends Metadata {
 	// EXIF thumbnail flavors
 	public static final int EXIF_FLAVOR_JPG = 0xFFD8;//JPEG SOI
 	public static final int EXIF_FLAVOR_TIFF = 0x4D4D;//TIFF MM
@@ -64,7 +67,9 @@ public class Exif {
 	
 	private boolean isThumbnailRequired;
 	
+	// TODO: revise to use a builder
 	public Exif(int flavor) {
+		super(MetadataType.EXIF, null); 
 		if(flavor != Exif.EXIF_FLAVOR_JPG && flavor != Exif.EXIF_FLAVOR_TIFF)
 			throw new IllegalArgumentException("Unknown EXIF flavor: " + flavor);
 		this.flavor = flavor;
@@ -149,7 +154,9 @@ public class Exif {
 	 * @param os OutputStream
 	 * @throws Exception 
 	 */
-	public void write(OutputStream os) throws Exception {
+	@Override
+	// TODO remove this method, use the base class version
+	public void write(OutputStream os) throws IOException {
 		RandomAccessOutputStream randOS = null;
 		// Write the EXIF data according to the flavor
 		if(flavor == Exif.EXIF_FLAVOR_JPG) {
@@ -192,7 +199,7 @@ public class Exif {
 		}
 	}
 	
-	private void writeThumbNail(RandomAccessOutputStream randOS, int offset) throws Exception {
+	private void writeThumbNail(RandomAccessOutputStream randOS, int offset) throws IOException {
 		// Create thumbnail IFD (IFD1)
 		int thumbnailWidth = thumbNail.getWidth();
 		int thumbnailHeight = thumbNail.getHeight();
@@ -236,7 +243,11 @@ public class Exif {
 		// This is amazing. We can actually keep track of how many bytes have been written to
 		// the underlying stream by JPEGWriter
 		long startOffset = randOS.getStreamPointer();
-		jpgWriter.write(thumbNail, randOS);
+		try {
+			jpgWriter.write(thumbNail, randOS);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		long finishOffset = randOS.getStreamPointer();			
 		int totalOut = (int)(finishOffset - startOffset);
 		if(flavor == Exif.EXIF_FLAVOR_JPG) {// Update fields

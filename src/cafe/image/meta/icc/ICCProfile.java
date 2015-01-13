@@ -22,7 +22,8 @@ package cafe.image.meta.icc;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import cafe.image.meta.Metadata;
+import cafe.image.meta.MetadataType;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 
@@ -32,50 +33,36 @@ import cafe.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 07/02/2013
  */
-public class ICCProfile {
-	// Profile header - 128 bytes in length and contains 18 fields
-	private static class ICCProfileHeader {
-		private long profileSize;
-		private byte[] preferredCMMType = new byte[4];
-		private byte[] profileVersionNumber = new byte[4];
-		private int profileClass;
-		private byte[] colorSpace = new byte[4];
-		private byte[] PCS = new byte[4];
-		private byte[] dateTimeCreated = new byte[12];
-		private byte[] profileFileSignature = new byte[4]; // "acsp" 61637370h
-		private byte[] primaryPlatformSignature = new byte[4];
-		private byte[] profileFlags = new byte[4];
-		private byte[] deviceManufacturer = new byte[4];
-		private byte[] deviceModel = new byte[4];
-		private byte[] deviceAttributes = new byte[8];
-		private int renderingIntent;
-		private byte[] PCSXYZ = new byte[12];
-		private byte[] profileCreator = new byte[4];
-		private byte[] profileID = new byte[16];
-		private byte[] bytesReserved = new byte[28];
-	}
+public class ICCProfile extends Metadata {
+	
 	public static final int TAG_TABLE_OFFSET = 128;
+	
+	private ICCProfileHeader header;
+	private ProfileTagTable tagTable;
 	
 	public static void showProfile(byte[] icc_profile) {
 		if(icc_profile != null && icc_profile.length > 0) {
 			ICCProfile profile = new ICCProfile(icc_profile);
+			profile.loadProfile();
 			profile.showHeader();
 			profile.showTagTable();
 		}
 	}
-	private ICCProfileHeader header;
-	private ProfileTagTable tagTable;
-		
-	private byte[] data;
+	
+	public static void showProfile(InputStream is) {
+		try {
+			showProfile(IOUtils.inputStreamToByteArray(is));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public ICCProfile(byte[] profile) {
-		this.data = profile;
-		loadProfile();
+		super(MetadataType.ICC_PROFILE, profile);
 	}
 	
 	public ICCProfile(InputStream is) throws IOException {
-		this.data = IOUtils.inputStreamToByteArray(is);
-		loadProfile();
+		this(IOUtils.inputStreamToByteArray(is));
 	}
 	
 	public boolean canBeUsedIndependently() {
@@ -88,10 +75,6 @@ public class ICCProfile {
 	
 	public String getColorSpace() {
 		return new String(header.colorSpace);
-	}
-	
-	public byte[] getData() {
-		return data;
 	}
 	
 	public String getDateTimeCreated() {
@@ -250,9 +233,10 @@ public class ICCProfile {
 		return (((header.deviceAttributes[0]>>7)&0x01) == 0);
 	}
 	
-	private void loadProfile() {
+	public void loadProfile() {
 		this.header = new ICCProfileHeader();
 		this.tagTable = new ProfileTagTable();
+		byte[] data = getData();
 		readHeader(data);
 		readTagTable(data);
 	}
@@ -282,7 +266,7 @@ public class ICCProfile {
 		tagTable.read(data);
 	}
 	
-	public void showHeader() {
+	private void showHeader() {
 		System.out.println("*** Start of ICC_Profile Header ***");
 		System.out.println("Profile Size: " + getProfileSize());
 		System.out.println("CMM Type: " + getPreferredCMMType());
@@ -304,7 +288,29 @@ public class ICCProfile {
 		System.out.println("*** End of ICC_Profile Header ***");
 	}
 	
-	public void showTagTable() {
+	private void showTagTable() {
 		tagTable.showTable();
 	}
+
+	// Profile header - 128 bytes in length and contains 18 fields
+	private static class ICCProfileHeader {
+		private long profileSize;
+		private byte[] preferredCMMType = new byte[4];
+		private byte[] profileVersionNumber = new byte[4];
+		private int profileClass;
+		private byte[] colorSpace = new byte[4];
+		private byte[] PCS = new byte[4];
+		private byte[] dateTimeCreated = new byte[12];
+		private byte[] profileFileSignature = new byte[4]; // "acsp" 61637370h
+		private byte[] primaryPlatformSignature = new byte[4];
+		private byte[] profileFlags = new byte[4];
+		private byte[] deviceManufacturer = new byte[4];
+		private byte[] deviceModel = new byte[4];
+		private byte[] deviceAttributes = new byte[8];
+		private int renderingIntent;
+		private byte[] PCSXYZ = new byte[12];
+		private byte[] profileCreator = new byte[4];
+		private byte[] profileID = new byte[16];
+		private byte[] bytesReserved = new byte[28];
+	}		
 }
