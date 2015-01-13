@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    13Jan2015  Split remove_ancillary_chunks() arguments
  * WY    22Dec2014  Added read_ICCP_chunk() to read ICC_Profile chunk
  * WY    22Dec2014  dump_text_chunks() now calls read_text_chunks()
  */
@@ -40,6 +41,7 @@ import java.util.zip.InflaterInputStream;
 
 import cafe.image.meta.icc.ICCProfile;
 import cafe.io.IOUtils;
+import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
 /**
  * PNG image tweaking tool
@@ -427,66 +429,70 @@ public class PNGTweaker {
   	}
   	
     /**
-   	 * @param args  An array of String passed to the method. The first element is either a file name or
-   	 *              a directory. The other elements are the names of the chunks to be removed.
-   	 * @throws Exception  Any exception related to the IO operations.
+     * Removes ancillary chunks either specified by "args" or predefined by REMOVABLE EnumSet.
+     * 
+     * @param fileOrDirectoryName file or directory name for the input PNG image(s).
+   	 * @param args  An array of String specifying the names of the chunks to be removed.
+   	 * @throws IOException
    	 */  	
-  	public static void remove_ancillary_chunks(String args[]) throws IOException
+  	public static void remove_ancillary_chunks(String fileOrDirectoryName, String ... args) throws IOException
     {
-  		if(args == null) throw new IllegalArgumentException("Input args is null");
-       
-  	    if(args.length>0)
+  		File dir = new File(".");
+  		File[] files = null;
+
+  	    if(!StringUtils.isNullOrEmpty(fileOrDirectoryName))
 	    {
-  	    	File[] files = {new File(args[0])};
-  	    	File dir = new File(".");
-
-	        if(files[0].isDirectory())
-		    {
+  	    	files = new File[] {new File(fileOrDirectoryName)};
+  	    
+  	    	if(files[0].isDirectory()) {
 			   dir = files[0];
-
-		       files = files[0].listFiles(new FileFilter(){
+			   files = null;
+  	    	}
+    	}
+  	    
+  	    if(files == null) {
+  	    	files = dir.listFiles(new FileFilter(){
 				  public boolean accept(File file)
 				  {
 				     if(file.getName().toLowerCase().endsWith("png")){
-                       return true;
+                     return true;
 				     }
 				     
-                     return false;
+                   return false;
 				  }
-			   });
-		    }			
-		  
-	        if(args.length>1)
-		    {	
-   		       REMOVABLE = EnumSet.noneOf(ChunkType.class);
+  	    	});
+  	    }
+	   
+  	    if(args != null && args.length > 0)
+	    {	
+	       REMOVABLE = EnumSet.noneOf(ChunkType.class);
    		     
-	    	   String key = "";
+    	   String key = "";
 			
-   		       for (int i=1;i<args.length;i++)
-   		       {
-				  key = args[i];				  
-				  if(ChunkType.containsIgnoreCase(key) && ChunkType.fromString(key).getAttribute() == ChunkType.Attribute.ANCILLARY)
+	       for (int i = 0; i < args.length; i++)
+	       {
+			  key = args[i];				  
+			  if(ChunkType.containsIgnoreCase(key) && ChunkType.fromString(key).getAttribute() == ChunkType.Attribute.ANCILLARY)
 			    	  REMOVABLE.add(ChunkType.fromString(key));
-			   }
-		    }
+       		}
+	    }
 	      
-		    FileInputStream fs = null;		
+	    FileInputStream fs = null;		
 		  
-		    for(int i= files.length-1;i>=0;i--)
-		    {
-			 	String outFileName = files[i].getName();
-				outFileName = outFileName.substring(0,outFileName.lastIndexOf('.'))
+	    for(int i = files.length - 1; i >= 0; i--)
+	    {
+		 	String outFileName = files[i].getName();
+		 	outFileName = outFileName.substring(0,outFileName.lastIndexOf('.'))
 					+"_slim.png";
-				System.out.println("<<"+files[i].getName());
-		  	    fs = new FileInputStream(files[i]);
-                remove_chunks(fs, dir, outFileName);
-				System.out.println(">>"+outFileName);	
-				System.out.println("************************");
-				fs.close();
-		    }
-		}
-	}
-   	
+		 	System.out.println("<<" + files[i].getName());
+	 		fs = new FileInputStream(files[i]);
+	 		remove_chunks(fs, dir, outFileName);
+ 			System.out.println(">>" + outFileName);	
+ 			System.out.println("************************");
+ 			fs.close();
+	    }
+    }
+  	
    	private static void remove_chunks(InputStream is, File outfileDir, String outfileName) throws IOException
     {
   		//Local variables for reading chunks

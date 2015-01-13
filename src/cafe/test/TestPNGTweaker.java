@@ -52,7 +52,7 @@ public class TestPNGTweaker {
         
         fi.close();
         
-        PNGTweaker.remove_ancillary_chunks(args);
+        PNGTweaker.remove_ancillary_chunks(args[0]);
         
         fi = new FileInputStream(args[0]);
         
