@@ -32,9 +32,15 @@ import cafe.util.Reader;
 public class IDATReader implements Reader {
 
 	private byte[] rawData;
-	private ByteArrayOutputStream byteOutput = new ByteArrayOutputStream(1024);
+	private ByteArrayOutputStream byteOutput = null;
 	
-	public IDATReader() {}
+	public IDATReader() {
+		this(8192); // 8K buffer
+	}
+	
+	public IDATReader(int bufLen) {
+		byteOutput = new ByteArrayOutputStream(bufLen);
+	}
 	
 	public IDATReader addChunk(Chunk chunk) throws IOException {
 		//
