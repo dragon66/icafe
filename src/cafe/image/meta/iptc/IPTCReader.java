@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cafe.io.IOUtils;
 import cafe.util.Reader;
 
 /**
@@ -33,10 +34,33 @@ import cafe.util.Reader;
  */
 public class IPTCReader implements Reader {
 	private List<IPTCDataSet> datasetList = new ArrayList<IPTCDataSet>();
+	private byte[] data;
+	
+	public IPTCReader(byte[] data) {
+		this.data = data;
+	}
 	
 	@Override
 	public void read() throws IOException {
-		// TODO Auto-generated method stub
+		int i = 0;
+		int tagMarker = data[i];
+		
+		while (tagMarker == 0x1c) {
+			i++;
+			int recordNumber = data[i++];
+			int tag = data[i++];
+			int recordSize = IOUtils.readUnsignedShortMM(data, i);
+			i += 2;
+			datasetList.add(new IPTCDataSet(recordNumber, tag, recordSize, data, i));
+			i += recordSize;
+			// Sanity check
+			if(i >= data.length) break;	
+			tagMarker = data[i];							
+		}
+				
+		for(IPTCDataSet iptc : datasetList) {
+			iptc.print();
+		}
 	}
 	
 	public List<IPTCDataSet> getDataSet() {
