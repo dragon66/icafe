@@ -317,7 +317,7 @@ public class PNGWriter extends ImageWriter {
 		
 		IDATBuilder builder = new IDATBuilder(compressionLevel);
 		
-		// Bytes to buffer before creating an IDAT chunk
+		// How many bytes to buffer before creating an IDAT chunk
 		int bufferLen = bytesPerPixel * imageWidth * imageHeight / 5; // We are expecting 5 IDAT chunks
 		int counter = 0;
 		
@@ -426,7 +426,7 @@ public class PNGWriter extends ImageWriter {
 		
 		IDATBuilder builder = new IDATBuilder(compressionLevel);
 		
-		// Bytes to buffer before creating an IDAT chunk
+		// How many bytes to buffer before creating an IDAT chunk
 		int bufferLen = imageWidth * imageHeight / 5; // We are expecting 5 IDAT chunks
 		int counter = 0;
 	
@@ -521,7 +521,7 @@ public class PNGWriter extends ImageWriter {
 		// Now build the data
 		IDATBuilder builder = new IDATBuilder(compressionLevel);
 		
-		// Bytes to buffer before creating an IDAT chunk
+		// How many bytes to buffer before creating an IDAT chunk
 		int bufferLen = bytesPerPixel * imageWidth * imageHeight / 5; // We are expecting 5 IDAT chunks
 		int counter = 0;
 		
