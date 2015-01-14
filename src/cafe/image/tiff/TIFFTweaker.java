@@ -1878,7 +1878,7 @@ public class TIFFTweaker {
 		return offset;
 	}
 	
-	private static int readIFD(IFD parent, Tag parentTag, Class<?> tagClass, RandomAccessInputStream rin, List<IFD> list, int offset, String indent) throws IOException 
+	private static int readIFD(IFD parent, Tag parentTag, Class<? extends Tag> tagClass, RandomAccessInputStream rin, List<IFD> list, int offset, String indent) throws IOException 
 	{	
 		// Use reflection to invoke fromShort(short) method
 		Method method = null;
@@ -2175,7 +2175,7 @@ public class TIFFTweaker {
 		return rin.readInt();
 	}
 	
-	private static void readIFDs(IFD parent, Tag parentTag, Class<?> tagClass, List<IFD> list, int offset, RandomAccessInputStream rin) throws IOException {
+	private static void readIFDs(IFD parent, Tag parentTag, Class<? extends Tag> tagClass, List<IFD> list, int offset, RandomAccessInputStream rin) throws IOException {
 		int ifd = 0;
 		// Read the IFDs into a list first	
 		while (offset != 0)
