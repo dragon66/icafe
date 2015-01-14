@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    14Jan2015  Moved thumbnail related code to ExifThumbnail
  * WY    06May2014  Complete rewrite to support adding thumbnail IFD
  */
 
@@ -25,23 +26,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import cafe.image.ImageIO;
-import cafe.image.ImageMeta;
-import cafe.image.ImageType;
 import cafe.image.jpeg.Marker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
-import cafe.image.options.JPEGOptions;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.LongField;
 import cafe.image.tiff.RationalField;
 import cafe.image.tiff.ShortField;
 import cafe.image.tiff.Tag;
-import cafe.image.tiff.TiffFieldEnum;
 import cafe.image.tiff.TiffField;
 import cafe.image.tiff.TiffTag;
-import cafe.image.writer.ImageWriter;
 import cafe.io.IOUtils;
 import cafe.io.MemoryCacheRandomAccessOutputStream;
 import cafe.io.RandomAccessOutputStream;
@@ -62,7 +57,7 @@ public class Exif extends Metadata {
 	private IFD imageIFD;
 	private IFD exifSubIFD;
 	private IFD gpsSubIFD;
-	private BufferedImage thumbNail;
+	private ExifThumbnail thumbnail;
 	private int firstIFDOffset = 0x08;	
 	
 	private boolean isThumbnailRequired;
@@ -105,7 +100,7 @@ public class Exif extends Metadata {
 	}
 	
 	public boolean hasThumbnail() {
-		return thumbNail != null;
+		return thumbnail != null && thumbnail.containsImage();
 	}
 	
 	public void addExif(IFD exifSubIFD) {
@@ -123,11 +118,10 @@ public class Exif extends Metadata {
 	}
 	
 	/**
-	 * @param thumbNail optional thumbnail image. If null, will be generated from the input image
-	 * @param flavor JPEG or TIFF flavor of thumbnail
+	 * @param thumbnail optional thumbnail image. If null, will be generated from the input image
 	 */
-	public void addThumbnail(BufferedImage thumbNail) {		
-		this.thumbNail = thumbNail;
+	public void addThumbnail(BufferedImage thumbnail) {
+		this.thumbnail = new ExifThumbnail(flavor, thumbnail);
 		this.isThumbnailRequired = true;
 	}
 	
@@ -135,8 +129,8 @@ public class Exif extends Metadata {
 		return isThumbnailRequired;
 	}	
 	
-	public void setThumbnail(BufferedImage thumbNail) {
-		this.thumbNail = thumbNail;
+	public void setThumbnail(BufferedImage thumbnail) {
+		this.thumbnail.setImage(thumbnail);
 	}
 	
 	public IFD getIFD(Tag tag) {
@@ -160,7 +154,6 @@ public class Exif extends Metadata {
 	 * @throws Exception 
 	 */
 	@Override
-	// TODO remove this method, use the base class version
 	public void write(OutputStream os) throws IOException {
 		RandomAccessOutputStream randOS = null;
 		// Write the EXIF data according to the flavor
@@ -181,9 +174,9 @@ public class Exif extends Metadata {
 			// Writes IFDs
 			randOS.seek(firstIFDOffset);
 			int offset = imageIFD.write(randOS, firstIFDOffset);
-			if(isThumbnailRequired && thumbNail != null) {
+			if(isThumbnailRequired && thumbnail != null) {
 				imageIFD.setNextIFDOffset(randOS, offset);
-				writeThumbNail(randOS, offset);
+				thumbnail.write(randOS, offset);
 			}
 			// Now it's time to update the segment length
 			int length = (int)randOS.getLength();
@@ -197,74 +190,10 @@ public class Exif extends Metadata {
 			randOS.writeToStream(length);
 			randOS.close();
 		} else if(flavor == Exif.EXIF_FLAVOR_TIFF) {
-			if(isThumbnailRequired && thumbNail != null) {
+			if(isThumbnailRequired && thumbnail != null) {
 				randOS = (RandomAccessOutputStream)os;
-				writeThumbNail(randOS, (int)randOS.getStreamPointer());
+				thumbnail.write(randOS, (int)randOS.getStreamPointer());
 			}
-		}
-	}
-	
-	private void writeThumbNail(RandomAccessOutputStream randOS, int offset) throws IOException {
-		// Create thumbnail IFD (IFD1)
-		int thumbnailWidth = thumbNail.getWidth();
-		int thumbnailHeight = thumbNail.getHeight();
-		IFD thumbNailIFD = new IFD();
-		thumbNailIFD.addField(new ShortField(TiffTag.IMAGE_WIDTH.getValue(), new short[]{(short)thumbnailWidth}));
-		thumbNailIFD.addField(new ShortField(TiffTag.IMAGE_LENGTH.getValue(), new short[]{(short)thumbnailHeight}));
-		if(flavor == Exif.EXIF_FLAVOR_JPG) {
-			thumbNailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{0})); // Place holder
-			thumbNailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{0})); // Place holder
-		} else {
-			thumbNailIFD.addField(new LongField(TiffTag.STRIP_OFFSETS.getValue(), new int[]{0})); // Place holder
-			thumbNailIFD.addField(new LongField(TiffTag.STRIP_BYTE_COUNTS.getValue(), new int[]{0})); // Place holder
-		}
-		// Other related tags
-		thumbNailIFD.addField(new RationalField(TiffTag.X_RESOLUTION.getValue(), new int[] {72, 1}));
-		thumbNailIFD.addField(new RationalField(TiffTag.Y_RESOLUTION.getValue(), new int[] {72, 1}));
-		thumbNailIFD.addField(new ShortField(TiffTag.RESOLUTION_UNIT.getValue(), new short[]{2}));
-		thumbNailIFD.addField(new ShortField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue(), new short[]{6}));
-		thumbNailIFD.addField(new ShortField(TiffTag.SAMPLES_PER_PIXEL.getValue(), new short[]{3}));		
-		thumbNailIFD.addField(new ShortField(TiffTag.BITS_PER_SAMPLE.getValue(), new short[]{8, 8, 8}));
-		thumbNailIFD.addField(new ShortField(TiffTag.YCbCr_SUB_SAMPLING.getValue(), new short[]{1, 1}));
-		thumbNailIFD.addField(new ShortField(TiffTag.PLANAR_CONFIGURATTION.getValue(), new short[]{1}));
-		if(flavor == Exif.EXIF_FLAVOR_JPG)
-			thumbNailIFD.addField(new ShortField(TiffTag.COMPRESSION.getValue(), new short[]{(short)TiffFieldEnum.Compression.OLD_JPG.getValue()}));
-		else
-			thumbNailIFD.addField(new ShortField(TiffTag.COMPRESSION.getValue(), new short[]{(short)TiffFieldEnum.Compression.JPG.getValue()}));			
-		thumbNailIFD.addField(new ShortField(TiffTag.ROWS_PER_STRIP.getValue(), new short[]{(short)thumbnailHeight}));
-		// Write the thumbnail IFD
-		// This line is very important!!!
-		randOS.seek(thumbNailIFD.write(randOS, offset));
-		// Create a JPEGWriter to write the image
-		ImageWriter jpgWriter = ImageIO.getWriter(ImageType.JPG);
-		// Create a ImageMeta builder
-		ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
-		// Create JPEGOptions		
-		JPEGOptions jpegOptions = new JPEGOptions();			
-		jpegOptions.setQuality(90);
-		builder.imageOptions(jpegOptions);
-		// Set ImageMeta to the writer
-		jpgWriter.setImageMeta(builder.build());
-		// This is amazing. We can actually keep track of how many bytes have been written to
-		// the underlying stream by JPEGWriter
-		long startOffset = randOS.getStreamPointer();
-		try {
-			jpgWriter.write(thumbNail, randOS);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		long finishOffset = randOS.getStreamPointer();			
-		int totalOut = (int)(finishOffset - startOffset);
-		if(flavor == Exif.EXIF_FLAVOR_JPG) {// Update fields
-			randOS.seek(thumbNailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue()).getDataOffset());
-			randOS.writeInt((int)startOffset);
-			randOS.seek(thumbNailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue()).getDataOffset());
-			randOS.writeInt(totalOut);
-		} else if(flavor == Exif.EXIF_FLAVOR_TIFF) {
-			randOS.seek(thumbNailIFD.getField(TiffTag.STRIP_OFFSETS.getValue()).getDataOffset());
-			randOS.writeInt((int)startOffset);
-			randOS.seek(thumbNailIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()).getDataOffset());
-			randOS.writeInt(totalOut);
 		}
 	}	
 }
