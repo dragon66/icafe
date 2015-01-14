@@ -37,10 +37,14 @@ public class TestJPEGTweaker {
 		JPEGTweaker.removeExif(fin, fout);
 		fin.close();
 		fout.close();
+		fin = new FileInputStream(args[0]);
+		fout = new FileOutputStream("exif_inserted.jpg");
+		JPEGTweaker.insertExif(fin, fout, populateExif());
+		fin.close();
+		fout.close();
 	}
 	
 	// This method is for testing only
-	@SuppressWarnings("unused")
 	private static Exif populateExif() throws Exception {
 		// Create an EXIF wrapper
 		Exif exif = new Exif(Exif.EXIF_FLAVOR_JPG);		
