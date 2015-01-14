@@ -21,6 +21,4 @@ public interface Tag {
 	public FieldType getFieldType();
 	public String getName();
 	public short getValue();
-	// We don't really need to include this method explicitly
-	public String toString();
 }
