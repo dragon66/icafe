@@ -28,6 +28,7 @@ import java.util.Date;
 
 import cafe.image.jpeg.Marker;
 import cafe.image.meta.Metadata;
+import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.IFD;
@@ -142,9 +143,8 @@ public class Exif extends Metadata {
 		return null;
 	}
 	
-	@Override
-	public void show() {
-		
+	public MetadataReader getReader() {
+		return null;
 	}
 	
 	/** 
