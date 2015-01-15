@@ -535,10 +535,6 @@ public class TIFFTweaker {
 		return extractICCProfile(0, rin);
 	}
 	
-	public static IRBThumbnail extractThumbnail(RandomAccessInputStream rin) throws Exception {
-		return extractThumbnail(0, rin);
-	}
-	
 	public static IRBThumbnail extractThumbnail(int pageNumber, RandomAccessInputStream rin) throws Exception {
 		// Read pass image header
 		int offset = readHeader(rin);
@@ -562,6 +558,10 @@ public class TIFFTweaker {
 		}
 		
 		return null;
+	}
+	
+	public static IRBThumbnail extractThumbnail(RandomAccessInputStream rin) throws Exception {
+		return extractThumbnail(0, rin);
 	}
 	
 	public static void finishInsert(RandomAccessOutputStream rout, List<IFD> list) throws IOException {
@@ -1226,24 +1226,36 @@ public class TIFFTweaker {
 	}
 	
 	/**
+	 * Inserts a thumbnail into PHOTOSHOP private tag field
+	 *  
+	 * @param rin RandomAccessInputStream for the input TIFF
+	 * @param rout RandomAccessOutputStream for the output TIFF
+	 * @param thumbnail a IRBThumbnail to be inserted
+	 * @throws Exception
+	 */
+	public static void insertThumbnail(RandomAccessInputStream rin, RandomAccessOutputStream rout, IRBThumbnail thumbnail) throws Exception {
+		//TODO
+	}
+	
+	/**
 	 * Insert a TIFF image into another TIFF image or append it to the end of the first image in case the first image
 	 * is only one page.
 	 * <p>
 	 * This method doesn't need to decode the images if SamplesPerPixel value is less than 8 or
 	 * SamplesPerPixel & 8 != 0.
 	 *
-	 * @param tiff1 File for the first TIFF image
-	 * @param tiff2 File for the second TIFF image
-	 * @param pageNumber offset where to insert the second TIFF image (zero based)
-	 * @param tiff3 File for the output TIFF image
+	 * @param original File for the original TIFF image
+	 * @param toBeInserted File for the TIFF image to be inserted
+	 * @param pageNumber offset where to insert the TIFF image (zero based)
+	 * @param output File for the output TIFF image
 	 * 
 	 * @throws IOException
 	 */
-	public static void insertTiffImage(File tiff1, File tiff2, int pageNumber, File tiff3) throws IOException {
+	public static void insertTiffImage(File original, File toBeInserted, int pageNumber, File output) throws IOException {
 		// Create FileInputStream for input and output images
-		FileInputStream fin1 = new FileInputStream(tiff1);
-		FileInputStream fin2 = new FileInputStream(tiff2);
-		FileOutputStream fout = new FileOutputStream(tiff3);
+		FileInputStream fin1 = new FileInputStream(original);
+		FileInputStream fin2 = new FileInputStream(toBeInserted);
+		FileOutputStream fout = new FileOutputStream(output);
 		// Wrap the FileInputStream and FileOutputStream in the RandomAccessInputStream and RandomAccessOutputStream 
 		RandomAccessInputStream rin1 = new FileCacheRandomAccessInputStream(fin1);
 		RandomAccessInputStream rin2 = new FileCacheRandomAccessInputStream(fin2);		
@@ -1267,18 +1279,18 @@ public class TIFFTweaker {
 	 * This method doesn't need to decode the images if SamplesPerPixel value is less than 8 or
 	 * SamplesPerPixel & 8 != 0.
 	 *
-	 * @param tiff1 RandomAccessInputStream for the first TIFF image
-	 * @param tiff2 RandomAccessInputStream for the second TIFF image
+	 * @param original RandomAccessInputStream for the original TIFF image
+	 * @param toBeInserted RandomAccessInputStream for the TIFF image to be inserted
 	 * @param pageNumber offset where to insert the second TIFF image (zero based)
-	 * @param tiff3 RandomAccessOutputStream for the output TIFF image
+	 * @param output RandomAccessOutputStream for the output TIFF image
 	 * 
 	 * @throws IOException
 	 */
-	public static void insertTiffImage(RandomAccessInputStream tiff1, RandomAccessInputStream tiff2, int pageNumber, RandomAccessOutputStream tiff3) throws IOException {
+	public static void insertTiffImage(RandomAccessInputStream original, RandomAccessInputStream toBeInserted, int pageNumber, RandomAccessOutputStream output) throws IOException {
 		List<IFD> ifds1 = new ArrayList<IFD>();
-		int offset1 = copyHeader(tiff1, tiff3);
+		int offset1 = copyHeader(original, output);
 		// Read IFDs for the first image
-		readIFDs(null, null, TiffTag.class, ifds1, offset1, tiff1);
+		readIFDs(null, null, TiffTag.class, ifds1, offset1, original);
 		// Sanity check
 		if(pageNumber < 0) pageNumber = 0;
 		else if(pageNumber > ifds1.size()) pageNumber = ifds1.size();
@@ -1288,19 +1300,19 @@ public class TIFFTweaker {
 			// Place holder, to be updated afterwards
 			ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0}));
 		}
-		int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, tiff1, tiff3);
-		short writeEndian = tiff3.getEndian();
+		int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, original, output);
+		short writeEndian = output.getEndian();
 		List<IFD> ifds2 = new ArrayList<IFD>();
-		readIFDs(ifds2, tiff2);
+		readIFDs(ifds2, toBeInserted);
 		for(int j = 0; j < ifds2.size(); j++) {
 			ifds2.get(j).removeField(TiffTag.PAGE_NUMBER.getValue());
 			// Place holder, to be updated afterwards
 			ifds2.get(j).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0})); 
 		}
 		List<IFD> newList = new ArrayList<IFD>(ifds1.size() + ifds2.size());
-		short readEndian = tiff2.getEndian();
+		short readEndian = toBeInserted.getEndian();
 		if(readEndian == writeEndian) // Copy as is
-			offset = copyPages(ifds2, offset, tiff2, tiff3);
+			offset = copyPages(ifds2, offset, toBeInserted, output);
 		else {
 			// Need to check BitsPerSample to see if we are dealing with images with BitsPerSample > 8
 			IFD prevIFD = null;
@@ -1310,7 +1322,7 @@ public class TIFFTweaker {
 				TiffField<?> f_bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE.getValue());
 				if(f_bitsPerSample != null) bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
 				if(bitsPerSample <= 8) { // Just copy data
-					offset = copyPageData(currIFD, offset, tiff2, tiff3);							
+					offset = copyPageData(currIFD, offset, toBeInserted, output);							
 				} else if(bitsPerSample%8 == 0) {
 					/*
 					 * TIFF viewers seem to have problem interpreting data with more than 8 BitsPerSample.
@@ -1340,7 +1352,7 @@ public class TIFFTweaker {
 						int[] uncompressedStripByteCounts = getUncompressedStripByteCounts(currIFD, off.length);
 								
 						// We are going to write the image data first
-						tiff3.seek(offset);
+						output.seek(offset);
 								
 						TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION.getValue());
 						int tiffCompression = 1;
@@ -1364,26 +1376,26 @@ public class TIFFTweaker {
 						switch(compression) { // Predictor seems to work for LZW, DEFLATE as is! Need more test though!
 							case LZW: // Tested
 								decoder = new LZWTreeDecoder(8, true);
-								encoder = new LZWTreeEncoder(tiff3, 8, 4096, null); // 4K buffer	
+								encoder = new LZWTreeEncoder(output, 8, 4096, null); // 4K buffer	
 								break;
 							case DEFLATE:
 							case DEFLATE_ADOBE: // Tested
 								decoder = new DeflateDecoder();
-								encoder = new DeflateEncoder(tiff3, 4096, 4, null); // 4K buffer	
+								encoder = new DeflateEncoder(output, 4096, 4, null); // 4K buffer	
 								break;
 							case PACKBITS:
 								// Not tested
 								for(int k = 0; k < off.length; k++) {
-									tiff2.seek(off[k]);
+									toBeInserted.seek(off[k]);
 									byte[] buf = new byte[counts[k]];
-									tiff2.readFully(buf);
+									toBeInserted.readFully(buf);
 									byte[] buf2 = new byte[uncompressedStripByteCounts[k]];
 									Packbits.unpackbits(buf, buf2);
 									ArrayUtils.flipEndian(buf2, 0, buf2.length, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
 									// Compress the data
 									buf2 = new byte[buf.length + (buf.length + 127)/128];
 									int bytesCompressed = Packbits.packbits(buf, buf2);
-									tiff3.write(buf2, 0, bytesCompressed);
+									output.write(buf2, 0, bytesCompressed);
 									temp[k] = offset;
 									offset += bytesCompressed; // DONE!
 								}
@@ -1400,21 +1412,21 @@ public class TIFFTweaker {
 								}
 								// Read the data, reorder the byte sequence and write back the data
 								for(int k = 0; k < off.length; k++) {
-									tiff2.seek(off[k]);
+									toBeInserted.seek(off[k]);
 									byte[] buf = new byte[counts[k]];
-									tiff2.readFully(buf);										
+									toBeInserted.readFully(buf);										
 									buf = ArrayUtils.flipEndian(buf, 0, buf.length, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
-									tiff3.write(buf);
+									output.write(buf);
 									temp[k] = offset;
 									offset += buf.length;
 								}										
 								break;
 							default: // Fall back to simple copy, at least won't break the whole output image
 								for(int l = 0; l < off.length; l++) {
-									tiff2.seek(off[l]);
+									toBeInserted.seek(off[l]);
 									byte[] buf = new byte[counts[l]];
-									tiff2.readFully(buf);
-									tiff3.write(buf);
+									toBeInserted.readFully(buf);
+									output.write(buf);
 									temp[l] = offset;
 									offset += buf.length;
 								}
@@ -1422,9 +1434,9 @@ public class TIFFTweaker {
 						}
 						if(decoder != null) {
 							for(int k = 0; k < off.length; k++) {
-								tiff2.seek(off[k]);
+								toBeInserted.seek(off[k]);
 								byte[] buf = new byte[counts[k]];
-								tiff2.readFully(buf);
+								toBeInserted.readFully(buf);
 								decoder.setInput(buf);
 								int bytesDecompressed = 0;
 								byte[] decompressed = new byte[uncompressedStripByteCounts[k]];
@@ -1452,28 +1464,28 @@ public class TIFFTweaker {
 							stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
 						currIFD.addField(stripOffSets);		
 					} else { // Just copy since in this case TIFF viewers tend to think the data is always in TIFF LZW packing format
-						offset = copyPageData(currIFD, offset, tiff2, tiff3);
+						offset = copyPageData(currIFD, offset, toBeInserted, output);
 					}
 					if(prevIFD != null) // Link this IFD with previous one if any
-						prevIFD.setNextIFDOffset(tiff3, offset);
+						prevIFD.setNextIFDOffset(output, offset);
 					// Then write the IFD
-					offset = currIFD.write(tiff3, offset);							
+					offset = currIFD.write(output, offset);							
 					prevIFD = currIFD;
 				}					
 			}
 		}
 		if(pageNumber == 0) {
-			ifds2.get(ifds2.size() - 1).setNextIFDOffset(tiff3, ifds1.get(0).getStartOffset());
+			ifds2.get(ifds2.size() - 1).setNextIFDOffset(output, ifds1.get(0).getStartOffset());
 			newList.addAll(ifds2);
 			newList.addAll(ifds1);
 		} else {
 			if(pageNumber == ifds1.size()) {
-				ifds1.get(ifds1.size() - 1).setNextIFDOffset(tiff3, ifds2.get(0).getStartOffset());
+				ifds1.get(ifds1.size() - 1).setNextIFDOffset(output, ifds2.get(0).getStartOffset());
 				newList.addAll(ifds1);
 				newList.addAll(ifds2);
 			} else {
-				ifds1.get(pageNumber - 1).setNextIFDOffset(tiff3, ifds2.get(0).getStartOffset());
-				ifds2.get(ifds2.size() - 1).setNextIFDOffset(tiff3, ifds1.get(pageNumber).getStartOffset());
+				ifds1.get(pageNumber - 1).setNextIFDOffset(output, ifds2.get(0).getStartOffset());
+				ifds2.get(ifds2.size() - 1).setNextIFDOffset(output, ifds1.get(pageNumber).getStartOffset());
 				newList.addAll(ifds1.subList(0, pageNumber));
 				newList.addAll(ifds2);
 				newList.addAll(ifds1.subList(pageNumber, ifds1.size()));
@@ -1483,14 +1495,14 @@ public class TIFFTweaker {
 		// Reset pageNumber and total pages
 		for(int i = 0; i < maxPageNumber; i++) {
 			offset = newList.get(i).getField(TiffTag.PAGE_NUMBER.getValue()).getDataOffset();
-			tiff3.seek(offset);
-			tiff3.writeShort((short)i); // Update page number for this page
-			tiff3.writeShort((short)maxPageNumber); // Update total page number
+			output.seek(offset);
+			output.writeShort((short)i); // Update page number for this page
+			output.writeShort((short)maxPageNumber); // Update total page number
 		}			
 		// Figure out the first IFD offset
 		int firstIFDOffset = newList.get(0).getStartOffset();
 		// And write the IFDs
-		writeToStream(tiff3, firstIFDOffset); // DONE!	
+		writeToStream(output, firstIFDOffset); // DONE!	
 	}
 	
 	/**
@@ -2368,19 +2380,11 @@ public class TIFFTweaker {
 	}
 	
 	private static void showIPTC(byte[] iptc) {
-		try {
-			new IPTCReader(iptc).read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}	
+		new IPTCReader(iptc).showMetadata();			
 	}
 	
 	private static void showPhtoshop(byte[] data) {
-		try {
-			new IRBReader(data).read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		new IRBReader(data).showMetadata();		
 	}
 	
 	public static void snoop(RandomAccessInputStream rin) throws IOException	{	
