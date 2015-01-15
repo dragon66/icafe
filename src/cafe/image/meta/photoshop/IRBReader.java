@@ -11,11 +11,12 @@
 package cafe.image.meta.photoshop;
 
 import java.io.IOException;
+
+import cafe.image.meta.MetadataReader;
 import cafe.image.meta.iptc.IPTCReader;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
-import cafe.util.Reader;
 
 /**
  * Photoshop Image Resource Block reader
@@ -23,10 +24,11 @@ import cafe.util.Reader;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/10/2015
  */
-public class IRBReader implements Reader {
+public class IRBReader implements MetadataReader {
 	private byte[] data;
 	private boolean containsThumbnail;
 	private IRBThumbnail thumbnail;
+	private boolean loaded;
 	
 	public IRBReader(byte[] data) {
 		this.data = data;
@@ -239,5 +241,17 @@ public class IRBReader implements Reader {
 				}					
 			}
 		}
+	}
+	
+	public void showMetadata() {
+		if(!loaded) {
+			try {
+				read();
+				loaded = true;			
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// TODO: move metadata dumping function from read() to here
+		}		
 	}
 }

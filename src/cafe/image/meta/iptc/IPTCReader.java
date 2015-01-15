@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cafe.image.meta.MetadataReader;
 import cafe.io.IOUtils;
-import cafe.util.Reader;
 
 /**
  * IPTC image metadata reader
@@ -32,12 +32,17 @@ import cafe.util.Reader;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/12/2015
  */
-public class IPTCReader implements Reader {
+public class IPTCReader implements MetadataReader {
 	private List<IPTCDataSet> datasetList = new ArrayList<IPTCDataSet>();
 	private byte[] data;
+	private boolean loaded;
 	
 	public IPTCReader(byte[] data) {
 		this.data = data;
+	}
+	
+	public List<IPTCDataSet> getDataSet() {
+		return Collections.unmodifiableList(datasetList);
 	}
 	
 	@Override
@@ -56,14 +61,21 @@ public class IPTCReader implements Reader {
 			// Sanity check
 			if(i >= data.length) break;	
 			tagMarker = data[i];							
-		}
-				
-		for(IPTCDataSet iptc : datasetList) {
-			iptc.print();
-		}
+		}		
 	}
 	
-	public List<IPTCDataSet> getDataSet() {
-		return Collections.unmodifiableList(datasetList);
+	public void showMetadata() {
+		if(!loaded) {
+			try {
+				read();
+				loaded = true;		
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			for(IPTCDataSet iptc : datasetList) {
+				iptc.print();
+			}
+		}	
 	}
 }
