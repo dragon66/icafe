@@ -13,7 +13,7 @@ public class TestICCProfile {
 	public static void main(String[] args) throws IOException {		
 		FileInputStream fin = new FileInputStream(args[0]);		
 		Metadata icc_profile = new ICCProfile(fin);
-		icc_profile.show();
+		icc_profile.getReader().showMetadata();
 		FileOutputStream fout = new FileOutputStream(new File("ICCProfile.icc"));
 		icc_profile.write(fout);
 		fin.close();
