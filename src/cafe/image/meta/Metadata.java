@@ -10,8 +10,16 @@
 
 package cafe.image.meta;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PushbackInputStream;
+import java.util.List;
+
+import cafe.image.ImageType;
+import cafe.image.util.IMGUtils;
 
 /**
  * Base class for image metadata.
@@ -22,6 +30,36 @@ import java.io.OutputStream;
 public abstract class Metadata {
 	private MetadataType type;
 	private byte[] data;
+	
+	/**
+	 * Reads all metadata associated with the input image
+	 *
+	 * @param is InputStream for the image
+	 * @return a list of Metadata for the input stream
+	 * @throws IOException
+	 */
+	public static List<Metadata> readMetadata(InputStream is) throws IOException {
+		// 4 byte as image magic number
+		PushbackInputStream pushBackStream = new PushbackInputStream(is, 4); 
+		@SuppressWarnings("unused")
+		ImageType imageType = IMGUtils.guessImageType(pushBackStream);
+		// TODO - change corresponding tweaker snoop() to return a list of Metadata
+		pushBackStream.close();
+		
+		return null;
+	}
+	
+	public static List<Metadata> readMetadata(File image) throws IOException {
+		FileInputStream fin = new FileInputStream(image);
+		List<Metadata> metadataList = readMetadata(fin);
+		fin.close();
+		
+		return metadataList; 
+	}
+	
+	public static List<Metadata> readMetadata(String image) throws IOException {
+		return readMetadata(new File(image));
+	}
 	
 	public Metadata(MetadataType type, byte[] data) {
 		this.type = type;
@@ -36,9 +74,14 @@ public abstract class Metadata {
 		return type;
 	}
 	
-	// Dumps the content of the Metadata
-	public abstract void show();
-
+	public abstract MetadataReader getReader();
+	
+	public void showMetadata() {
+		MetadataReader reader = getReader();
+		if(reader != null)
+			reader.showMetadata();
+	}
+	
 	/**
 	 * Writes the metadata out to the output stream
 	 * 
