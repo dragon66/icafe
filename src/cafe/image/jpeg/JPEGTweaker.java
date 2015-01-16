@@ -58,18 +58,16 @@ import cafe.image.ImageIO;
 import cafe.image.ImageType;
 import cafe.image.writer.ImageWriter;
 import cafe.image.meta.exif.Exif;
+import cafe.image.meta.exif.ExifReader;
+import cafe.image.meta.exif.ExifThumbnail;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.photoshop.IRBReader;
 import cafe.image.meta.photoshop.IRBThumbnail;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.TIFFTweaker;
-import cafe.image.tiff.TiffField;
-import cafe.image.tiff.TiffTag;
 import cafe.io.FileCacheRandomAccessInputStream;
-import cafe.io.FileCacheRandomAccessOutputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
-import cafe.io.RandomAccessOutputStream;
 import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
 
@@ -339,42 +337,24 @@ public class JPEGTweaker {
 						if (Arrays.equals(exif_buf, exif)||Arrays.equals(exif_buf, exif2)) {
 							exif_buf = new byte[length-8];
 						    IOUtils.readFully(is, exif_buf);
-						    RandomAccessInputStream tiffin = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(exif_buf));
-							List<IFD> ifds = new ArrayList<IFD>();
-						    TIFFTweaker.readIFDs(ifds, tiffin);
-						    if(ifds.size() >= 2) {
+						    ExifReader reader = new ExifReader(exif_buf);
+						    reader.read();
+						    if(reader.containsThumbnail()) {
 						    	String outpath = "";
 								if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
 									outpath = pathToThumbnail + "exif_thumbnail";
 								else
 									outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_exif_t";
-						    	IFD thumbnailIFD = ifds.get(1);
-						    	TiffField<?> field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
-						    	if(field != null) { // JPEG format, save as JPEG
-						    		int thumbnailOffset = field.getDataAsLong()[0];
-						    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());
-						    		int thumbnailLen = field.getDataAsLong()[0];
-						    		tiffin.seek(thumbnailOffset);
-						    		byte[] data = new byte[thumbnailLen];
-						    		tiffin.readFully(data);
-						    		OutputStream fout = new FileOutputStream(outpath + ".jpg");
-						    		fout.write(data);
-						    		fout.close();
+						    	ExifThumbnail thumbnail = reader.getThumbnail();
+						    	OutputStream fout = null;
+						    	if(thumbnail.getDataType() == ExifThumbnail.DATA_TYPE_COMPRESSED_JPG) {// JPEG format, save as JPEG
+						    		 fout = new FileOutputStream(outpath + ".jpg");						    	
 						    	} else { // Uncompressed, save as TIFF
-						    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS.getValue());
-						    		if(field == null) 
-						    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS.getValue());
-						    		if(field != null) {
-						    			 tiffin.seek(0);
-						    			 OutputStream fout = new FileOutputStream(outpath + ".tif");
-						    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(fout);
-						    			 TIFFTweaker.retainPages(tiffin, tiffout, 1);
-						    			 tiffout.close(); // Auto flush when closed
-						    			 fout.close();
-						    		}
+						    		fout = new FileOutputStream(outpath + ".tif");
 						    	}
-						    }
-						    tiffin.close();
+						    	fout.write(thumbnail.getCompressedImage());
+					    		fout.close();
+						    }						  			
 						} else {
 							IOUtils.skipFully(is, length - 8);
 						}
@@ -396,10 +376,21 @@ public class JPEGTweaker {
 								// Create output path
 								String outpath = "";
 								if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
-									outpath = pathToThumbnail + "photoshop_thumbnail";
+									outpath = pathToThumbnail + "photoshop_thumbnail.jpg";
 								else
-									outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_photoshop_t";
-								thumbnail.write(outpath);								
+									outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_photoshop_t.jpg";
+								FileOutputStream fout = new FileOutputStream(outpath);
+								if(thumbnail.getDataType() == IRBThumbnail.DATA_TYPE_KJpegRGB) {
+									fout.write(thumbnail.getCompressedImage());
+								} else {
+									ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
+									try {
+										writer.write(thumbnail.getRawImage(), fout);
+									} catch (Exception e) {
+										throw new IOException("Writing thumbnail failed!");
+									}
+								}
+								fout.close();								
 							}							
 						}				
 				    	marker = IOUtils.readShortMM(is);
