@@ -20,7 +20,6 @@ package cafe.image.meta.exif;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import cafe.image.ImageIO;
 import cafe.image.ImageMeta;
 import cafe.image.ImageType;
@@ -41,34 +40,66 @@ import cafe.io.RandomAccessOutputStream;
  * @version 1.0 01/08/2014
  */
 public class ExifThumbnail {
+	// Internal data type of thumbnail
+	// Represented by a BufferedImage
+	public static final int DATA_TYPE_RAW = 0; 
+	// Represented by a byte array of JPEG or TIFF stream
+	public static final int DATA_TYPE_COMPRESSED_JPG = 1;
+	public static final int DATA_TYPE_UNCOMPRESSED_TIFF = 2;
 	// Comprised of an IFD and an associated image
-	//Create thumbnail IFD (IFD1 in the case of JPEG EXIF segment)
-	private IFD thumbnailIFD; 
+	// Create thumbnail IFD (IFD1 in the case of JPEG EXIF segment)
+	private IFD thumbnailIFD = new IFD(); 
 	private BufferedImage thumbnail;
+	private byte[] compressedThumbnail;
 	// JPEG and TIFF, perhaps other formats have subtle difference
 	private int flavor;
 	private int quality = 90;
+	private int dataType = DATA_TYPE_RAW; // Default data type
 	
 	public ExifThumbnail() {
 		this(Exif.EXIF_FLAVOR_JPG); // Default to JPEG flavor
 	}
 	
 	public ExifThumbnail(int flavor) {
-		this(flavor, null);
+		this.flavor = flavor;
 	}
 	
 	public ExifThumbnail(int flavor, BufferedImage thumbnail) {
 		this.flavor = flavor;
-		this.thumbnail = thumbnail;
-		thumbnailIFD = new IFD();
+		setImage(thumbnail);
+	}
+	
+	public ExifThumbnail(int flavor, byte[] compressedThumbnail, int dataType, IFD thumbnailIFD) {
+		this.flavor = flavor;
+		setImage(compressedThumbnail, dataType, thumbnailIFD);
 	}
 	
 	public boolean containsImage() {
-		return thumbnail != null;
+		return thumbnail != null || compressedThumbnail != null;
+	}
+	
+	public byte[] getCompressedImage() {
+		return compressedThumbnail;
+	}
+	
+	public int getDataType() {
+		return dataType;
+	}
+	
+	public BufferedImage getRawImage() {
+		return thumbnail;
+	}
+	
+	public void setImage(byte[] compressedThumbnail, int dataType, IFD thumbnailIFD) {
+		this.compressedThumbnail = compressedThumbnail;
+		if(dataType == DATA_TYPE_COMPRESSED_JPG || dataType == DATA_TYPE_UNCOMPRESSED_TIFF)
+			this.dataType = dataType;
+		this.thumbnailIFD = thumbnailIFD;
 	}
 	
 	public void setImage(BufferedImage thumbnail) {
 		this.thumbnail = thumbnail;
+		this.dataType = DATA_TYPE_RAW;
 	}
 	
 	public void setImageQuality(int quality) {
@@ -76,6 +107,7 @@ public class ExifThumbnail {
 	}
 	
 	public void write(RandomAccessOutputStream randOS, int offset) throws IOException {
+		if(thumbnail == null) throw new IllegalArgumentException("Expected raw data thumbnail does not exist!");
 		// We are going to write the IFD and associated thumbnail
 		int thumbnailWidth = thumbnail.getWidth();
 		int thumbnailHeight = thumbnail.getHeight();
