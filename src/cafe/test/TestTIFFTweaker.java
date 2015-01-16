@@ -18,7 +18,6 @@ import cafe.image.ImageFrame;
 import cafe.image.ImageMeta;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
-import cafe.image.meta.photoshop.IRBThumbnail;
 import cafe.image.options.TIFFOptions;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.RationalField;
@@ -49,9 +48,7 @@ public class TestTIFFTweaker {
 			} else if(args[1].equalsIgnoreCase("snoop")) {
 				TIFFTweaker.snoop(rin);
 			} else if(args[1].equalsIgnoreCase("extractThumbnail")){
-				IRBThumbnail thumbnail = TIFFTweaker.extractThumbnail(rin);
-				if(thumbnail != null)
-					thumbnail.write("thumbnail");
+				TIFFTweaker.extractThumbnail(rin, "thumbnail");					
 			} else if(args[1].equalsIgnoreCase("extractICCProfile")) {
 				byte[] icc_profile = TIFFTweaker.extractICCProfile(rin);
 				if(icc_profile != null) {
