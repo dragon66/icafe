@@ -21,6 +21,7 @@ package cafe.image.meta.exif;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -59,19 +60,29 @@ public class Exif extends Metadata {
 	private IFD exifSubIFD;
 	private IFD gpsSubIFD;
 	private ExifThumbnail thumbnail;
-	private int firstIFDOffset = 0x08;	
+	private int firstIFDOffset = 0x08;
+	
+	private MetadataReader reader;
 	
 	private boolean isThumbnailRequired;
 	
-	// TODO: revise to use a builder
 	public Exif(int flavor) {
 		super(MetadataType.EXIF, null); 
 		if(flavor != Exif.EXIF_FLAVOR_JPG && flavor != Exif.EXIF_FLAVOR_TIFF)
 			throw new IllegalArgumentException("Unknown EXIF flavor: " + flavor);
 		this.flavor = flavor;
 		if(flavor == Exif.EXIF_FLAVOR_JPG)
-			createImageIFD();
-	}	
+			createImageIFD();		
+	}
+	
+	public Exif(byte[] data) {
+		super(MetadataType.EXIF, data);
+		this.reader = new ExifReader(data);
+	}
+	
+	public Exif(InputStream is) throws IOException {
+		this(IOUtils.inputStreamToByteArray(is));
+	}
 	
 	private void createImageIFD() {
 		// Create Image IFD (IFD0)
@@ -144,7 +155,7 @@ public class Exif extends Metadata {
 	}
 	
 	public MetadataReader getReader() {
-		return null;
+		return reader;
 	}
 	
 	/** 
