@@ -71,7 +71,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import cafe.image.ImageFrame;
+import cafe.image.ImageIO;
 import cafe.image.ImageMeta;
+import cafe.image.ImageType;
 import cafe.image.compression.ImageDecoder;
 import cafe.image.compression.ImageEncoder;
 import cafe.image.compression.deflate.DeflateDecoder;
@@ -89,6 +91,7 @@ import cafe.image.meta.iptc.IPTCReader;
 import cafe.image.meta.photoshop.IRBReader;
 import cafe.image.meta.photoshop.IRBThumbnail;
 import cafe.image.util.IMGUtils;
+import cafe.image.writer.ImageWriter;
 import cafe.image.writer.TIFFWriter;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.FileCacheRandomAccessOutputStream;
@@ -535,7 +538,7 @@ public class TIFFTweaker {
 		return extractICCProfile(0, rin);
 	}
 	
-	public static IRBThumbnail extractThumbnail(int pageNumber, RandomAccessInputStream rin) throws Exception {
+	public static IRBThumbnail extractThumbnail(int pageNumber, RandomAccessInputStream rin) throws IOException {
 		// Read pass image header
 		int offset = readHeader(rin);
 		// Read the IFDs into a list first
@@ -560,8 +563,31 @@ public class TIFFTweaker {
 		return null;
 	}
 	
-	public static IRBThumbnail extractThumbnail(RandomAccessInputStream rin) throws Exception {
+	public static IRBThumbnail extractThumbnail(RandomAccessInputStream rin) throws IOException {
 		return extractThumbnail(0, rin);
+	}
+	
+	public static void extractThumbnail(RandomAccessInputStream rin, String pathToThumbnail) throws IOException {
+		IRBThumbnail thumbnail = extractThumbnail(rin);				
+		if(thumbnail != null) {
+			String outpath = "";
+			if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
+				outpath = pathToThumbnail + "photoshop_thumbnail.jpg";
+			else
+				outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_photoshop_t.jpg";
+			FileOutputStream fout = new FileOutputStream(outpath);
+			if(thumbnail.getDataType() == IRBThumbnail.DATA_TYPE_KJpegRGB) {
+				fout.write(thumbnail.getCompressedImage());
+			} else {
+				ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
+				try {
+					writer.write(thumbnail.getRawImage(), fout);
+				} catch (Exception e) {
+					throw new IOException("Writing thumbnail failed!");
+				}
+			}
+			fout.close();	
+		}			
 	}
 	
 	public static void finishInsert(RandomAccessOutputStream rout, List<IFD> list) throws IOException {
