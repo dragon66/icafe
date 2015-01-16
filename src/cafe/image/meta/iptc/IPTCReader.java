@@ -45,6 +45,10 @@ public class IPTCReader implements MetadataReader {
 		return Collections.unmodifiableList(datasetList);
 	}
 	
+	public boolean isDataLoaded() {
+		return loaded;
+	}
+	
 	@Override
 	public void read() throws IOException {
 		int i = 0;
@@ -61,14 +65,15 @@ public class IPTCReader implements MetadataReader {
 			// Sanity check
 			if(i >= data.length) break;	
 			tagMarker = data[i];							
-		}		
+		}
+		
+		loaded = true;
 	}
 	
 	public void showMetadata() {
 		if(!loaded) {
 			try {
 				read();
-				loaded = true;		
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

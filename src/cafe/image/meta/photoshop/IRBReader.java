@@ -42,6 +42,10 @@ public class IRBReader implements MetadataReader {
 		return thumbnail;
 	}
 	
+	public boolean isDataLoaded() {
+		return loaded;
+	}
+	
 	@Override
 	public void read() throws IOException {
 		int i = 0;
@@ -178,10 +182,10 @@ public class IRBReader implements MetadataReader {
 						int thumbnailFormat = IOUtils.readIntMM(data, i); //1 = kJpegRGB. Also supports kRawRGB (0).
 						i += 4;
 						switch (thumbnailFormat) {
-							case IRBThumbnail.FORMAT_KJpegRGB:
+							case IRBThumbnail.DATA_TYPE_KJpegRGB:
 								System.out.println("Thumbnail format: KJpegRGB");
 								break;
-							case IRBThumbnail.FORMAT_KRawRGB:
+							case IRBThumbnail.DATA_TYPE_KRawRGB:
 								System.out.println("Thumbnail format: KRawRGB");
 								break;
 						}
@@ -210,9 +214,9 @@ public class IRBReader implements MetadataReader {
 						System.out.println("Number of planes: "  + numOfPlanes);
 						i += 2;
 						byte[] thumbnailData = null;
-						if(thumbnailFormat == IRBThumbnail.FORMAT_KJpegRGB)
+						if(thumbnailFormat == IRBThumbnail.DATA_TYPE_KJpegRGB)
 							thumbnailData = ArrayUtils.subArray(data, i, sizeAfterCompression);
-						else if(thumbnailFormat == IRBThumbnail.FORMAT_KRawRGB)
+						else if(thumbnailFormat == IRBThumbnail.DATA_TYPE_KRawRGB)
 							thumbnailData = ArrayUtils.subArray(data, i, totalSize);
 						// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
 						i += sizeAfterCompression; 
@@ -241,13 +245,13 @@ public class IRBReader implements MetadataReader {
 				}					
 			}
 		}
+		loaded = true;
 	}
 	
 	public void showMetadata() {
 		if(!loaded) {
 			try {
 				read();
-				loaded = true;			
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

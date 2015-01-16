@@ -146,10 +146,6 @@ public class ICCProfileReader implements MetadataReader {
 		return "" + majorVersion + "." + minorRevision + bugFix;			
 	}
 	
-	public MetadataReader getReader() {
-		return null;
-	}
-	
 	public int getRenderingIntent() {
 		return header.renderingIntent&0x0000ffff;
 	}
@@ -175,6 +171,10 @@ public class ICCProfileReader implements MetadataReader {
 	
 	public boolean isColor() {
 		return (((header.deviceAttributes[0]>>4)&0x01) == 0);
+	}
+	
+	public boolean isDataLoaded() {
+		return loaded;
 	}
 	
 	public boolean isEmbeddedInFile() {
@@ -254,7 +254,6 @@ public class ICCProfileReader implements MetadataReader {
 		if(!loaded) {
 			try {
 				read();
-				loaded = true;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
