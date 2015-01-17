@@ -10,7 +10,7 @@
 
 package cafe.image.writer;
 
-import cafe.image.ImageColorType;
+import cafe.image.ColorType;
 import cafe.image.ImageType;
 import cafe.image.util.IMGUtils;
 
@@ -180,7 +180,7 @@ public class BMPWriter extends ImageWriter {
 	protected void write (int[] pixels, int imageWidth, int imageHeight, 
 			OutputStream os) throws Exception {   
 		// The entry point for all the image writers		
-		if(getImageMeta().getColorType() == ImageColorType.INDEXED) write256ColorBitmap(pixels, imageWidth, imageHeight, os);
+		if(getImageMeta().getColorType() == ColorType.INDEXED) write256ColorBitmap(pixels, imageWidth, imageHeight, os);
 		else writeTrueColorBitmap(pixels, imageWidth, imageHeight, os);
 	}
 

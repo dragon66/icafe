@@ -25,14 +25,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import cafe.image.ImageColorType;
+import cafe.image.ColorType;
 import cafe.image.ImageMeta;
 import cafe.image.ImageType;
 import cafe.image.options.ImageOptions;
 import cafe.image.options.PNGOptions;
 import cafe.image.png.Chunk;
 import cafe.image.png.ChunkType;
-import cafe.image.png.ColorType;
 import cafe.image.png.Filter;
 import cafe.image.png.IDATBuilder;
 import cafe.image.png.IENDBuilder;
@@ -230,9 +229,9 @@ public class PNGWriter extends ImageWriter {
 		
 		boolean noAlpha = !imageMeta.hasAlpha();
 		// Determine type of image to write
-		if(imageMeta.getColorType() == ImageColorType.INDEXED) {
+		if(imageMeta.getColorType() == ColorType.INDEXED) {
 			writeIndexed(pixels, imageWidth, imageHeight, os);
-		} else if(imageMeta.getColorType() == ImageColorType.GRAY_SCALE) {
+		} else if(imageMeta.getColorType() == ColorType.GRAY_SCALE) {
 			if(noAlpha) {
 				writeGrayScale(IMGUtils.rgb2grayscale(pixels), imageWidth, imageHeight, false, os);
 			} else
@@ -254,8 +253,8 @@ public class PNGWriter extends ImageWriter {
 		IHDRBuilder hdrBuilder = new IHDRBuilder().width(imageWidth).height(imageHeight).compressionMethod(0).
 				filterMethod(0).interlaceMethod(0);
 		// Determine the gray-scale type
-		if(hasAlpha) hdrBuilder.colorType(ColorType.GRAY_SCALE_WITH_ALPHA);
-		else hdrBuilder.colorType(ColorType.GRAY_SCALE);
+		if(hasAlpha) hdrBuilder.colorType(4);
+		else hdrBuilder.colorType(0);
 		// PNG allows for 8 and 16 bits for gray-scale with alpha, for now, only 8 bit is supported
 		int bitsPerPixel = 8;		
 		
@@ -379,7 +378,7 @@ public class PNGWriter extends ImageWriter {
 
 		// Add IHDR chunk
 		chunks.add(new IHDRBuilder().width(imageWidth).height(imageHeight).bitDepth(bitsPerPixel)
-				.colorType(ColorType.INDEX_COLOR).compressionMethod(0).filterMethod(0).interlaceMethod(0).build());
+				.colorType(3).compressionMethod(0).filterMethod(0).interlaceMethod(0).build());
 		
 		int numOfColors = (1<<bitsPerPixel);
 		
@@ -468,8 +467,8 @@ public class PNGWriter extends ImageWriter {
 		IHDRBuilder hdrBuilder = new IHDRBuilder().width(imageWidth).height(imageHeight).bitDepth(8).
 				compressionMethod(0).filterMethod(0).interlaceMethod(0);
 		
-		if(noAlpha) hdrBuilder.colorType(ColorType.TRUE_COLOR);
-		else hdrBuilder.colorType(ColorType.TRUE_COLOR_WITH_ALPHA);
+		if(noAlpha) hdrBuilder.colorType(2);
+		else hdrBuilder.colorType(6);
 				
 		chunks.add(hdrBuilder.build());
 		

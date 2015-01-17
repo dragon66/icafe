@@ -31,7 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-import cafe.image.ImageColorType;
+import cafe.image.ColorType;
 import cafe.image.ImageMeta;
 import cafe.image.ImageType;
 import cafe.image.compression.huffman.HuffmanEncoder;
@@ -134,7 +134,7 @@ public class JPEGWriter extends ImageWriter {
 	private void processImageMeta() throws Exception {
 		// Grab the ImageMeta
 		imageMeta = getImageMeta();
-		grayScale = imageMeta.getColorType() == ImageColorType.GRAY_SCALE;
+		grayScale = imageMeta.getColorType() == ColorType.GRAY_SCALE;
 		ImageOptions options = imageMeta.getImageOptions();
 		// Read and set options if any
 		if(options instanceof JPEGOptions) {

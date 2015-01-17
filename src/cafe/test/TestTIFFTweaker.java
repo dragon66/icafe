@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import cafe.image.ImageColorType;
+import cafe.image.ColorType;
 import cafe.image.ImageFrame;
 import cafe.image.ImageMeta;
 import cafe.image.meta.exif.Exif;
@@ -82,7 +82,7 @@ public class TestTIFFTweaker {
 				tiffOptions.setDeflateCompressionLevel(6);
 				builder.imageOptions(tiffOptions);
 				
-				frames[0].setFrameMeta(builder.colorType(ImageColorType.GRAY_SCALE).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
+				frames[0].setFrameMeta(builder.colorType(ColorType.GRAY_SCALE).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
 				
 				tiffOptions = new TIFFOptions(tiffOptions); // Copy constructor		
 				tiffOptions.setTiffCompression(Compression.DEFLATE);
@@ -92,7 +92,7 @@ public class TestTIFFTweaker {
 				tiffOptions = new TIFFOptions(tiffOptions);				
 				tiffOptions.setTiffCompression(Compression.CCITTFAX4);
 				
-				ImageMeta meta = builder.colorType(ImageColorType.BILEVEL).ditherThreshold(50).imageOptions(tiffOptions).build();
+				ImageMeta meta = builder.colorType(ColorType.BILEVEL).ditherThreshold(50).imageOptions(tiffOptions).build();
 				
 				for(int i = 2; i < frames.length; i++)
 					frames[i].setFrameMeta(meta);
