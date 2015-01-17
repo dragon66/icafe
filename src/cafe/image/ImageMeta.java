@@ -15,7 +15,7 @@
  * ====  =======    ==================================================
  * WY    30Dec2014  Added new meta data fields hasICCP, containsThumbnail,
  *                  icc_profile, and thumbnails
- * WY    17Dec2014  Replaced different color type fields with ColorType
+ * WY    17Dec2014  Replaced different color type fields with ImageColorType
  */
 
 package cafe.image;
@@ -36,7 +36,7 @@ public class ImageMeta {
 	private final int width;	
 	private final int height;
     private final int bitsPerPixel;
-    private final ColorType colorType;
+    private final ImageColorType colorType;
     private final int rgbColorPalette[];
     private final byte componentColorPalette[][];
     private final boolean hasAlpha;
@@ -81,7 +81,7 @@ public class ImageMeta {
     	return bitsPerPixel;
     }
     
-    public ColorType getColorType() {
+    public ImageColorType getColorType() {
     	return colorType;
     }
     
@@ -153,7 +153,7 @@ public class ImageMeta {
 		private int width = 0;
 		private int height = 0;
 		private int bitsPerPixel = 0;
-	    private ColorType colorType = ColorType.FULL_COLOR;
+	    private ImageColorType colorType = ImageColorType.FULL_COLOR;
 	    private int rgbColorPalette[];
 	    private byte componentColorPalette[][]; // For RGBA separate components
 	    // Whether alpha channel is included or not
@@ -187,7 +187,7 @@ public class ImageMeta {
 		   return new ImageMeta(this);
 		}
 	    
-	    public ImageMetaBuilder colorType(ColorType colorType) {
+	    public ImageMetaBuilder colorType(ImageColorType colorType) {
 	    	this.colorType = colorType;
 	    	return this;
 	    }
@@ -239,7 +239,7 @@ public class ImageMeta {
 	    	this.width = 0;
 	    	this.height = 0;
 	      	this.bitsPerPixel = 0;
-	    	this.colorType = ColorType.FULL_COLOR;
+	    	this.colorType = ImageColorType.FULL_COLOR;
 	    	this.rgbColorPalette = null;
 	    	this.componentColorPalette = null;
 	    	this.hasAlpha = false;

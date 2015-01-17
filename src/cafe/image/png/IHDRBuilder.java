@@ -70,14 +70,14 @@ public class IHDRBuilder extends ChunkBuilder implements Builder<Chunk> {
 		}		
 	}
 	
-	public IHDRBuilder colorType(int colorType) {
+	public IHDRBuilder colorType(ColorType colorType) {
 		switch(colorType) {
-			case 0:
-			case 2:
-			case 3:
-			case 4:
-			case 6:
-				this.colorType = colorType;
+			case GRAY_SCALE:
+			case TRUE_COLOR:
+			case INDEX_COLOR:
+			case GRAY_SCALE_WITH_ALPHA:
+			case TRUE_COLOR_WITH_ALPHA:
+				this.colorType = colorType.getValue();
 				return this;
 			default:
 				throw new IllegalArgumentException("Invalid colorType: " + colorType);

@@ -36,7 +36,7 @@ import java.util.zip.InflaterInputStream;
 
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.png.ChunkType;
-import cafe.image.png.ColorFormat;
+import cafe.image.png.ColorType;
 import cafe.image.png.Filter;
 import cafe.image.png.PNGDescriptor;
 import cafe.image.util.IMGUtils;
@@ -1055,7 +1055,7 @@ public class PNGReader extends ImageReader
 		 ColorSpace colorSpace = ColorSpace.getInstance(ColorSpace.CS_sRGB);		
 		 if(hasICCP) colorSpace = new ICC_ColorSpace(ICC_Profile.getInstance(icc_profile));
 		 
-		 switch (ColorFormat.fromInt(color_format))
+		 switch (ColorType.fromInt(color_format))
 		 {
 		   case GRAY_SCALE:
 			   //Create a BufferedImage			   			  
@@ -1381,7 +1381,7 @@ public class PNGReader extends ImageReader
 		  System.out.println("image width: "+width);
 		  System.out.println("image height: "+height);
 		  System.out.println("image bit depth: "+bitsPerPixel);
-		  System.out.println(ColorFormat.fromInt(color_format));
+		  System.out.println(ColorType.fromInt(color_format));
 	  	  System.out.println("image compression: "+ compression + " - " + PNGDescriptor.getCompressionTypeDescrition(compression));
 		  System.out.println("image filter method: " + filter_method + " - " + PNGDescriptor.getFilterTypeDescription(filter_method));
 		  System.out.println("image interlace method: " + interlace_method + " - " + PNGDescriptor.getInterlaceTypeDescription(interlace_method));

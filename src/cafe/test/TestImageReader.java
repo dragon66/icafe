@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 
-import cafe.image.ColorType;
+import cafe.image.ImageColorType;
 import cafe.image.ImageIO;
 import cafe.image.ImageMeta;
 import cafe.image.ImageType;
@@ -99,7 +99,7 @@ public class TestImageReader {
 		 }
 		  
 		 t1 = System.currentTimeMillis();
-		 ImageIO.write(img, fo, imageType, builder.colorType(ColorType.FULL_COLOR).applyDither(true).ditherThreshold(18).hasAlpha(true).build());			
+		 ImageIO.write(img, fo, imageType, builder.colorType(ImageColorType.FULL_COLOR).applyDither(true).ditherThreshold(18).hasAlpha(true).build());			
 		 t2 = System.currentTimeMillis();
 		
 		 fo.close();
