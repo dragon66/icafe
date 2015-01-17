@@ -16,10 +16,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
+import cafe.image.ImageIO;
 import cafe.image.ImageType;
+import cafe.image.bmp.BMPTweaker;
+import cafe.image.gif.GIFTweaker;
+import cafe.image.jpeg.JPEGTweaker;
+import cafe.image.png.PNGTweaker;
+import cafe.image.tiff.TIFFTweaker;
 import cafe.image.util.IMGUtils;
+import cafe.io.FileCacheRandomAccessInputStream;
+import cafe.io.RandomAccessInputStream;
 
 /**
  * Base class for image metadata.
@@ -38,26 +47,48 @@ public abstract class Metadata {
 	 * @return a list of Metadata for the input stream
 	 * @throws IOException
 	 */
-	public static List<Metadata> readMetadata(InputStream is) throws IOException {
+	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
+		// Metadata map for all the Metadata read
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		// 4 byte as image magic number
-		PushbackInputStream pushBackStream = new PushbackInputStream(is, 4); 
-		@SuppressWarnings("unused")
-		ImageType imageType = IMGUtils.guessImageType(pushBackStream);
-		// TODO - change corresponding tweaker snoop() to return a list of Metadata
-		pushBackStream.close();
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// TODO - change corresponding tweaker snoop() to return a map of Metadata
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.snoop(pushbackStream);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				TIFFTweaker.snoop(randIS);
+				randIS.close();
+				break;
+			case PNG:
+				PNGTweaker.snoop(pushbackStream);
+			case GIF:
+				GIFTweaker.snoop(pushbackStream);
+				break;
+			case BMP:
+				BMPTweaker.snoop(pushbackStream);
+				break;
+			default:
+				throw new IllegalArgumentException("Metadata reading is not supported for " + imageType + " image");
+				
+		}		
+		pushbackStream.close();
 		
-		return null;
+		return metadataMap;
 	}
 	
-	public static List<Metadata> readMetadata(File image) throws IOException {
+	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
 		FileInputStream fin = new FileInputStream(image);
-		List<Metadata> metadataList = readMetadata(fin);
+		Map<MetadataType, Metadata> metadataMap = readMetadata(fin);
 		fin.close();
 		
-		return metadataList; 
+		return metadataMap; 
 	}
 	
-	public static List<Metadata> readMetadata(String image) throws IOException {
+	public static Map<MetadataType, Metadata> readMetadata(String image) throws IOException {
 		return readMetadata(new File(image));
 	}
 	
