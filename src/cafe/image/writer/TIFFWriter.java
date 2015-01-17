@@ -13,7 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
- * WY    22Dec2014  Fixed regression bug when migrating to ColorType 
+ * WY    22Dec2014  Fixed regression bug when migrating to ImageColorType 
  * WY    05Jun2014  Added support for CMYK image and ICC_Profile
  * WY    24Mar2014  Added JPEG compression for GrayScale image
  * WY    19Mar2014  Added JPEG compression for RGB image
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cafe.image.ColorType;
+import cafe.image.ImageColorType;
 import cafe.image.ImageMeta;
 import cafe.image.ImageType;
 import cafe.image.compression.ImageEncoder;
@@ -267,7 +267,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 		ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
 		
 		if(grayscale)
-			builder.colorType(ColorType.GRAY_SCALE);
+			builder.colorType(ImageColorType.GRAY_SCALE);
 		
 		JPEGOptions jpegOptions = new JPEGOptions();
 		
@@ -601,9 +601,9 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 			compression = tiffOptions.getTiffCompression();
 		}
 		// Start writing image data				
-		if(meta.getColorType() == ColorType.INDEXED) {
+		if(meta.getColorType() == ImageColorType.INDEXED) {
 			writeIndexed(pixels, imageWidth, imageHeight, compression);
-		} else if(meta.getColorType() == ColorType.BILEVEL) {
+		} else if(meta.getColorType() == ImageColorType.BILEVEL) {
 			if(meta.isApplyDither()) {
 				writeBilevel(IMGUtils.rgb2bilevelDither(pixels, imageWidth, imageHeight, meta.getDitherThreshold()), imageWidth, imageHeight, compression);
 			} else 
@@ -613,9 +613,9 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 			if(compression == Compression.JPG) {
 				if(getImageMeta().hasAlpha())
 					System.out.println("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
-				jpegCompress(pixels, imageWidth, imageHeight, meta.getColorType() == ColorType.GRAY_SCALE);			
+				jpegCompress(pixels, imageWidth, imageHeight, meta.getColorType() == ImageColorType.GRAY_SCALE);			
 			} else {
-				if(meta.getColorType() == ColorType.GRAY_SCALE) {
+				if(meta.getColorType() == ImageColorType.GRAY_SCALE) {
 					if(meta.hasAlpha()) {
 						writeGrayScale(IMGUtils.rgb2grayscaleA(pixels), imageWidth, imageHeight, compression, true);
 					} else {
