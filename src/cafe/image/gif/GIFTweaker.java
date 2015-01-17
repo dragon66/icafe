@@ -138,7 +138,7 @@ public class GIFTweaker {
 		return true;
 	}
 	
-	private static boolean readFrame(InputStream is, DataTransferObject DTO) throws Exception {
+	private static boolean readFrame(InputStream is, DataTransferObject DTO) throws IOException {
 		// Need to reset some of the fields
 		int disposalMethod = -1;
 		boolean transparent = false;
@@ -292,7 +292,7 @@ public class GIFTweaker {
 		is.read(DTO.logicalScreenDescriptor);
 	}
 	
-	public static void snoop(InputStream is) throws Exception {
+	public static void snoop(InputStream is) throws IOException {
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		

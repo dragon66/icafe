@@ -50,7 +50,7 @@ public class BMPTweaker {
 		is.read(DTO.infoHeader);
 	}
 	
-	public static void snoop(InputStream is) throws Exception {
+	public static void snoop(InputStream is) throws IOException {
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		readHeader(is, DTO);
@@ -86,7 +86,7 @@ public class BMPTweaker {
 		}		
 	}
 	
-	private static void readPalette(InputStream is, DataTransferObject DTO) throws Exception {
+	private static void readPalette(InputStream is, DataTransferObject DTO) throws IOException {
 		int index = 0, bindex = 0;
 		int colorsUsed = IOUtils.readInt(DTO.infoHeader, 32);
 		int bitsPerPixel = IOUtils.readShort(DTO.infoHeader, 14);
