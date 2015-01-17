@@ -109,10 +109,12 @@ public final class IFD {
 	public IFD removeChild(Tag tag) {
 		return children.remove(tag);
 	}
+	
 	/** Remove a specific field associated with the given tag */
 	public TiffField<?> removeField(short tag) {
 		return tiffFields.remove(tag);
 	}
+	
 	/**
 	 * Set the next IFD offset pointer
 	 * <p>
@@ -127,6 +129,7 @@ public final class IFD {
 		os.seek(endOffset - 4);
 		os.writeInt(nextOffset);
 	}
+	
 	/** Write this IFD and all the children, if any, to the output stream
 	 * 
 	 * @param os RandomAccessOutputStream
