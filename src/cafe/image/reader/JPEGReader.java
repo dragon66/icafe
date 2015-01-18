@@ -7,13 +7,18 @@ import java.awt.image.MemoryImageSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cafe.image.compression.huffman.HuffmanTbl;
+import cafe.image.jpeg.DHTReader;
+import cafe.image.jpeg.DQTReader;
 import cafe.image.jpeg.HTable;
+import cafe.image.jpeg.Marker;
 import cafe.image.jpeg.QTable;
-import cafe.image.reader.JPEGReaderEx.HUF_NODE;
+import cafe.image.jpeg.Segment;
 import cafe.io.IOUtils;
+import cafe.util.ArrayUtils;
 
 public class JPEGReader extends ImageReader {
 	public static final int LUMINANCE = 1;
@@ -96,7 +101,7 @@ public class JPEGReader extends ImageReader {
 	// End of JPEG marker definitions
 	// For JFIF there are normally two quantization tables, but for
 	// other format there can be up to 4 quantization tables!
-	private int quant_tbl[][] = new int[4][64];
+	private short quant_tbl[][] = new short[4][64];
 	private int transform[][] = new int[8][8];
 	private int block[] = new int[64];
 	private int zigzag_array[] = new int[64];
@@ -110,11 +115,10 @@ public class JPEGReader extends ImageReader {
 	private int max_v_samp_factor = 0;
 	private int max_h_samp_factor = 0;
 	
-	private HuffmanTbl dc_huftbl[] = new HuffmanTbl[4];
-	private HuffmanTbl ac_huftbl[] = new HuffmanTbl[4];
+	private HuffmanTbl dc_hufftbl[] = new HuffmanTbl[4];
+	private HuffmanTbl ac_hufftbl[] = new HuffmanTbl[4];
 	
-	private int component[][] = new int[4][4];
-	private int scan_component[][] = new int[4][3];
+	private int component[][] = new int[4][6];
 	
 	@SuppressWarnings("unused")
 	private HUF_NODE[][] dc_node;
@@ -129,8 +133,7 @@ public class JPEGReader extends ImageReader {
 	private int[] ac_total_nodes;
 	
 	Image img_thumb;
-	private boolean thumbnail = false;
-	private boolean firstAPP0 = true;
+	private boolean containsThumbnail = false;
 	
 	/**
 	 * Used to keep track of the tables when reading SOS segment.
@@ -144,105 +147,77 @@ public class JPEGReader extends ImageReader {
 	@SuppressWarnings("unused")
 	private List<HTable> dcTables = new ArrayList<HTable>(4);
 	
-	public BufferedImage read1(InputStream is) throws Exception
-	{
+	public BufferedImage read1(InputStream is) throws Exception	{
 		finished = false;
 		int identifier = -1;
 		int marker = 0;
-	
-		identifier = is.read();// Read segment identifier
+		
+		// Read segment identifier
+		identifier = is.read();
 	            
-		if (identifier == -1)
-		{
+		if (identifier == -1) {
 			System.out.println("END OF FILE!");
 			return null;
 		}
+		
 		// The very first marker should be the start_of_image marker!	
-		if((identifier != SEGMENT_IDENTIFIER)||((marker = is.read()) != SOI))
-		{
+		if((identifier != SEGMENT_IDENTIFIER)||((marker = is.read()) != SOI)) {
 			System.out.println("Invalid JPEG image!");
 			return null;
 		}
-		System.out.println("SOI(0x"+Integer.toHexString(SOI)+")");
+		
+		System.out.println("SOI(0xd8) - Start of image");
 		
 		while (!finished)
 		{
 			identifier = is.read(); // Keep reading segment identifiers
 	            
-			if (identifier == -1)
-			{
+			if (identifier == -1) {
 				System.out.println("END OF FILE!");
 				finished = true;
-			}
-				
-			else if(identifier != SEGMENT_IDENTIFIER)
-			{
+			} else if(identifier != SEGMENT_IDENTIFIER)	{
 				System.out.println("Invalid SEGMENT_IDENTIFIER!");
 				finished  = true;
-				//continue;
-			}
-			else
-			{
-				marker = is.read(); // Read marker
-	
-				while(marker == SEGMENT_IDENTIFIER)
-				{
+			} else {
+				marker = is.read(); // Read marker	
+				while(marker == SEGMENT_IDENTIFIER) {
 					marker = is.read();
 				}
 				if(marker==0x00) continue;// This is not a marker
 				// RSTs, there is no length byte and other contents
 				// associated with these markers, skip...
-				if ((marker >= 0xd0)&&(marker <= 0xd7))  
-				{ ; }                              
-				else if ((marker >= APP0)&&(marker <= APP15))
-					read_Application_Segment(marker,is);
-				else
-				{
-					switch (marker)
-					{
+				if ((marker >= 0xd0) && (marker <= 0xd7)) { ; }                              
+				else if ((marker >= APP0) && (marker <= APP15))
+					read_APP_Segment(marker, is);
+				else {
+					switch (marker)	{
 						case SEGMENT_IDENTIFIER: break;
 						case DQT:
-						{
 							read_DQT_Segment(is);
 							break;
-						}
 						case DHT:
-						{
 							read_DHT_Segment(is);
 							break;
-						}
 						case SOF0:
 						case SOF2:
-						{
 							read_SOF_Segment(is, marker);
 							break;				        	 
-						}
 						case SOS:
-						{
 							read_SOS_Segment(is);
 							break;
-						}
 						case DRI:
-						{
 							read_DRI_Segment(is);
 							break;
-						}
 						case EOI:
 						case  -1:
-						{
 							read_EOI_Segment();
 							break;
-						}
 						case COM:
-						{
 							read_COM_Segment(is);
 							break;
-						}
 						default:
-						{
-							read_Unknown_Segment(is, marker, read_word(is));
+							read_Unknown_Segment(is, marker, IOUtils.readUnsignedShortMM(is));
 							break;
-						}
 					}// End of switch
 				}
 			}
@@ -252,53 +227,50 @@ public class JPEGReader extends ImageReader {
    	}
 	   
 	// Process JFIF APPn header segment
-	public boolean read_Application_Segment(int APPn,InputStream is) throws IOException
-	{
-		int len=read_word(is);// Length of the JFIF header
+	private boolean read_APP_Segment(int APPn, InputStream is) throws IOException {
+		// Length of the JFIF header
+		int len = IOUtils.readUnsignedShortMM(is);
+		String identifier = "";
 		
-		switch(APPn)
-		{ 
+		switch(APPn) { 
 			case APP0:
-			{   
-				if (firstAPP0)
-				{
-					System.out.print("APP0(0x"+Integer.toHexString(APP0)+"): ");
-					byte[] identifier=new byte[5];
-					IOUtils.readFully(is,identifier,0,5);
-					String JFIF_IDENTIFIER=new String(identifier); // JFIF identifier
-					if (!JFIF_IDENTIFIER.trim().equals("JFIF"))
-					{
-						System.out.println("NOT a valid JFIF file");
-						finished = true;
-						return false;
-					}
-					int major_revision = is.read();
-					int minor_revision = is.read();
-					// Printout JFIF and revision information, the major_revision should be 1
-					// and the minor_revision should be 0..2, otherwise try to decode anyway            
-					System.out.println(JFIF_IDENTIFIER+major_revision+"."+minor_revision); 
-					IOUtils.skipFully(is,5); //x/y densities ignored
-					// Thumbnail follows
-					int thumb_width = is.read();
-					System.out.println("thumbnail width is: "+thumb_width);
-					int thumb_height = is.read();
-					System.out.println("thumbnail height is: "+thumb_height);
-					if((thumb_width!=0)&&(thumb_height!=0))
-					{
-						thumbnail = true;
-						generate_thumbnail(thumb_width,thumb_height,is);
-					}
-					firstAPP0 = false;
-				}
-				else
-				{
-					read_Unknown_Segment(is, APP0, len);
-				}
+				byte[] jfif = {0x4A, 0x46, 0x49, 0x46, 0x00}; // JFIF
+				System.out.println("APP0(0xe0) - Application segment 0");
+				byte[] buf = new byte[len - 2];
+			    IOUtils.readFully(is, buf);
+			    // JFIF segment
+			    if(Arrays.equals(ArrayUtils.subArray(buf, 0, 5), jfif)) {
+			    	System.out.print(new String(buf, 0, 4));
+			    	System.out.println(" - version " + (buf[5]&0xff) + "." + (buf[6]&0xff));
+			    	System.out.print("Density unit: ");
+			    	
+			    	switch(buf[7]&0xff) {
+			    		case 0:
+			    			System.out.println("No units, aspect ratio only specified");
+			    			break;
+			    		case 1:
+			    			System.out.println("Dots per inch");
+			    			break;
+			    		case 2:
+			    			System.out.println("Dots per centimeter");
+			    			break;
+			    		default:
+			    	}
+			    	
+			    	System.out.println("X density: " + IOUtils.readUnsignedShortMM(buf, 8));
+			    	System.out.println("Y density: " + IOUtils.readUnsignedShortMM(buf, 10));
+			    	int thumbnailWidth = buf[12]&0xff;
+			    	int thumbnailHeight = buf[13]&0xff;
+			    	System.out.println("Thumbnail dimension: " + thumbnailWidth + "X" + thumbnailHeight);
+			    	
+			    	if(thumbnailWidth != 0 && thumbnailHeight != 0)	{
+			    		containsThumbnail = true;
+			    		generate_thumbnail(thumbnailWidth, thumbnailHeight, is);
+			    	}	   
+			    }
 				break;
-			}
 			case APP1:
-			{
-				System.out.print("APP1(0x"+Integer.toHexString(APP1)+"): ");
+				System.out.print("APP1(0xe1"); // Could be Exif or Adobe XMP
 				/** 
 				 * This format is specific to digital cameras
 				 * to insert information about camera setups to 
@@ -307,93 +279,73 @@ public class JPEGReader extends ImageReader {
 				 * sometimes, there are more than one app1 segments found,
 				 * this will cause some confusion, but it won't stop the decoder!
 				 */
-				byte[] buf = new byte[len-2];
-				IOUtils.readFully(is,buf,0,len-2);
+				buf = new byte[len-2];
+				IOUtils.readFully(is, buf, 0, len-2);
 				int identifier_len = 0;
-				while ((buf[identifier_len]&0xff)!=0)
-				{
+				while ((buf[identifier_len]&0xff) != 0)	{
 					identifier_len++;
 				}
-				// Exif header
-				//byte[] identifier=new byte[6];
-				//is.read(identifier,0,6);
-				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8"); // Could be Exif or Adobe XMP
-				System.out.println("["+IDENTIFIER+"]");
+				identifier = new String(buf, 0, identifier_len, "UTF-8"); 
+				System.out.println("[" + identifier + "]");
 				break;
-			}
 			case APP2:
-			{
-				System.out.print("APP2(0x"+Integer.toHexString(APP2)+"): ");
+				System.out.print("APP2(0xe2");
 				// FPXR or ICC Profile data
-				byte[] buf = new byte[len-2];
-				IOUtils.readFully(is,buf,0,len-2);
-				int identifier_len = 0;
-				while ((buf[identifier_len]&0xff)!=0)
-				{
+				buf = new byte[len-2];
+				IOUtils.readFully(is, buf, 0, len-2);
+				identifier_len = 0;
+				while ((buf[identifier_len]&0xff) != 0) {
 					identifier_len++;
 				}
-				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				System.out.println("["+IDENTIFIER+"]");
+				identifier = new String(buf, 0, identifier_len, "UTF-8");
+				System.out.println("[" + identifier + "]");
 				break;
-			}
 			case APP12: // [Ducky]
-			{
 				// Some digital cameras store useful text information in APP12 markers.
-				System.out.print("APP12(0x"+Integer.toHexString(APP12)+"): ");
-				byte[] buf = new byte[len-2];
-				IOUtils.readFully(is,buf,0,len-2);
-				int identifier_len = 0;
-				while ((buf[identifier_len]&0xff)!=0)
-				{
+				System.out.print("APP12(0xec");
+				buf = new byte[len-2];
+				IOUtils.readFully(is, buf, 0, len-2);
+				identifier_len = 0;
+				while ((buf[identifier_len]&0xff) != 0) {
 					identifier_len++;
 				}
-				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				System.out.println("["+IDENTIFIER+"]");
+				identifier = new String(buf, 0, identifier_len, "UTF-8");
+				System.out.println("[" + identifier + "]");
 				break;
-			}
 			case APP13:// [Photoshop 3.0]
-			{	
-				// IPTC and Photoshop data
-				System.out.print("APP13(0x"+Integer.toHexString(APP13)+"): ");
-				byte[] buf = new byte[len-2];
-				IOUtils.readFully(is,buf,0,len-2);
-				int identifier_len = 0;
-				while ((buf[identifier_len]&0xff)!=0)
-				{
+			// IPTC and Photoshop data
+				System.out.print("APP13(0xed");
+				buf = new byte[len-2];
+				IOUtils.readFully(is, buf, 0, len-2);
+				identifier_len = 0;
+				while ((buf[identifier_len]&0xff) != 0) {
 					identifier_len++;
 				}
-				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				System.out.println("["+IDENTIFIER+"]");
+				identifier = new String(buf,0,identifier_len,"UTF-8");
+				System.out.println("[" + identifier + "]");
 				break;				
-			}
 			case APP14:// [Adobe]
-			{
-				System.out.print("APP14(0x"+Integer.toHexString(APP14)+"): ");
-				byte[] buf = new byte[len-2];
-				IOUtils.readFully(is,buf,0,len-2);
-				int identifier_len = 0;
-				while ((buf[identifier_len]&0xff)!=0)
-				{
+				System.out.print("APP14(0xee");
+				buf = new byte[len-2];
+				IOUtils.readFully(is, buf, 0, len-2);
+				identifier_len = 0;
+				while ((buf[identifier_len]&0xff) != 0)	{
 					identifier_len++;
 				}
-				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				System.out.println("["+IDENTIFIER+"]");
+				identifier = new String(buf, 0, identifier_len, "UTF-8");
+				System.out.println("["+identifier+"]");
 				break;
-			}
 			case APP15:
-			{
 				System.out.print("APP15(0x"+Integer.toHexString(APP15)+"): ");
-				byte[] buf = new byte[len-2];
+				buf = new byte[len-2];
 				IOUtils.readFully(is,buf,0,len-2);
-				int identifier_len = 0;
-				while ((buf[identifier_len]&0xff)!=0)
-				{
+				identifier_len = 0;
+				while ((buf[identifier_len]&0xff) != 0)	{
 					identifier_len++;
 				}
-				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				System.out.println("["+IDENTIFIER+"]");
+				identifier = new String(buf, 0, identifier_len, "UTF-8");
+				System.out.println("[" + identifier + "]");
 				break;
-			}
 			default:
 				read_Unknown_Segment(is, APPn, len);
 		}// End of switch!	
@@ -403,7 +355,7 @@ public class JPEGReader extends ImageReader {
 	    
 	public boolean containsThumbnail()
 	{
-		return thumbnail;
+		return containsThumbnail;
 	}
 	   
 	// Generate thumbnail view
@@ -426,162 +378,195 @@ public class JPEGReader extends ImageReader {
    	}
 	   
 	// Process define Quantization table
-	public void read_DQT_Segment(InputStream is) throws IOException
-	{
-		// Define quantization table segment, only for 8 bits precision
-		System.out.println("DQT(0x"+Integer.toHexString(DQT)+")");
-		int QT_info = 0;
-		int QT_precision = 0;
-		int QT_index = 0;
-		byte buf[] = new byte[64];;
+	private void read_DQT_Segment(InputStream is) throws IOException {
+		System.out.println("DQT(0xdb) - Define quantization table segment");
+		int len = IOUtils.readUnsignedShortMM(is);
+		byte buf[] = new byte[len - 2];
+		IOUtils.readFully(is, buf);
+		
+		DQTReader reader = new DQTReader(new Segment(Marker.DQT, len, buf));
+		List<QTable> qTables = reader.getTables();
+	
 		int count = 0;
-		
-		int len = read_word(is);
-		len -= 2;//
-		
-		while(len > 0)
-		{
-			QT_info = is.read();
-			QT_precision = (QT_info>>4)&0x0f;
-			//System.out.println("precision of QT is "+QT_precision);
-			if (QT_precision != 0)
-			{
-				System.out.println("only 8 bit precision is surported!");
-				finished = true;
-				return;
+		  
+		for(QTable table : qTables)	{
+			int QT_precision = table.getPrecision();
+			int QT_index = table.getIndex();
+			short[] qTable = table.getTable();
+			System.out.println("precision of QT is " + QT_precision);
+			System.out.println("Quantization table #" + QT_index + ":");
+			
+			System.arraycopy(qTable, 0, quant_tbl[QT_index], 0, 64);
+			
+			if(debug) {
+				if(QT_precision == 0) {
+					for (int j = 0; j < 64; j++)
+				    {
+						if (j != 0 && j%8 == 0) {
+							System.out.println();
+						}
+						
+						System.out.print((qTable[j]&0xff) + " ");			
+				    }
+				} else { // 16 bit big-endian
+									
+					for (int j = 0; j < 64; j++) {
+						if (j != 0 && j%8 == 0) {
+							System.out.println();
+						}
+						
+						System.out.print((qTable[j]&0xffff) + " ");	
+					}				
+				}
+				System.out.println();
 			}
-			QT_index = (QT_info&0x0f);
-			//System.out.println("for QT_no "+QT_index);
-			// Read QT tables
-			// We assume a precision value of zero
-			IOUtils.readFully(is, buf,0,64);
-			for (int j=0; j<64; j++ )
-			{
-				quant_tbl[QT_index][j] = buf[j]&0xff;
-			}
-			len -= 65;
-			count ++;
+			
+		   	count++;
 		}
-		System.out.println("number of Quantation tables: " + count);
+		
+		System.out.println("Total number of Quantation tables: " + count);
+		System.out.println("------------------------------------");
 	}
 	   
 	// Process define Huffman table
-	public void read_DHT_Segment(InputStream is) throws IOException
-	{
-		// Define huffman table segment
-		int HT_info=0;
-		int HT_index=0;
-		int HT_type =0;
-		int count=0;
-		byte bits[];
-		byte values[];
+	private void read_DHT_Segment(InputStream is) throws IOException {
+		// Define Huffman table segment
+		System.out.println("DHT(0xc4) - Define Huffman table");
 		
-		System.out.println("DHT(0x"+Integer.toHexString(DHT)+")");
-		int len=read_word(is);
-		len -= 2;
-		while (len > 0)
-		{
-			HT_info=is.read();
-			HT_type=(HT_info>>4)&0x0f;// 0=DC table, 1=AC table
-			HT_index=(HT_info&0x0f);// Huffman tables number
-			//System.out.println("HT type is "+HT_type);
-			//System.out.println("HT_num is "+HT_index);
-			count = 0;			
-			bits = new byte[16];
-			// Number of Huffman code of length i. (i=1..16)
-			IOUtils.readFully(is,bits,0,16);
-			
-			for (int i=0; i<16; i++ )
-			{
-				count += bits[i]&0xff;
-			}
-			//System.out.println("number of Huffman code: " + count);
-			if (count>256)
-			{
-				System.out.println("invalid huffman code count!");
-				finished = true;
-				return;
-			}
-			
-			values = new byte[count];
-			IOUtils.readFully(is,values,0,count);
-	          	
-			if (HT_type == 0)
-			{
-				dc_huftbl[HT_index] = new HuffmanTbl(bits, values);
-			}
-			else 
-			{
-				ac_huftbl[HT_index] = new HuffmanTbl(bits, values);
-			}
-				
-			len -= (1+16+count);
+		final String[] HT_class_table = {"DC Component", "AC Component"};
+		int len = IOUtils.readUnsignedShortMM(is);
+        System.out.println("DHT segment length: " + len);       	
+        byte buf[] = new byte[len - 2];
+        IOUtils.readFully(is, buf);
+		
+		DHTReader reader = new DHTReader(new Segment(Marker.DHT, len, buf));
+		
+		List<HTable> dcTables = reader.getDCTables();
+		List<HTable> acTables = reader.getACTables();
+		
+		for(HTable table : dcTables) {
+			int destination_id = table.getDestinationID();
+			dc_hufftbl[destination_id] = new HuffmanTbl(table.getBits(), table.getValues());
 		}
+		
+		for(HTable table : acTables) {
+			int destination_id = table.getDestinationID();
+			ac_hufftbl[destination_id] = new HuffmanTbl(table.getBits(), table.getValues());
+		}
+		
+		if(debug) {
+			List<HTable> tables = new ArrayList<HTable>(dcTables);
+			tables.addAll(acTables);
+			
+			for(HTable table : tables )
+			{
+				System.out.println("Class: " + table.getComponentClass() + " (" + HT_class_table[table.getComponentClass()] + ")");
+				System.out.println("Destination ID: " + table.getDestinationID());
+				
+				byte[] bits = table.getBits();
+				byte[] values = table.getValues();
+				
+			    int count = 0;
+				
+				for (int i = 0; i < bits.length; i++)
+				{
+					count += (bits[i]&0xff);
+				}
+				
+	            System.out.println("Number of codes: " + count);
+				
+	            if (count > 256)
+				{
+					System.out.println("invalid huffman code count!");			
+					return;
+				}
+		        
+	            int j = 0;
+	            
+				for (int i = 0; i < 16; i++) {
+				
+					System.out.print("Codes of length " + (i+1) + " (" + (bits[i]&0xff) +  " total): [ ");
+					
+					for (int k = 0; k < (bits[i]&0xff); k++) {
+						System.out.print((values[j++]&0xff) + " ");
+					}
+					
+					System.out.println("]");
+				}
+				
+				System.out.println("**********************************");
+			}
+		}	
 	}
 	   
 	// Process SOF segment
-	public void read_SOF_Segment(InputStream is,int SOFn) throws IOException
-	{
-		System.out.println("SOF(0x"+Integer.toHexString(SOFn)+")");
+	private void read_SOF_Segment(InputStream is, int SOFn) throws IOException {
+		System.out.println("SOF(0x" + Integer.toHexString(SOFn) + ") - Start of frame");
 		int samp_factor = 0;
-		int len = read_word(is);
+		int len = IOUtils.readUnsignedShortMM(is);
 		// This is in bits/sample, usually 8, (12 and 16 not supported by most software). 
 		int precision = is.read();// Usually 8, for baseline JPEG
-		if (precision != 8)
-		{
+		System.out.println("Data precision (bits/sample): " + precision);
+		if (precision != 8) {
 			System.out.println("only 8 bit precision is surported!");
 			finished = true;
 			return;
 		}
 		// Image width and height
-		image_height = read_word(is);
-		image_width = read_word(is);
-		System.out.println("image size: "+image_width+"X"+image_height);
+		image_height = IOUtils.readUnsignedShortMM(is);
+		image_width = IOUtils.readUnsignedShortMM(is);
+		System.out.println("Image size: " + image_width + "X" + image_height);
 		// Number of components
 		// Usually 1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK 
-		// JFIF uses either 1 component (Y, greyscaled) or 3 components (YCbCr, sometimes called YUV, color).
 		int num_of_components = is.read();
-		//System.out.println("number of components: "+num_components);
-		for (int i=0; i<num_of_components; i++)
-		{
-			// Component ID(1 byte)(1 = Y, 2 = Cb, 3 = Cr, 4 = I, 5 = Q)    
-			component[i][0] = is.read();//Component id
-			// Sampling factors (1byte) (bit 0-3 horizontal, 4-7 vertical).
-			// This is to be confirmed!
+		System.out.println("number of components: " + num_of_components);
+
+		// JFIF uses either 1 component (Y, greyscaled) or 3 components (YCbCr, sometimes called YUV, color).
+		for (int i = 0; i < num_of_components; i++)	{
+			// Component ID(1 byte)(1 = Y, 2 = Cb, 3 = Cr, 4 = I, 5 = Q)
+			int component_id = is.read();
+			int index = component_id - 1;
+			component[index][0] = component_id; 
+			// Sampling factors (1byte) (bit 0-3 vertical, 4-7 horizontal).
 			samp_factor = is.read();
-			component[i][1] = (samp_factor>>4)&0x0f;//Horizontal 
-			component[i][2] = (samp_factor&0x0f);//Vertical
-			if (component[i][1] > max_h_samp_factor)
-			{
+			component[index][1] = (samp_factor>>4)&0x0f;//Horizontal			
+			component[index][2] = (samp_factor&0x0f);//Vertical
+			if (component[index][1] > max_h_samp_factor) {
 				max_h_samp_factor = component[i][1];
 			}
-			if (component[i][2] > max_v_samp_factor)
-			{
+			if (component[index][2] > max_v_samp_factor) {
 				max_v_samp_factor = component[i][2];
 			}
-			component[i][3] = is.read();// Quantization table number
-			//System.out.println("component "+ component[i][0]+" quantization table number: "+component[i][3]);
+			component[index][3] = is.read();// Quantization table number
+			if(debug) {
+				System.out.println("Component " + i + ":");
+				System.out.println("Component id: " + component[index][0]);
+				System.out.println("Component horizontal sampling factor: " + component[index][1]);
+				System.out.println("Component vertical sampling factor: " + component[index][2]);		
+				System.out.println("Component quantization table number: " + component[index][3]);
+			}
 		}
-		IOUtils.skipFully(is,len-8-3*num_of_components);
-			
-		if(SOFn == SOF2)
-		{
+		
+		IOUtils.skipFully(is, len-8-3*num_of_components);
+		
+		System.out.println("------------------------------------");
+
+		if(SOFn == SOF2) {
 			System.out.println("progressive DCT, Huffman coding not supported!");
-			finished=true;
-			System.exit(1);		
-		}	    
+			finished = true;
+			return;		
+		}
 	}
 	   
 	// Process start of scan 
-	public void read_SOS_Segment(InputStream is) throws IOException
-	{
+	private void read_SOS_Segment(InputStream is) throws IOException {
 		// Start of scan segment
-		System.out.println("SOS(0x"+Integer.toHexString(SOS)+")");
+		System.out.println("SOS(0xda");
 			
 		int tbl_no = 0;
 		int Ss, Se, Ah_Al, Ah, Al;
 		
-		int len = read_word(is);
+		int len = IOUtils.readUnsignedShortMM(is);
 		System.out.println("length is: "+len);
 		
 		// The number of components in this scan
@@ -589,81 +574,80 @@ public class JPEGReader extends ImageReader {
 		System.out.println("number of components in this scan: " + num_of_components);
 		len -= 3;
 		
-		for (int i=0; i<num_of_components; i++)
-		{
-			scan_component[i][0] = is.read();// Component id
+		for (int i = 0; i < num_of_components; i++)	{
+			int component_id = is.read();// Component id
 			tbl_no = is.read();
-			scan_component[i][1] = tbl_no&0x0f;// DC table number
-			scan_component[i][2] = (tbl_no>>4)&0x0f;// AC table number
+			component[component_id - 1][4] = (tbl_no>>4)&0x0f;// DC table number
+			component[component_id - 1][5] = tbl_no&0x0f;// AC table number
+			if(debug) {
+				System.out.println("Component " + i + ":");
+				System.out.println("Component ID: " + component_id);
+				System.out.println("DC table number: " + component[component_id - 1][4] );
+				System.out.println("AC table number: " + component[component_id - 1][5] );
+			}
 			len -= 2;
 		}
 		Ss = is.read();// Start of spectral or predictor selection
 		Se = is.read();// End of spectral selection		
-		System.out.println("Ss: " + Ss);
-		System.out.println("Se: " + Se);
 		//System.out.println("Ss and Se are: "+ Ss+"&"+Se);
 		Ah_Al = is.read();
 		Ah = (Ah_Al>>4)&0x0f;// Successive approximation bit position high
 		Al = Ah_Al&0x0f;// Successive approximation bit position low or point transform
-		System.out.println("Ah: " + Ah);
-		System.out.println("Al: " + Al);
-		IOUtils.skipFully(is,len-3);
-		System.out.println("length remains: "+(len-3));
+		IOUtils.skipFully(is, len-3);
+		if(debug) {
+			System.out.println("Ss: " + Ss);
+			System.out.println("Se: " + Se);
+			System.out.println("Ah: " + Ah);
+			System.out.println("Al: " + Al);
+			System.out.println("length remains: " + (len-3));
+		}
 		// Begin of the image data
 		decode_image_data(is);
 	}	
 	   
 	// Process define restart interval
-	public void read_DRI_Segment(InputStream is) throws IOException
-	{
-		System.out.println("DRI(0x"+Integer.toHexString(DRI)+")");
-		IOUtils.skipFully(is,read_word(is)-2);
+	private void read_DRI_Segment(InputStream is) throws IOException {
+		System.out.println("DRI(0xdd");
+		IOUtils.skipFully(is, IOUtils.readUnsignedShortMM(is)-2);
 	}	
 	
 	// Process unknown marker
-	public void read_Unknown_Segment(InputStream is, int marker, int len) throws IOException
-	{
+	private void read_Unknown_Segment(InputStream is, int marker, int len) throws IOException {
 		byte[] buf = new byte[len-2];
-		IOUtils.readFully(is,buf,0,len-2);
+		IOUtils.readFully(is, buf, 0, len-2);
 		int identifier_len = 0;
-		while ((buf[identifier_len]&0xff)!=0)
-		{
+		while ((buf[identifier_len]&0xff) != 0)	{
 			identifier_len++;
 		}	
-		String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");	  	   
-		if ((marker>=0xe0)&&(marker<=0xef))
-		{
-			System.out.println("Application type marker: "+ "0x"+Integer.toHexString(marker));
+		String identifier = new String(buf,0,identifier_len,"UTF-8");	  	   
+		if ((marker >= 0xe0) && (marker <= 0xef)) {
+			System.out.println("Application type marker: "+ "0x" + Integer.toHexString(marker));
+		} else {
+			System.out.println("Unrecognized marker: " + "0x" + Integer.toHexString(marker));
 		}
-		else
-		{
-			System.out.println("Unrecognized marker: " + "0x"+Integer.toHexString(marker));
-		}
-		System.out.println("with identifier: ["+IDENTIFIER+"] ignored!");
+		System.out.println("with identifier: [" + identifier + "] ignored!");
 	}
 	   
 	// Process comment marker
-	public void read_COM_Segment(InputStream is) throws IOException
-	{
-		int len=read_word(is);
-		byte buf[]=new byte[len-2];
-		IOUtils.readFully(is,buf,0,len-2);
+	private void read_COM_Segment(InputStream is) throws IOException	{
+		int len = IOUtils.readUnsignedShortMM(is);
+		byte buf[] = new byte[len-2];
+		IOUtils.readFully(is, buf, 0, len-2);
 		System.out.println("Comment: " + new String(buf,"UTF-8"));
 	}	
 	   
 	// Process end of image marker
-	public void read_EOI_Segment()
-	{
+	private void read_EOI_Segment()	{
 		System.out.println("END OF IMAGE!");
-		finished=true;
+		finished = true;
 	}
 	
 	/**
-	 * @param is  
+	 * @param is InputStream of the image
 	 */
-	public void decode_image_data(InputStream is)
-	{
+	private void decode_image_data(InputStream is) {
 		System.out.println("Start Processing Image Data...");
+		
 	}
 	
 	@SuppressWarnings("unused")
@@ -787,11 +771,6 @@ public class JPEGReader extends ImageReader {
 		}
 	}
 		
-	private int read_word(InputStream is) throws IOException
-	{
-		return (is.read()<<8)|(is.read());
-	}
-	  
 	class HUF_NODE
 	{
 		int code;
@@ -802,6 +781,6 @@ public class JPEGReader extends ImageReader {
 	
 	@Override
 	public BufferedImage read(InputStream is) throws Exception {
-		return javax.imageio.ImageIO.read(is);
+		return read1(is);
 	}
 }
