@@ -781,6 +781,7 @@ public class JPEGReader extends ImageReader {
 	
 	@Override
 	public BufferedImage read(InputStream is) throws Exception {
-		return read1(is);
+		return javax.imageio.ImageIO.read(is);
+		//return read1(is);
 	}
 }
