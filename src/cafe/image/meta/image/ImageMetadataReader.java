@@ -33,7 +33,7 @@ public class ImageMetadataReader implements MetadataReader {
 	private boolean containsThumbnail;
 	
 	public ImageMetadataReader(Document document) {
-		this(document, null);
+		this.document = document;
 	}
 	
 	public ImageMetadataReader(Document document, Thumbnail thumbnail) {
