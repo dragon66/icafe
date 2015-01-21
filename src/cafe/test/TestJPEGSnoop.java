@@ -9,7 +9,7 @@ public class TestJPEGSnoop {
 
 	public static void main(String[] args) throws IOException {
 		FileInputStream fin = new FileInputStream(args[0]);
-		JPEGTweaker.snoop(fin);
+		JPEGTweaker.readMetadata(fin);
 		fin.close();
 	}
 }

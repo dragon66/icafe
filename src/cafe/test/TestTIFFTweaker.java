@@ -46,7 +46,7 @@ public class TestTIFFTweaker {
 				TIFFTweaker.copyCat(rin, rout);
 				rout.close();
 			} else if(args[1].equalsIgnoreCase("snoop")) {
-				TIFFTweaker.snoop(rin);
+				TIFFTweaker.readMetadata(rin);
 			} else if(args[1].equalsIgnoreCase("extractThumbnail")){
 				TIFFTweaker.extractThumbnail(rin, "thumbnail");					
 			} else if(args[1].equalsIgnoreCase("extractICCProfile")) {
