@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    20Jan2015  Revised to work with Metadata.showMetadata()
  * WY    13Jan2015  Split remove_ancillary_chunks() arguments
  * WY    22Dec2014  Added read_ICCP_chunk() to read ICC_Profile chunk
  * WY    22Dec2014  dump_text_chunks() now calls read_text_chunks()
@@ -32,13 +33,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.InflaterInputStream;
 
+import cafe.image.meta.Metadata;
+import cafe.image.meta.MetadataType;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
@@ -118,6 +123,20 @@ public class PNGTweaker {
    		return chunks;
    	}
   	
+  	public static byte[] readICCProfile(byte[] buf) throws IOException {
+  		 int profileName_len = 0;
+		 while(buf[profileName_len] != 0) profileName_len++;
+ 		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
+ 		
+ 		 InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, buf.length - profileName_len - 2));
+ 		 System.out.println("ICCProfile name: " + profileName);
+ 		 
+ 		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
+ 		 System.out.println("ICCProfile length: " + icc_profile.length);
+ 	 		 
+ 		 return icc_profile;
+  	}
+  	
   	public static byte[] read_ICCP_chunk(InputStream is) throws IOException {
   		//Local variables for reading chunks
         int data_len = 0;
@@ -156,21 +175,10 @@ public class PNGTweaker {
             switch (chunk)
             {
             	case ICCP:
-            		 buf = new byte[data_len];
-            		 IOUtils.read(is, buf);
-            		 int profileName_len = 0;
-            		 while(buf[profileName_len] != 0) profileName_len++;
-             		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
-             		
-             		 InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, data_len - profileName_len - 2));
-             		 System.out.println("ICCProfile name: " + profileName);
-             		 
-             		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
-             		 System.out.println("ICCProfile length: " + icc_profile.length);
-             		 
-             		 IOUtils.skipFully(is, 4); // Skip CRC
-             		 
-             		 return icc_profile;
+            		buf = new byte[data_len];
+            		IOUtils.read(is, buf);            		 
+            		IOUtils.skipFully(is, 4); // Skip CRC
+            		return readICCProfile(buf);
             	default:
             		buf = new byte[data_len+4];
             		IOUtils.read(is, buf,0, data_len+4);
@@ -392,6 +400,27 @@ public class PNGTweaker {
         
         return list;
   	}
+  	
+	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+		List<Chunk> chunks = PNGTweaker.readChunks(is);
+		Iterator<Chunk> iter = chunks.iterator();
+		
+		while (iter.hasNext()) {
+			Chunk chunk = iter.next();
+			ChunkType type = chunk.getChunkType();
+			long length = chunk.getLength();
+			if(type == ChunkType.ICCP)
+				metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile(readICCProfile(chunk.getData())));
+			System.out.print(type.getName() + " (" + type.getAttribute() + ")");
+			System.out.print(" | " + length + " bytes");
+			System.out.println(" | " + "0x" + Long.toHexString(chunk.getCRC()) + " (CRC)");
+		}
+		
+		is.close();
+		
+		return metadataMap;
+	}
   	
   	/**
   	 * @param is  InputStream of the image
@@ -634,22 +663,7 @@ public class PNGTweaker {
   		ICCProfile.showProfile(icc_profile);
   	}
   	
-  	public static void snoop(InputStream is) throws IOException {
-		
-		List<Chunk> chunks = PNGTweaker.readChunks(is);
-		Iterator<Chunk> iter = chunks.iterator();
-		
-		while (iter.hasNext()) {
-			Chunk chunk = iter.next();
-			System.out.print(chunk.getChunkType().getName() + " (" + chunk.getChunkType().getAttribute() + ")");
-			System.out.print(" | " + chunk.getLength() + " bytes");
-			System.out.println(" | " + "0x" + Long.toHexString(chunk.getCRC()) + " (CRC)");
-		}
-		
-		is.close();
-	}
-  	
-  	public static List<Chunk> splitIDATChunk(Chunk chunk, int size) {
+   	public static List<Chunk> splitIDATChunk(Chunk chunk, int size) {
    		
   		if (chunk.getChunkType() != ChunkType.IDAT)	{
    			throw new IllegalArgumentException("Not a valid IDAT chunk.");   				

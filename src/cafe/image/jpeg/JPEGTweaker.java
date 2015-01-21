@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    19Jan2015  Renamed snoop() to readMetadata() and revised readAPPn()
  * WY    10Jan2015  Revised extractThumbnails() to use IRBReader and IRBThumbnail
  * WY    05Jan2015  Enhanced to show information for all SOFX and SOS segments
  * WY    07Oct2014  Revised readAPP1() to show Adobe XMP information
@@ -47,7 +48,6 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -57,14 +57,16 @@ import java.io.OutputStream;
 import cafe.image.ImageIO;
 import cafe.image.ImageType;
 import cafe.image.writer.ImageWriter;
+import cafe.image.meta.Metadata;
+import cafe.image.meta.MetadataType;
+import cafe.image.meta.adobe.IRB;
+import cafe.image.meta.adobe.IRBReader;
+import cafe.image.meta.adobe.IRBThumbnail;
+import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifReader;
 import cafe.image.meta.exif.ExifThumbnail;
 import cafe.image.meta.icc.ICCProfile;
-import cafe.image.meta.photoshop.IRBReader;
-import cafe.image.meta.photoshop.IRBThumbnail;
-import cafe.image.tiff.IFD;
-import cafe.image.tiff.TIFFTweaker;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -73,7 +75,9 @@ import cafe.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * JPEG image tweaking tool
@@ -144,8 +148,6 @@ public class JPEGTweaker {
 	}
 	
 	public static byte[] extractICCProfile(InputStream is) throws IOException {
-		// ICC_PROFILE identifier with trailing bytes [0x00].
-		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};		
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 		// Flag when we are done
 		boolean finished = false;
@@ -193,17 +195,7 @@ public class JPEGTweaker {
 				    	finished = true;
 						break;
 				    case APP2:
-				    	byte[] icc_profile_buf = new byte[12];
-						length = IOUtils.readUnsignedShortMM(is);						
-						IOUtils.readFully(is, icc_profile_buf);		
-						// ICC_PROFILE segment.
-						if (Arrays.equals(icc_profile_buf, icc_profile_id)) {
-							icc_profile_buf = new byte[length-14];
-						    IOUtils.readFully(is, icc_profile_buf);
-						    bo.write(icc_profile_buf, 2, length-16);
-				  		} else {
-				  			IOUtils.skipFully(is, length-14);
-				  		}
+				    	readAPP2(is, bo);
 						marker = IOUtils.readShortMM(is);
 						break;
 				    default:
@@ -660,31 +652,29 @@ public class JPEGTweaker {
 	    }
 	}
 	
-	private static void readAPP1(InputStream is) throws IOException 
-	{
+	private static Metadata readAPP1(InputStream is) throws IOException {
 		// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
-		byte[] exif = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-		byte[] exif2 = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
-		String xmp = "http://ns.adobe.com/xap/1.0/\0";
+		byte[] exif_id = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
+		byte[] exif2_id = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
+		String xmp_id = "http://ns.adobe.com/xap/1.0/\0";
 		int length = IOUtils.readUnsignedShortMM(is);
 		byte[] buf = new byte[length-2];
 		IOUtils.readFully(is, buf);		
 		// EXIF segment.
-		if (Arrays.equals(ArrayUtils.subArray(buf, 0, 6), exif)||Arrays.equals(buf, exif2)) {
-			RandomAccessInputStream randInputStream = new FileCacheRandomAccessInputStream(
-					new ByteArrayInputStream(ArrayUtils.subArray(buf, 6, length-8)));
-			List<IFD> list = new ArrayList<IFD>();
-		    TIFFTweaker.readIFDs(list, randInputStream);
-		   	randInputStream.close();
-		} else if(new String(ArrayUtils.subArray(buf, 0, xmp.length())).equals(xmp)) {
-			StringUtils.showXML(ArrayUtils.subArray(buf, xmp.length(), length - xmp.length() - 2));
+		if (Arrays.equals(ArrayUtils.subArray(buf, 0, 6), exif_id)||Arrays.equals(buf, exif2_id)) {
+			return new Exif(ArrayUtils.subArray(buf, 6, length-8));
+		} else if(new String(ArrayUtils.subArray(buf, 0, xmp_id.length())).equals(xmp_id)) {
+			XMP xmp = new XMP(ArrayUtils.subArray(buf, xmp_id.length(), length - xmp_id.length() - 2));
+			xmp.showMetadata();
+			return xmp;
 			// For comparison purpose only
-			//System.out.println(new String(ArrayUtils.subArray(buf, xmp.length(), length - xmp.length() - 2), "utf-8"));
+			//System.out.println(new String(ArrayUtils.subArray(buf, xmp_id.length(), length - xmp_id.length() - 2), "utf-8"));
   		}
+		
+		return null;
 	}
 	
-	private static void readAPP12(InputStream is) throws IOException 
-	{
+	private static void readAPP12(InputStream is) throws IOException {
 		// APP12 is either used by some old cameras to set PictureInfo
 		// or Adobe PhotoShop to store Save for Web data - called Ducky segment.
 		String[] duckyInfo = {"Ducky", "Photoshop Save For Web Quality: ", "Comment: ", "Copyright: "};
@@ -741,7 +731,7 @@ public class JPEGTweaker {
 		}
 	}
 	
-	private static void readAPP13(InputStream is) throws IOException {
+	private static Metadata readAPP13(InputStream is) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
 		byte[] data = new byte[length-2];
 		IOUtils.readFully(is, data, 0, length-2);
@@ -751,12 +741,13 @@ public class JPEGTweaker {
 		
 		if(new String(data, 0, i++).equals("Photoshop 3.0")) {
 			System.out.println("Photoshop 3.0");
-			new IRBReader(ArrayUtils.subArray(data, i, data.length - i)).read();			
-		}		
+			return new IRB(ArrayUtils.subArray(data, i, data.length - i));						
+		}
+		
+		return null;
 	}
 	
-	private static void readAPP14(InputStream is) throws IOException 
-	{
+	private static void readAPP14(InputStream is) throws IOException {
 		byte[] adobe = {0x41, 0x64, 0x6f, 0x62, 0x65};
 		String[] app14Info = {"DCTEncodeVersion: ", "APP14Flags0: ", "APP14Flags1: ", "ColorTransform: "};		
 		int expectedLen = 14; // Expected length of this segment is 14.
@@ -776,58 +767,53 @@ public class JPEGTweaker {
 		}		
 	}
 	
-	private static void readAPP2(InputStream is) throws IOException {
+	private static void readAPP2(InputStream is, ByteArrayOutputStream bo) throws IOException {
 		// ICC_PROFILE identifier with trailing bytes [0x00].
-		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};		
-		byte[] buf = new byte[12];
-		int length = IOUtils.readUnsignedShortMM(is);
-		
-		IOUtils.readFully(is, buf);		
+		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
+		byte[] icc_profile_buf = new byte[12];
+		int length = IOUtils.readUnsignedShortMM(is);						
+		IOUtils.readFully(is, icc_profile_buf);		
 		// ICC_PROFILE segment.
-		if (Arrays.equals(buf, icc_profile_id)) {
-			buf = new byte[length-14];
-		    IOUtils.readFully(is, buf);
-		    System.out.println("ICC_Profile marker #" + (buf[0]&0xff) + " of " + (buf[1]&0xff));
+		if (Arrays.equals(icc_profile_buf, icc_profile_id)) {
+			icc_profile_buf = new byte[length-14];
+		    IOUtils.readFully(is, icc_profile_buf);
+		    bo.write(icc_profile_buf, 2, length-16);
+		    System.out.println("ICC_Profile marker #" + (icc_profile_buf[0]&0xff) + " of " + (icc_profile_buf[1]&0xff));
 		    System.out.println("ICC_Profile data length : " + (length-16));
   		} else {
-			IOUtils.skipFully(is, length-14);
-		}
+  			IOUtils.skipFully(is, length-14);
+  		}
 	}
 	
-	public static void readAPPn(InputStream is, Marker marker) throws IOException {
+	private static Metadata readAPPn(InputStream is, Marker marker, Map<MetadataType, Metadata> matadataMap) throws IOException {
 		switch (marker) {
 			case APP0:
 				readAPP0(is);
 				break;
 			case APP1:
-				readAPP1(is);
-				break;
-			case APP2:
-				readAPP2(is);
-				break;
+				return readAPP1(is);
 			case APP12:
 				readAPP12(is);
 				break;
 			case APP13:
-				readAPP13(is);
-				break;
+				return readAPP13(is);
 			case APP14:
 				readAPP14(is);
 				break;
 			default:
 		}
+		
+		return null;
 	}
 	
-	public static String readCOM(InputStream is) throws IOException 
-	{
+	private static String readCOM(InputStream is) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
 		byte[] data = new byte[length-2];
 		IOUtils.readFully(is, data, 0, length-2);
 		return new String(data).trim();
 	}
 	
-	private static void readDHT(InputStream is, List<HTable> m_acTables, List<HTable> m_dcTables) throws IOException 
-	{	
+	private static void readDHT(InputStream is, List<HTable> m_acTables, List<HTable> m_dcTables) throws IOException {	
 		final String[] HT_class_table = {"DC Component", "AC Component"};
 	 			
 		int len = IOUtils.readUnsignedShortMM(is);
@@ -887,8 +873,7 @@ public class JPEGTweaker {
    	}
 	
 	// Process define Quantization table
-	private static void readDQT(InputStream is, List<QTable> m_qTables) throws IOException
-	{
+	private static void readDQT(InputStream is, List<QTable> m_qTables) throws IOException {
 		int len = IOUtils.readUnsignedShortMM(is);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
@@ -936,8 +921,131 @@ public class JPEGTweaker {
 		System.out.println("**********************************");
 	}
 	
-	private static SOFReader readSOF(InputStream is, Marker marker) throws IOException 
-	{		
+	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+		// Need to wrap the input stream with a BufferedInputStream to
+		// speed up reading the SOS
+		is = new BufferedInputStream(is);
+		// Definitions
+		List<QTable> m_qTables = new ArrayList<QTable>(4);
+		List<HTable> m_acTables = new ArrayList<HTable>(4);	
+		List<HTable> m_dcTables = new ArrayList<HTable>(4);
+		
+		// Each SOFReader is associated with a single SOF segment
+		// Usually there is only one SOF segment, but for hierarchical
+		// JPEG, there could be more than one SOF
+		List<SOFReader> readers = new ArrayList<SOFReader>();
+		// Used to read ICCProfile
+		ByteArrayOutputStream bo = new ByteArrayOutputStream();
+	
+		boolean finished = false;
+		int length = 0;	
+		short marker;
+		Marker emarker;
+		
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+		{
+			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+			return metadataMap;
+		}
+		
+		System.out.println("*** JPEG snooping starts ***");
+		
+		System.out.println(Marker.SOI);
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished)
+	    {	        
+			if (Marker.fromShort(marker) == Marker.EOI)
+			{
+				System.out.println(Marker.EOI);
+				finished = true;
+			}
+		   	else {// Read markers
+				emarker = Marker.fromShort(marker);
+				System.out.println(emarker); 
+	
+				switch (emarker) {
+					case APP0:
+					case APP1:
+					case APP12:						
+					case APP13:						
+					case APP14:
+						Metadata meta = readAPPn(is, emarker, metadataMap);
+						if(meta != null) metadataMap.put(meta.getType(), meta);
+						marker = IOUtils.readShortMM(is);
+						break;
+					case APP2:
+						readAPP2(is, bo);
+						marker = IOUtils.readShortMM(is);
+						break;	
+					case COM:
+				    	String comment = JPEGTweaker.readCOM(is);
+				    	System.out.println("=>" + comment);	
+				    	marker = IOUtils.readShortMM(is);
+				    	break;				   				
+					case DHT:
+						readDHT(is, m_acTables, m_dcTables);
+						marker = IOUtils.readShortMM(is);
+						break;
+					case DQT:
+						readDQT(is, m_qTables);
+						marker = IOUtils.readShortMM(is);
+						break;
+					case SOF0:
+					case SOF1:
+					case SOF2:
+					case SOF3:
+					case SOF5:
+					case SOF6:
+					case SOF7:
+					case SOF9:
+					case SOF10:
+					case SOF11:
+					case SOF13:
+					case SOF14:
+					case SOF15:
+						readers.add(readSOF(is, emarker));
+						marker = IOUtils.readShortMM(is);
+						break;
+					case SOS:					
+						marker = readSOS(is, readers.get(readers.size() - 1));
+						break;
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+				    case TEM: // The only stand alone mark besides SOI, EOI, and RSTn. 
+						marker = IOUtils.readShortMM(is);
+						break;
+				    case PADDING:	
+				    	int nextByte = 0;
+				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
+				    	marker = (short)((0xff<<8)|nextByte);
+				    	break;
+				    default:
+					    length = IOUtils.readUnsignedShortMM(is);
+					    IOUtils.skipFully(is, length-2);
+					    marker = IOUtils.readShortMM(is);					    
+				}
+			}
+	    }
+		
+		is.close();
+		
+		System.out.println("*** JPEG snooping ends ***");
+		
+		if(bo.size() > 0) { // We have ICCProfile data
+			ICCProfile icc_profile = new ICCProfile(bo.toByteArray());
+			icc_profile.showMetadata();
+			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
+		}
+		
+		return metadataMap;
+	}
+	
+	private static SOFReader readSOF(InputStream is, Marker marker) throws IOException {		
 		int len = IOUtils.readUnsignedShortMM(is);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
@@ -967,8 +1075,7 @@ public class JPEGTweaker {
 	
 	// This method is very slow if not wrapped in some kind of cache stream but it works for multiple
 	// SOSs in case of progressive JPEG
-	private static short readSOS(InputStream is, SOFReader sofReader) throws IOException 
-	{
+	private static short readSOS(InputStream is, SOFReader sofReader) throws IOException {
 		int len = IOUtils.readUnsignedShortMM(is);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
@@ -1243,117 +1350,7 @@ public class JPEGTweaker {
 		}
 
 		return marker;
-	}
-	
-	public static void snoop(InputStream is) throws IOException 
-	{
-		// Need to wrap the input stream with a BufferedInputStream to
-		// speed up reading the SOS
-		is = new BufferedInputStream(is);
-		// Definitions
-		List<QTable> m_qTables = new ArrayList<QTable>(4);
-		List<HTable> m_acTables = new ArrayList<HTable>(4);	
-		List<HTable> m_dcTables = new ArrayList<HTable>(4);
-		
-		// Each SOFReader is associated with a single SOF segment
-		// Usually there is only one SOF segment, but for hierarchical
-		// JPEG, there could be more than one SOF
-		List<SOFReader> readers = new ArrayList<SOFReader>();
-		
-		boolean finished = false;
-		int length = 0;	
-		short marker;
-		Marker emarker;
-		
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
-			return;
-		}
-		
-		System.out.println("*** JPEG snooping starts ***");
-		
-		System.out.println(Marker.SOI);
-		
-		marker = IOUtils.readShortMM(is);
-		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
-				System.out.println(Marker.EOI);
-				finished = true;
-			}
-		   	else {// Read markers
-				emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
-				switch (emarker) {
-					case APP0:
-					case APP1:
-					case APP2:
-					case APP12:						
-					case APP13:						
-					case APP14:
-						JPEGTweaker.readAPPn(is, emarker);
-						marker = IOUtils.readShortMM(is);
-						break;									
-				    case COM:
-				    	String comment = JPEGTweaker.readCOM(is);
-				    	System.out.println("=>" + comment);	
-				    	marker = IOUtils.readShortMM(is);
-				    	break;				   				
-					case DHT:
-						readDHT(is, m_acTables, m_dcTables);
-						marker = IOUtils.readShortMM(is);
-						break;
-					case DQT:
-						readDQT(is, m_qTables);
-						marker = IOUtils.readShortMM(is);
-						break;
-					case SOF0:
-					case SOF1:
-					case SOF2:
-					case SOF3:
-					case SOF5:
-					case SOF6:
-					case SOF7:
-					case SOF9:
-					case SOF10:
-					case SOF11:
-					case SOF13:
-					case SOF14:
-					case SOF15:
-						readers.add(readSOF(is, emarker));
-						marker = IOUtils.readShortMM(is);
-						break;
-					case SOS:					
-						marker = readSOS(is, readers.get(readers.size() - 1));
-						break;
-					case JPG: // JPG and JPGn shouldn't appear in the image.
-					case JPG0:
-					case JPG13:
-				    case TEM: // The only stand alone mark besides SOI, EOI, and RSTn. 
-						marker = IOUtils.readShortMM(is);
-						break;
-				    case PADDING:	
-				    	int nextByte = 0;
-				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
-				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;
-				    default:
-					    length = IOUtils.readUnsignedShortMM(is);
-					    IOUtils.skipFully(is, length-2);
-					    marker = IOUtils.readShortMM(is);					    
-				}
-			}
-	    }
-		
-		is.close();
-		
-		System.out.println("*** JPEG snooping ends ***");
-	}
+	}	
 	
 	/**
 	 * Write ICC_Profile as one or more APP2 segments

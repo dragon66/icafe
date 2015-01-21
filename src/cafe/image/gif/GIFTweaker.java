@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ====================================================================
+ * WY    20Jan2015  Revised to work with Metadata.showMetadata()
  * WY    28Dec2014  Added snoop() to show GIF image metadata 
  * WY    18Nov2014  Fixed bug with splitFramesEx() disposal method "RESTORE_TO_PREVIOUS" 
  * WY    17Nov2014  Added writeAnimatedGIF(GIFFrame) to work with GIFFrame
@@ -33,17 +34,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-
-
-//import cafe.image.core.ImageMeta;
-
-
-
+import cafe.image.meta.Metadata;
+import cafe.image.meta.MetadataType;
 import cafe.image.ImageType;
 import cafe.image.options.GIFOptions;
 import cafe.image.reader.GIFReader;
@@ -292,7 +288,8 @@ public class GIFTweaker {
 		is.read(DTO.logicalScreenDescriptor);
 	}
 	
-	public static void snoop(InputStream is) throws IOException {
+	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		
@@ -336,6 +333,8 @@ public class GIFTweaker {
 		
 		System.out.println("Total number of frames: " + frameCount);
 		System.out.println("... GIF snoop ends ...");
+		
+		return metadataMap;
 	}
 	
 	/**

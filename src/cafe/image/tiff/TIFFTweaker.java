@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    20Jan2015  Revised to work with Metadata.showMetadata()
  * WY    12Jan2015  Added showIPTC() to show IPTC private tag information
  * WY    11Jan2015  Added extractThumbnail() to extract Photoshop thumbnail
  * WY    10Jan2015  Added showICCProfile() and showPhotoshop()
@@ -68,7 +69,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import cafe.image.ImageFrame;
 import cafe.image.ImageIO;
@@ -82,14 +85,19 @@ import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.image.compression.lzw.LZWTreeEncoder;
 import cafe.image.compression.packbits.Packbits;
 import cafe.image.jpeg.Marker;
+import cafe.image.meta.Metadata;
+import cafe.image.meta.MetadataType;
+import cafe.image.meta.adobe.IRB;
+import cafe.image.meta.adobe.IRBReader;
+import cafe.image.meta.adobe.IRBThumbnail;
+import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.GPSTag;
 import cafe.image.meta.exif.InteropTag;
 import cafe.image.meta.icc.ICCProfile;
+import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCReader;
-import cafe.image.meta.photoshop.IRBReader;
-import cafe.image.meta.photoshop.IRBThumbnail;
 import cafe.image.util.IMGUtils;
 import cafe.image.writer.ImageWriter;
 import cafe.image.writer.TIFFWriter;
@@ -1927,7 +1935,7 @@ public class TIFFTweaker {
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		}
-		String indent2 = indent + "-----"; // Increment indentation
+		String indent2 = indent + "----- "; // Increment indentation
 		IFD tiffIFD = new IFD();
 		rin.seek(offset);
 		int no_of_fields = rin.readShort();
@@ -1989,8 +1997,8 @@ public class TIFFTweaker {
 						showICCProfile(data);
 					} else if(ftag == TiffTag.PHOTOSHOP) {
 						showPhtoshop(data);
-					} else if(ftag == TiffTag.XMP) {
-						StringUtils.showXML(data);
+					} else if(ftag == TiffTag.XMP) {						
+						StringUtils.showXML(StringUtils.createXML(data));
 					} else if(ftag == TiffTag.IPTC) {
 						showIPTC(data);
 					} else
@@ -2229,6 +2237,44 @@ public class TIFFTweaker {
 		readIFDs(null, null, TiffTag.class, list, offset, rin);
 	}
 	
+	public static Map<MetadataType, Metadata> readMetadata(RandomAccessInputStream rin) throws IOException	{
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+		System.out.println("*** TIFF snooping starts ***");
+		int offset = readHeader(rin);
+		List<IFD> list = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, list, offset, rin);
+		if(list.size() > 0) {
+			IFD currIFD = list.get(0);
+			TiffField<?> field = currIFD.getField(TiffTag.ICC_PROFILE.getValue()); 
+			if(field != null) { // We have found ICC_Profile
+				metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile((byte[])field.getData()));
+			}
+			field = currIFD.getField(TiffTag.XMP.getValue());
+			if(field != null) { // We have found XMP
+				metadataMap.put(MetadataType.XMP, new XMP((byte[])field.getData()));
+			}
+			field = currIFD.getField(TiffTag.PHOTOSHOP.getValue());
+			if(field != null) { // We have found EXIF SubIFD
+				metadataMap.put(MetadataType.PHOTOSHOP_IRB, new IRB((byte[])field.getData()));
+			}
+			field = currIFD.getField(TiffTag.IPTC.getValue());
+			if(field != null) { // We have found EXIF SubIFD
+				FieldType type = field.getType();
+				if(type == FieldType.LONG)
+					metadataMap.put(MetadataType.IPTC, new IPTC(ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN)));
+				else
+					metadataMap.put(MetadataType.IPTC, new IPTC((byte[])field.getData()));
+			}
+			field = currIFD.getField(TiffTag.EXIF_SUB_IFD.getValue());
+			if(field != null) { // We have found EXIF SubIFD
+				metadataMap.put(MetadataType.EXIF, new Exif(currIFD));
+			}
+		}
+		System.out.println("*** TIFF snooping ends ***");
+		
+		return metadataMap;
+	}
+	
 	/**
 	 * Remove a range of pages from a multiple page TIFF image
 	 * 
@@ -2411,14 +2457,6 @@ public class TIFFTweaker {
 	
 	private static void showPhtoshop(byte[] data) {
 		new IRBReader(data).showMetadata();		
-	}
-	
-	public static void snoop(RandomAccessInputStream rin) throws IOException	{	
-		System.out.println("*** TIFF snooping starts ***");
-		int offset = readHeader(rin);
-		List<IFD> list = new ArrayList<IFD>();
-		readIFDs(null, null, TiffTag.class, list, offset, rin);	
-		System.out.println("*** TIFF snooping ends ***");
 	}
 	
 	/**

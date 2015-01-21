@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ====================================================================
+ * WY    20Jan2015  Revised to work with Metadata.showMetadata()
  * WY    28Dec2014  Added snoop() to show GIF image metadata 
  * WY    18Nov2014  Fixed bug with splitFramesEx() disposal method "RESTORE_TO_PREVIOUS" 
  * WY    17Nov2014  Added writeAnimatedGIF(GIFFrame) to work with GIFFrame
@@ -25,8 +26,12 @@ package cafe.image.bmp;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import cafe.io.IOUtils;
+import cafe.image.meta.MetadataType;
+import cafe.image.meta.Metadata;
 
 /**
  * BMP image tweaking tool
@@ -50,7 +55,8 @@ public class BMPTweaker {
 		is.read(DTO.infoHeader);
 	}
 	
-	public static void snoop(InputStream is) throws IOException {
+	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		readHeader(is, DTO);
@@ -83,7 +89,9 @@ public class BMPTweaker {
 		if(bitsPerPixel <= 8) {
 			readPalette(is, DTO);
 			System.out.println("Color map follows");
-		}		
+		}
+		
+		return metadataMap;		
 	}
 	
 	private static void readPalette(InputStream is, DataTransferObject DTO) throws IOException {
