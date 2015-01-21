@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import cafe.image.jpeg.Marker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataReader;
@@ -84,6 +83,11 @@ public class Exif extends Metadata {
 		this(IOUtils.inputStreamToByteArray(is));
 	}
 	
+	public Exif(IFD imageIFD) {
+		this(Exif.EXIF_FLAVOR_TIFF);
+		this.reader = new ExifReader(imageIFD);
+	}
+	
 	private void createImageIFD() {
 		// Create Image IFD (IFD0)
 		imageIFD = new IFD();
@@ -139,7 +143,7 @@ public class Exif extends Metadata {
 	
 	public boolean isThumbnailRequired() {
 		return isThumbnailRequired;
-	}	
+	}
 	
 	public void setThumbnail(BufferedImage thumbnail) {
 		this.thumbnail.setImage(thumbnail);
