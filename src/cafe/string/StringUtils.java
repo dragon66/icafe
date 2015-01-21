@@ -238,6 +238,32 @@ public class StringUtils
 		return false;
 	}
 	
+	public static Document createXML(byte[] xml) {
+		//Get the DOM Builder Factory
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		//Get the DOM Builder
+		DocumentBuilder builder = null;
+		try {
+			builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		//Load and Parse the XML document
+		//document contains the complete XML as a Tree.
+		Document document = null;
+		try {
+			try {
+				document = builder.parse(new ByteArrayInputStream(xml), "UTF-8");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (SAXException e) {
+			e.printStackTrace();
+		}
+		
+		return document;
+	}
+	
 	/**
 	 * From www.javapractices.com EscapeChars.java
 	 * 
@@ -939,29 +965,7 @@ public class StringUtils
 		return buffer.toString();
 	}
 	
-	public static void showXML(byte[] xml) {
-		//Get the DOM Builder Factory
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		//Get the DOM Builder
-		DocumentBuilder builder = null;
-		try {
-			builder = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		}
-		//Load and Parse the XML document
-		//document contains the complete XML as a Tree.
-		Document document = null;
-		try {
-			try {
-				document = builder.parse(new ByteArrayInputStream(xml), "UTF-8");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (SAXException e) {
-			e.printStackTrace();
-		}
-		
+	public static void showXML(Document document) {
 		printNode(document,"");
 	}
 	
