@@ -29,9 +29,14 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import cafe.io.IOUtils;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.Metadata;
+import cafe.image.meta.image.ImageMetadata;
+import cafe.string.StringUtils;
 
 /**
  * BMP image tweaking tool
@@ -57,6 +62,7 @@ public class BMPTweaker {
 	
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+		Document doc = StringUtils.createDocumentNode(); // Create a document for ImageMetadata
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		readHeader(is, DTO);
@@ -67,7 +73,12 @@ public class BMPTweaker {
 		System.out.println("Reserved1 (2 bytes): " + IOUtils.readShort(DTO.fileHeader, 6));
 		System.out.println("Reserved2 (2 bytes): " + IOUtils.readShort(DTO.fileHeader, 8));
 		System.out.println("Data offset: " + IOUtils.readInt(DTO.fileHeader, 10));
-		
+		Node header = doc.createElement("header");
+		Node imageSignature = doc.createElement("ImageSignature");
+		imageSignature.appendChild(doc.createTextNode(new String(DTO.fileHeader, 0, 2)));
+		header.appendChild(imageSignature);
+		doc.appendChild(header);
+		// TODO add more ImageMetadata elements to doc
 		System.out.println("Info header length: " + IOUtils.readInt(DTO.infoHeader, 0));
 		System.out.println("Image width: " + IOUtils.readInt(DTO.infoHeader, 4));
 		System.out.println("Image heigth: " + IOUtils.readInt(DTO.infoHeader, 8));		
@@ -90,6 +101,8 @@ public class BMPTweaker {
 			readPalette(is, DTO);
 			System.out.println("Color map follows");
 		}
+		
+		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(doc));
 		
 		return metadataMap;		
 	}
