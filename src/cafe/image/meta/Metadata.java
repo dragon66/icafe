@@ -53,25 +53,27 @@ public abstract class Metadata {
 		// 4 byte as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
-		// TODO - change corresponding tweaker snoop() to return a map of Metadata
+		// Delegate metadata reading to corresponding image tweakers.
 		switch(imageType) {
 			case JPG:
-				JPEGTweaker.snoop(pushbackStream);
+				metadataMap = JPEGTweaker.readMetadata(pushbackStream);
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
-				TIFFTweaker.snoop(randIS);
+				metadataMap = TIFFTweaker.readMetadata(randIS);
 				randIS.close();
 				break;
 			case PNG:
-				PNGTweaker.snoop(pushbackStream);
+				metadataMap = PNGTweaker.readMetadata(pushbackStream);
+				break;
 			case GIF:
-				GIFTweaker.snoop(pushbackStream);
+				metadataMap = GIFTweaker.readMetadata(pushbackStream);
 				break;
 			case BMP:
-				BMPTweaker.snoop(pushbackStream);
+				metadataMap = BMPTweaker.readMetadata(pushbackStream);
 				break;
 			default:
+				pushbackStream.close();
 				throw new IllegalArgumentException("Metadata reading is not supported for " + imageType + " image");
 				
 		}		
