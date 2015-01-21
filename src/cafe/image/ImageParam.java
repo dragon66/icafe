@@ -9,7 +9,7 @@
  * 
  * Change History - most recent changes go on top of previous changes
  *
- * ImageMeta.java
+ * ImageParam.java
  *
  * Who   Date       Description
  * ====  =======    ==================================================
@@ -31,7 +31,7 @@ import cafe.util.Builder;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 11/06/2012
  */
-public class ImageMeta {
+public class ImageParam {
 	// final fields
 	private final int width;	
 	private final int height;
@@ -51,10 +51,10 @@ public class ImageMeta {
     
     private final ImageOptions imageOptions;
     
-    // DEFAULT_IMAGE_META is immutable given the fact the arrays it contains are empty
-    public static final ImageMeta DEFAULT_IMAGE_META = new ImageMetaBuilder().build();
+    // DEFAULT_IMAGE_PARAM is immutable given the fact the arrays it contains are empty
+    public static final ImageParam DEFAULT_IMAGE_PARAM = new ImageParamBuilder().build();
     
-    private ImageMeta(ImageMetaBuilder builder) {
+    private ImageParam(ImageParamBuilder builder) {
 		width = builder.width;
 		height = builder.height;
 		bitsPerPixel = builder.bitsPerPixel;
@@ -146,8 +146,8 @@ public class ImageMeta {
 		return transparent;
 	}
 	
-	// Internal meta data builder
-	public static class ImageMetaBuilder implements Builder<ImageMeta> {
+	// Internal parameter data builder
+	public static class ImageParamBuilder implements Builder<ImageParam> {
 		// Parameters - initialized to default values
 		// Common parameters for all image formats
 		private int width = 0;
@@ -171,63 +171,63 @@ public class ImageMeta {
 	    // Additional format-specific parameters
 	    private ImageOptions imageOptions;
 		
-	    public ImageMetaBuilder() {	}
+	    public ImageParamBuilder() {	}
 	    
-	    public ImageMetaBuilder applyDither(boolean applyDither) {
+	    public ImageParamBuilder applyDither(boolean applyDither) {
 	    	this.applyDither = applyDither;
 	    	return this;
 	    }
 	    
-	    public ImageMetaBuilder bitsPerPixel(int bitsPerPixel) {
+	    public ImageParamBuilder bitsPerPixel(int bitsPerPixel) {
 			this.bitsPerPixel = bitsPerPixel;
 			return this; 
 		}
 		
-	    public ImageMeta build() {
-		   return new ImageMeta(this);
+	    public ImageParam build() {
+		   return new ImageParam(this);
 		}
 	    
-	    public ImageMetaBuilder colorType(ImageColorType colorType) {
+	    public ImageParamBuilder colorType(ImageColorType colorType) {
 	    	this.colorType = colorType;
 	    	return this;
 	    }
 	    
-	    public ImageMetaBuilder componentColorPalette(byte[][] componentPalette) {
+	    public ImageParamBuilder componentColorPalette(byte[][] componentPalette) {
 	    	this.componentColorPalette = componentPalette;
 	    	return this;
 	    }
 	    
-	    public ImageMetaBuilder containsThumbnail(boolean containsThumbnail) {
+	    public ImageParamBuilder containsThumbnail(boolean containsThumbnail) {
 	    	this.containsThumbnail = containsThumbnail;
 	    	return this;
 	    }
 	    
-	    public ImageMetaBuilder ditherThreshold(int ditherThreshold) {
+	    public ImageParamBuilder ditherThreshold(int ditherThreshold) {
 	    	this.ditherThreshold = ditherThreshold;
 	    	return this;
 	    }
 	    
-	    public ImageMetaBuilder hasAlpha(boolean hasAlpha) {
+	    public ImageParamBuilder hasAlpha(boolean hasAlpha) {
 			this.hasAlpha = hasAlpha;
 			return this;
 		}
 		    		
-	    public ImageMetaBuilder hasICCP(boolean hasICCP) {
+	    public ImageParamBuilder hasICCP(boolean hasICCP) {
 	    	this.hasICCP = hasICCP;
 	    	return this;
 	    }
 	    
-	    public ImageMetaBuilder height(int height) {
+	    public ImageParamBuilder height(int height) {
 	    	this.height = height;
 	    	return this;
 	    }
 	    
-	    public ImageMetaBuilder iccProfile(byte[] icc_profile) {
+	    public ImageParamBuilder iccProfile(byte[] icc_profile) {
 	    	this.icc_profile = icc_profile;
 	    	return this;
 	    }
 	    
-	    public ImageMetaBuilder imageOptions(ImageOptions imageOptions) {
+	    public ImageParamBuilder imageOptions(ImageOptions imageOptions) {
 			this.imageOptions = imageOptions;
 			return this;
 		}
@@ -254,27 +254,27 @@ public class ImageMeta {
 	    	this.imageOptions = null;
 	    }
 		
-		public ImageMetaBuilder rgbColorPalette(int[] rgbColorPalette) {
+		public ImageParamBuilder rgbColorPalette(int[] rgbColorPalette) {
 			this.rgbColorPalette = rgbColorPalette;
 			return this;
 		}
 		
-		public ImageMetaBuilder thumbnails(BufferedImage[] thumbnails) {
+		public ImageParamBuilder thumbnails(BufferedImage[] thumbnails) {
 	    	this.thumbnails = thumbnails;
 	    	return this;
 	    }
 		
-		public ImageMetaBuilder transparent(boolean transparent) {
+		public ImageParamBuilder transparent(boolean transparent) {
 			this.transparent = transparent;
 			return this;
 		}
 		
-		public ImageMetaBuilder transparentColor(int transparentColor) {
+		public ImageParamBuilder transparentColor(int transparentColor) {
 			this.transparentColor = transparentColor;
 			return this;
 		}
 		
-		public ImageMetaBuilder width(int width) {
+		public ImageParamBuilder width(int width) {
 	    	this.width = width; 
 	    	return this; 
 	    }		
