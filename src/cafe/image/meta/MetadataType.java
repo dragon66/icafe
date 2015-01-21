@@ -17,5 +17,5 @@ package cafe.image.meta;
  * @version 1.0 01/12/2015
  */
 public enum MetadataType {
-	EXIF, IPTC, ICC_PROFILE, PHOTOSHOP_IRB, TEXT;
+	EXIF, IPTC, ICC_PROFILE, PHOTOSHOP_IRB, XMP, IMAGE;
 }
