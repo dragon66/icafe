@@ -28,19 +28,15 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
+import cafe.image.meta.image.Thumbnail;
+
 /** 
  * Photoshop Image Resource Block thumbnail wrapper.
  *
  * @author Wen Yu, yuwen_66@yahoo.com 
  * @version 1.0 01/10/2015   
  */
-public class IRBThumbnail {
-	public static final int DATA_TYPE_KRawRGB = 0;
-	public static final int DATA_TYPE_KJpegRGB = 1;
-	
-	private int dataType;
-	private int width;
-	private int height;
+public class IRBThumbnail extends Thumbnail {
 	//Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
 	private int paddedRowBytes;
 	// Total size = widthbytes * height * planes
@@ -52,11 +48,6 @@ public class IRBThumbnail {
 	// Number of planes. = 1
 	private int numOfPlanes;
 	private ImageResourceID id;
-	
-	private BufferedImage thumbnail;
-	private byte[] compressedThumbnail;
-	
-	private byte[] data;	
 
 	public IRBThumbnail(ImageResourceID id, int dataType, int width, int height, int paddedRowBytes, int totalSize, int compressedSize, int bitsPerPixel, int numOfPlanes, byte[] data) {
 		this.id = id;
@@ -68,28 +59,16 @@ public class IRBThumbnail {
 		this.compressedSize = compressedSize;
 		this.bitsPerPixel = bitsPerPixel;
 		this.numOfPlanes = numOfPlanes;
-		this.data = data;
-		setImage();
+		
+		setImage(data);
 	}
 	
 	public int getBitsPerPixel() {
 		return bitsPerPixel;
 	}
 	
-	public byte[] getCompressedImage() {
-		return compressedThumbnail;
-	}
-	
 	public int getCompressedSize() {
 		return compressedSize;
-	}
-	
-	public int getDataType() {
-		return dataType;
-	}
-	
-	public int getHeight() {
-		return height;
 	}
 	
 	public int getNumOfPlanes() {
@@ -100,10 +79,6 @@ public class IRBThumbnail {
 		return paddedRowBytes;
 	}
 	
-	public BufferedImage getRawImage() {
-		return thumbnail;
-	}
-	
 	public ImageResourceID getResouceID() {
 		return id;
 	}
@@ -112,20 +87,14 @@ public class IRBThumbnail {
 		return totalSize;		
 	}
 	
-	public int getWidth() {
-		return width;
-	}
-	
-	private void setImage() {
+	private void setImage(byte[] data) {
 		// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
 		if(dataType == DATA_TYPE_KJpegRGB) {
-			// Note: Not sure whether or not this will create wrong color JPEG
-			// if it's written by Photoshop 4.0!
 			compressedThumbnail = data;
 		} else if(dataType == DATA_TYPE_KRawRGB) {
 			// kRawRGB - NOT tested yet!
 			//Create a BufferedImage
-			DataBuffer db = new DataBufferByte(data, totalSize);
+			DataBuffer db = new DataBufferByte(compressedThumbnail, totalSize);
 			int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
 			if(id == ImageResourceID.THUMBNAIL_RESOURCE_PS4)
 				off = new int[]{2, 1, 0}; // RGB band offset for BGR for photoshop4.0 BGR format

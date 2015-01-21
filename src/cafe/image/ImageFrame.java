@@ -21,25 +21,25 @@ import java.awt.image.BufferedImage;
 public class ImageFrame {
 	// Frame parameters
 	private BufferedImage frame;
-	private ImageMeta frameMeta;
+	private ImageParam frameParam;
 	
 	public ImageFrame(BufferedImage frame) {
-		this(frame, ImageMeta.DEFAULT_IMAGE_META);
+		this(frame, ImageParam.DEFAULT_IMAGE_PARAM);
 	}
 	
-	public ImageFrame(BufferedImage frame, ImageMeta frameMeta) {
+	public ImageFrame(BufferedImage frame, ImageParam frameParam) {
 		this.frame = frame;
-		this.frameMeta = frameMeta;
+		this.frameParam = frameParam;
 	}
 	public BufferedImage getFrame() {
 		return frame;
 	}
 	
-	public ImageMeta getFrameMeta() {
-		return frameMeta;
+	public ImageParam getFrameParam() {
+		return frameParam;
 	}
 	
-	public void setFrameMeta(ImageMeta frameMeta) {
-		this.frameMeta = frameMeta;
+	public void setFrameMeta(ImageParam frameParam) {
+		this.frameParam = frameParam;
 	}
 }

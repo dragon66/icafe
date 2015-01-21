@@ -133,13 +133,13 @@ public final class ImageIO {
 	}
 	
 	public static void write(BufferedImage img, OutputStream os, ImageType imageType) throws Exception {
-		write(img, os, imageType, ImageMeta.DEFAULT_IMAGE_META);
+		write(img, os, imageType, ImageParam.DEFAULT_IMAGE_PARAM);
 	}
 	
-	public static void write(BufferedImage img, OutputStream os, ImageType imageType, ImageMeta imageMeta) throws Exception {
+	public static void write(BufferedImage img, OutputStream os, ImageType imageType, ImageParam imageParam) throws Exception {
 		ImageWriter imageWriter = getWriter(imageType);
 		if(imageWriter != null) {
-			imageWriter.setImageMeta(imageMeta);
+			imageWriter.setImageParam(imageParam);
 			imageWriter.write(img, os);
 		}		
 	}

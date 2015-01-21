@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import cafe.image.ImageColorType;
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.compression.huffman.HuffmanEncoder;
 import cafe.image.jpeg.HTable;
@@ -57,7 +57,7 @@ public class JPEGWriter extends ImageWriter {
   	private int newHeight;
 	private int newWidth; 
 	
-	private ImageMeta imageMeta;
+	private ImageParam imageParam;
     private JPEGOptions jpegOptions;
     
     private int numOfComponents = 3; // Default number of components (3): YCrCb
@@ -132,10 +132,10 @@ public class JPEGWriter extends ImageWriter {
 	
 	// TODO: may need more changes to work with CMYK or RGB, and perhaps YCCK color space
 	private void processImageMeta() throws Exception {
-		// Grab the ImageMeta
-		imageMeta = getImageMeta();
-		grayScale = imageMeta.getColorType() == ImageColorType.GRAY_SCALE;
-		ImageOptions options = imageMeta.getImageOptions();
+		// Grab the ImageParam
+		imageParam = getImageParam();
+		grayScale = imageParam.getColorType() == ImageColorType.GRAY_SCALE;
+		ImageOptions options = imageParam.getImageOptions();
 		// Read and set options if any
 		if(options instanceof JPEGOptions) {
 			jpegOptions = (JPEGOptions)options;
@@ -194,7 +194,7 @@ public class JPEGWriter extends ImageWriter {
 	}
 	
 	protected void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {	
-		// Read ImageMeta and set parameters
+		// Read ImageParam and set parameters
 		processImageMeta();	
 		// Start of image marker
 		writeSOI(os);
@@ -484,7 +484,7 @@ public class JPEGWriter extends ImageWriter {
 	 * EOI
 	 */
 	public void writeDefaultJPEGTables(OutputStream os) throws Exception {
-		if(imageMeta == null)
+		if(imageParam == null)
 			processImageMeta();
 		writeSOI(os);
 		writeDQT(os);

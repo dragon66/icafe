@@ -15,7 +15,7 @@ import java.util.List;
 
 import cafe.image.ImageColorType;
 import cafe.image.ImageFrame;
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.options.TIFFOptions;
@@ -74,7 +74,7 @@ public class TestTIFFTweaker {
 					fin.close();
 				}				
 				
-				ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
+				ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
 				  
 				TIFFOptions tiffOptions = new TIFFOptions();
 				tiffOptions.setTiffCompression(Compression.LZW);
@@ -92,7 +92,7 @@ public class TestTIFFTweaker {
 				tiffOptions = new TIFFOptions(tiffOptions);				
 				tiffOptions.setTiffCompression(Compression.CCITTFAX4);
 				
-				ImageMeta meta = builder.colorType(ImageColorType.BILEVEL).ditherThreshold(50).imageOptions(tiffOptions).build();
+				ImageParam meta = builder.colorType(ImageColorType.BILEVEL).ditherThreshold(50).imageOptions(tiffOptions).build();
 				
 				for(int i = 2; i < frames.length; i++)
 					frames[i].setFrameMeta(meta);
@@ -110,7 +110,7 @@ public class TestTIFFTweaker {
 					int offset = TIFFTweaker.prepareForInsert(rin, rout, list);
 					int index = 3;
 					TIFFWriter writer = new TIFFWriter();
-					writer.setImageMeta(frames[0].getFrameMeta());
+					writer.setImageParam(frames[0].getFrameParam());
 					for(int i = 0; i < frames.length; i++) {
 						offset = TIFFTweaker.insertPage(frames[i].getFrame(), index+=2, rout, list, offset, writer);
 					}
@@ -131,7 +131,7 @@ public class TestTIFFTweaker {
 						for(int w = 0; w < width; w++)
 							if (((h/50)+(w/50)) % 2 == 0) raster.setSample(w, h, 0, 0); // checkerboard pattern.
 							else raster.setSample(w, h, 0, 1);
-					writer.setImageMeta(frames[2].getFrameMeta());
+					writer.setImageParam(frames[2].getFrameParam());
 					TIFFTweaker.insertPage(im, 0, rout, list, offset, writer);
 					TIFFTweaker.finishInsert(rout, list);
 					long t2 = System.currentTimeMillis();

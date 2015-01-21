@@ -79,7 +79,7 @@ public class ExifReader implements MetadataReader {
 		    		exifIn.seek(thumbnailOffset);
 		    		byte[] thumbnailData = new byte[thumbnailLen];
 		    		exifIn.readFully(thumbnailData);
-		    		thumbnail.setImage(thumbnailData, ExifThumbnail.DATA_TYPE_COMPRESSED_JPG, thumbnailIFD);
+		    		thumbnail.setImage(thumbnailData, ExifThumbnail.DATA_TYPE_KJpegRGB, thumbnailIFD);
 		    	} else { // Uncompressed, save as TIFF
 		    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS.getValue());
 		    		if(field == null) 
@@ -90,7 +90,7 @@ public class ExifReader implements MetadataReader {
 		    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(bout);
 		    			 TIFFTweaker.retainPages(exifIn, tiffout, 1);
 		    			 tiffout.close(); // Auto flush when closed
-		    			 thumbnail.setImage(bout.toByteArray(), ExifThumbnail.DATA_TYPE_UNCOMPRESSED_TIFF, thumbnailIFD);
+		    			 thumbnail.setImage(bout.toByteArray(), ExifThumbnail.DATA_TYPE_KTiffRGB, thumbnailIFD);
 		    		}
 		    	}
 		    }

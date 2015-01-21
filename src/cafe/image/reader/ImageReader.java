@@ -22,7 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 
 /** 
  * Abstract base class for image readers.
@@ -47,7 +47,7 @@ public abstract class ImageReader
     	debug = debugObject.booleanValue();
     }
     
-    protected ImageMeta meta = ImageMeta.DEFAULT_IMAGE_META;
+    protected ImageParam param = ImageParam.DEFAULT_IMAGE_PARAM;
     
     public int getFrameCount() {
     	return -1;
@@ -57,8 +57,8 @@ public abstract class ImageReader
     	return null;
     }
     
-    public ImageMeta getImageMeta() {
-		return meta;
+    public ImageParam getImageParam() {
+		return param;
 	}
         
 	// Entry method, to be implemented by specific ImageReader subclass

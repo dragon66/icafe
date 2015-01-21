@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 
 import cafe.image.ImageColorType;
 import cafe.image.ImageIO;
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.options.JPEGOptions;
 import cafe.image.options.PNGOptions;
@@ -68,7 +68,7 @@ public class TestImageReader {
 		  
 		 FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
 				
-		 ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
+		 ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
 		  
 		 switch(imageType) {
 		  	case TIFF:// Set TIFF-specific options

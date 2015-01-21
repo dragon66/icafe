@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import cafe.image.ImageColorType;
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.options.ImageOptions;
 import cafe.image.options.PNGOptions;
@@ -57,7 +57,7 @@ public class PNGWriter extends ImageWriter {
 	boolean isApplyAdaptiveFilter = false;	
 	int filterType = Filter.NONE;		
 	int compressionLevel = 4;
-	ImageMeta imageMeta;
+	ImageParam imageParam;
 	// A collection of chunks representing the PNG image.
 	private List<Chunk> chunks = new ArrayList<Chunk>(10);
 	
@@ -218,8 +218,8 @@ public class PNGWriter extends ImageWriter {
 		addTextChunks(chunks);
 		addTimeChunk(chunks);
 		
-		imageMeta = getImageMeta();		
-		ImageOptions options = imageMeta.getImageOptions();
+		imageParam = getImageParam();		
+		ImageOptions options = imageParam.getImageOptions();
 		
 		if(options instanceof PNGOptions) {
 			PNGOptions pngOptions = (PNGOptions)options;
@@ -228,11 +228,11 @@ public class PNGWriter extends ImageWriter {
 			compressionLevel = pngOptions.getCompressionLevel();
 		}
 		
-		boolean noAlpha = !imageMeta.hasAlpha();
+		boolean noAlpha = !imageParam.hasAlpha();
 		// Determine type of image to write
-		if(imageMeta.getColorType() == ImageColorType.INDEXED) {
+		if(imageParam.getColorType() == ImageColorType.INDEXED) {
 			writeIndexed(pixels, imageWidth, imageHeight, os);
-		} else if(imageMeta.getColorType() == ImageColorType.GRAY_SCALE) {
+		} else if(imageParam.getColorType() == ImageColorType.GRAY_SCALE) {
 			if(noAlpha) {
 				writeGrayScale(IMGUtils.rgb2grayscale(pixels), imageWidth, imageHeight, false, os);
 			} else
@@ -287,10 +287,10 @@ public class PNGWriter extends ImageWriter {
 		
 		chunks.add(hdrBuilder.bitDepth(bitsPerPixel).build());
 	
-		if(!hasAlpha && imageMeta.isTransparent()) {
+		if(!hasAlpha && imageParam.isTransparent()) {
 			// Add Transparent chunk
 			TRNSBuilder tBuilder = new TRNSBuilder(0);
-			int transparentColor = imageMeta.getTransparentColor();		
+			int transparentColor = imageParam.getTransparentColor();		
 			byte trans_color = (byte)(((transparentColor>>16)&0xff)*0.2126 + ((transparentColor>>8)&0xff)*0.7152 + (transparentColor&0xff)*0.0722);
 			byte[] alpha = new byte[] {0, (byte)((trans_color<<bitsPerPixel)>>8)};
 			
@@ -463,7 +463,7 @@ public class PNGWriter extends ImageWriter {
 	
 	private void writeRGB(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {
 		// The rule of thumb is always use PAETH filter which, in most cases, is as good as adaptive filter and much faster
-		boolean noAlpha = !imageMeta.hasAlpha();
+		boolean noAlpha = !imageParam.hasAlpha();
 		// Add IHDR chunk
 		IHDRBuilder hdrBuilder = new IHDRBuilder().width(imageWidth).height(imageHeight).bitDepth(8).
 				compressionMethod(0).filterMethod(0).interlaceMethod(0);
@@ -498,10 +498,10 @@ public class PNGWriter extends ImageWriter {
 			}
 		}
 		
-		if(noAlpha && imageMeta.isTransparent()) {
+		if(noAlpha && imageParam.isTransparent()) {
 			// Add Transparent chunk
 			TRNSBuilder tBuilder = new TRNSBuilder(2);
-			int transparentColor = imageMeta.getTransparentColor();		
+			int transparentColor = imageParam.getTransparentColor();		
 			
 			byte[] alpha = new byte[] {0, (byte)(transparentColor>>>16), 0, (byte)(transparentColor>>>8), 0, (byte)(transparentColor>>>0)};
 			

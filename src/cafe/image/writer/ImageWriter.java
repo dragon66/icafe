@@ -14,7 +14,7 @@ import java.io.*;
 import java.awt.*;
 import java.awt.image.*;
 
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.util.IMGUtils;
 
@@ -28,7 +28,7 @@ import cafe.image.util.IMGUtils;
  */
 public abstract class ImageWriter
 {	
-	private ImageMeta imageMeta = ImageMeta.DEFAULT_IMAGE_META;
+	private ImageParam imageParam = ImageParam.DEFAULT_IMAGE_PARAM;
 	
 	private int[] getPixels(Image img, int imageWidth, int imageHeight) throws Exception
 	{	
@@ -52,8 +52,8 @@ public abstract class ImageWriter
 			}
 		}
 	    
-	    if(imageMeta.isTransparent()) {
-	    	int transColor = (imageMeta.getTransparentColor() & 0x00ffffff);
+	    if(imageParam.isTransparent()) {
+	    	int transColor = (imageParam.getTransparentColor() & 0x00ffffff);
 		
 			for(int i = pixels.length - 1; i > 0; i--) {
 				int pixel = (pixels[i] & 0x00ffffff);
@@ -64,14 +64,14 @@ public abstract class ImageWriter
 	    return pixels;
 	}
 	
-	public ImageMeta getImageMeta() {
-		return imageMeta;
+	public ImageParam getImageParam() {
+		return imageParam;
 	}
 	
 	public abstract ImageType getImageType();
 	
-	public void setImageMeta(ImageMeta imageMeta) {
-		this.imageMeta = imageMeta;
+	public void setImageParam(ImageParam imageParam) {
+		this.imageParam = imageParam;
 	}
 	
 	public void write(Image img, OutputStream os) throws Exception

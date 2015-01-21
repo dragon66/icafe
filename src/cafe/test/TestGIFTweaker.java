@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import cafe.image.ImageIO;
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.gif.GIFFrame;
 import cafe.image.gif.GIFTweaker;
@@ -43,7 +43,7 @@ public class TestGIFTweaker {
 		
 		ImageWriter writer = ImageIO.getWriter(ImageType.GIF);
 		ImageType imageType = writer.getImageType();
-		ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
+		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
 		  
 		switch(imageType) {
 			case TIFF:// Set TIFF-specific options
@@ -69,7 +69,7 @@ public class TestGIFTweaker {
 		  	default:
 		}
 		  
-		writer.setImageMeta(builder.applyDither(true).ditherThreshold(18).hasAlpha(true).build());
+		writer.setImageParam(builder.applyDither(true).ditherThreshold(18).hasAlpha(true).build());
 		
 		FileInputStream is = new FileInputStream(args[0]);
 		

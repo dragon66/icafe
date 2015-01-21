@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import cafe.image.ImageColorType;
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.compression.ImageEncoder;
 import cafe.image.compression.ccitt.G31DEncoder;
@@ -264,7 +264,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 		
 		JPEGWriter jpgWriter = new JPEGWriter();
 		
-		ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
+		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
 		
 		if(grayscale)
 			builder.colorType(ImageColorType.GRAY_SCALE);
@@ -279,7 +279,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 		
 		builder.imageOptions(jpegOptions);
 		
-		jpgWriter.setImageMeta(builder.build());
+		jpgWriter.setImageParam(builder.build());
 		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream(); // No need to close the stream
 		jpgWriter.writeDefaultJPEGTables(bout);
@@ -591,7 +591,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 	
 	private void writePageData(int[] pixels, int imageWidth, int imageHeight) throws Exception {
 		//
-		ImageMeta meta = getImageMeta();
+		ImageParam meta = getImageParam();
 		ImageOptions options = meta.getImageOptions();
 		
 		Compression compression = Compression.PACKBITS;
@@ -611,7 +611,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 		} else {
 			// JPEG is a special case
 			if(compression == Compression.JPG) {
-				if(getImageMeta().hasAlpha())
+				if(getImageParam().hasAlpha())
 					System.out.println("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
 				jpegCompress(pixels, imageWidth, imageHeight, meta.getColorType() == ImageColorType.GRAY_SCALE);			
 			} else {
@@ -794,7 +794,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 				break;		
 		}
 
-		boolean hasAlpha = getImageMeta().hasAlpha();
+		boolean hasAlpha = getImageParam().hasAlpha();
 
 		int samplesPerPixel = (hasAlpha?(numOfSamples+1):numOfSamples);
 		ifd.addField(new ShortField(TiffTag.SAMPLES_PER_PIXEL.getValue(), new short[]{(short)samplesPerPixel}));

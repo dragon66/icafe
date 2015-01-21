@@ -20,9 +20,11 @@ package cafe.image.meta.exif;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
 import cafe.image.ImageIO;
-import cafe.image.ImageMeta;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
+import cafe.image.meta.image.Thumbnail;
 import cafe.image.options.JPEGOptions;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.LongField;
@@ -39,22 +41,13 @@ import cafe.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/08/2014
  */
-public class ExifThumbnail {
-	// Internal data type of thumbnail
-	// Represented by a BufferedImage
-	public static final int DATA_TYPE_RAW = 0; 
-	// Represented by a byte array of JPEG or TIFF stream
-	public static final int DATA_TYPE_COMPRESSED_JPG = 1;
-	public static final int DATA_TYPE_UNCOMPRESSED_TIFF = 2;
+public class ExifThumbnail extends Thumbnail {
 	// Comprised of an IFD and an associated image
 	// Create thumbnail IFD (IFD1 in the case of JPEG EXIF segment)
 	private IFD thumbnailIFD = new IFD(); 
-	private BufferedImage thumbnail;
-	private byte[] compressedThumbnail;
 	// JPEG and TIFF, perhaps other formats have subtle difference
 	private int flavor;
 	private int quality = 90;
-	private int dataType = DATA_TYPE_RAW; // Default data type
 	
 	public ExifThumbnail() {
 		this(Exif.EXIF_FLAVOR_JPG); // Default to JPEG flavor
@@ -74,32 +67,11 @@ public class ExifThumbnail {
 		setImage(compressedThumbnail, dataType, thumbnailIFD);
 	}
 	
-	public boolean containsImage() {
-		return thumbnail != null || compressedThumbnail != null;
-	}
-	
-	public byte[] getCompressedImage() {
-		return compressedThumbnail;
-	}
-	
-	public int getDataType() {
-		return dataType;
-	}
-	
-	public BufferedImage getRawImage() {
-		return thumbnail;
-	}
-	
 	public void setImage(byte[] compressedThumbnail, int dataType, IFD thumbnailIFD) {
 		this.compressedThumbnail = compressedThumbnail;
-		if(dataType == DATA_TYPE_COMPRESSED_JPG || dataType == DATA_TYPE_UNCOMPRESSED_TIFF)
+		if(dataType == DATA_TYPE_KJpegRGB || dataType == DATA_TYPE_KTiffRGB)
 			this.dataType = dataType;
 		this.thumbnailIFD = thumbnailIFD;
-	}
-	
-	public void setImage(BufferedImage thumbnail) {
-		this.thumbnail = thumbnail;
-		this.dataType = DATA_TYPE_RAW;
 	}
 	
 	public void setImageQuality(int quality) {
@@ -139,14 +111,14 @@ public class ExifThumbnail {
 		randOS.seek(thumbnailIFD.write(randOS, offset));
 		// Create a JPEGWriter to write the image
 		ImageWriter jpgWriter = ImageIO.getWriter(ImageType.JPG);
-		// Create a ImageMeta builder
-		ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
+		// Create a ImageParam builder
+		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
 		// Create JPEGOptions		
 		JPEGOptions jpegOptions = new JPEGOptions();			
 		jpegOptions.setQuality(quality);
 		builder.imageOptions(jpegOptions);
-		// Set ImageMeta to the writer
-		jpgWriter.setImageMeta(builder.build());
+		// Set ImageParam to the writer
+		jpgWriter.setImageParam(builder.build());
 		// This is amazing. We can actually keep track of how many bytes have been written to
 		// the underlying stream by JPEGWriter
 		long startOffset = randOS.getStreamPointer();

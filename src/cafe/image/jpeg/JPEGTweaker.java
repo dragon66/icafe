@@ -339,7 +339,7 @@ public class JPEGTweaker {
 									outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_exif_t";
 						    	ExifThumbnail thumbnail = reader.getThumbnail();
 						    	OutputStream fout = null;
-						    	if(thumbnail.getDataType() == ExifThumbnail.DATA_TYPE_COMPRESSED_JPG) {// JPEG format, save as JPEG
+						    	if(thumbnail.getDataType() == ExifThumbnail.DATA_TYPE_KJpegRGB) {// JPEG format, save as JPEG
 						    		 fout = new FileOutputStream(outpath + ".jpg");						    	
 						    	} else { // Uncompressed, save as TIFF
 						    		fout = new FileOutputStream(outpath + ".tif");

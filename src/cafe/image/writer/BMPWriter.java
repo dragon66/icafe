@@ -180,7 +180,7 @@ public class BMPWriter extends ImageWriter {
 	protected void write (int[] pixels, int imageWidth, int imageHeight, 
 			OutputStream os) throws Exception {   
 		// The entry point for all the image writers		
-		if(getImageMeta().getColorType() == ImageColorType.INDEXED) write256ColorBitmap(pixels, imageWidth, imageHeight, os);
+		if(getImageParam().getColorType() == ImageColorType.INDEXED) write256ColorBitmap(pixels, imageWidth, imageHeight, os);
 		else writeTrueColorBitmap(pixels, imageWidth, imageHeight, os);
 	}
 

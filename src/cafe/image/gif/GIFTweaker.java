@@ -400,7 +400,7 @@ public class GIFTweaker {
 		//g.setColor(reader.getBackgroundColor());
 		//g.fillRect(0, 0, logicalScreenWidth, logicalScreenHeight);
 		
-		//ImageMeta.ImageMetaBuilder builder = new ImageMeta.ImageMetaBuilder();
+		//ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
 		//builder.transparent(reader.isTransparent()).transparentColor(reader.getBackgroundColor().getRGB());
   
 		int frameCount = 0;		
