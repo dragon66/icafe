@@ -256,10 +256,10 @@ public class ICCProfileReader implements MetadataReader {
 				read();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			showHeader();
-			showTagTable();
-		}		
+			}	
+		}
+		showHeader();
+		showTagTable();
 	}
 
 	private void showTagTable() {
