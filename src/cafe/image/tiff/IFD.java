@@ -80,6 +80,10 @@ public final class IFD {
 		return children.get(tag);
 	}
 	
+	public Map<Tag, IFD> getChildren() {
+		return Collections.unmodifiableMap(children);
+	}
+	
 	public int getEndOffset() {
 		return endOffset;
 	}
