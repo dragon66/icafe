@@ -238,6 +238,20 @@ public class StringUtils
 		return false;
 	}
 	
+	// Create an empty Document node
+	public static Document createDocumentNode() {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder builder = null;
+	    
+		try {
+			builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		
+		return builder.newDocument();
+	}
+	
 	public static Document createXML(byte[] xml) {
 		//Get the DOM Builder Factory
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
