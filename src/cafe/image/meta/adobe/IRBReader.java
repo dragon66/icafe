@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014 by Wen Yu.
+ * Copyright (c) 2014-2015 by Wen Yu.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Any modifications to this file must keep this entire header intact.
  */
 
-package cafe.image.meta.photoshop;
+package cafe.image.meta.adobe;
 
 import java.io.IOException;
 
@@ -91,7 +91,7 @@ public class IRBReader implements MetadataReader {
 						   (Size specifier)  ...     data length (> 32767 bytes only)
 						   (Data)            ...     (its length is specified before)
 						 */
-						new IPTCReader(ArrayUtils.subArray(data, i, size)).read();
+						new IPTCReader(ArrayUtils.subArray(data, i, size)).showMetadata();
 						i += size;
 						if(size%2 != 0) i++;
 						break;

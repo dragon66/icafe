@@ -16,7 +16,7 @@
  * WY    10Jan2015  Initial creation for IRBReader to encapsulate IRB thumbnail
  */
 
-package cafe.image.meta.photoshop;
+package cafe.image.meta.adobe;
 
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;

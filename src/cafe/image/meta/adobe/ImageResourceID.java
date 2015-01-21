@@ -13,10 +13,10 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
- * WY    01Oct2014  Moved from cafe.image.meta to cafe.image.meta.photoshop
+ * WY    01Oct2014  Moved from cafe.image.meta to cafe.image.meta.adobe
  */
 
-package cafe.image.meta.photoshop;
+package cafe.image.meta.adobe;
 
 import java.util.HashMap;
 import java.util.Map;
