@@ -23,6 +23,7 @@ import org.w3c.dom.Document;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
+import cafe.image.meta.Thumbnail;
 
 public class ImageMetadata extends Metadata {
 	
