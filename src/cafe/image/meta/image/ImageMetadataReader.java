@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.w3c.dom.Document;
 
 import cafe.image.meta.MetadataReader;
+import cafe.image.meta.Thumbnail;
 import cafe.string.StringUtils;
 
 public class ImageMetadataReader implements MetadataReader {
