@@ -28,7 +28,7 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
-import cafe.image.meta.image.Thumbnail;
+import cafe.image.meta.Thumbnail;
 
 /** 
  * Photoshop Image Resource Block thumbnail wrapper.
@@ -51,16 +51,29 @@ public class IRBThumbnail extends Thumbnail {
 
 	public IRBThumbnail(ImageResourceID id, int dataType, int width, int height, int paddedRowBytes, int totalSize, int compressedSize, int bitsPerPixel, int numOfPlanes, byte[] data) {
 		this.id = id;
-		this.dataType = dataType;
-		this.width = width;
-		this.height = height;
 		this.paddedRowBytes = paddedRowBytes;
 		this.totalSize = totalSize;
 		this.compressedSize = compressedSize;
 		this.bitsPerPixel = bitsPerPixel;
-		this.numOfPlanes = numOfPlanes;
-		
-		setImage(data);
+		this.numOfPlanes = numOfPlanes;		
+		// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
+		if(dataType == DATA_TYPE_KJpegRGB) {
+			setImage(width, height, dataType, data);
+		} else if(dataType == DATA_TYPE_KRawRGB) {
+			// kRawRGB - NOT tested yet!
+			//Create a BufferedImage
+			DataBuffer db = new DataBufferByte(data, totalSize);
+			int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
+			if(id == ImageResourceID.THUMBNAIL_RESOURCE_PS4)
+				off = new int[]{2, 1, 0}; // RGB band offset for BGR for photoshop4.0 BGR format
+			int numOfBands = 3;
+			int trans = Transparency.OPAQUE;
+				
+			WritableRaster raster = Raster.createInterleavedRaster(db, width, height, paddedRowBytes, numOfBands, off, null);
+			ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, trans, DataBuffer.TYPE_BYTE);
+	   		
+			setImage(new BufferedImage(cm, raster, false, null));
+		}
 	}
 	
 	public int getBitsPerPixel() {
@@ -85,25 +98,5 @@ public class IRBThumbnail extends Thumbnail {
 	
 	public int getTotalSize() {
 		return totalSize;		
-	}
-	
-	private void setImage(byte[] data) {
-		// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
-		if(dataType == DATA_TYPE_KJpegRGB) {
-			compressedThumbnail = data;
-		} else if(dataType == DATA_TYPE_KRawRGB) {
-			// kRawRGB - NOT tested yet!
-			//Create a BufferedImage
-			DataBuffer db = new DataBufferByte(compressedThumbnail, totalSize);
-			int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
-			if(id == ImageResourceID.THUMBNAIL_RESOURCE_PS4)
-				off = new int[]{2, 1, 0}; // RGB band offset for BGR for photoshop4.0 BGR format
-			int numOfBands = 3;
-			int trans = Transparency.OPAQUE;
-				
-			WritableRaster raster = Raster.createInterleavedRaster(db, width, height, paddedRowBytes, numOfBands, off, null);
-			ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, trans, DataBuffer.TYPE_BYTE);
-	   		thumbnail = new BufferedImage(cm, raster, false, null);		
-		}
 	}
  }

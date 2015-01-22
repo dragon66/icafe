@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import cafe.image.meta.MetadataReader;
+import cafe.image.meta.Thumbnail;
 import cafe.image.tiff.FieldType;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.TIFFTweaker;
@@ -69,9 +70,16 @@ public class ExifReader implements MetadataReader {
 		    // We have thumbnail IFD
 		    if(ifds.size() >= 2) {
 		    	containsThumbnail = true;
-		    	thumbnail = new ExifThumbnail();
 		    	IFD thumbnailIFD = ifds.get(1);
-		    	TiffField<?> field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
+		    	int width = -1;
+		    	int height = -1;
+		    	TiffField<?> field = thumbnailIFD.getField(TiffTag.IMAGE_WIDTH.getValue());
+		    	if(field != null) 
+		    		width = field.getDataAsLong()[0];
+		    	field = thumbnailIFD.getField(TiffTag.IMAGE_LENGTH.getValue());
+		    	if(field != null)
+		    		height = field.getDataAsLong()[0];
+		    	field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
 		    	if(field != null) { // JPEG format, save as JPEG
 		    		int thumbnailOffset = field.getDataAsLong()[0];
 		    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());
@@ -79,7 +87,7 @@ public class ExifReader implements MetadataReader {
 		    		exifIn.seek(thumbnailOffset);
 		    		byte[] thumbnailData = new byte[thumbnailLen];
 		    		exifIn.readFully(thumbnailData);
-		    		thumbnail.setImage(thumbnailData, ExifThumbnail.DATA_TYPE_KJpegRGB, thumbnailIFD);
+		    		thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
 		    	} else { // Uncompressed, save as TIFF
 		    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS.getValue());
 		    		if(field == null) 
@@ -90,7 +98,7 @@ public class ExifReader implements MetadataReader {
 		    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(bout);
 		    			 TIFFTweaker.retainPages(exifIn, tiffout, 1);
 		    			 tiffout.close(); // Auto flush when closed
-		    			 thumbnail.setImage(bout.toByteArray(), ExifThumbnail.DATA_TYPE_KTiffRGB, thumbnailIFD);
+		    			 thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KTiffRGB, bout.toByteArray(), thumbnailIFD);
 		    		}
 		    	}
 		    }
@@ -213,7 +221,7 @@ public class ExifReader implements MetadataReader {
 		System.out.println("Exif reader output starts =>");
 		showIFDs(ifds, "");
 		if(containsThumbnail) {
-			System.out.println("Exif thumbnail format: " + (thumbnail.getDataType() == 1? "DATA_TYPE_COMPRESSED_JPG":"DATA_TYPE_COMPRESSED_TIFF"));
+			System.out.println("Exif thumbnail format: " + (thumbnail.getDataType() == 1? "DATA_TYPE_JPG":"DATA_TYPE_TIFF"));
 			System.out.println("Exif thumbnail data length: " + thumbnail.getCompressedImage().length);
 		}
 		System.out.println("<= Exif reader output ends");

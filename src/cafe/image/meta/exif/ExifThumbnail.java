@@ -24,7 +24,7 @@ import java.io.IOException;
 import cafe.image.ImageIO;
 import cafe.image.ImageParam;
 import cafe.image.ImageType;
-import cafe.image.meta.image.Thumbnail;
+import cafe.image.meta.Thumbnail;
 import cafe.image.options.JPEGOptions;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.LongField;
@@ -58,19 +58,12 @@ public class ExifThumbnail extends Thumbnail {
 	}
 	
 	public ExifThumbnail(int flavor, BufferedImage thumbnail) {
+		super(thumbnail);
 		this.flavor = flavor;
-		setImage(thumbnail);
 	}
 	
-	public ExifThumbnail(int flavor, byte[] compressedThumbnail, int dataType, IFD thumbnailIFD) {
-		this.flavor = flavor;
-		setImage(compressedThumbnail, dataType, thumbnailIFD);
-	}
-	
-	public void setImage(byte[] compressedThumbnail, int dataType, IFD thumbnailIFD) {
-		this.compressedThumbnail = compressedThumbnail;
-		if(dataType == DATA_TYPE_KJpegRGB || dataType == DATA_TYPE_KTiffRGB)
-			this.dataType = dataType;
+	public ExifThumbnail(int width, int height, int dataType, byte[] compressedThumbnail, IFD thumbnailIFD) {
+		super(width, height, dataType, compressedThumbnail);
 		this.thumbnailIFD = thumbnailIFD;
 	}
 	
@@ -79,6 +72,7 @@ public class ExifThumbnail extends Thumbnail {
 	}
 	
 	public void write(RandomAccessOutputStream randOS, int offset) throws IOException {
+		BufferedImage thumbnail = getRawImage();
 		if(thumbnail == null) throw new IllegalArgumentException("Expected raw data thumbnail does not exist!");
 		// We are going to write the IFD and associated thumbnail
 		int thumbnailWidth = thumbnail.getWidth();
