@@ -939,12 +939,19 @@ public class TIFFTweaker {
 	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif) throws Exception {
 		// If no thumbnail image is provided in EXIF wrapper, one will be created from the input stream
 		if(exif.isThumbnailRequired() && !exif.hasThumbnail()) {
+			long streamPointer = rin.getStreamPointer();
+			rin.seek(0);
 			BufferedImage original = javax.imageio.ImageIO.read(rin);
+			if(original == null) { // Java ImageIO failed
+				rin.seek(0);
+				original = ImageIO.read(rin); // Try our own stuff
+			}
 			int imageWidth = original.getWidth();
 			int imageHeight = original.getHeight();
 			int thumbnailWidth = 160;
 			int thumbnailHeight = 120;
-			if(imageWidth < imageHeight) { // Swap thumbnail width and height to keep a relative aspect ratio
+			if(imageWidth < imageHeight) { 
+				// Swap thumbnail width and height to keep a relative aspect ratio
 				int temp = thumbnailWidth;
 				thumbnailWidth = thumbnailHeight;
 				thumbnailHeight = temp;
@@ -957,9 +964,9 @@ public class TIFFTweaker {
 			        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			g.drawImage(original, 0, 0, thumbnailWidth, thumbnailHeight, null);
 			// Insert the thumbnail into EXIF wrapper
-			exif.setThumbnail(thumbnail);
+			exif.setThumbnailImage(thumbnail);
 			// Reset the stream pointer
-			rin.seek(0);
+			rin.seek(streamPointer);
 		}
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
