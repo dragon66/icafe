@@ -136,17 +136,12 @@ public class Exif extends Metadata {
 	/**
 	 * @param thumbnail optional thumbnail image. If null, will be generated from the input image
 	 */
-	public void addThumbnail(BufferedImage thumbnail) {
-		this.thumbnail = new ExifThumbnail(flavor, thumbnail);
+	public void addThumbnail(ExifThumbnail thumbnail) {
+		if(thumbnail == null)
+			this.thumbnail = new ExifThumbnail(flavor); 
+		else
+			this.thumbnail = thumbnail;
 		this.isThumbnailRequired = true;
-	}
-	
-	public boolean isThumbnailRequired() {
-		return isThumbnailRequired;
-	}
-	
-	public void setThumbnail(BufferedImage thumbnail) {
-		this.thumbnail.setImage(thumbnail);
 	}
 	
 	public IFD getIFD(Tag tag) {
@@ -160,6 +155,14 @@ public class Exif extends Metadata {
 	
 	public MetadataReader getReader() {
 		return reader;
+	}
+	
+	public boolean isThumbnailRequired() {
+		return isThumbnailRequired;
+	}
+	
+	public void setThumbnailImage(BufferedImage thumbnail) {
+		this.thumbnail.setImage(thumbnail);
 	}
 	
 	/** 
