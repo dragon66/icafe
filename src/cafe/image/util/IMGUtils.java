@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    22Jan2015  Factored out guessImageType(byte[])
  * WY    24Dec2014  Rename CMYK2RGB() to iccp2rgbRaster()
  * WY    17Dec2014  Bug fix for rgb2bilevelDither() to bypass transparent pixels
  * WY    03Dec2014  Bug fix for getRGB() to fall back to BufferedImage.getRGB()
@@ -44,7 +45,9 @@ import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.util.Arrays;
 
+import cafe.image.ImageIO;
 import cafe.image.ImageType;
+import cafe.io.RandomAccessInputStream;
 import cafe.util.IntHashtable;
 
 /** 
@@ -148,24 +151,6 @@ public class IMGUtils {
 		colorInfo[1] = transparent_index;
 
         return colorInfo;
-	}
-	
-	/**
-	 * Convert ICC_ColorSpace raster to RGB raster w/o alpha
-	 * 
-	 * @param raster WritableRaster for ICC_Profile ColorSpace
-	 * @param cm ColorModel for ICC_Profile ColorSpace
-	 * @return WritableRaster for RGB ColorSpace
-	 */
-	public static WritableRaster iccp2rgbRaster(WritableRaster raster, ColorModel cm) {
-		ColorSpace sRGB = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-		ColorConvertOp cco = new ColorConvertOp(cm.getColorSpace(), sRGB, null);
-		WritableRaster rgbRaster = null;		
-		BufferedImage iccpImage = new BufferedImage(cm, raster, false, null);
-		// Filter on BufferedImage to keep alpha channel
-		rgbRaster = cco.filter(iccpImage, null).getRaster();
-		
-		return rgbRaster;
 	}
 	
 	/**
@@ -737,10 +722,7 @@ public class IMGUtils {
 		}
 	}
 	
-	public static ImageType guessImageType(PushbackInputStream is) throws IOException {
-		// Read the first 4 bytes
-		byte[] magicNumber = new byte[4];
-		is.read(magicNumber);
+	public static ImageType guessImageType(byte[] magicNumber) {
 		ImageType imageType = ImageType.UNKNOWN;
 		// Check image type
 		if(Arrays.equals(magicNumber, TIFF_II) || Arrays.equals(magicNumber, TIFF_MM))
@@ -774,9 +756,46 @@ public class IMGUtils {
 			System.out.println("Unknown format!");		
 		}
 		
+		return imageType;
+	}
+	
+	public static ImageType guessImageType(PushbackInputStream is) throws IOException {
+		// Read the first ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes
+		byte[] magicNumber = new byte[ImageIO.IMAGE_MAGIC_NUMBER_LEN];
+		is.read(magicNumber);
+		ImageType imageType = guessImageType(magicNumber);
 		is.unread(magicNumber);// reset stream pointer
 		
 		return imageType;
+	}
+	
+	public static ImageType guessImageType(RandomAccessInputStream is) throws IOException {
+		// Read the first ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes
+		byte[] magicNumber = new byte[ImageIO.IMAGE_MAGIC_NUMBER_LEN];
+		long streamPointer = is.getStreamPointer();
+		is.read(magicNumber);		
+		ImageType imageType = guessImageType(magicNumber);
+		is.seek(streamPointer);// reset stream pointer
+		
+		return imageType;
+	}
+	
+	/**
+	 * Convert ICC_ColorSpace raster to RGB raster w/o alpha
+	 * 
+	 * @param raster WritableRaster for ICC_Profile ColorSpace
+	 * @param cm ColorModel for ICC_Profile ColorSpace
+	 * @return WritableRaster for RGB ColorSpace
+	 */
+	public static WritableRaster iccp2rgbRaster(WritableRaster raster, ColorModel cm) {
+		ColorSpace sRGB = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+		ColorConvertOp cco = new ColorConvertOp(cm.getColorSpace(), sRGB, null);
+		WritableRaster rgbRaster = null;		
+		BufferedImage iccpImage = new BufferedImage(cm, raster, false, null);
+		// Filter on BufferedImage to keep alpha channel
+		rgbRaster = cco.filter(iccpImage, null).getRaster();
+		
+		return rgbRaster;
 	}
 	
 	// Change the bit color sex of a byte array
@@ -1218,16 +1237,21 @@ public class IMGUtils {
 		return grayscale;
 	}
 	
-	// Convert RGB to YCbCr with level shift (minus 128)		
-	public static void RGB2YCbCr(int[][] red, int[][] green, int[][] blue, float[][] Y, float[][] Cb, float[][] Cr, int imageWidth, int imageHeight) {
-		//
-		for(int i = 0; i < imageHeight; i++) {
-			for(int j = 0; j < imageWidth; j++) {
-				Y[i][j] = 0.299f*red[i][j] + 0.587f*green[i][j] + 0.114f*blue[i][j] - 128.0f;
-				Cb[i][j] = - 0.1687f*red[i][j] - 0.3313f*green[i][j] + 0.5f*blue[i][j];
-				Cr[i][j] = 0.5f*red[i][j] - 0.4187f*green[i][j] - 0.0813f*blue[i][j];
-			}
+	// Convert RGB to YCbCr		
+	public static byte[] RGB2YCbCr(int[] rgb) {
+		int red,green,blue, index = 0;
+		byte[] ycbcr = new byte[rgb.length*3];
+		
+		for(int i = 0; i < rgb.length; i++) {
+			red = ((rgb[i] >> 16) & 0xff);
+			green = ((rgb[i] >> 8) & 0xff);
+			blue = (rgb[i] & 0xff);
+			ycbcr[index++] = (byte)(0.299f*red + 0.587f*green + 0.114f*blue);
+			ycbcr[index++] = (byte)(- 0.1687f*red - 0.3313f*green + 0.5f*blue + 128.0f);
+			ycbcr[index++] = (byte)(0.5f*red - 0.4187f*green - 0.0813f*blue + 128.f);
 		}
+		
+		return ycbcr;
 	}
 	
 	// Convert RGB to YCbCr with level shift (minus 128)
@@ -1247,21 +1271,16 @@ public class IMGUtils {
 		}
 	}
 	
-	// Convert RGB to YCbCr		
-	public static byte[] RGB2YCbCr(int[] rgb) {
-		int red,green,blue, index = 0;
-		byte[] ycbcr = new byte[rgb.length*3];
-		
-		for(int i = 0; i < rgb.length; i++) {
-			red = ((rgb[i] >> 16) & 0xff);
-			green = ((rgb[i] >> 8) & 0xff);
-			blue = (rgb[i] & 0xff);
-			ycbcr[index++] = (byte)(0.299f*red + 0.587f*green + 0.114f*blue);
-			ycbcr[index++] = (byte)(- 0.1687f*red - 0.3313f*green + 0.5f*blue + 128.0f);
-			ycbcr[index++] = (byte)(0.5f*red - 0.4187f*green - 0.0813f*blue + 128.f);
+	// Convert RGB to YCbCr with level shift (minus 128)		
+	public static void RGB2YCbCr(int[][] red, int[][] green, int[][] blue, float[][] Y, float[][] Cb, float[][] Cr, int imageWidth, int imageHeight) {
+		//
+		for(int i = 0; i < imageHeight; i++) {
+			for(int j = 0; j < imageWidth; j++) {
+				Y[i][j] = 0.299f*red[i][j] + 0.587f*green[i][j] + 0.114f*blue[i][j] - 128.0f;
+				Cb[i][j] = - 0.1687f*red[i][j] - 0.3313f*green[i][j] + 0.5f*blue[i][j];
+				Cr[i][j] = 0.5f*red[i][j] - 0.4187f*green[i][j] - 0.0813f*blue[i][j];
+			}
 		}
-		
-		return ycbcr;
 	}
 	
 	// Convert RGB to YCbCr with alpha	
