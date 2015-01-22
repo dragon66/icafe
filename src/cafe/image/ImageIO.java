@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    22Jan2015  Revised read(InputStream) to leave the stream open
  * WY    08Jan2015  Added getReader(PushbackInputStream)
  * WY    22Sep2014  Added read() to detect image type and read image
  * WY    24Sep2014  Added write() to write Image
@@ -31,6 +32,7 @@ import java.io.PushbackInputStream;
 import cafe.image.reader.ImageReader;
 import cafe.image.writer.ImageWriter;
 import cafe.image.util.IMGUtils;
+import cafe.io.RandomAccessInputStream;
 
 public final class ImageIO {
 	// Image header magic number length
@@ -86,8 +88,7 @@ public final class ImageIO {
 	 * @param imgType image type enum defined by {@link ImageType}
 	 * @return a ImageWriter for image type imageType or null if not found. 
 	 */
-	public static ImageWriter getWriter(ImageType imgType)
-	{
+	public static ImageWriter getWriter(ImageType imgType) {
 		return imgType.getWriter();
 	}
 	
@@ -97,7 +98,12 @@ public final class ImageIO {
 	 * @throws Exception
 	 */
 	public static BufferedImage read(File file) throws Exception {
-		return read(new FileInputStream(file));
+		FileInputStream fin = new FileInputStream(file);
+		BufferedImage bi = read(fin);
+		// Release resources
+		fin.close();
+		
+		return bi;
 	}
 	
 	/**
@@ -109,16 +115,21 @@ public final class ImageIO {
 	 * @throws Exception
 	 */
 	public static BufferedImage read(InputStream is) throws Exception {
+		ImageType imageType = null;
 		// 4 byte as image magic number
-		PushbackInputStream pushBackStream = new PushbackInputStream(is, IMAGE_MAGIC_NUMBER_LEN); 
-		ImageType imageType = IMGUtils.guessImageType(pushBackStream);
+		if(is instanceof RandomAccessInputStream) {
+			imageType = IMGUtils.guessImageType((RandomAccessInputStream)is);
+		} else {
+			is = new PushbackInputStream(is, IMAGE_MAGIC_NUMBER_LEN); 
+			imageType = IMGUtils.guessImageType((PushbackInputStream)is);
+		}		
 		BufferedImage bi = null;		
-		
 		if(imageType != ImageType.UNKNOWN) {
-			bi = getReader(imageType).read(pushBackStream);
+			bi = getReader(imageType).read(is);
 		}
-		
-		pushBackStream.close();
+		// We don't want to close the stream after successful reading in case it will be used elsewhere
+		if(bi == null)
+			is.close();		
 		
 		return bi;
 	}
