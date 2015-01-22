@@ -73,19 +73,38 @@ public class BMPTweaker {
 		System.out.println("Reserved1 (2 bytes): " + IOUtils.readShort(DTO.fileHeader, 6));
 		System.out.println("Reserved2 (2 bytes): " + IOUtils.readShort(DTO.fileHeader, 8));
 		System.out.println("Data offset: " + IOUtils.readInt(DTO.fileHeader, 10));
-		Node header = doc.createElement("header");
+		Node root = doc.createElement("Bitmap");
+		Node header = doc.createElement("Header");
+		Node fileHeader = doc.createElement("FileHeader");
 		Node imageSignature = doc.createElement("ImageSignature");
+		Node fileSize = doc.createElement("FileSize");
+		Node reserved1 = doc.createElement("Reserved1");		
+		Node reserved2 = doc.createElement("Reserved2");
+		Node dataOffset = doc.createElement("DataOffset");
 		imageSignature.appendChild(doc.createTextNode(new String(DTO.fileHeader, 0, 2)));
-		header.appendChild(imageSignature);
-		doc.appendChild(header);
+		fileSize.appendChild(doc.createTextNode(IOUtils.readInt(DTO.fileHeader, 2) + " bytes"));
+		reserved1.appendChild(doc.createTextNode("" + IOUtils.readShort(DTO.fileHeader, 6)));
+		reserved2.appendChild(doc.createTextNode("" + IOUtils.readShort(DTO.fileHeader, 8)));
+		dataOffset.appendChild(doc.createTextNode("byte " + IOUtils.readInt(DTO.fileHeader, 10)));
+		header.appendChild(fileHeader);
+		fileHeader.appendChild(imageSignature);
+		fileHeader.appendChild(fileSize);
+		fileHeader.appendChild(reserved1);
+		fileHeader.appendChild(reserved2);
+		fileHeader.appendChild(dataOffset);
+		
 		// TODO add more ImageMetadata elements to doc
 		System.out.println("Info header length: " + IOUtils.readInt(DTO.infoHeader, 0));
 		System.out.println("Image width: " + IOUtils.readInt(DTO.infoHeader, 4));
-		System.out.println("Image heigth: " + IOUtils.readInt(DTO.infoHeader, 8));		
+		System.out.println("Image heigth: " + IOUtils.readInt(DTO.infoHeader, 8));	
+		
+		String alignment = "";
 		if(IOUtils.readInt(DTO.infoHeader, 8) > 0)
-			System.out.println("Image alignment: ALIGN_BOTTOM_UP");
+			alignment = "BOTTOM_UP" ;
 		else
-			System.out.println("Image alignment: ALIGN_TOP_DOWN");
+			alignment = "TOP_DOWN";
+		
+		System.out.println("Image alignment: " + alignment);
 		System.out.println("Number of planes: " + IOUtils.readShort(DTO.infoHeader, 12));
 		System.out.println("BitCount (bits per pixel): " + IOUtils.readShort(DTO.infoHeader, 14));
 		System.out.println("Compression: " + BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)));
@@ -95,6 +114,45 @@ public class BMPTweaker {
 		System.out.println("Colors used (number of actually used colors): " + IOUtils.readInt(DTO.infoHeader, 32));
 		System.out.println("Important colors (number of important colors): " + IOUtils.readInt(DTO.infoHeader, 36));
 		
+		Node infoHeader = doc.createElement("InfoHeader");
+		Node infoHeaderLen = doc.createElement("InfoHeaderLength");
+		Node imageAlignment = doc.createElement("ImageAlignment");
+		Node numOfPlanes = doc.createElement("NumberOfPlanes");
+		Node bitCount = doc.createElement("BitsPerPixel");
+		Node compression = doc.createElement("Compression");
+		Node imageSize = doc.createElement("CompessedImageSize");
+		Node horizontalResolution = doc.createElement("HorizontalResolution");
+		Node verticalResolution = doc.createElement("VerticalResolution");
+		Node colorsUsed = doc.createElement("ColorsUsed");
+		Node importantColors = doc.createElement("ImportantColors");
+		
+		infoHeaderLen.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 0) + " bytes"));
+		imageAlignment.appendChild(doc.createTextNode(alignment));
+		numOfPlanes.appendChild(doc.createTextNode(IOUtils.readShort(DTO.infoHeader, 12) + " planes"));
+		bitCount.appendChild(doc.createTextNode(IOUtils.readShort(DTO.infoHeader, 14) + " bytes per pixel"));
+		compression.appendChild(doc.createTextNode(BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)).toString()));
+		imageSize.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 20) + " bytes"));
+		horizontalResolution.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 24) + " pixels/meter"));
+		verticalResolution.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 28) + " pixels/meter"));
+		colorsUsed.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 32) + " colors used"));
+		importantColors.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 36) + " important colors"));		
+		
+		infoHeader.appendChild(infoHeaderLen);
+		infoHeader.appendChild(imageAlignment);
+		infoHeader.appendChild(numOfPlanes);
+		infoHeader.appendChild(bitCount);
+		infoHeader.appendChild(compression);
+		infoHeader.appendChild(imageSize);
+		infoHeader.appendChild(horizontalResolution);
+		infoHeader.appendChild(verticalResolution);
+		infoHeader.appendChild(colorsUsed);
+		infoHeader.appendChild(importantColors);
+		
+		header.appendChild(infoHeader);
+		
+		root.appendChild(header);
+		doc.appendChild(root);
+				
 		int bitsPerPixel = IOUtils.readShort(DTO.infoHeader, 14);
 		
 		if(bitsPerPixel <= 8) {
