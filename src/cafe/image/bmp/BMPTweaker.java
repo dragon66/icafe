@@ -129,7 +129,7 @@ public class BMPTweaker {
 		infoHeaderLen.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 0) + " bytes"));
 		imageAlignment.appendChild(doc.createTextNode(alignment));
 		numOfPlanes.appendChild(doc.createTextNode(IOUtils.readShort(DTO.infoHeader, 12) + " planes"));
-		bitCount.appendChild(doc.createTextNode(IOUtils.readShort(DTO.infoHeader, 14) + " bytes per pixel"));
+		bitCount.appendChild(doc.createTextNode(IOUtils.readShort(DTO.infoHeader, 14) + " bits per pixel"));
 		compression.appendChild(doc.createTextNode(BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)).toString()));
 		imageSize.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 20) + " bytes"));
 		horizontalResolution.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 24) + " pixels/meter"));
