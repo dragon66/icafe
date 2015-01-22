@@ -435,7 +435,7 @@ public class JPEGTweaker {
 			        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			g.drawImage(original, 0, 0, thumbnailWidth, thumbnailHeight, null);
 			// Insert thumbnail into EXIF wrapper
-			exif.setThumbnail(thumbnail);
+			exif.setThumbnailImage(thumbnail);
 			// Reset the stream pointer
 			((RandomAccessInputStream)is).seek(0);
 		}
