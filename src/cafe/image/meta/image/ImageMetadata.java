@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    22Jan2015  Revised to take care of more than one thumbnails
  * WY    21Jan2015  Initial creation
  */
 
@@ -34,9 +35,9 @@ public class ImageMetadata extends Metadata {
 		this.reader = new ImageMetadataReader(document);
 	}
 	
-	public ImageMetadata(Document document, Thumbnail thumbnail) {
+	public ImageMetadata(Document document, Thumbnail[] thumbnails) {
 		super(MetadataType.IMAGE, null);
-		this.reader = new ImageMetadataReader(document, thumbnail);
+		this.reader = new ImageMetadataReader(document, thumbnails);
 	}
 
 	@Override

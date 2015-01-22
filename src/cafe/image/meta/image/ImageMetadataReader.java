@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    22Jan2015  Revised to take care of more than one thumbnails
  * WY    21Jan2015  Initial creation
  */
 
@@ -30,29 +31,28 @@ public class ImageMetadataReader implements MetadataReader {
 	// Fields definition
 	private boolean loaded;
 	private Document document;
-	private Thumbnail thumbnail;
+	private Thumbnail[] thumbnails;
 	private boolean containsThumbnail;
 	
 	public ImageMetadataReader(Document document) {
 		this.document = document;
 	}
 	
-	public ImageMetadataReader(Document document, Thumbnail thumbnail) {
+	public ImageMetadataReader(Document document, Thumbnail[] thumbnails) {
 		this.document = document;
-		this.thumbnail = thumbnail;
-		this.containsThumbnail = true;
+		this.thumbnails = thumbnails;
 	}
 	
 	public boolean containsThumbnail() {
-		return containsThumbnail;
+		return thumbnails != null && thumbnails.length > 0;
 	}
 	
 	public Document getDocument() {
 		return document;
 	}
 	
-	public Thumbnail getThumbnail() {
-		return thumbnail;
+	public Thumbnail[] getThumbnails() {
+		return thumbnails;
 	}
 	
 	@Override
@@ -71,9 +71,11 @@ public class ImageMetadataReader implements MetadataReader {
 		StringUtils.showXML(document);
 		// Thumbnail information
 		if(containsThumbnail) { // We have thumbnail
-			System.out.println("Thumbnail width: " + thumbnail.getWidth());
-			System.out.println("Thumbanil height: " + thumbnail.getHeight());
-			System.out.println("Thumbnail data type: " + thumbnail.getDataType());
+			for(Thumbnail thumbnail : thumbnails) {
+				System.out.println("Thumbnail width: " + thumbnail.getWidth());
+				System.out.println("Thumbanil height: " + thumbnail.getHeight());
+				System.out.println("Thumbnail data type: " + thumbnail.getDataType());
+			}
 		}		
 	}
 }
