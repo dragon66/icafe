@@ -98,7 +98,7 @@ public class ExifReader implements MetadataReader {
 		    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(bout);
 		    			 TIFFTweaker.retainPages(exifIn, tiffout, 1);
 		    			 tiffout.close(); // Auto flush when closed
-		    			 thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KTiffRGB, bout.toByteArray(), thumbnailIFD);
+		    			 thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_TIFF, bout.toByteArray(), thumbnailIFD);
 		    		}
 		    	}
 		    }
