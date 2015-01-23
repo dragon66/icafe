@@ -20,7 +20,8 @@
 package cafe.image.meta.image;
 
 import java.io.IOException;
-
+import java.util.Iterator;
+import java.util.Map;
 import org.w3c.dom.Document;
 
 import cafe.image.meta.MetadataReader;
@@ -31,27 +32,26 @@ public class ImageMetadataReader implements MetadataReader {
 	// Fields definition
 	private boolean loaded;
 	private Document document;
-	private Thumbnail[] thumbnails;
-	private boolean containsThumbnail;
-	
+	private Map<String, Thumbnail> thumbnails;
+		
 	public ImageMetadataReader(Document document) {
 		this.document = document;
 	}
 	
-	public ImageMetadataReader(Document document, Thumbnail[] thumbnails) {
+	public ImageMetadataReader(Document document, Map<String, Thumbnail> thumbnails) {
 		this.document = document;
 		this.thumbnails = thumbnails;
 	}
 	
 	public boolean containsThumbnail() {
-		return thumbnails != null && thumbnails.length > 0;
+		return thumbnails != null && thumbnails.size() > 0;
 	}
 	
 	public Document getDocument() {
 		return document;
 	}
 	
-	public Thumbnail[] getThumbnails() {
+	public Map<String, Thumbnail> getThumbnails() {
 		return thumbnails;
 	}
 	
@@ -70,11 +70,18 @@ public class ImageMetadataReader implements MetadataReader {
 	public void showMetadata() {
 		StringUtils.showXML(document);
 		// Thumbnail information
-		if(containsThumbnail) { // We have thumbnail
-			for(Thumbnail thumbnail : thumbnails) {
-				System.out.println("Thumbnail width: " + thumbnail.getWidth());
-				System.out.println("Thumbanil height: " + thumbnail.getHeight());
-				System.out.println("Thumbnail data type: " + thumbnail.getDataType());
+		if(containsThumbnail()) { // We have thumbnail
+			Iterator<Map.Entry<String, Thumbnail>> entries = thumbnails.entrySet().iterator();
+			System.out.println("Total number of thumbnails: " + thumbnails.size());
+			int i = 0;
+			while (entries.hasNext()) {
+			    Map.Entry<String, Thumbnail> entry = entries.next();
+			    System.out.println("Thumbnail #" + i + ": " + entry.getKey() + " thumbnail:");
+			    Thumbnail thumbnail = entry.getValue();
+			    System.out.println("Thumbnail width: " + ((thumbnail.getWidth() < 0)? " Unavailable": thumbnail.getWidth()));
+				System.out.println("Thumbanil height: " + ((thumbnail.getHeight() < 0)? " Unavailable": thumbnail.getHeight()));
+				System.out.println("Thumbnail data type: " + thumbnail.getDataTypeAsString());
+				i++;
 			}
 		}		
 	}

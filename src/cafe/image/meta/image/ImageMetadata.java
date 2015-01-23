@@ -19,6 +19,8 @@
 
 package cafe.image.meta.image;
 
+import java.util.Map;
+
 import org.w3c.dom.Document;
 
 import cafe.image.meta.Metadata;
@@ -35,7 +37,7 @@ public class ImageMetadata extends Metadata {
 		this.reader = new ImageMetadataReader(document);
 	}
 	
-	public ImageMetadata(Document document, Thumbnail[] thumbnails) {
+	public ImageMetadata(Document document, Map<String, Thumbnail> thumbnails) {
 		super(MetadataType.IMAGE, null);
 		this.reader = new ImageMetadataReader(document, thumbnails);
 	}
