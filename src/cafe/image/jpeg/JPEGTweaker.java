@@ -59,6 +59,7 @@ import cafe.image.ImageType;
 import cafe.image.writer.ImageWriter;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
+import cafe.image.meta.Thumbnail;
 import cafe.image.meta.adobe.IRB;
 import cafe.image.meta.adobe.IRBReader;
 import cafe.image.meta.adobe.IRBThumbnail;
@@ -67,6 +68,7 @@ import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifReader;
 import cafe.image.meta.exif.ExifThumbnail;
 import cafe.image.meta.icc.ICCProfile;
+import cafe.image.meta.image.ImageMetadata;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -923,6 +925,7 @@ public class JPEGTweaker {
 	
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+		Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
 		// Need to wrap the input stream with a BufferedInputStream to
 		// speed up reading the SOS
 		is = new BufferedInputStream(is);
@@ -974,7 +977,24 @@ public class JPEGTweaker {
 					case APP13:						
 					case APP14:
 						Metadata meta = readAPPn(is, emarker, metadataMap);
-						if(meta != null) metadataMap.put(meta.getType(), meta);
+						if(meta != null) {
+							metadataMap.put(meta.getType(), meta);
+							if(meta.getType() == MetadataType.EXIF) {
+								Exif exif = (Exif)meta;
+								ExifReader reader = (ExifReader)exif.getReader();
+								reader.read();
+								if(reader.containsThumbnail()) {
+									thumbnails.put("EXIF", reader.getThumbnail());
+								}
+							} else if(meta.getType() == MetadataType.PHOTOSHOP_IRB) {
+								IRB irb = (IRB)meta;
+								IRBReader reader = (IRBReader)irb.getReader();
+								reader.read();
+								if(reader.containsThumbnail()) {
+									thumbnails.put("PHOTOSHOP_IRB", reader.getThumbnail());
+								}
+							}
+						}						
 						marker = IOUtils.readShortMM(is);
 						break;
 					case APP2:
@@ -1041,6 +1061,8 @@ public class JPEGTweaker {
 			icc_profile.showMetadata();
 			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
 		}
+		
+		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(null, thumbnails));
 		
 		return metadataMap;
 	}
