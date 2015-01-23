@@ -8,7 +8,7 @@ public class Thumbnail {
 	public static final int DATA_TYPE_KRawRGB = 0; // This is from IRBThumbnail
 	// Represented by a byte array of JPEG or TIFF image
 	public static final int DATA_TYPE_KJpegRGB = 1; // This is from IRBThumbnail
-	public static final int DATA_TYPE_KTiffRGB = 2; // This is fabricated
+	public static final int DATA_TYPE_TIFF = 2;
 	
 	private BufferedImage thumbnail;
 	private byte[] compressedThumbnail;
@@ -41,6 +41,19 @@ public class Thumbnail {
 		return dataType;
 	}
 	
+	public String getDataTypeAsString() {
+		switch(dataType) {
+			case 0:
+				return "DATA_TYPE_KRawRGB";
+			case 1:
+				return "DATA_TYPE_KJpegRGB";
+			case 2:
+				return "DATA_TYPE_TIFF";
+			default:
+				return "DATA_TYPE_Unknown";
+		}
+	}
+	
 	public int getHeight() {
 		return height;
 	}
@@ -64,7 +77,7 @@ public class Thumbnail {
 		this.width = width;
 		this.height = height;
 		
-		if(dataType == DATA_TYPE_KJpegRGB || dataType == DATA_TYPE_KTiffRGB) {
+		if(dataType == DATA_TYPE_KJpegRGB || dataType == DATA_TYPE_TIFF) {
 			this.compressedThumbnail = compressedThumbnail;
 			this.dataType = dataType;
 		}
