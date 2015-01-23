@@ -21,8 +21,9 @@ package cafe.image.meta.adobe;
 import java.io.IOException;
 
 import org.w3c.dom.Document;
+
 import cafe.image.meta.MetadataReader;
-import cafe.string.StringUtils;
+import cafe.string.XMLUtils;
 
 public class XMPReader implements MetadataReader {
 	private byte[] data;
@@ -40,7 +41,7 @@ public class XMPReader implements MetadataReader {
 	
 	@Override
 	public void read() throws IOException {
-		document = StringUtils.createXML(data);
+		document = XMLUtils.createXML(data);
 	}
 
 	@Override
@@ -56,7 +57,7 @@ public class XMPReader implements MetadataReader {
 				e.printStackTrace();
 			}
 			if(document != null)
-				StringUtils.showXML(document);
+				XMLUtils.showXML(document);
 		}		
 	}
 }

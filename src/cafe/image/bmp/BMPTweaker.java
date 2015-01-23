@@ -36,7 +36,7 @@ import cafe.io.IOUtils;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.image.ImageMetadata;
-import cafe.string.StringUtils;
+import static cafe.string.XMLUtils.*;
 
 /**
  * BMP image tweaking tool
@@ -62,7 +62,7 @@ public class BMPTweaker {
 	
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
-		Document doc = StringUtils.createDocumentNode(); // Create a document for ImageMetadata
+		Document doc = createDocumentNode(); // Create a document for ImageMetadata
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		readHeader(is, DTO);
@@ -73,25 +73,25 @@ public class BMPTweaker {
 		System.out.println("Reserved1 (2 bytes): " + IOUtils.readShort(DTO.fileHeader, 6));
 		System.out.println("Reserved2 (2 bytes): " + IOUtils.readShort(DTO.fileHeader, 8));
 		System.out.println("Data offset: " + IOUtils.readInt(DTO.fileHeader, 10));
-		Node root = doc.createElement("Bitmap");
-		Node header = doc.createElement("Header");
-		Node fileHeader = doc.createElement("FileHeader");
-		Node imageSignature = doc.createElement("ImageSignature");
-		Node fileSize = doc.createElement("FileSize");
-		Node reserved1 = doc.createElement("Reserved1");		
-		Node reserved2 = doc.createElement("Reserved2");
-		Node dataOffset = doc.createElement("DataOffset");
-		imageSignature.appendChild(doc.createTextNode(new String(DTO.fileHeader, 0, 2)));
-		fileSize.appendChild(doc.createTextNode(IOUtils.readInt(DTO.fileHeader, 2) + " bytes"));
-		reserved1.appendChild(doc.createTextNode("" + IOUtils.readShort(DTO.fileHeader, 6)));
-		reserved2.appendChild(doc.createTextNode("" + IOUtils.readShort(DTO.fileHeader, 8)));
-		dataOffset.appendChild(doc.createTextNode("byte " + IOUtils.readInt(DTO.fileHeader, 10)));
-		header.appendChild(fileHeader);
-		fileHeader.appendChild(imageSignature);
-		fileHeader.appendChild(fileSize);
-		fileHeader.appendChild(reserved1);
-		fileHeader.appendChild(reserved2);
-		fileHeader.appendChild(dataOffset);
+		Node root = createElement(doc, "bitmap");
+		Node header = createElement(doc, "header");
+		Node fileHeader = createElement(doc, "file-header");
+		Node imageSignature = createElement(doc, "image-signature");
+		Node fileSize = createElement(doc, "file-size");
+		Node reserved1 = createElement(doc, "reserved1");		
+		Node reserved2 = createElement(doc, "reserved2");
+		Node dataOffset = createElement(doc, "data-offset");
+		addText(doc, imageSignature, new String(DTO.fileHeader, 0, 2));
+		addText(doc, fileSize, IOUtils.readInt(DTO.fileHeader, 2) + " bytes");
+		addText(doc, reserved1, "" + IOUtils.readShort(DTO.fileHeader, 6));
+		addText(doc, reserved2, "" + IOUtils.readShort(DTO.fileHeader, 8));
+		addText(doc, dataOffset, "byte " + IOUtils.readInt(DTO.fileHeader, 10));
+		addChild(header, fileHeader);
+		addChild(fileHeader, imageSignature);
+		addChild(fileHeader, fileSize);
+		addChild(fileHeader, reserved1);
+		addChild(fileHeader, reserved2);
+		addChild(fileHeader, dataOffset);
 		
 		// TODO add more ImageMetadata elements to doc
 		System.out.println("Info header length: " + IOUtils.readInt(DTO.infoHeader, 0));
@@ -114,44 +114,44 @@ public class BMPTweaker {
 		System.out.println("Colors used (number of actually used colors): " + IOUtils.readInt(DTO.infoHeader, 32));
 		System.out.println("Important colors (number of important colors): " + IOUtils.readInt(DTO.infoHeader, 36));
 		
-		Node infoHeader = doc.createElement("InfoHeader");
-		Node infoHeaderLen = doc.createElement("InfoHeaderLength");
-		Node imageAlignment = doc.createElement("ImageAlignment");
-		Node numOfPlanes = doc.createElement("NumberOfPlanes");
-		Node bitCount = doc.createElement("BitsPerPixel");
-		Node compression = doc.createElement("Compression");
-		Node imageSize = doc.createElement("CompessedImageSize");
-		Node horizontalResolution = doc.createElement("HorizontalResolution");
-		Node verticalResolution = doc.createElement("VerticalResolution");
-		Node colorsUsed = doc.createElement("ColorsUsed");
-		Node importantColors = doc.createElement("ImportantColors");
+		Node infoHeader = createElement(doc, "info-header");
+		Node infoHeaderLen = createElement(doc, "info-header-length");
+		Node imageAlignment = createElement(doc, "image-alignment");
+		Node numOfPlanes = createElement(doc, "number-of-planes");
+		Node bitCount = createElement(doc, "bits-per-pixel");
+		Node compression = createElement(doc, "compression");
+		Node imageSize = createElement(doc, "compessed-image-size");
+		Node horizontalResolution = createElement(doc, "horizontal-resolution");
+		Node verticalResolution = createElement(doc, "vertical-resolution");
+		Node colorsUsed = createElement(doc, "colors-used");
+		Node importantColors = createElement(doc, "important-colors");
 		
-		infoHeaderLen.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 0) + " bytes"));
-		imageAlignment.appendChild(doc.createTextNode(alignment));
-		numOfPlanes.appendChild(doc.createTextNode(IOUtils.readShort(DTO.infoHeader, 12) + " planes"));
-		bitCount.appendChild(doc.createTextNode(IOUtils.readShort(DTO.infoHeader, 14) + " bits per pixel"));
-		compression.appendChild(doc.createTextNode(BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)).toString()));
-		imageSize.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 20) + " bytes"));
-		horizontalResolution.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 24) + " pixels/meter"));
-		verticalResolution.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 28) + " pixels/meter"));
-		colorsUsed.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 32) + " colors used"));
-		importantColors.appendChild(doc.createTextNode(IOUtils.readInt(DTO.infoHeader, 36) + " important colors"));		
+		addText(doc, infoHeaderLen, IOUtils.readInt(DTO.infoHeader, 0) + " bytes");
+		addText(doc, imageAlignment, alignment);
+		addText(doc, numOfPlanes, IOUtils.readShort(DTO.infoHeader, 12) + " planes");
+		addText(doc, bitCount, IOUtils.readShort(DTO.infoHeader, 14) + " bits per pixel");
+		addText(doc, compression, BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)).toString());
+		addText(doc, imageSize, IOUtils.readInt(DTO.infoHeader, 20) + " bytes");
+		addText(doc, horizontalResolution, IOUtils.readInt(DTO.infoHeader, 24) + " pixels/meter");
+		addText(doc, verticalResolution, IOUtils.readInt(DTO.infoHeader, 28) + " pixels/meter");
+		addText(doc, colorsUsed, IOUtils.readInt(DTO.infoHeader, 32) + " colors used");
+		addText(doc, importantColors, IOUtils.readInt(DTO.infoHeader, 36) + " important colors");		
 		
-		infoHeader.appendChild(infoHeaderLen);
-		infoHeader.appendChild(imageAlignment);
-		infoHeader.appendChild(numOfPlanes);
-		infoHeader.appendChild(bitCount);
-		infoHeader.appendChild(compression);
-		infoHeader.appendChild(imageSize);
-		infoHeader.appendChild(horizontalResolution);
-		infoHeader.appendChild(verticalResolution);
-		infoHeader.appendChild(colorsUsed);
-		infoHeader.appendChild(importantColors);
+		addChild(infoHeader, infoHeaderLen);
+		addChild(infoHeader, imageAlignment);
+		addChild(infoHeader, numOfPlanes);
+		addChild(infoHeader, bitCount);
+		addChild(infoHeader, compression);
+		addChild(infoHeader, imageSize);
+		addChild(infoHeader, horizontalResolution);
+		addChild(infoHeader, verticalResolution);
+		addChild(infoHeader, colorsUsed);
+		addChild(infoHeader, importantColors);
 		
-		header.appendChild(infoHeader);
+		addChild(header, infoHeader);
 		
-		root.appendChild(header);
-		doc.appendChild(root);
+		addChild(root, header);
+		addChild(doc, root);
 				
 		int bitsPerPixel = IOUtils.readShort(DTO.infoHeader, 14);
 		

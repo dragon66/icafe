@@ -111,6 +111,7 @@ import cafe.io.ReadStrategyMM;
 import cafe.io.WriteStrategyII;
 import cafe.io.WriteStrategyMM;
 import cafe.string.StringUtils;
+import cafe.string.XMLUtils;
 import cafe.util.ArrayUtils;
 import static cafe.image.writer.TIFFWriter.*;
 
@@ -2006,7 +2007,7 @@ public class TIFFTweaker {
 					} else if(ftag == TiffTag.PHOTOSHOP) {
 						showPhtoshop(data);
 					} else if(ftag == TiffTag.XMP) {						
-						StringUtils.showXML(StringUtils.createXML(data));
+						XMLUtils.showXML(XMLUtils.createXML(data));
 					} else if(ftag == TiffTag.IPTC) {
 						showIPTC(data);
 					} else

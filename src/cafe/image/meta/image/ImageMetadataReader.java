@@ -22,11 +22,12 @@ package cafe.image.meta.image;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+
 import org.w3c.dom.Document;
 
 import cafe.image.meta.MetadataReader;
 import cafe.image.meta.Thumbnail;
-import cafe.string.StringUtils;
+import cafe.string.XMLUtils;
 
 public class ImageMetadataReader implements MetadataReader {
 	// Fields definition
@@ -68,7 +69,7 @@ public class ImageMetadataReader implements MetadataReader {
 	
 	@Override
 	public void showMetadata() {
-		StringUtils.showXML(document);
+		XMLUtils.showXML(document);
 		// Thumbnail information
 		if(containsThumbnail()) { // We have thumbnail
 			Iterator<Map.Entry<String, Thumbnail>> entries = thumbnails.entrySet().iterator();
