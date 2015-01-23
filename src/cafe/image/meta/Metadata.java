@@ -37,8 +37,17 @@ import cafe.io.RandomAccessInputStream;
  * @version 1.0 01/12/2015
  */
 public abstract class Metadata {
+	// Fields
 	private MetadataType type;
 	private byte[] data;
+	
+	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
+		FileInputStream fin = new FileInputStream(image);
+		Map<MetadataType, Metadata> metadataMap = readMetadata(fin);
+		fin.close();
+		
+		return metadataMap; 
+	}
 	
 	/**
 	 * Reads all metadata associated with the input image
@@ -82,14 +91,6 @@ public abstract class Metadata {
 		return metadataMap;
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
-		FileInputStream fin = new FileInputStream(image);
-		Map<MetadataType, Metadata> metadataMap = readMetadata(fin);
-		fin.close();
-		
-		return metadataMap; 
-	}
-	
 	public static Map<MetadataType, Metadata> readMetadata(String image) throws IOException {
 		return readMetadata(new File(image));
 	}
@@ -103,11 +104,11 @@ public abstract class Metadata {
 		return data;
 	}
 	
+	public abstract MetadataReader getReader();
+	
 	public MetadataType getType() {
 		return type;
 	}
-	
-	public abstract MetadataReader getReader();
 	
 	public void showMetadata() {
 		MetadataReader reader = getReader();
