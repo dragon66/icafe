@@ -977,24 +977,8 @@ public class JPEGTweaker {
 					case APP13:						
 					case APP14:
 						Metadata meta = readAPPn(is, emarker, metadataMap);
-						if(meta != null) {
-							metadataMap.put(meta.getType(), meta);
-							if(meta.getType() == MetadataType.EXIF) {
-								Exif exif = (Exif)meta;
-								ExifReader reader = (ExifReader)exif.getReader();
-								reader.read();
-								if(reader.containsThumbnail()) {
-									thumbnails.put("EXIF", reader.getThumbnail());
-								}
-							} else if(meta.getType() == MetadataType.PHOTOSHOP_IRB) {
-								IRB irb = (IRB)meta;
-								IRBReader reader = (IRBReader)irb.getReader();
-								reader.read();
-								if(reader.containsThumbnail()) {
-									thumbnails.put("PHOTOSHOP_IRB", reader.getThumbnail());
-								}
-							}
-						}						
+						if(meta != null)
+							metadataMap.put(meta.getType(), meta);						
 						marker = IOUtils.readShortMM(is);
 						break;
 					case APP2:
@@ -1060,6 +1044,27 @@ public class JPEGTweaker {
 			ICCProfile icc_profile = new ICCProfile(bo.toByteArray());
 			icc_profile.showMetadata();
 			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
+		}
+		
+		// Extract thumbnails to ImageMetadata
+		Metadata meta = metadataMap.get(MetadataType.EXIF);
+		if(meta != null) {
+			Exif exif = (Exif)meta;
+			ExifReader reader = exif.getReader();
+			reader.read();
+			if(reader.containsThumbnail()) {
+				thumbnails.put("EXIF", reader.getThumbnail());
+			}
+		}
+		
+		meta = metadataMap.get(MetadataType.PHOTOSHOP_IRB);
+		if(meta != null) {
+			IRB irb = (IRB)meta;
+			IRBReader reader = irb.getReader();
+			reader.read();
+			if(reader.containsThumbnail()) {
+				thumbnails.put("PHOTOSHOP_IRB", reader.getThumbnail());
+			}
 		}
 		
 		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(null, thumbnails));
