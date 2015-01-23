@@ -28,7 +28,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import cafe.image.jpeg.Marker;
 import cafe.image.meta.Metadata;
-import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.IFD;
@@ -61,7 +60,7 @@ public class Exif extends Metadata {
 	private ExifThumbnail thumbnail;
 	private int firstIFDOffset = 0x08;
 	
-	private MetadataReader reader;
+	private ExifReader reader;
 	
 	private boolean isThumbnailRequired;
 	
@@ -153,7 +152,7 @@ public class Exif extends Metadata {
 		return null;
 	}
 	
-	public MetadataReader getReader() {
+	public ExifReader getReader() {
 		return reader;
 	}
 	

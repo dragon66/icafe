@@ -22,12 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import cafe.image.meta.Metadata;
-import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
 import cafe.io.IOUtils;
 
 public class IRB extends Metadata {
-	private MetadataReader reader;
+	private IRBReader reader;
 	
 	public static void showIRB(byte[] irb) {
 		if(irb != null && irb.length > 0) {
@@ -54,7 +53,7 @@ public class IRB extends Metadata {
 		reader = new IRBReader(data);
 	}
 	
-	public MetadataReader getReader() {
+	public IRBReader getReader() {
 		return reader;
 	}
 }
