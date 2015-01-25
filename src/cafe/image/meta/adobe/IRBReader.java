@@ -73,41 +73,29 @@ public class IRBReader implements MetadataReader {
 				i += 4;
 				ImageResourceID eId =ImageResourceID.fromShort(id); 
 				
-				switch (eId) {
-					case IPTC_NAA: // IPTC
-						_8bims.add(new IPTC_NAA(name, size, ArrayUtils.subArray(data, i, size)));
-						break;
-					case JPEG_QUALITY: 
-						_8bims.add(new JPEGQuality(name, size, ArrayUtils.subArray(data, i, size)));
-						break;
-					case THUMBNAIL_RESOURCE_PS4:
-					case THUMBNAIL_RESOURCE_PS5:
-						containsThumbnail = true;
-						int thumbnailFormat = IOUtils.readIntMM(data, i); //1 = kJpegRGB. Also supports kRawRGB (0).
-						int width = IOUtils.readIntMM(data, i + 4);
-						int height = IOUtils.readIntMM(data, i + 8);
-						// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-						int widthBytes = IOUtils.readIntMM(data, i + 12);
-						// Total size = widthbytes * height * planes
-						int totalSize = IOUtils.readIntMM(data, i + 16);
-						// Size after compression. Used for consistency check.
-						int sizeAfterCompression = IOUtils.readIntMM(data, i + 20);
-						short bitsPerPixel = IOUtils.readShortMM(data, i + 24); // Bits per pixel. = 24
-						short numOfPlanes = IOUtils.readShortMM(data, i + 26); // Number of planes. = 1
-						byte[] thumbnailData = null;
-						if(thumbnailFormat == IRBThumbnail.DATA_TYPE_KJpegRGB)
-							thumbnailData = ArrayUtils.subArray(data, i + 28, sizeAfterCompression);
-						else if(thumbnailFormat == IRBThumbnail.DATA_TYPE_KRawRGB)
-							thumbnailData = ArrayUtils.subArray(data, i + 28, totalSize);
-						// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
-						thumbnail = new IRBThumbnail(eId, thumbnailFormat, width, height, widthBytes, totalSize, sizeAfterCompression, bitsPerPixel, numOfPlanes, thumbnailData);
-						break;
-					case VERSION_INFO:
-						_8bims.add(new VersionInfo(name, size, ArrayUtils.subArray(data, i, size)));
-						break;
-					default:
-						_8bims.add(new _8BIM(id, name, size, ArrayUtils.subArray(data, i, size)));						
-				}
+				_8bims.add(new _8BIM(id, name, size, ArrayUtils.subArray(data, i, size)));
+				
+				if(eId == ImageResourceID.THUMBNAIL_RESOURCE_PS4 || eId == ImageResourceID.THUMBNAIL_RESOURCE_PS5) {
+					containsThumbnail = true;
+					int thumbnailFormat = IOUtils.readIntMM(data, i); //1 = kJpegRGB. Also supports kRawRGB (0).
+					int width = IOUtils.readIntMM(data, i + 4);
+					int height = IOUtils.readIntMM(data, i + 8);
+					// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
+					int widthBytes = IOUtils.readIntMM(data, i + 12);
+					// Total size = widthbytes * height * planes
+					int totalSize = IOUtils.readIntMM(data, i + 16);
+					// Size after compression. Used for consistency check.
+					int sizeAfterCompression = IOUtils.readIntMM(data, i + 20);
+					short bitsPerPixel = IOUtils.readShortMM(data, i + 24); // Bits per pixel. = 24
+					short numOfPlanes = IOUtils.readShortMM(data, i + 26); // Number of planes. = 1
+					byte[] thumbnailData = null;
+					if(thumbnailFormat == IRBThumbnail.DATA_TYPE_KJpegRGB)
+						thumbnailData = ArrayUtils.subArray(data, i + 28, sizeAfterCompression);
+					else if(thumbnailFormat == IRBThumbnail.DATA_TYPE_KRawRGB)
+						thumbnailData = ArrayUtils.subArray(data, i + 28, totalSize);
+					// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
+					thumbnail = new IRBThumbnail(eId, thumbnailFormat, width, height, widthBytes, totalSize, sizeAfterCompression, bitsPerPixel, numOfPlanes, thumbnailData);
+				}				
 				i += size;
 				if(size%2 != 0) i++;
 			}

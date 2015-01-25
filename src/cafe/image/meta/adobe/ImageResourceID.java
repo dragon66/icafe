@@ -18,10 +18,14 @@
 
 package cafe.image.meta.adobe;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cafe.image.meta.iptc.IPTCReader;
+import cafe.io.IOUtils;
 import cafe.string.StringUtils;
+import cafe.util.ArrayUtils;
 
 /**
  * Defines Image Resource IDs for Adobe Image Resource Block (IRB)
@@ -57,9 +61,103 @@ public enum ImageResourceID {
 	WORKING_PATH("Working path (not saved).", (short)0x0401),
 	LAYERS_GROUP_INFO("Layers group information. 2 bytes per layer containing a group ID for the dragging groups. Layers in a group have the same group ID.", (short)0x0402),
 	OBSOLETE3("Obsolete.", (short)0x0403),
-	IPTC_NAA("IPTC-NAA record.", (short)0x0404),
+	IPTC_NAA("IPTC-NAA record.", (short)0x0404) {
+		public void show(byte[] data) {
+			/* Structure of an IPTC data set
+			   [Record name]    [size]   [description]
+			   ---------------------------------------
+			   (Tag marker)     1 byte   this must be 0x1c
+			   (Record number)  1 byte   always 2 for 2:xx datasets
+			   (Dataset number) 1 byte   this is what we call a "tag"
+			   (Size specifier) 2 bytes  data length (< 32768 bytes) or length of ...
+			   (Size specifier)  ...     data length (> 32767 bytes only)
+			   (Data)            ...     (its length is specified before)
+			 */
+			new IPTCReader(data).showMetadata();
+		}			
+	},
 	IMAGE_MODE("Image mode for raw format files.", (short)0x0405),
-	JPEG_QUALITY("JPEG quality. Private.", (short)0x0406),
+	JPEG_QUALITY("JPEG quality. Private.", (short)0x0406) {
+		public void show(byte[] data) {
+			// PhotoShop Save As Quality
+			// index 0: Quality level
+			int value = IOUtils.readShortMM(data, 0);
+		
+			switch (value) {
+				case 0xfffd:
+					System.out.print("Quality 1 (Low)");
+					break;
+				case 0xfffe:
+					System.out.print("Quality 2 (Low)");
+					break;
+				case 0xffff:
+					System.out.print("Quality 3 (Low)");
+					break;
+				case 0x0000:
+					System.out.print("Quality 4 (Low)");
+					break;
+				case 0x0001:
+					System.out.print("Quality 5 (Medium)");
+					break;
+				case 0x0002:
+					System.out.print("Quality 6 (Medium)");
+					break;
+				case 0x0003:
+					System.out.print("Quality 7 (Medium)");
+					break;
+				case 0x0004:
+					System.out.print("Quality 8 (High)");
+					break;
+				case 0x0005:
+					System.out.print("Quality 9 (High)");
+					break;
+				case 0x0006:
+					System.out.print("Quality 10 (Maximum)");
+					break;
+				case 0x0007:
+					System.out.print("Quality 11 (Maximum)");
+					break;
+				case 0x0008:
+					System.out.print("Quality 12 (Maximum)");
+					break;
+				default:
+			}
+			
+			int format = IOUtils.readShortMM(data, 2);
+			System.out.print(" : ");
+			
+			switch (format) {
+				case 0x0000:
+					System.out.print("Standard Format");
+					break;
+				case 0x0001:
+					System.out.print("Optimised Format");
+					break;
+				case 0x0101:
+					System.out.print("Progressive Format");
+					break;
+				default:
+			}
+			
+			int progressiveScans = IOUtils.readShortMM(data, 4);
+			System.out.print(" : ");
+			
+			switch (progressiveScans) {
+				case 0x0001:
+					System.out.print("3 Scans");
+					break;
+				case 0x0002:
+					System.out.print("4 Scans");
+					break;
+				case 0x0003:
+					System.out.print("5 Scans");
+					break;
+				default:
+			}
+			
+			System.out.println(" - Plus 1 byte unknown trailer value = " + data[6]); // Always seems to be 0x01
+		}
+	},
 	GRID_INFO("Grid and guides information.", (short)0x0408),
 	THUMBNAIL_RESOURCE_PS4("Photoshop 4.0 thumbnail resource.", (short)0x0409), // Photoshop 4.0
 	COPYRIGHT_FLAG("Copyright flag. Boolean indicating whether image is copyrighted. Can be set via Property suite or by user in File Info...", (short)0x040a),
@@ -82,7 +180,31 @@ public enum ImageResourceID {
 	JUMP_TO_XPEP("Jump To XPEP. 2 bytes major version, 2 bytes minor version, 4 bytes count.", (short)0x041c),
 	ALPHA_IDENTIFIERS("Alpha Identifiers. 4 bytes of length, followed by 4 bytes each for every alpha identifier.", (short)0x041d),
 	URL_LIST("URL List. 4 byte count of URLs, followed by 4 byte long, 4 byte ID, and unicode string for each count.", (short)0x041e),
-	VERSION_INFO("(Photoshop 6.0) Version Info. 4 byte version, 1 byte HasRealMergedData, unicode string of writer name, unicode string of reader name, 4 bytes of file version.", (short)0x0421),
+	VERSION_INFO("(Photoshop 6.0) Version Info. 4 byte version, 1 byte HasRealMergedData, unicode string of writer name, unicode string of reader name, 4 bytes of file version.", (short)0x0421) {
+		public void show(byte[] data) {
+			int i = 0;
+			System.out.println("Version: " + StringUtils.byteArrayToHexString(ArrayUtils.subArray(data, i, 4)));
+			i += 4;
+	        System.out.println("Has Real Merged Data: " + ((data[i++]!=0)?"True":"False"));
+	        int writer_size = IOUtils.readIntMM(data, i);
+	        i += 4;
+	        try {
+				System.out.println("Writer name: " + new String(data, i, writer_size*2, "UTF-16BE"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+	        i += writer_size*2;
+	        int reader_size = IOUtils.readIntMM(data, i);
+	        i += 4;
+	        try {
+				System.out.println("Reader name: " + new String(data, i, reader_size*2, "UTF-16BE"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+	        i += reader_size*2;
+	        System.out.println("File Version: " + StringUtils.byteArrayToHexString(ArrayUtils.subArray(data, i, 4)));  
+		}
+	},
 	EXIF_DATA1("(Photoshop 7.0) EXIF data 1.", (short)0x0422),
 	EXIF_DATA3("(Photoshop 7.0) EXIF data 3.", (short)0x0423),
 	XMP_METADATA("(Photoshop 7.0) XMP metadata.", (short)0x0424),
@@ -162,7 +284,9 @@ public enum ImageResourceID {
       for(ImageResourceID id : values()) {
            idMap.put(id.getValue(), id);
       }
-    } 
+    }
+    
+    public void show(byte[] data) {}
 	
 	private final String description;
 	private final short value;

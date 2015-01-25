@@ -67,6 +67,8 @@ public class _8BIM {
 		
 		System.out.println("Type: 8BIM");
 		System.out.println("Name: " + name);
-		System.out.println("Size: " + size);		
+		System.out.println("Size: " + size);
+		
+		eId.show(getData());
 	}
 }
