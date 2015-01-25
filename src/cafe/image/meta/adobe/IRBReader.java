@@ -11,11 +11,11 @@
 package cafe.image.meta.adobe;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import cafe.image.meta.MetadataReader;
-import cafe.image.meta.iptc.IPTCReader;
 import cafe.io.IOUtils;
-import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
 
 /**
@@ -29,6 +29,7 @@ public class IRBReader implements MetadataReader {
 	private boolean containsThumbnail;
 	private IRBThumbnail thumbnail;
 	private boolean loaded;
+	List<_8BIM> _8bims = new ArrayList<_8BIM>();
 	
 	public IRBReader(byte[] data) {
 		this.data = data;
@@ -36,6 +37,10 @@ public class IRBReader implements MetadataReader {
 	
 	public boolean containsThumbnail() {
 		return containsThumbnail;
+	}
+	
+	public List<_8BIM> get8BIM() {
+		return _8bims;
 	}
 	
 	public IRBThumbnail getThumbnail()  {
@@ -51,198 +56,60 @@ public class IRBReader implements MetadataReader {
 		int i = 0;
 		while((i+4) < data.length) {
 			String _8bim = new String(data, i, 4);
-			System.out.println("Type: " + _8bim);
 			i += 4;			
 			if(_8bim.equals("8BIM")) {
 				short id = IOUtils.readShortMM(data, i);
 				i += 2;
-				int nameLen = (data[i++]&0xff);
-				System.out.println("Name: " + new String(data, i, nameLen).trim());
+				int nameLen = 0;
+				while(data[i + nameLen] != 0) {
+					nameLen++;
+				}
+				nameLen++;
+				if((nameLen%2) != 0) nameLen++;
+				String name = new String(data, i, nameLen).trim();
 				i += nameLen;
-				if((nameLen%2) == 0) i++;
+				//
 				int size = IOUtils.readIntMM(data, i);
 				i += 4;
-				System.out.println("Size: " + size);
-				
 				ImageResourceID eId =ImageResourceID.fromShort(id); 
-				
-				if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {
-					System.out.println("PATH_INFO" + " [Value: " + StringUtils.shortToHexStringMM(id) +"]" + " - Path Information (saved paths).");
-				}
-				else if((id >= ImageResourceID.PLUGIN_RESOURCE0.getValue()) && (id <= ImageResourceID.PLUGIN_RESOURCE999.getValue())) {
-					System.out.println("PLUGIN_RESOURCE" + " [Value: " + StringUtils.shortToHexStringMM(id) +"]" + " - Plug-In resource.");
-				}
-				else if (eId == ImageResourceID.UNKNOWN) {
-					System.out.println(eId + " [Value: " + StringUtils.shortToHexStringMM(id) +"]");
-				}
-				else {
-					System.out.println(eId);
-				}
 				
 				switch (eId) {
 					case IPTC_NAA: // IPTC
-						/* Structure of an IPTC data set
-						   [Record name]    [size]   [description]
-						   ---------------------------------------
-						   (Tag marker)     1 byte   this must be 0x1c
-						   (Record number)  1 byte   always 2 for 2:xx datasets
-						   (Dataset number) 1 byte   this is what we call a "tag"
-						   (Size specifier) 2 bytes  data length (< 32768 bytes) or length of ...
-						   (Size specifier)  ...     data length (> 32767 bytes only)
-						   (Data)            ...     (its length is specified before)
-						 */
-						new IPTCReader(ArrayUtils.subArray(data, i, size)).showMetadata();
-						i += size;
-						if(size%2 != 0) i++;
+						_8bims.add(new IPTC_NAA(name, size, ArrayUtils.subArray(data, i, size)));
 						break;
-					case JPEG_QUALITY: // PhotoShop Save As Quality
-						// index 0: Quality level
-						int value = IOUtils.readShortMM(data, i);
-						i += 2;
-						switch (value) {
-							case 0xfffd:
-								System.out.print("Quality 1 (Low)");
-								break;
-							case 0xfffe:
-								System.out.print("Quality 2 (Low)");
-								break;
-							case 0xffff:
-								System.out.print("Quality 3 (Low)");
-								break;
-							case 0x0000:
-								System.out.print("Quality 4 (Low)");
-								break;
-							case 0x0001:
-								System.out.print("Quality 5 (Medium)");
-								break;
-							case 0x0002:
-								System.out.print("Quality 6 (Medium)");
-								break;
-							case 0x0003:
-								System.out.print("Quality 7 (Medium)");
-								break;
-							case 0x0004:
-								System.out.print("Quality 8 (High)");
-								break;
-							case 0x0005:
-								System.out.print("Quality 9 (High)");
-								break;
-							case 0x0006:
-								System.out.print("Quality 10 (Maximum)");
-								break;
-							case 0x0007:
-								System.out.print("Quality 11 (Maximum)");
-								break;
-							case 0x0008:
-								System.out.print("Quality 12 (Maximum)");
-								break;
-							default:
-						}
-						
-						int format = IOUtils.readShortMM(data, i);
-						i += 2;
-						System.out.print(" : ");
-						
-						switch (format) {
-							case 0x0000:
-								System.out.print("Standard Format");
-								break;
-							case 0x0001:
-								System.out.print("Optimised Format");
-								break;
-							case 0x0101:
-								System.out.print("Progressive Format");
-								break;
-							default:
-						}
-						
-						int progressiveScans = IOUtils.readShortMM(data, i);
-						i += 2;
-						System.out.print(" : ");
-						
-						switch (progressiveScans) {
-							case 0x0001:
-								System.out.print("3 Scans");
-								break;
-							case 0x0002:
-								System.out.print("4 Scans");
-								break;
-							case 0x0003:
-								System.out.print("5 Scans");
-								break;
-							default:
-						}
-						
-						System.out.println(" - Plus 1 byte unknown trailer value = " + data[i++]); // Always seems to be 0x01
-						if(size%2 != 0) i++;
+					case JPEG_QUALITY: 
+						_8bims.add(new JPEGQuality(name, size, ArrayUtils.subArray(data, i, size)));
 						break;
 					case THUMBNAIL_RESOURCE_PS4:
 					case THUMBNAIL_RESOURCE_PS5:
 						containsThumbnail = true;
 						int thumbnailFormat = IOUtils.readIntMM(data, i); //1 = kJpegRGB. Also supports kRawRGB (0).
-						i += 4;
-						switch (thumbnailFormat) {
-							case IRBThumbnail.DATA_TYPE_KJpegRGB:
-								System.out.println("Thumbnail format: KJpegRGB");
-								break;
-							case IRBThumbnail.DATA_TYPE_KRawRGB:
-								System.out.println("Thumbnail format: KRawRGB");
-								break;
-						}
-						int width = IOUtils.readIntMM(data, i);
-						System.out.println("Thumbnail width: " + width);
-						i += 4;
-						int height = IOUtils.readIntMM(data, i);
-						System.out.println("Thumbnail height: " + height);
-						i += 4;
+						int width = IOUtils.readIntMM(data, i + 4);
+						int height = IOUtils.readIntMM(data, i + 8);
 						// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-						int widthBytes = IOUtils.readIntMM(data, i);
-						System.out.println("Padded row bytes: " + widthBytes);
-						i += 4;
+						int widthBytes = IOUtils.readIntMM(data, i + 12);
 						// Total size = widthbytes * height * planes
-						int totalSize = IOUtils.readIntMM(data, i);
-						System.out.println("Total size: "  + totalSize);
-						i += 4;
+						int totalSize = IOUtils.readIntMM(data, i + 16);
 						// Size after compression. Used for consistency check.
-						int sizeAfterCompression = IOUtils.readIntMM(data, i);
-						System.out.println("Size after compression: " + sizeAfterCompression);
-						i += 4;
-						short bitsPerPixel = IOUtils.readShortMM(data, i); // Bits per pixel. = 24
-						System.out.println("Bits per pixel: " + bitsPerPixel);
-						i += 2;
-						short numOfPlanes = IOUtils.readShortMM(data, i); // Number of planes. = 1
-						System.out.println("Number of planes: "  + numOfPlanes);
-						i += 2;
+						int sizeAfterCompression = IOUtils.readIntMM(data, i + 20);
+						short bitsPerPixel = IOUtils.readShortMM(data, i + 24); // Bits per pixel. = 24
+						short numOfPlanes = IOUtils.readShortMM(data, i + 26); // Number of planes. = 1
 						byte[] thumbnailData = null;
 						if(thumbnailFormat == IRBThumbnail.DATA_TYPE_KJpegRGB)
-							thumbnailData = ArrayUtils.subArray(data, i, sizeAfterCompression);
+							thumbnailData = ArrayUtils.subArray(data, i + 28, sizeAfterCompression);
 						else if(thumbnailFormat == IRBThumbnail.DATA_TYPE_KRawRGB)
-							thumbnailData = ArrayUtils.subArray(data, i, totalSize);
+							thumbnailData = ArrayUtils.subArray(data, i + 28, totalSize);
 						// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
-						i += sizeAfterCompression; 
-						if(size%2 != 0) i++;
 						thumbnail = new IRBThumbnail(eId, thumbnailFormat, width, height, widthBytes, totalSize, sizeAfterCompression, bitsPerPixel, numOfPlanes, thumbnailData);
 						break;
 					case VERSION_INFO:
-						System.out.println("Version: " + StringUtils.byteArrayToHexString(ArrayUtils.subArray(data, i, 4)));
-						i += 4;
-                        System.out.println("Has Real Merged Data: " + ((data[i++]!=0)?"True":"False"));
-                        int writer_size = IOUtils.readIntMM(data, i);
-                        i += 4;
-                        System.out.println("Writer name: " + new String(data, i, writer_size*2, "UTF-16BE"));
-                        i += writer_size*2;
-                        int reader_size = IOUtils.readIntMM(data, i);
-                        i += 4;
-                        System.out.println("Reader name: " + new String(data, i, reader_size*2, "UTF-16BE"));
-                        i += reader_size*2;
-                        System.out.println("File Version: " + StringUtils.byteArrayToHexString(ArrayUtils.subArray(data, i, 4)));                           
-                        i += 4;
-                        if(size%2 != 0) i++;
-                        break;
-					default:							
-						i += size;
-						if(size%2 != 0) i++;
-				}					
+						_8bims.add(new VersionInfo(name, size, ArrayUtils.subArray(data, i, size)));
+						break;
+					default:
+						_8bims.add(new _8BIM(id, name, size, ArrayUtils.subArray(data, i, size)));						
+				}
+				i += size;
+				if(size%2 != 0) i++;
 			}
 		}
 		loaded = true;
@@ -254,8 +121,37 @@ public class IRBReader implements MetadataReader {
 				read();
 			} catch (IOException e) {
 				e.printStackTrace();
+			}			
+		}
+		System.out.println("<<Adobe IRB infomation starts>>");
+		for(_8BIM _8bim : _8bims) {
+			_8bim.show();
+		}
+		if(containsThumbnail) {
+			System.out.println(thumbnail.getResouceID());
+			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).
+			switch (thumbnailFormat) {
+				case IRBThumbnail.DATA_TYPE_KJpegRGB:
+					System.out.println("Thumbnail format: KJpegRGB");
+					break;
+				case IRBThumbnail.DATA_TYPE_KRawRGB:
+					System.out.println("Thumbnail format: KRawRGB");
+					break;
 			}
-			// TODO: move metadata dumping function from read() to here
-		}		
+			System.out.println("Thumbnail width: " + thumbnail.getWidth());
+			System.out.println("Thumbnail height: " + thumbnail.getHeight());
+			// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
+			System.out.println("Padded row bytes: " + thumbnail.getPaddedRowBytes());
+			// Total size = widthbytes * height * planes
+			System.out.println("Total size: "  + thumbnail.getTotalSize());
+			// Size after compression. Used for consistency check.
+			System.out.println("Size after compression: " + thumbnail.getCompressedSize());
+			// Bits per pixel. = 24
+			System.out.println("Bits per pixel: " + thumbnail.getBitsPerPixel());
+			// Number of planes. = 1
+			System.out.println("Number of planes: "  + thumbnail.getNumOfPlanes());
+		}
+		
+		System.out.println("<<Adobe IRB infomation ends>>");
 	}
 }
