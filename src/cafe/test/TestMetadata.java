@@ -20,5 +20,6 @@ public class TestMetadata {
 			System.out.println("-----------------------------------------");
 		}
 		System.out.println("End of metadata information.");
+		Metadata.extractThumbnails(args[0], "thumbnail");		
 	}
 }

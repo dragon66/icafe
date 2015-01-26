@@ -6,6 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * Metadata.java
+ *
+ * Who   Date       Description
+ * ====  =========  ====================================================================
+ * WY    25Jan2015  Added extractThumbnails()
  */
 
 package cafe.image.meta;
@@ -41,6 +49,45 @@ public abstract class Metadata {
 	private MetadataType type;
 	private byte[] data;
 	
+	public static void  extractThumbnails(File image, String pathToThumbnail) throws IOException {
+		FileInputStream fin = new FileInputStream(image);
+		extractThumbnails(fin, pathToThumbnail);
+		fin.close();
+	}
+	
+	public static void extractThumbnails(InputStream is, String pathToThumbnail) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate metadata reading to corresponding image tweakers.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.extractThumbnails(pushbackStream, pathToThumbnail);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				TIFFTweaker.extractThumbnail(randIS, pathToThumbnail);
+				randIS.close();
+				break;
+			case PNG:
+				System.out.println("PNG image format does not contain any thumbnail");
+				break;
+			case GIF:
+			case PCX:
+			case TGA:
+			case BMP:
+				System.out.println(imageType + " image format does not contain any thumbnails");
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("Thumbnail extracting is not supported for " + imageType + " image");				
+		}		
+	}
+	
+	public static void extractThumbnails(String image, String pathToThumbnail) throws IOException {
+		extractThumbnails(new File(image), pathToThumbnail);
+	}
+	
 	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
 		FileInputStream fin = new FileInputStream(image);
 		Map<MetadataType, Metadata> metadataMap = readMetadata(fin);
@@ -59,7 +106,7 @@ public abstract class Metadata {
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
 		// Metadata map for all the Metadata read
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
-		// 4 byte as image magic number
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
 		// Delegate metadata reading to corresponding image tweakers.
@@ -85,7 +132,7 @@ public abstract class Metadata {
 				pushbackStream.close();
 				throw new IllegalArgumentException("Metadata reading is not supported for " + imageType + " image");
 				
-		}		
+		}	
 		pushbackStream.close();
 		
 		return metadataMap;
