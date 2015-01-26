@@ -10,6 +10,10 @@
 
 package cafe.image.meta.iptc;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 
 /**
@@ -25,6 +29,22 @@ public class IPTCDataSet {
 	private byte[] data;
 	private int offset;
 	
+	public IPTCDataSet(int tag, String value) {
+		this(tag, value.getBytes());
+	}
+	
+	public IPTCDataSet(int tag, byte[] data) {
+		this(IPTCRecord.APPLICATION, tag, data);
+	}
+	
+	public IPTCDataSet(IPTCRecord record, int tag, byte[] data) {
+		this(record.getRecordNumber(), tag, data.length, data, 0);
+	}
+	
+	public IPTCDataSet(IPTCRecord record, int tag, String value) {
+		this(record, tag, value.getBytes());
+	}
+	
 	public IPTCDataSet(int recordNumber, int tag, int size, byte[] data, int offset) {
 		this.recordNumber = recordNumber;
 		this.tag = tag;
@@ -33,22 +53,26 @@ public class IPTCDataSet {
 		this.offset = offset;
 	}
 	
+	public byte[] getData() {
+		return data;
+	}
+	
+	public int getOffset() {
+		return offset;
+	}	
+	
 	public int getRecordNumber() {
 		return recordNumber;
 	}
-	
-	public int getTag() {
-		return tag;
-	}		
 	
 	public int getSize() {
 		return size;
 	}
 	
-	public int getOffset() {
-		return offset;
-	}
-	
+	public int getTag() {
+		return tag;
+	}	
+
 	public void print() {
 		
 		switch (recordNumber) {
@@ -88,5 +112,19 @@ public class IPTCDataSet {
 		System.out.println("Dataset tag: " + tag + "[" + StringUtils.shortToHexStringMM((short)tag) + "]");
 		System.out.println("Dataset size: " + size);
 		System.out.println("Dataset value: " + new String(data, offset, size).trim());
-	}	
+	}
+	
+	/**
+	 * Write the current IPTCDataSet to the OutputStream
+	 * 
+	 * @param out OutputStream to write the IPTCDataSet
+	 * @throws IOException
+	 */
+	public void write(OutputStream out) throws IOException {
+		out.write(0x1c); // tag marker
+		out.write(recordNumber);
+		out.write(getTag());
+		IOUtils.writeShortMM(out, data.length);
+		out.write(data);
+	}
 }

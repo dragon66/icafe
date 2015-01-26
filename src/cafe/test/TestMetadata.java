@@ -1,10 +1,17 @@
 package cafe.test;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
+import cafe.image.meta.iptc.IPTCDataSet;
+import cafe.image.meta.iptc.IPTCRecord;
+import cafe.image.meta.iptc.IPTCApplicationTag;
 
 public class TestMetadata {
 
@@ -20,6 +27,22 @@ public class TestMetadata {
 			System.out.println("-----------------------------------------");
 		}
 		System.out.println("End of metadata information.");
-		Metadata.extractThumbnails(args[0], "thumbnail");		
+		Metadata.extractThumbnails(args[0], "thumbnail");
+		
+		FileInputStream fin = new FileInputStream("images/f1.tif");
+		FileOutputStream fout = new FileOutputStream("f1-iccp-inserted.tif");
+			
+		Metadata.insertIPTC(fin, fout, createIPTCDataSet());
+		
+		fin.close();
+		fout.close();
+	}
+	
+	private static List<IPTCDataSet> createIPTCDataSet() {
+		List<IPTCDataSet> iptcs = new ArrayList<IPTCDataSet>();
+		iptcs.add(new IPTCDataSet(IPTCRecord.APPLICATION, IPTCApplicationTag.COPYRIGHT_NOTICE.getTag(), "Copyright 2014-2015, yuwen_66@yahoo.com"));
+		iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
+		
+		return iptcs;
 	}
 }

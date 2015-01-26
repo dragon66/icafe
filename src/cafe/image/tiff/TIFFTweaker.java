@@ -60,6 +60,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,6 +98,7 @@ import cafe.image.meta.exif.GPSTag;
 import cafe.image.meta.exif.InteropTag;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.iptc.IPTC;
+import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.meta.iptc.IPTCReader;
 import cafe.image.util.IMGUtils;
 import cafe.image.writer.ImageWriter;
@@ -1033,6 +1035,27 @@ public class TIFFTweaker {
 	 */
 	public static void insertICCProfile(ICC_Profile icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
 		insertICCProfile(icc_profile.getData(), pageNumber, rin, rout);
+	}
+	
+	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IPTCDataSet> iptcs) throws IOException {
+		int offset = copyHeader(rin, rout);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		
+		for(IPTCDataSet dataset : iptcs) {
+			dataset.write(bout);
+		}
+		
+		IFD workingPage = ifds.get(0);
+		workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
+		
+		offset = copyPages(ifds, offset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();	
+
+		writeToStream(rout, firstIFDOffset);	
 	}
 	
 	/**

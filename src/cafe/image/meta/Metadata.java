@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cafe.image.ImageIO;
@@ -32,11 +33,14 @@ import cafe.image.ImageType;
 import cafe.image.bmp.BMPTweaker;
 import cafe.image.gif.GIFTweaker;
 import cafe.image.jpeg.JPEGTweaker;
+import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.png.PNGTweaker;
 import cafe.image.tiff.TIFFTweaker;
 import cafe.image.util.IMGUtils;
 import cafe.io.FileCacheRandomAccessInputStream;
+import cafe.io.FileCacheRandomAccessOutputStream;
 import cafe.io.RandomAccessInputStream;
+import cafe.io.RandomAccessOutputStream;
 
 /**
  * Base class for image metadata.
@@ -86,6 +90,35 @@ public abstract class Metadata {
 	
 	public static void extractThumbnails(String image, String pathToThumbnail) throws IOException {
 		extractThumbnails(new File(image), pathToThumbnail);
+	}
+
+	public static void insertIPTC(InputStream is, OutputStream out, List<IPTCDataSet> iptcs) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate metadata reading to corresponding image tweakers.
+		switch(imageType) {
+			case JPG:
+				//JPEGTweaker.insertIPTC(pushbackStream, iptcs, out);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
+				TIFFTweaker.insertIPTC(randIS, randOS, iptcs);
+				randIS.close();
+				randOS.close();
+				break;
+			case PNG:
+			case GIF:
+			case PCX:
+			case TGA:
+			case BMP:
+				System.out.println(imageType + " image format does not support IPTC data");
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("IPTC data inserting is not supported for " + imageType + " image");				
+		}		
 	}
 	
 	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
