@@ -76,11 +76,10 @@ public class IPTCReader implements MetadataReader {
 				read();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			
-			for(IPTCDataSet iptc : datasetList) {
-				iptc.print();
-			}
+			}			
 		}	
+		for(IPTCDataSet iptc : datasetList) {
+			iptc.print();
+		}
 	}
 }
