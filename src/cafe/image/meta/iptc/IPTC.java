@@ -19,7 +19,7 @@ public class IPTC extends Metadata {
 				reader.showMetadata();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}			
+			}
 		}
 	}
 	
