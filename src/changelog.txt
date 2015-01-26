@@ -1,6 +1,7 @@
 ***************************
-Last modified on 01/25/2015
+Last modified on 01/26/2015
 ***************************
+26Jan2015  Added code to insert IPTC into TIFF image
 25Jan2015  Added extractThumbnails() to Metadata
 20Jan2015  Revised tweaker classes to work with Metadata.showMetadata()
 11Jan2015  Enhanced to extract TIFF Photoshop thumbnail
