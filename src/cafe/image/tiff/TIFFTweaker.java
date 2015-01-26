@@ -1004,7 +1004,7 @@ public class TIFFTweaker {
 	 * @param rout RandomAccessOutputStream for the output image
 	 * @throws Exception
 	 */
-	public static void insertICCProfile(byte[] icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws Exception {
+	public static void insertICCProfile(byte[] icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
@@ -1031,7 +1031,7 @@ public class TIFFTweaker {
 	 * @param rout RandomAccessOutputStream for the output image
 	 * @throws Exception
 	 */
-	public static void insertICCProfile(ICC_Profile icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws Exception {
+	public static void insertICCProfile(ICC_Profile icc_profile, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
 		insertICCProfile(icc_profile.getData(), pageNumber, rin, rout);
 	}
 	
