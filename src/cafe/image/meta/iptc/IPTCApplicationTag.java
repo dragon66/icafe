@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 06/10/2013
  */
-enum IPTCApplicationTag {
+public enum IPTCApplicationTag {
 	 RECORD_VERSION(0, "ApplicationRecordVersion"),
 	 OBJECT_TYPE_REF(3, "ObjectTypeRef"),
 	 OBJECT_ATTR_REF(4, "ObjectAttribRef"),

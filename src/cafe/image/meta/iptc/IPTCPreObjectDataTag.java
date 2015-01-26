@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 07/02/2013
  */
-enum IPTCPreObjectDataTag {
+public enum IPTCPreObjectDataTag {
 	 SIZE_MODE(10, "SizeMode"),
 	 MAX_SUBFILE_SIZE(20, "MaxSubfileSize"),
 	 OBJECT_SIZE_ANNOUNCED(90, "ObjectSizeAnnounced"),

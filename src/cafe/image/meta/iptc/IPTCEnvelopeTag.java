@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 07/02/2013
  */
-enum IPTCEnvelopeTag {
+public enum IPTCEnvelopeTag {
 	 RECORD_VERSION(0, "EnvelopeRecordVersion"),
 	 DESTINATION(5, "Destination"),
 	 FILE_FORMAT(20, "FileFormat"),
