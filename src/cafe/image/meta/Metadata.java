@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ====================================================================
+ * WY    27Jan2015  Added insertIRB()
+ * WY    26Jan2015  Added insertIPTC()
  * WY    25Jan2015  Added extractThumbnails()
  */
 
@@ -33,6 +35,7 @@ import cafe.image.ImageType;
 import cafe.image.bmp.BMPTweaker;
 import cafe.image.gif.GIFTweaker;
 import cafe.image.jpeg.JPEGTweaker;
+import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.png.PNGTweaker;
 import cafe.image.tiff.TIFFTweaker;
@@ -63,7 +66,7 @@ public abstract class Metadata {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
-		// Delegate thumbnail extracting to corresponding image tweakers.
+		// Delegate thumbnail extracting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
 				JPEGTweaker.extractThumbnails(pushbackStream, pathToThumbnail);
@@ -96,7 +99,7 @@ public abstract class Metadata {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
-		// Delegate IPTC inserting to corresponding image tweakers.
+		// Delegate IPTC inserting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
 				JPEGTweaker.insertIPTC(pushbackStream, out, iptcs);
@@ -118,6 +121,35 @@ public abstract class Metadata {
 			default:
 				pushbackStream.close();
 				throw new IllegalArgumentException("IPTC data inserting is not supported for " + imageType + " image");				
+		}		
+	}
+	
+	public static void insertIRB(InputStream is, OutputStream out, List<_8BIM> bims) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate IRB inserting to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.insertIRB(pushbackStream, out, bims);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
+				TIFFTweaker.insertIRB(randIS, randOS, bims);
+				randIS.close();
+				randOS.close();
+				break;
+			case PNG:
+			case GIF:
+			case PCX:
+			case TGA:
+			case BMP:
+				System.out.println(imageType + " image format does not support IRB data");
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("IRB data inserting is not supported for " + imageType + " image");				
 		}		
 	}
 	
