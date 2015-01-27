@@ -42,8 +42,8 @@ Image convertion and management:
    * Remove thumbnails from JPEG image.
    * Extract thumbnails from JPEG (the extracted thumbnail is either in JPEG or TIFF format depending on whether or not it is in JPEG or Raw format and the inserted thumbnail could be completely different from the original image).
    * Insert thumbnail to TIFF image.
-   * Extract thumbnail(as normal TIFF page) from TIFF image.
-   * Extract Photoshop thumbnail from Photoshop tag
+   * Extract thumbnail from TIFF Photoshop IRB tag.
+   * Extract Photoshop thumbnail from Photoshop APP13 (Photoshop IRB)
 - JPEG and TIFF EXIF data manipulation
    * Insert EXIF data into JPEG.
    * Extract EXIF data from JPEG.
@@ -53,6 +53,14 @@ Image convertion and management:
 - JPEG and TIFF ICC Profile support
    * Insert ICC profile to JPEG and TIFF.
    * Extract ICC profile from JPEG and TIFF.
+- JPEG and TIFF IPTC metadata support
+   * Insert IPTC directly to TIFF via RichTiffIPTC tag.
+   * Insert IPTC to JPEG via APP13 Photoshop IRB
+   * Extract IPTC from both TIFF and JPEG
+- JPEG and TIFF Photoshop IRB metadata support
+   * Insert IRB into JPEG via APP13 segment
+   * Insert IRB into TIFF via tag PHOTOSHOP.
+   * Extract IRB data from both JPEG and TIFF.
 - PNG chunk manipulation
    * Remove chunks from or add chunks to existing PNG.
    * Extract text chunk from PNG.
