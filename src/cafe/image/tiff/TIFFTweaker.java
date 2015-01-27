@@ -1027,6 +1027,10 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);	
 	}
 	
+	public static void insertICCProfile(ICC_Profile icc_profile, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		insertICCProfile(icc_profile.getData(), 0, rin, rout);
+	}
+	
 	/**
 	 * Inserts ICC_Profile into TIFF page
 	 * 
@@ -1041,18 +1045,26 @@ public class TIFFTweaker {
 	}
 	
 	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IPTCDataSet> iptcs) throws IOException {
+		insertIPTC(rin, rout, 0, iptcs);
+	}
+	
+	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, List<IPTCDataSet> iptcs) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
 		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
 		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+	
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		
 		for(IPTCDataSet dataset : iptcs) {
 			dataset.write(bout);
 		}
 		
-		IFD workingPage = ifds.get(0);
 		workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
 		
 		offset = copyPages(ifds, offset, rin, rout);
@@ -1062,17 +1074,25 @@ public class TIFFTweaker {
 	}
 	
 	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<_8BIM> bims) throws IOException {
+		insertIRB(rin, rout, 0, bims);
+	}
+	
+	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, List<_8BIM> bims) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
 		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
 	
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		
 		for(_8BIM bim : bims)
 			bim.write(bout);
-				
-		IFD workingPage = ifds.get(0);
+		
 		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
 		
 		offset = copyPages(ifds, offset, rin, rout);
