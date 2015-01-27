@@ -1,6 +1,7 @@
 ***************************
-Last modified on 01/26/2015
+Last modified on 01/27/2015
 ***************************
+27Jan2015  Added code to insert Photoshop IRB into TIFF and JPEG images
 26Jan2015  Added code to insert IPTC into TIFF and JPEG images
 25Jan2015  Added extractThumbnails() to Metadata
 20Jan2015  Revised tweaker classes to work with Metadata.showMetadata()

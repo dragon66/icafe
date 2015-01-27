@@ -13,7 +13,8 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
- * WY    26Jan2015  Added insertIPTC() to insert APP13 with IPTC
+ * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB into APP13
+ * WY    26Jan2015  Added insertIPTC() to insert IPTC with APP13
  * WY    19Jan2015  Renamed snoop() to readMetadata() and revised readAPPn()
  * WY    10Jan2015  Revised extractThumbnails() to use IRBReader and IRBThumbnail
  * WY    05Jan2015  Enhanced to show information for all SOFX and SOS segments
@@ -633,7 +634,21 @@ public class JPEGTweaker {
 	 * @throws IOException
 	 */
 	public static void insertIPTC(InputStream is, OutputStream os, List<IPTCDataSet> iptcs) throws IOException {
-		// Copy the original image and insert EXIF data
+		// Copy image and insert IPTC data as one of the IRB 8BIM block
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		// Write IPTC
+		for(IPTCDataSet iptc : iptcs)
+			iptc.write(bout);
+		// Create 8BIM
+		_8BIM bim = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "", bout.toByteArray());
+		List<_8BIM> bims = new ArrayList<_8BIM>();
+		bims.add(bim);
+		
+		insertIRB(is, os, bims);
+	}
+	
+	public static void insertIRB(InputStream is, OutputStream os, List<_8BIM> bims) throws IOException {
+		// Copy the original image and insert Photoshop IRB data
 		boolean finished = false;
 		int length = 0;	
 		short marker;
@@ -685,23 +700,19 @@ public class JPEGTweaker {
 				    case SOS:
 				    	IOUtils.writeShortMM(os, Marker.APP13.getValue());
 				    	// We add APP13 data right before the SOS segment.
-				    	String app13id = "Photoshop 3.0\0";
+				    	String photoshop = "Photoshop 3.0\0";
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						// Write IPTC
-						for(IPTCDataSet iptc : iptcs)
-							iptc.write(bout);
-						// Create 8BIM
-						_8BIM bim = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "", bout.toByteArray());
-						bout.reset();
-						bim.write(bout);
+						for(_8BIM bim : bims)
+							bim.write(bout);
 						// Write segment length
 						IOUtils.writeShortMM(os, 14 + 2 +  bout.size());
 						// Write segment data
-						os.write(app13id.getBytes());
+						os.write(photoshop.getBytes());
 						os.write(bout.toByteArray());
 						//Copy sos
 				    	IOUtils.writeShortMM(os, marker);
-						copyToEnd(is, os);
+						copyToEnd(is, os); // Copy the rest of the data
 						finished = true; // No more marker to read, we are done. 
 						break;
 				    case APP1:

@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB data
+ * WY    26Jan2015  Added insertIPTC() to insert IPTC data
  * WY    20Jan2015  Revised to work with Metadata.showMetadata()
  * WY    12Jan2015  Added showIPTC() to show IPTC private tag information
  * WY    11Jan2015  Added extractThumbnail() to extract Photoshop thumbnail
@@ -92,6 +94,7 @@ import cafe.image.meta.adobe.IRB;
 import cafe.image.meta.adobe.IRBReader;
 import cafe.image.meta.adobe.IRBThumbnail;
 import cafe.image.meta.adobe.XMP;
+import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.GPSTag;
@@ -1051,6 +1054,26 @@ public class TIFFTweaker {
 		
 		IFD workingPage = ifds.get(0);
 		workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
+		
+		offset = copyPages(ifds, offset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();	
+
+		writeToStream(rout, firstIFDOffset);	
+	}
+	
+	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<_8BIM> bims) throws IOException {
+		int offset = copyHeader(rin, rout);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+	
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		
+		for(_8BIM bim : bims)
+			bim.write(bout);
+				
+		IFD workingPage = ifds.get(0);
+		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
