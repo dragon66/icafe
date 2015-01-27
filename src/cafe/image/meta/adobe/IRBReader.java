@@ -60,12 +60,10 @@ public class IRBReader implements MetadataReader {
 			if(_8bim.equals("8BIM")) {
 				short id = IOUtils.readShortMM(data, i);
 				i += 2;
-				int nameLen = 0;
-				while(data[i + nameLen] != 0) {
-					nameLen++;
-				}
-				nameLen++;
-				if((nameLen%2) != 0) nameLen++;
+				// Pascal string for name follows
+				// First byte denotes string length -
+				int nameLen = data[i++]&0xff;
+				if((nameLen%2) == 0) nameLen++;
 				String name = new String(data, i, nameLen).trim();
 				i += nameLen;
 				//
@@ -97,7 +95,7 @@ public class IRBReader implements MetadataReader {
 					thumbnail = new IRBThumbnail(eId, thumbnailFormat, width, height, widthBytes, totalSize, sizeAfterCompression, bitsPerPixel, numOfPlanes, thumbnailData);
 				}				
 				i += size;
-				if(size%2 != 0) i++;
+				if(size%2 != 0) i++; // Skip padding byte
 			}
 		}
 		loaded = true;

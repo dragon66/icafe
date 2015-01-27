@@ -640,7 +640,7 @@ public class JPEGTweaker {
 		for(IPTCDataSet iptc : iptcs)
 			iptc.write(bout);
 		// Create 8BIM
-		_8BIM bim = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "", bout.toByteArray());
+		_8BIM bim = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
 		List<_8BIM> bims = new ArrayList<_8BIM>();
 		bims.add(bim);
 		

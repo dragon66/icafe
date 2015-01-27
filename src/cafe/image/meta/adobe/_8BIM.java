@@ -89,17 +89,16 @@ public class _8BIM {
 		os.write("8BIM".getBytes());
 		// Write resource id
 		IOUtils.writeShortMM(os, id); 		
-		// Write name (null terminated and even length)
-		if(name.trim().length() == 0) 
-			IOUtils.writeShortMM(os, 0);
-		else
-			os.write(name.trim().getBytes());
-		if(name.trim().length()%2 != 0)
+		// Write name (Pascal string - first byte denotes length of the string)
+		byte[] temp = name.trim().getBytes();
+		os.write(temp.length); // Size of the string, may be zero
+		os.write(temp);
+		if(temp.length%2 == 0)
 			os.write(0);
-		// Now write size
+		// Now write data size
 		IOUtils.writeIntMM(os, size);
-		os.write(data);
-		if(size%2 != 0)
-			os.write(0);
+		os.write(data); // Write the data itself
+		if(data.length%2 != 0)
+			os.write(0); // Padding the data to even size if needed
 	}
 }
