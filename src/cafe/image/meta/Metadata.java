@@ -63,7 +63,7 @@ public abstract class Metadata {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
-		// Delegate metadata reading to corresponding image tweakers.
+		// Delegate thumbnail extracting to corresponding image tweakers.
 		switch(imageType) {
 			case JPG:
 				JPEGTweaker.extractThumbnails(pushbackStream, pathToThumbnail);
@@ -96,10 +96,10 @@ public abstract class Metadata {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
-		// Delegate metadata reading to corresponding image tweakers.
+		// Delegate IPTC inserting to corresponding image tweakers.
 		switch(imageType) {
 			case JPG:
-				//JPEGTweaker.insertIPTC(pushbackStream, iptcs, out);
+				JPEGTweaker.insertIPTC(pushbackStream, out, iptcs);
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);

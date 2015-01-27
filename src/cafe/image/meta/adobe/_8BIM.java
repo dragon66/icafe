@@ -18,6 +18,10 @@
 
 package cafe.image.meta.adobe;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 
 public class _8BIM {
@@ -26,11 +30,19 @@ public class _8BIM {
 	private int size;
 	private byte[] data;
 	
+	public _8BIM(short id, String name, byte[] data) {
+		this( id, name, data.length, data);
+	}
+	
 	public _8BIM(short id, String name, int size, byte[] data) {
 		this.id = id;
 		this.name = name;
 		this.size = size;
 		this.data = data;
+	}
+	
+	public _8BIM(ImageResourceID eId, String name, byte[] data) {
+		this(eId.getValue(), name, data);
 	}
 	
 	public byte[] getData() {
@@ -70,5 +82,24 @@ public class _8BIM {
 		System.out.println("Size: " + size);
 		
 		eId.show(getData());
+	}
+	
+	public void write(OutputStream os) throws IOException {
+		// Write IRB id
+		os.write("8BIM".getBytes());
+		// Write resource id
+		IOUtils.writeShortMM(os, id); 		
+		// Write name (null terminated and even length)
+		if(name.trim().length() == 0) 
+			IOUtils.writeShortMM(os, 0);
+		else
+			os.write(name.trim().getBytes());
+		if(name.trim().length()%2 != 0)
+			os.write(0);
+		// Now write size
+		IOUtils.writeIntMM(os, size);
+		os.write(data);
+		if(size%2 != 0)
+			os.write(0);
 	}
 }

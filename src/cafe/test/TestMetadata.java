@@ -30,8 +30,16 @@ public class TestMetadata {
 		Metadata.extractThumbnails(args[0], "thumbnail");
 		
 		FileInputStream fin = new FileInputStream("images/f1.tif");
-		FileOutputStream fout = new FileOutputStream("f1-iccp-inserted.tif");
+		FileOutputStream fout = new FileOutputStream("f1-iptc-inserted.tif");
 			
+		Metadata.insertIPTC(fin, fout, createIPTCDataSet());
+		
+		fin.close();
+		fout.close();
+		
+		fin = new FileInputStream("images/1.jpg");
+		fout = new FileOutputStream("1-iptc-inserted.jpg");
+		
 		Metadata.insertIPTC(fin, fout, createIPTCDataSet());
 		
 		fin.close();

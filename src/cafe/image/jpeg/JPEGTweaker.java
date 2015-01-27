@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    26Jan2015  Added insertIPTC() to insert APP13 with IPTC
  * WY    19Jan2015  Renamed snoop() to readMetadata() and revised readAPPn()
  * WY    10Jan2015  Revised extractThumbnails() to use IRBReader and IRBThumbnail
  * WY    05Jan2015  Enhanced to show information for all SOFX and SOS segments
@@ -63,12 +64,15 @@ import cafe.image.meta.Thumbnail;
 import cafe.image.meta.adobe.IRB;
 import cafe.image.meta.adobe.IRBReader;
 import cafe.image.meta.adobe.IRBThumbnail;
+import cafe.image.meta.adobe.ImageResourceID;
 import cafe.image.meta.adobe.XMP;
+import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifReader;
 import cafe.image.meta.exif.ExifThumbnail;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.image.ImageMetadata;
+import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -618,6 +622,103 @@ public class JPEGTweaker {
 	
 	public static void insertICCProfile(InputStream is, OutputStream os, ICCProfile icc_profile) throws Exception {
 		insertICCProfile(is, os, icc_profile.getData());
+	}
+	
+	/**
+	 * Inserts a list of IPTCDataSet into a JPEG APP13 Photoshop IRB segment
+	 * 
+	 * @param is InputStream for the original image
+	 * @param os OutputStream for the image with IPTC APP13 inserted
+	 * @param iptcs a list of IPTCDataSet to be inserted
+	 * @throws IOException
+	 */
+	public static void insertIPTC(InputStream is, OutputStream os, List<IPTCDataSet> iptcs) throws IOException {
+		// Copy the original image and insert EXIF data
+		boolean finished = false;
+		int length = 0;	
+		short marker;
+		Marker emarker;
+				
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+		{
+			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+			is.close();
+			os.close();		
+			return;
+		}
+		
+		System.out.println(Marker.SOI);
+		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished)
+	    {	        
+			if (Marker.fromShort(marker) == Marker.EOI)
+			{
+				IOUtils.writeShortMM(os, Marker.EOI.getValue());
+				System.out.println(Marker.EOI);
+				finished = true;
+			}
+		   	else // Read markers
+			{
+		   		emarker = Marker.fromShort(marker);
+				System.out.println(emarker); 
+	
+				switch (emarker) {
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
+						IOUtils.writeShortMM(os, marker);
+				    	marker = IOUtils.readShortMM(is);
+						break;
+				    case PADDING:	
+				    	IOUtils.writeShortMM(os, marker);
+				    	int nextByte = 0;
+				    	while((nextByte = IOUtils.read(is)) == 0xff) {
+				    		IOUtils.write(os, nextByte);
+				    	}
+				    	marker = (short)((0xff<<8)|nextByte);
+				    	break;				
+				    case SOS:
+				    	IOUtils.writeShortMM(os, Marker.APP13.getValue());
+				    	// We add APP13 data right before the SOS segment.
+				    	String app13id = "Photoshop 3.0\0";
+						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+						// Write IPTC
+						for(IPTCDataSet iptc : iptcs)
+							iptc.write(bout);
+						// Create 8BIM
+						_8BIM bim = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "", bout.toByteArray());
+						bout.reset();
+						bim.write(bout);
+						// Write segment length
+						IOUtils.writeShortMM(os, 14 + 2 +  bout.size());
+						// Write segment data
+						os.write(app13id.getBytes());
+						os.write(bout.toByteArray());
+						//Copy sos
+				    	IOUtils.writeShortMM(os, marker);
+						copyToEnd(is, os);
+						finished = true; // No more marker to read, we are done. 
+						break;
+				    case APP1:
+				    	readAPP1(is);
+						marker = IOUtils.readShortMM(is);
+						break;
+				    default:
+					    length = IOUtils.readUnsignedShortMM(is);					
+					    byte[] buf = new byte[length - 2];
+					    IOUtils.writeShortMM(os, marker);
+					    IOUtils.writeShortMM(os, (short)length);
+					    IOUtils.readFully(is, buf);
+					    IOUtils.write(os, buf);
+					    marker = IOUtils.readShortMM(is);
+				}
+			}
+	    }
 	}
 	
 	private static void readAPP0(InputStream is) throws IOException
