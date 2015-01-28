@@ -20,6 +20,7 @@
 
 package cafe.image.meta;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -150,6 +151,35 @@ public abstract class Metadata {
 			default:
 				pushbackStream.close();
 				throw new IllegalArgumentException("IRB data inserting is not supported for " + imageType + " image");				
+		}		
+	}
+	
+	public static void insertIRBThumbnail(InputStream is, OutputStream out, BufferedImage thumbnail) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate IRB thumbnail inserting to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.insertIRBThumbnail(pushbackStream, out, thumbnail);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
+				TIFFTweaker.insertThumbnail(randIS, randOS, thumbnail);
+				randIS.close();
+				randOS.close();
+				break;
+			case PNG:
+			case GIF:
+			case PCX:
+			case TGA:
+			case BMP:
+				System.out.println(imageType + " image format does not support IRB thumbnail");
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("IRB thumbnail inserting is not supported for " + imageType + " image");				
 		}		
 	}
 	

@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    27Jan2015  Implemented insertThumbnail() to insert thumbnail to Photoshop IRB
  * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB data
  * WY    26Jan2015  Added insertIPTC() to insert IPTC data
  * WY    20Jan2015  Revised to work with Metadata.showMetadata()
@@ -1339,11 +1340,13 @@ public class TIFFTweaker {
 	 *  
 	 * @param rin RandomAccessInputStream for the input TIFF
 	 * @param rout RandomAccessOutputStream for the output TIFF
-	 * @param thumbnail a IRBThumbnail to be inserted
+	 * @param thumbnail a BufferedImage to be inserted
 	 * @throws Exception
 	 */
-	public static void insertThumbnail(RandomAccessInputStream rin, RandomAccessOutputStream rout, IRBThumbnail thumbnail) throws Exception {
-		//TODO
+	public static void insertThumbnail(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage thumbnail) throws IOException {
+		// Sanity check
+		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
+		insertIRB(rin, rout, IMGUtils.createThumbnail8BIM(thumbnail));
 	}
 	
 	/**

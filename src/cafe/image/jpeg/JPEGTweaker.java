@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    27Jan2015  Added insertIRBThumbnail() to insert Photoshop IRB thumbnail
  * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB into APP13
  * WY    26Jan2015  Added insertIPTC() to insert IPTC with APP13
  * WY    19Jan2015  Renamed snoop() to readMetadata() and revised readAPPn()
@@ -58,6 +59,7 @@ import java.io.OutputStream;
 
 import cafe.image.ImageIO;
 import cafe.image.ImageType;
+import cafe.image.util.IMGUtils;
 import cafe.image.writer.ImageWriter;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
@@ -730,6 +732,12 @@ public class JPEGTweaker {
 				}
 			}
 	    }
+	}
+	
+	public static void insertIRBThumbnail(InputStream is, OutputStream os, BufferedImage thumbnail) throws IOException {
+		// Sanity check
+		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
+		insertIRB(is, os, IMGUtils.createThumbnail8BIM(thumbnail));
 	}
 	
 	private static void readAPP0(InputStream is) throws IOException

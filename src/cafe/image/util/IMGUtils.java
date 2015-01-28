@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    27Jan2015  Added createThumbnail8BIM()
  * WY    22Jan2015  Factored out guessImageType(byte[])
  * WY    24Dec2014  Rename CMYK2RGB() to iccp2rgbRaster()
  * WY    17Dec2014  Bug fix for rgb2bilevelDither() to bypass transparent pixels
@@ -41,12 +42,20 @@ import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PushbackInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import cafe.image.ImageIO;
 import cafe.image.ImageType;
+import cafe.image.meta.adobe.ImageResourceID;
+import cafe.image.meta.adobe._8BIM;
+import cafe.image.writer.ImageWriter;
+import cafe.image.writer.JPEGWriter;
+import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
 import cafe.util.IntHashtable;
 
@@ -151,6 +160,45 @@ public class IMGUtils {
 		colorInfo[1] = transparent_index;
 
         return colorInfo;
+	}
+	
+	public static List<_8BIM> createThumbnail8BIM(BufferedImage thumbnail) throws IOException {
+		// Create memory buffer to write data
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		// Compress the thumbnail
+		ImageWriter writer = new JPEGWriter();
+		try {
+			writer.write(thumbnail, bout);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		byte[] data = bout.toByteArray();
+		bout.reset();
+		// Write thumbnail format
+		IOUtils.writeIntMM(bout, 1); // 1 = kJpegRGB. We are going to write JPEG format thumbnail
+		// Write thumbnail dimension
+		int width = thumbnail.getWidth();
+		int height = thumbnail.getHeight();
+		IOUtils.writeIntMM(bout, width);
+		IOUtils.writeIntMM(bout, height);
+		// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
+		int bitsPerPixel = 24;
+		int planes = 1;
+		int widthBytes = (width*bitsPerPixel + 31)/32*4;
+		IOUtils.writeIntMM(bout, widthBytes);
+		// Total size = widthbytes * height * planes
+		IOUtils.writeIntMM(bout, widthBytes*height*planes);
+		// Size after compression. Used for consistency check.
+		IOUtils.writeIntMM(bout, data.length);
+		IOUtils.writeShortMM(bout, bitsPerPixel);
+		IOUtils.writeShortMM(bout, planes);
+		bout.write(data);
+		// Create 8BIM
+		_8BIM bim = new _8BIM(ImageResourceID.THUMBNAIL_RESOURCE_PS5, "thumbnail", bout.toByteArray());
+		List<_8BIM> bims = new ArrayList<_8BIM>();
+		bims.add(bim);
+		
+		return bims;
 	}
 	
 	/**

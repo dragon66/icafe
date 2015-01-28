@@ -1,6 +1,10 @@
 package cafe.test;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +48,14 @@ public class TestMetadata {
 		
 		fin.close();
 		fout.close();
+		
+		fin = new FileInputStream("images/1.jpg");
+		fout = new FileOutputStream("1-irbthumbnail-inserted.jpg");
+		
+		Metadata.insertIRBThumbnail(fin, fout, createThumbnail());
+		
+		fin.close();
+		fout.close();
 	}
 	
 	private static List<IPTCDataSet> createIPTCDataSet() {
@@ -52,5 +64,38 @@ public class TestMetadata {
 		iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
 		
 		return iptcs;
+	}
+	
+	private static BufferedImage createThumbnail() throws IOException {
+		FileInputStream fin = null;
+		BufferedImage original = null;
+		try {
+			fin = new FileInputStream("images/1.jpg");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		original = javax.imageio.ImageIO.read(fin);
+		int imageWidth = original.getWidth();
+		int imageHeight = original.getHeight();
+		// Default thumbnail dimension
+		int thumbnailWidth = 160;
+		int thumbnailHeight = 120;
+		if(imageWidth < imageHeight) {
+			// Swap width and height to keep a relative aspect ratio
+			int temp = thumbnailWidth;
+			thumbnailWidth = thumbnailHeight;
+			thumbnailHeight = temp;
+		}			
+		if(imageWidth < thumbnailWidth) thumbnailWidth = imageWidth;
+		if(imageHeight < thumbnailHeight) thumbnailHeight = imageHeight;
+		BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = thumbnail.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+		        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.drawImage(original, 0, 0, thumbnailWidth, thumbnailHeight, null);
+		
+		fin.close();
+		
+		return thumbnail;
 	}
 }
