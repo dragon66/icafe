@@ -12,7 +12,8 @@ public class TestJPEGSnoop {
 	public static void main(String[] args) throws IOException {
 		FileInputStream fin = new FileInputStream(args[0]);
 		Metadata meta = JPEGTweaker.readMetadata(fin).get(MetadataType.PHOTOSHOP_IRB);
-		meta.showMetadata();
+		if(meta != null)
+			meta.showMetadata();
 		fin.close();
 	}
 }
