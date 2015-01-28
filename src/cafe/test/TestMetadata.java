@@ -52,7 +52,15 @@ public class TestMetadata {
 		fin = new FileInputStream("images/1.jpg");
 		fout = new FileOutputStream("1-irbthumbnail-inserted.jpg");
 		
-		Metadata.insertIRBThumbnail(fin, fout, createThumbnail());
+		Metadata.insertIRBThumbnail(fin, fout, createThumbnail("images/1.jpg"));
+		
+		fin.close();
+		fout.close();
+		
+		fin = new FileInputStream("images/f1.tif");
+		fout = new FileOutputStream("f1-irbthumbnail-inserted.tif");
+		
+		Metadata.insertIRBThumbnail(fin, fout, createThumbnail("images/f1.tif"));
 		
 		fin.close();
 		fout.close();
@@ -66,11 +74,11 @@ public class TestMetadata {
 		return iptcs;
 	}
 	
-	private static BufferedImage createThumbnail() throws IOException {
+	private static BufferedImage createThumbnail(String filePath) throws IOException {
 		FileInputStream fin = null;
 		BufferedImage original = null;
 		try {
-			fin = new FileInputStream("images/1.jpg");
+			fin = new FileInputStream(filePath);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
