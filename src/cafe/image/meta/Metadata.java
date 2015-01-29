@@ -97,18 +97,22 @@ public abstract class Metadata {
 	}
 
 	public static void insertIPTC(InputStream is, OutputStream out, List<IPTCDataSet> iptcs) throws IOException {
+		insertIPTC(is, out, iptcs, false);
+	}
+	
+	public static void insertIPTC(InputStream is, OutputStream out, List<IPTCDataSet> iptcs, boolean update) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
 		// Delegate IPTC inserting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
-				JPEGTweaker.insertIPTC(pushbackStream, out, iptcs);
+				JPEGTweaker.insertIPTC(pushbackStream, out, iptcs, update);
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
-				TIFFTweaker.insertIPTC(randIS, randOS, iptcs);
+				TIFFTweaker.insertIPTC(randIS, randOS, iptcs, update);
 				randIS.close();
 				randOS.close();
 				break;
@@ -126,18 +130,22 @@ public abstract class Metadata {
 	}
 	
 	public static void insertIRB(InputStream is, OutputStream out, List<_8BIM> bims) throws IOException {
+		insertIRB(is, out, bims, false);
+	}
+	
+	public static void insertIRB(InputStream is, OutputStream out, List<_8BIM> bims, boolean update) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
 		// Delegate IRB inserting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
-				JPEGTweaker.insertIRB(pushbackStream, out, bims);
+				JPEGTweaker.insertIRB(pushbackStream, out, bims, update);
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
-				TIFFTweaker.insertIRB(randIS, randOS, bims);
+				TIFFTweaker.insertIRB(randIS, randOS, bims, update);
 				randIS.close();
 				randOS.close();
 				break;

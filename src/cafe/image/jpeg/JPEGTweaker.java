@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    29Jan2015  Revised insertIPTC() and insertIRB() to keep old data
  * WY    27Jan2015  Added insertIRBThumbnail() to insert Photoshop IRB thumbnail
  * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB into APP13
  * WY    26Jan2015  Added insertIPTC() to insert IPTC with APP13
@@ -76,6 +77,7 @@ import cafe.image.meta.exif.ExifThumbnail;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.image.ImageMetadata;
 import cafe.image.meta.iptc.IPTCDataSet;
+import cafe.image.meta.iptc.IPTCReader;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -635,21 +637,125 @@ public class JPEGTweaker {
 	 * @param iptcs a list of IPTCDataSet to be inserted
 	 * @throws IOException
 	 */
-	public static void insertIPTC(InputStream is, OutputStream os, List<IPTCDataSet> iptcs) throws IOException {
-		// Copy image and insert IPTC data as one of the IRB 8BIM block
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		// Write IPTC
-		for(IPTCDataSet iptc : iptcs)
-			iptc.write(bout);
-		// Create 8BIM
-		_8BIM bim = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
-		List<_8BIM> bims = new ArrayList<_8BIM>();
-		bims.add(bim);
+	public static void insertIPTC(InputStream is, OutputStream os, List<IPTCDataSet> iptcs, boolean update) throws IOException {
+		// Copy the original image and insert Photoshop IRB data
+		boolean finished = false;
+		int length = 0;	
+		short marker;
+		Marker emarker;
 		
-		insertIRB(is, os, bims);
+		Map<Short, _8BIM> bimMap = null;
+				
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+		{
+			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+			is.close();
+			os.close();		
+			return;
+		}
+		
+		System.out.println(Marker.SOI);
+		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished)
+	    {	        
+			if (Marker.fromShort(marker) == Marker.EOI)
+			{
+				IOUtils.writeShortMM(os, Marker.EOI.getValue());
+				System.out.println(Marker.EOI);
+				finished = true;
+			}
+		   	else // Read markers
+			{
+		   		emarker = Marker.fromShort(marker);
+				System.out.println(emarker); 
+	
+				switch (emarker) {
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
+						IOUtils.writeShortMM(os, marker);
+				    	marker = IOUtils.readShortMM(is);
+						break;
+				    case PADDING:	
+				    	IOUtils.writeShortMM(os, marker);
+				    	int nextByte = 0;
+				    	while((nextByte = IOUtils.read(is)) == 0xff) {
+				    		IOUtils.write(os, nextByte);
+				    	}
+				    	marker = (short)((0xff<<8)|nextByte);
+				    	break;				
+				    case SOS:
+				    	IOUtils.writeShortMM(os, Marker.APP13.getValue());
+				    	// We add APP13 data right before the SOS segment.
+				    	String photoshop = "Photoshop 3.0\0";
+						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+						// Copy image and insert IPTC data as one of the IRB 8BIM block
+						// Write IPTC
+						for(IPTCDataSet iptc : iptcs)
+							iptc.write(bout);
+						// Create 8BIM for IPTC and write it to memory
+						_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
+						bout.reset();
+						newBIM.write(bout);
+						if(bimMap != null)
+							for(_8BIM bim : bimMap.values())
+								bim.write(bout);
+						// Write segment length
+						IOUtils.writeShortMM(os, 14 + 2 +  bout.size());
+						// Write segment data
+						os.write(photoshop.getBytes());
+						os.write(bout.toByteArray());
+						//Copy sos
+				    	IOUtils.writeShortMM(os, marker);
+						copyToEnd(is, os); // Copy the rest of the data
+						finished = true; // No more marker to read, we are done. 
+						break;
+				    case APP1:
+				    	readAPP1(is);
+						marker = IOUtils.readShortMM(is);
+						break;
+				    case APP13:
+				    	if(update) {
+					    	IRB irb = (IRB)readAPP13(is);
+					    	if(irb != null) {
+						    	IRBReader reader = irb.getReader();
+								reader.read();
+								bimMap = reader.get8BIM();
+								_8BIM iptcBIM = bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
+								if(iptcBIM != null) { // Keep the original values
+									IPTCReader iptcReader = new IPTCReader(iptcBIM.getData());
+									iptcReader.read();
+									Map<String, IPTCDataSet> dataSetMap = iptcReader.getDataSet();
+									for(IPTCDataSet iptc : iptcs)
+										dataSetMap.remove(iptc.getName());
+									iptcs.addAll(dataSetMap.values());
+								}
+						  	}					    	
+				    	} else {
+				    		length = IOUtils.readUnsignedShortMM(is);					
+						    IOUtils.skipFully(is, length);
+				    	}
+				    	marker = IOUtils.readShortMM(is);
+				    	break;				    	
+				    default:
+					    length = IOUtils.readUnsignedShortMM(is);					
+					    byte[] buf = new byte[length - 2];
+					    IOUtils.writeShortMM(os, marker);
+					    IOUtils.writeShortMM(os, (short)length);
+					    IOUtils.readFully(is, buf);
+					    IOUtils.write(os, buf);
+					    marker = IOUtils.readShortMM(is);
+				}
+			}
+	    }
 	}
 	
-	public static void insertIRB(InputStream is, OutputStream os, List<_8BIM> bims) throws IOException {
+	public static void insertIRB(InputStream is, OutputStream os, List<_8BIM> bims, boolean update) throws IOException {
 		// Copy the original image and insert Photoshop IRB data
 		boolean finished = false;
 		int length = 0;	
@@ -721,6 +827,23 @@ public class JPEGTweaker {
 				    	readAPP1(is);
 						marker = IOUtils.readShortMM(is);
 						break;
+				    case APP13: // We will keep the other IRBs from the original APP13
+				    	if(update) {
+					    	IRB irb = (IRB)readAPP13(is);
+					    	if(irb != null) {
+						    	IRBReader reader = irb.getReader();
+								reader.read();
+								Map<Short, _8BIM> bimMap = reader.get8BIM();
+								for(_8BIM bim : bims)
+									bimMap.remove(bim.getID());
+								bims.addAll(bimMap.values());
+					    	}					    	
+				    	} else {
+				    		length = IOUtils.readUnsignedShortMM(is);					
+						    IOUtils.skipFully(is, length);
+				    	}
+				    	marker = IOUtils.readShortMM(is);
+				    	break;				    	
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
@@ -737,7 +860,7 @@ public class JPEGTweaker {
 	public static void insertIRBThumbnail(InputStream is, OutputStream os, BufferedImage thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		insertIRB(is, os, IMGUtils.createThumbnail8BIM(thumbnail));
+		insertIRB(is, os, IMGUtils.createThumbnail8BIM(thumbnail), true); // Set true to keep other IRB blocks
 	}
 	
 	private static void readAPP0(InputStream is) throws IOException

@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    29Jan2015  Revised insertIPTC() and insertIRB() to keep old data
  * WY    27Jan2015  Implemented insertThumbnail() to insert thumbnail to Photoshop IRB
  * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB data
  * WY    26Jan2015  Added insertIPTC() to insert IPTC data
@@ -1045,11 +1046,11 @@ public class TIFFTweaker {
 		insertICCProfile(icc_profile.getData(), pageNumber, rin, rout);
 	}
 	
-	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IPTCDataSet> iptcs) throws IOException {
-		insertIPTC(rin, rout, 0, iptcs);
+	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IPTCDataSet> iptcs, boolean update) throws IOException {
+		insertIPTC(rin, rout, 0, iptcs, update);
 	}
 	
-	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, List<IPTCDataSet> iptcs) throws IOException {
+	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, List<IPTCDataSet> iptcs, boolean update) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
@@ -1061,6 +1062,23 @@ public class TIFFTweaker {
 		IFD workingPage = ifds.get(pageNumber);
 	
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		
+		if(update) {
+			TiffField<?> f_iptc = workingPage.removeField(TiffTag.IPTC.getValue());
+			if(f_iptc != null) {
+				byte[] data = null;
+				if(f_iptc.getType() == FieldType.LONG)
+					data = ArrayUtils.toByteArray(f_iptc.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN);
+				else
+					data = (byte[])f_iptc.getData();
+				IPTCReader reader = new IPTCReader(data);
+				reader.read();
+				Map<String, IPTCDataSet> dataSetMap = reader.getDataSet();
+				for(IPTCDataSet iptc : iptcs)
+					dataSetMap.remove(iptc.getName());
+				iptcs.addAll(dataSetMap.values());
+			}
+		}
 		
 		for(IPTCDataSet dataset : iptcs) {
 			dataset.write(bout);
@@ -1074,11 +1092,11 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);	
 	}
 	
-	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<_8BIM> bims) throws IOException {
-		insertIRB(rin, rout, 0, bims);
+	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<_8BIM> bims, boolean update) throws IOException {
+		insertIRB(rin, rout, 0, bims, update);
 	}
 	
-	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, List<_8BIM> bims) throws IOException {
+	public static void insertIRB(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, List<_8BIM> bims, boolean update) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
@@ -1090,6 +1108,18 @@ public class TIFFTweaker {
 		IFD workingPage = ifds.get(pageNumber);
 		
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		
+		if(update) {
+			TiffField<?> f_irb = workingPage.getField(TiffTag.PHOTOSHOP.getValue());
+			if(f_irb != null) {
+				IRBReader reader = new IRBReader((byte[])f_irb.getData());
+				reader.read();
+				Map<Short, _8BIM> bimMap = reader.get8BIM();
+				for(_8BIM bim : bims)
+					bimMap.remove(bim.getID());
+				bims.addAll(bimMap.values());
+			}
+		}
 		
 		for(_8BIM bim : bims)
 			bim.write(bout);
@@ -1346,7 +1376,7 @@ public class TIFFTweaker {
 	public static void insertThumbnail(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		insertIRB(rin, rout, IMGUtils.createThumbnail8BIM(thumbnail));
+		insertIRB(rin, rout, IMGUtils.createThumbnail8BIM(thumbnail), true);
 	}
 	
 	/**
