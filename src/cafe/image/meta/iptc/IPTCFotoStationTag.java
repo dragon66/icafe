@@ -28,14 +28,20 @@ public enum IPTCFotoStationTag {
 		this.name = name;
 	}
 	 
-	public int getTag() { return tag; }
-	 
 	public static IPTCFotoStationTag fromTag(int value) {
 		IPTCFotoStationTag record = recordMap.get(value);
 	   	if (record == null)
 	   		return UNKNOWN;
 		return record;
 	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public int getTag() {
+		return tag;
+	}	
  
 	@Override public String toString() {
 		return name;

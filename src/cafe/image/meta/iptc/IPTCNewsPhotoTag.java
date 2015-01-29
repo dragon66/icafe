@@ -54,7 +54,13 @@ public enum IPTCNewsPhotoTag {
 		 this.name = name;
 	 }
 	 
-	 public int getTag() { return tag; }
+	 public String getName() {
+		 return name;
+	 }
+	 
+	 public int getTag() {
+		 return tag;
+	 }
 	 
 	 public static IPTCNewsPhotoTag fromTag(int value) {
       	IPTCNewsPhotoTag record = recordMap.get(value);

@@ -42,6 +42,10 @@ public enum IPTCEnvelopeTag {
 		 this.name = name;
 	 }
 	 
+	 public String getName() {
+		 return name;
+	 }
+	 
 	 public int getTag() { return tag; }
 	 
 	 public static IPTCEnvelopeTag fromTag(int value) {

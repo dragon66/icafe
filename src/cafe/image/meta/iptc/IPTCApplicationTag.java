@@ -85,6 +85,10 @@ public enum IPTCApplicationTag {
 		 this.name = name;
 	 }
 	 
+	 public String getName() {
+		 return name;
+	 }
+	 
 	 public int getTag() { return tag; }
 	 
 	 public static IPTCApplicationTag fromTag(int value) {

@@ -29,7 +29,13 @@ public enum IPTCPostObjectDataTag {
 		 this.name = name;
 	 }
 	 
-	 public int getTag() { return tag; }
+	 public String getName() {
+		return name; 
+	 }
+	 
+	 public int getTag() {
+		 return tag;
+	 }
 	 
 	 public static IPTCPostObjectDataTag fromTag(int value) {
 		 IPTCPostObjectDataTag record = recordMap.get(value);

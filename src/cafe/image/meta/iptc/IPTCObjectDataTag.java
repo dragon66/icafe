@@ -29,13 +29,19 @@ public enum IPTCObjectDataTag {
 		 this.name = name;
 	 }
 	 
-	 public int getTag() { return tag; }
-	 
 	 public static IPTCObjectDataTag fromTag(int value) {
 		 IPTCObjectDataTag record = recordMap.get(value);
 	   	if (record == null)
 	   		return UNKNOWN;
       	return record;
+	 }
+	 
+	 public String getName() {
+		 return name;
+	 }
+	 
+	 public int getTag() {
+		 return tag;
 	 }
   
 	 @Override public String toString() {

@@ -32,7 +32,13 @@ public enum IPTCPreObjectDataTag {
 		 this.name = name;
 	 }
 	 
-	 public int getTag() { return tag; }
+	 public String getName() {
+		 return name;
+	 }
+	 
+	 public int getTag() {
+		 return tag;
+	 }
 	 
 	 public static IPTCPreObjectDataTag fromTag(int value) {
 		 IPTCPreObjectDataTag record = recordMap.get(value);
