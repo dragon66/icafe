@@ -11,8 +11,8 @@
 package cafe.image.meta.adobe;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import cafe.image.meta.MetadataReader;
 import cafe.io.IOUtils;
@@ -29,7 +29,7 @@ public class IRBReader implements MetadataReader {
 	private boolean containsThumbnail;
 	private IRBThumbnail thumbnail;
 	private boolean loaded;
-	List<_8BIM> _8bims = new ArrayList<_8BIM>();
+	Map<Short, _8BIM> _8bims = new HashMap<Short, _8BIM>();
 	
 	public IRBReader(byte[] data) {
 		this.data = data;
@@ -39,7 +39,7 @@ public class IRBReader implements MetadataReader {
 		return containsThumbnail;
 	}
 	
-	public List<_8BIM> get8BIM() {
+	public Map<Short, _8BIM> get8BIM() {
 		return _8bims;
 	}
 	
@@ -69,9 +69,10 @@ public class IRBReader implements MetadataReader {
 				//
 				int size = IOUtils.readIntMM(data, i);
 				i += 4;
+				
 				ImageResourceID eId =ImageResourceID.fromShort(id); 
 				
-				_8bims.add(new _8BIM(id, name, size, ArrayUtils.subArray(data, i, size)));
+				_8bims.put(id, new _8BIM(id, name, size, ArrayUtils.subArray(data, i, size)));
 				
 				if(eId == ImageResourceID.THUMBNAIL_RESOURCE_PS4 || eId == ImageResourceID.THUMBNAIL_RESOURCE_PS5) {
 					containsThumbnail = true;
@@ -110,7 +111,7 @@ public class IRBReader implements MetadataReader {
 			}			
 		}
 		System.out.println("<<Adobe IRB infomation starts>>");
-		for(_8BIM _8bim : _8bims) {
+		for(_8BIM _8bim : _8bims.values()) {
 			_8bim.show();
 		}
 		if(containsThumbnail) {
