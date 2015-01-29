@@ -6,12 +6,22 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * IPTCDataSet.java
+ *
+ * Who   Date       Description
+ * ====  =========  =================================================
+ * WY    29Jan2015  Fixed bug with write() write wrong data and size
+ * WY    29Jan2015  Added name field as a key to HashMap usage
  */
 
 package cafe.image.meta.iptc;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
@@ -28,6 +38,8 @@ public class IPTCDataSet {
 	private int size;
 	private byte[] data;
 	private int offset;
+	// A unique name used as HashMap key
+	private String name; 
 	
 	public IPTCDataSet(int tag, String value) {
 		this(tag, value.getBytes());
@@ -50,11 +62,38 @@ public class IPTCDataSet {
 		this.tag = tag;
 		this.size = size;
 		this.data = data;
-		this.offset = offset;
+		this.offset = offset;		
+		this.name = generateName();
 	}
 	
 	public byte[] getData() {
 		return data;
+	}
+	
+	private String generateName() {
+		switch(IPTCRecord.fromRecordNumber(recordNumber)) {
+			case APPLICATION:
+				return IPTCApplicationTag.fromTag(tag).getName();
+			case ENVELOP:
+				return IPTCEnvelopeTag.fromTag(tag).getName();
+			case FOTOSTATION:
+				return IPTCFotoStationTag.fromTag(tag).getName();
+			case NEWSPHOTO:
+				return IPTCNewsPhotoTag.fromTag(tag).getName();
+			case OBJECTDATA:
+				return IPTCObjectDataTag.fromTag(tag).getName();
+			case POST_OBJECTDATA:
+				return IPTCPostObjectDataTag.fromTag(tag).getName();
+			case PRE_OBJECTDATA:
+				return IPTCPreObjectDataTag.fromTag(tag).getName();
+			default:
+		}
+		
+		return "UnknownIPTCName";
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public int getOffset() {
@@ -78,40 +117,37 @@ public class IPTCDataSet {
 		switch (recordNumber) {
 			case 1: //Envelope Record
 				System.out.println("Record number " + recordNumber + ": Envelope Record");
-				System.out.println("Dataset name: " + IPTCEnvelopeTag.fromTag(tag));
 				break;
 			case 2: //Application Record
 				System.out.println("Record number " + recordNumber + ": Application Record");
-				System.out.println("Dataset name: " + IPTCApplicationTag.fromTag(tag));
 				break;
 			case 3: //NewsPhoto Record
 				System.out.println("Record number " + recordNumber + ": NewsPhoto Record");
-				System.out.println("Dataset name: " + IPTCNewsPhotoTag.fromTag(tag));
 				break;
 			case 7: //PreObjectData Record
 				System.out.println("Record number " + recordNumber + ": PreObjectData Record");
-				System.out.println("Dataset name: " + IPTCPreObjectDataTag.fromTag(tag));
 				break;
 			case 8: //ObjectData Record
 				System.out.println("Record number " + recordNumber + ": ObjectData Record");
-				System.out.println("Dataset name: " + IPTCObjectDataTag.fromTag(tag));
 				break;				
 			case 9: //PostObjectData Record
 				System.out.println("Record number " + recordNumber + ": PostObjectData Record");
-				System.out.println("Dataset name: " + IPTCPostObjectDataTag.fromTag(tag));
 				break;	
 			case 240: //FotoStation Record
 				System.out.println("Record number " + recordNumber + ": FotoStation Record");
-				System.out.println("Dataset name: " + IPTCFotoStationTag.fromTag(tag));
 				break;	
 			default:
 				System.out.println("Record number " + recordNumber + ": Unknown Record");
 				break;
 		}
-		
+		System.out.println("Dataset name: " + name);
 		System.out.println("Dataset tag: " + tag + "[" + StringUtils.shortToHexStringMM((short)tag) + "]");
 		System.out.println("Dataset size: " + size);
-		System.out.println("Dataset value: " + new String(data, offset, size).trim());
+		try {
+			System.out.println("Dataset value: " + new String(data, offset, size, "UTF-8").trim());
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -124,7 +160,7 @@ public class IPTCDataSet {
 		out.write(0x1c); // tag marker
 		out.write(recordNumber);
 		out.write(getTag());
-		IOUtils.writeShortMM(out, data.length);
-		out.write(data);
+		IOUtils.writeShortMM(out, size);
+		out.write(data, offset, size);
 	}
 }
