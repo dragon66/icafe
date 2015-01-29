@@ -20,9 +20,9 @@ import java.util.Map;
  * @version 1.0 01/26/2015
  */
 public enum IPTCRecord {
-	ENVELOP(1, "Envelop Record"), APPLICATION(2, "Application Record"), NEWSPHOTO(3, "NewsPhoto Record"),
-	PRE_OBJECTDATA(7, "PreObjectData Record"), OBJECTDATA(8, "ObjectData Record"), POST_OBJECTDATA(9, "PostObjectData Record"),
-	FOTOSTATION(240, "FotoStation Record"), UNKNOWN(9999, "Unknown Record");	
+	ENVELOP(1, "Envelop"), APPLICATION(2, "Application"), NEWSPHOTO(3, "NewsPhoto"),
+	PRE_OBJECTDATA(7, "PreObjectData"), OBJECTDATA(8, "ObjectData"), POST_OBJECTDATA(9, "PostObjectData"),
+	FOTOSTATION(240, "FotoStation"), UNKNOWN(999, "Unknown");	
 	
 	private IPTCRecord(int recordNumber, String name) {
 		this.recordNumber = recordNumber;
