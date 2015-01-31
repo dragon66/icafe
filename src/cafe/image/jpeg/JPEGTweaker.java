@@ -732,7 +732,7 @@ public class JPEGTweaker {
 									iptcReader.read();
 									Map<String, List<IPTCDataSet>> dataSetMap = iptcReader.getDataSet();
 									for(IPTCDataSet iptc : iptcs)
-										if(!iptc.getTagEnum().allowDuplicate())
+										if(!iptc.allowDuplicate())
 											dataSetMap.remove(iptc.getName());
 									for(List<IPTCDataSet> iptcList : dataSetMap.values())
 										iptcs.addAll(iptcList);

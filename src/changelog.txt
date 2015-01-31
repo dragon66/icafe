@@ -1,6 +1,7 @@
 ***************************
-Last modified on 01/27/2015
+Last modified on 01/30/2015
 ***************************
+30Jan2015  Added code to handle multiple occurrence of IPTC tag
 27Jan2015  Added code to insert thumbnail into Photoshop IRB
 27Jan2015  Added code to insert Photoshop IRB into TIFF and JPEG images
 26Jan2015  Added code to insert IPTC into TIFF and JPEG images

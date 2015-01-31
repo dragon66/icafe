@@ -69,6 +69,10 @@ public class IPTCDataSet {
 		this(record, tag, value.getBytes());
 	}
 	
+	public boolean allowDuplicate() {
+		return tagEnum.allowDuplicate();
+	}
+	
 	private String getTagName() {
 		switch(IPTCRecord.fromRecordNumber(recordNumber)) {
 			case APPLICATION:

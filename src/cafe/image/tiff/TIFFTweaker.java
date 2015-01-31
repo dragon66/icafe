@@ -1075,7 +1075,7 @@ public class TIFFTweaker {
 				reader.read();
 				Map<String, List<IPTCDataSet>> dataSetMap = reader.getDataSet();
 				for(IPTCDataSet iptc : iptcs)
-					if(!iptc.getTagEnum().allowDuplicate())
+					if(!iptc.allowDuplicate())
 						dataSetMap.remove(iptc.getName());
 				for(List<IPTCDataSet> iptcList : dataSetMap.values())
 					iptcs.addAll(iptcList);
