@@ -1073,10 +1073,12 @@ public class TIFFTweaker {
 					data = (byte[])f_iptc.getData();
 				IPTCReader reader = new IPTCReader(data);
 				reader.read();
-				Map<String, IPTCDataSet> dataSetMap = reader.getDataSet();
+				Map<String, List<IPTCDataSet>> dataSetMap = reader.getDataSet();
 				for(IPTCDataSet iptc : iptcs)
-					dataSetMap.remove(iptc.getName());
-				iptcs.addAll(dataSetMap.values());
+					if(!iptc.getTagEnum().allowDuplicate())
+						dataSetMap.remove(iptc.getName());
+				for(List<IPTCDataSet> iptcList : dataSetMap.values())
+					iptcs.addAll(iptcList);
 			}
 		}
 		

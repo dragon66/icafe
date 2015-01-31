@@ -730,15 +730,17 @@ public class JPEGTweaker {
 								if(iptcBIM != null) { // Keep the original values
 									IPTCReader iptcReader = new IPTCReader(iptcBIM.getData());
 									iptcReader.read();
-									Map<String, IPTCDataSet> dataSetMap = iptcReader.getDataSet();
+									Map<String, List<IPTCDataSet>> dataSetMap = iptcReader.getDataSet();
 									for(IPTCDataSet iptc : iptcs)
-										dataSetMap.remove(iptc.getName());
-									iptcs.addAll(dataSetMap.values());
+										if(!iptc.getTagEnum().allowDuplicate())
+											dataSetMap.remove(iptc.getName());
+									for(List<IPTCDataSet> iptcList : dataSetMap.values())
+										iptcs.addAll(iptcList);
 								}
 						  	}					    	
 				    	} else {
 				    		length = IOUtils.readUnsignedShortMM(is);					
-						    IOUtils.skipFully(is, length);
+						    IOUtils.skipFully(is, length - 2);
 				    	}
 				    	marker = IOUtils.readShortMM(is);
 				    	break;				    	
@@ -840,7 +842,7 @@ public class JPEGTweaker {
 					    	}					    	
 				    	} else {
 				    		length = IOUtils.readUnsignedShortMM(is);					
-						    IOUtils.skipFully(is, length);
+						    IOUtils.skipFully(is, length - 2);
 				    	}
 				    	marker = IOUtils.readShortMM(is);
 				    	break;				    	

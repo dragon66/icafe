@@ -33,16 +33,16 @@ public class TestMetadata {
 		System.out.println("End of metadata information.");
 		Metadata.extractThumbnails(args[0], "thumbnail");
 		
-		FileInputStream fin = new FileInputStream("images/iptc-envelope.tif");
-		FileOutputStream fout = new FileOutputStream("iptc-envelope-iptc-inserted.tif");
+		FileInputStream fin = new FileInputStream("images/iptc.tif");
+		FileOutputStream fout = new FileOutputStream("iptc-iptc-inserted.tif");
 			
 		Metadata.insertIPTC(fin, fout, createIPTCDataSet(), true);
 		
 		fin.close();
 		fout.close();
 		
-		fin = new FileInputStream("images/12.jpg");
-		fout = new FileOutputStream("12-iptc-inserted.jpg");
+		fin = new FileInputStream("images/wizard.jpg");
+		fout = new FileOutputStream("wizard-iptc-inserted.jpg");
 		
 		Metadata.insertIPTC(fin, fout, createIPTCDataSet(), true);
 		
@@ -69,6 +69,7 @@ public class TestMetadata {
 	private static List<IPTCDataSet> createIPTCDataSet() {
 		List<IPTCDataSet> iptcs = new ArrayList<IPTCDataSet>();
 		iptcs.add(new IPTCDataSet(IPTCRecord.APPLICATION, IPTCApplicationTag.COPYRIGHT_NOTICE.getTag(), "Copyright 2014-2015, yuwen_66@yahoo.com"));
+		iptcs.add(new IPTCDataSet(IPTCApplicationTag.CATEGORY.getTag(), "ICAFE"));
 		iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
 		
 		return iptcs;

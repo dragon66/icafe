@@ -33,28 +33,19 @@ import cafe.string.StringUtils;
  * @version 1.0 06/10/2013
  */
 public class IPTCDataSet {
-	private int recordNumber;
-	private int tag;
+	// Fields
+	private int recordNumber; // Corresponds to IPTCRecord enumeration recordNumber 
+	private int tag; // Corresponds to IPTC tag enumeration tag field
 	private int size;
 	private byte[] data;
 	private int offset;
-	// A unique name used as HashMap key
-	private String name; 
+	private IPTCTag tagEnum;
 	
-	public IPTCDataSet(int tag, String value) {
-		this(tag, value.getBytes());
-	}
+	// A unique name used as HashMap key
+	private String name;
 	
 	public IPTCDataSet(int tag, byte[] data) {
 		this(IPTCRecord.APPLICATION, tag, data);
-	}
-	
-	public IPTCDataSet(IPTCRecord record, int tag, byte[] data) {
-		this(record.getRecordNumber(), tag, data.length, data, 0);
-	}
-	
-	public IPTCDataSet(IPTCRecord record, int tag, String value) {
-		this(record, tag, value.getBytes());
 	}
 	
 	public IPTCDataSet(int recordNumber, int tag, int size, byte[] data, int offset) {
@@ -66,30 +57,50 @@ public class IPTCDataSet {
 		this.name = generateName();
 	}
 	
-	public byte[] getData() {
-		return data;
+	public IPTCDataSet(int tag, String value) {
+		this(tag, value.getBytes());
+	}
+	
+	public IPTCDataSet(IPTCRecord record, int tag, byte[] data) {
+		this(record.getRecordNumber(), tag, data.length, data, 0);
+	}
+	
+	public IPTCDataSet(IPTCRecord record, int tag, String value) {
+		this(record, tag, value.getBytes());
 	}
 	
 	private String generateName() {
 		switch(IPTCRecord.fromRecordNumber(recordNumber)) {
 			case APPLICATION:
-				return IPTCApplicationTag.fromTag(tag).getName();
+				tagEnum = IPTCApplicationTag.fromTag(tag);
+				break;
 			case ENVELOP:
-				return IPTCEnvelopeTag.fromTag(tag).getName();
+				tagEnum = IPTCEnvelopeTag.fromTag(tag);
+				break;
 			case FOTOSTATION:
-				return IPTCFotoStationTag.fromTag(tag).getName();
+				tagEnum = IPTCFotoStationTag.fromTag(tag);
+				break;
 			case NEWSPHOTO:
-				return IPTCNewsPhotoTag.fromTag(tag).getName();
+				tagEnum = IPTCNewsPhotoTag.fromTag(tag);
+				break;
 			case OBJECTDATA:
-				return IPTCObjectDataTag.fromTag(tag).getName();
+				tagEnum = IPTCObjectDataTag.fromTag(tag);
+				break;
 			case POST_OBJECTDATA:
-				return IPTCPostObjectDataTag.fromTag(tag).getName();
+				tagEnum = IPTCPostObjectDataTag.fromTag(tag);
+				break;
 			case PRE_OBJECTDATA:
-				return IPTCPreObjectDataTag.fromTag(tag).getName();
+				tagEnum = IPTCPreObjectDataTag.fromTag(tag);
+				break;
 			default:
+				tagEnum = IPTCApplicationTag.UNKNOWN;
 		}
 		
-		return "UnknownIPTCName";
+		return tagEnum.getName();
+	}
+	
+	public byte[] getData() {
+		return data;
 	}
 	
 	public String getName() {
@@ -110,8 +121,16 @@ public class IPTCDataSet {
 	
 	public int getTag() {
 		return tag;
-	}	
-
+	}
+	
+	public IPTCTag getTagEnum() {
+		return tagEnum;
+	}
+	
+	public static boolean multipleDataSetAllowed(String name) {
+		return true;
+	}
+	
 	public void print() {
 		
 		switch (recordNumber) {
@@ -139,15 +158,14 @@ public class IPTCDataSet {
 			default:
 				System.out.println("Record number " + recordNumber + ": Unknown Record");
 				break;
-		}
+		}		
+		
 		System.out.println("Dataset name: " + name);
 		System.out.println("Dataset tag: " + tag + "[" + StringUtils.shortToHexStringMM((short)tag) + "]");
 		System.out.println("Dataset size: " + size);
-		try {
-			System.out.println("Dataset value: " + new String(data, offset, size, "UTF-8").trim());
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		
+		try { System.out.println("Dataset value: " + new String(data, offset, size, "UTF-8").trim());
+		} catch (UnsupportedEncodingException e) { e.printStackTrace(); }
 	}
 	
 	/**

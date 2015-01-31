@@ -19,7 +19,9 @@
 package cafe.image.meta.iptc;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cafe.image.meta.MetadataReader;
@@ -32,7 +34,7 @@ import cafe.io.IOUtils;
  * @version 1.0 01/12/2015
  */
 public class IPTCReader implements MetadataReader {
-	private Map<String, IPTCDataSet> datasetMap = new HashMap<String, IPTCDataSet>();
+	private Map<String, List<IPTCDataSet>> datasetMap = new HashMap<String, List<IPTCDataSet>>();
 	private byte[] data;
 	private boolean loaded;
 	
@@ -40,7 +42,7 @@ public class IPTCReader implements MetadataReader {
 		this.data = data;
 	}
 	
-	public Map<String, IPTCDataSet> getDataSet() {
+	public Map<String, List<IPTCDataSet>> getDataSet() {
 		return datasetMap;
 	}
 	
@@ -60,7 +62,13 @@ public class IPTCReader implements MetadataReader {
 			int recordSize = IOUtils.readUnsignedShortMM(data, i);
 			i += 2;
 			IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, data, i);
-			datasetMap.put(dataSet.getName(), dataSet);
+			String name = dataSet.getName();
+			if(datasetMap.get(name) == null) {
+				List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
+				list.add(dataSet);
+				datasetMap.put(name, list);
+			} else
+				datasetMap.get(name).add(dataSet);
 			i += recordSize;
 			// Sanity check
 			if(i >= data.length) break;	
@@ -77,9 +85,11 @@ public class IPTCReader implements MetadataReader {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}			
-		}	
-		for(IPTCDataSet iptc : datasetMap.values()) {
-			iptc.print();
+		}
+		// Print multiple entry IPTCDataSet
+		for(List<IPTCDataSet> iptcs : datasetMap.values()) {
+			for(IPTCDataSet iptc : iptcs)
+				iptc.print();
 		}
 	}
 }
