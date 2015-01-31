@@ -19,14 +19,24 @@ import java.util.Map;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 07/02/2013
  */
-public enum IPTCEnvelopeTag {
+public enum IPTCEnvelopeTag implements IPTCTag {
 	 RECORD_VERSION(0, "EnvelopeRecordVersion"),
-	 DESTINATION(5, "Destination"),
+	 DESTINATION(5, "Destination") {
+		 @Override
+		 public boolean allowDuplicate() {
+			 return true;
+		 }
+	 },
 	 FILE_FORMAT(20, "FileFormat"),
 	 FILE_VERSION(22, "FileVersion"),
 	 SERVICE_IDENTIFIER(30, "ServiceIdentifier"),
 	 ENVELOPE_NUMBER(40, "EnvelopeNumber"),
-	 PRODUCT_ID(50, "ProductID"),
+	 PRODUCT_ID(50, "ProductID") {
+		 @Override
+		 public boolean allowDuplicate() {
+			 return true;
+		 }
+	 },
 	 ENVELOPE_PRIORITY(60, "EnvelopePriority"),
 	 DATE_SENT(70, "DateSent"),
 	 TIME_SENT(80, "TimeSent"),
@@ -40,6 +50,11 @@ public enum IPTCEnvelopeTag {
 	 private IPTCEnvelopeTag(int tag, String name) {
 		 this.tag = tag;
 		 this.name = name;
+	 }
+	 
+	 @Override
+	 public boolean allowDuplicate() {
+		 return false;
 	 }
 	 
 	 public String getName() {

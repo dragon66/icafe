@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 07/02/2013
  */
-public enum IPTCNewsPhotoTag {
+public enum IPTCNewsPhotoTag implements IPTCTag {
 	 RECORD_VERSION(0, "NewsPhotoVersion"),
 	 PICTURE_NUMBER(10, "PictureNumber"),
 	 IMAGE_WIDTH(20, "ImageWidth"),
@@ -52,6 +52,11 @@ public enum IPTCNewsPhotoTag {
 	 private IPTCNewsPhotoTag(int tag, String name) {
 		 this.tag = tag;
 		 this.name = name;
+	 }
+	 
+	 @Override
+	 public boolean allowDuplicate() {
+		 return false;
 	 }
 	 
 	 public String getName() {

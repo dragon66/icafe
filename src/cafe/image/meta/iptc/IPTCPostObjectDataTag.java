@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 07/02/2013
  */
-public enum IPTCPostObjectDataTag {
+public enum IPTCPostObjectDataTag implements IPTCTag {
 	 CONFIRMED_OBJECT_SIZE(10, "ConfirmedObjectSize"),
 		 	 	 
 	 UNKNOWN(999, "Unknown");
@@ -27,6 +27,11 @@ public enum IPTCPostObjectDataTag {
 	 private IPTCPostObjectDataTag(int tag, String name) {
 		 this.tag = tag;
 		 this.name = name;
+	 }
+	 
+	 @Override
+	 public boolean allowDuplicate() {
+		 return false;
 	 }
 	 
 	 public String getName() {

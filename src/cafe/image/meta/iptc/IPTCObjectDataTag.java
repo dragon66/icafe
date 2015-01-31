@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 07/02/2013
  */
-public enum IPTCObjectDataTag {
+public enum IPTCObjectDataTag implements IPTCTag {
 	 SUB_FILE(10, "SubFile"),
 		 	 	 
 	 UNKNOWN(999, "Unknown");
@@ -34,6 +34,11 @@ public enum IPTCObjectDataTag {
 	   	if (record == null)
 	   		return UNKNOWN;
       	return record;
+	 }
+	 
+	 @Override
+	 public boolean allowDuplicate() {
+		 return false;
 	 }
 	 
 	 public String getName() {
