@@ -54,7 +54,7 @@ public class IPTCDataSet {
 		this.size = size;
 		this.data = data;
 		this.offset = offset;		
-		this.name = generateName();
+		this.name = getTagName();
 	}
 	
 	public IPTCDataSet(int tag, String value) {
@@ -69,7 +69,7 @@ public class IPTCDataSet {
 		this(record, tag, value.getBytes());
 	}
 	
-	private String generateName() {
+	private String getTagName() {
 		switch(IPTCRecord.fromRecordNumber(recordNumber)) {
 			case APPLICATION:
 				tagEnum = IPTCApplicationTag.fromTag(tag);
