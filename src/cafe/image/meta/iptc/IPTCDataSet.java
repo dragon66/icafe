@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    01Feb2015  Added equals() and hashCode()
  * WY    29Jan2015  Fixed bug with write() write wrong data and size
  * WY    29Jan2015  Added name field as a key to HashMap usage
  */
@@ -22,9 +23,11 @@ package cafe.image.meta.iptc;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
+import cafe.util.ArrayUtils;
 
 /**
  * International Press Telecommunications Council (IPTC) data set
@@ -71,6 +74,26 @@ public class IPTCDataSet {
 	
 	public boolean allowDuplicate() {
 		return tagEnum.allowDuplicate();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IPTCDataSet other = (IPTCDataSet) obj;
+		byte[] thisData = ArrayUtils.subArray(data, offset, size);
+		byte[] thatData = ArrayUtils.subArray(other.data, other.offset, other.size);
+		if (!Arrays.equals(thisData, thatData))
+			return false;
+		if (recordNumber != other.recordNumber)
+			return false;
+		if (tag != other.tag)
+			return false;
+		return true;
 	}
 	
 	private String getTagName() {
@@ -129,6 +152,16 @@ public class IPTCDataSet {
 	
 	public IPTCTag getTagEnum() {
 		return tagEnum;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(ArrayUtils.subArray(data, offset, size));
+		result = prime * result + recordNumber;
+		result = prime * result + tag;
+		return result;
 	}
 	
 	public static boolean multipleDataSetAllowed(String name) {

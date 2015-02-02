@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    01Feb2015  Revised to remove duplicates when combining normal and Photoshop IPTC
  * WY    29Jan2015  Revised insertIPTC() and insertIRB() to keep old data
  * WY    27Jan2015  Implemented insertThumbnail() to insert thumbnail to Photoshop IRB
  * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB data
@@ -75,9 +76,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import cafe.image.ImageFrame;
 import cafe.image.ImageIO;
 import cafe.image.ImageParam;
@@ -95,6 +96,7 @@ import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.IRB;
 import cafe.image.meta.adobe.IRBReader;
 import cafe.image.meta.adobe.IRBThumbnail;
+import cafe.image.meta.adobe.ImageResourceID;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
@@ -208,6 +210,19 @@ public class TIFFTweaker {
 		rin.seek(OFFSET_TO_WRITE_FIRST_IFD_OFFSET);
 		
 		return rin.readInt();
+	}
+	
+	private static List<IPTCDataSet> copyIPTCDataSet(List<IPTCDataSet> iptcs, byte[] data) throws IOException {
+		IPTCReader iptc_reader = new IPTCReader(data);
+		iptc_reader.read();
+		Map<String, List<IPTCDataSet>> dataSetMap = iptc_reader.getDataSet();
+		for(IPTCDataSet iptc : iptcs)
+			if(!iptc.allowDuplicate())
+				dataSetMap.remove(iptc.getName());
+		for(List<IPTCDataSet> iptcList : dataSetMap.values())
+			iptcs.addAll(iptcList);
+		
+		return iptcs;
 	}
 	
 	private static TiffField<?> copyJPEGHufTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException
@@ -1050,6 +1065,27 @@ public class TIFFTweaker {
 		insertIPTC(rin, rout, 0, iptcs, update);
 	}
 	
+	/**
+	 * Inserts IPTC data into TIFF image. If the original TIFF image contains IPTC data, we either keep
+	 * or override them depending on the input parameter "update."
+	 * <p>
+	 * There is a possibility that IPTC data presents in more than one places such as a normal TIFF
+	 * tag, or buried inside a Photoshop IPTC-NAA Image Resource Block (IRB), or even in a XMP block.
+	 * Currently this method does the following thing: if no IPTC data was found from both Photoshop or 
+	 * normal IPTC tag, we insert the IPTC data with a normal IPTC tag. If IPTC data is found both as
+	 * a Photosho tag and a normal IPTC tag, depending on the "update" parameter, we will either delete
+	 * the IPTC data from both places and insert the new IPTC data into the Photoshop tag or we will
+	 * synchronize the two sets of IPTC data, delete the original IPTC from both places and insert the
+	 * synchronized IPTC data along with the new IPTC data into the Photoshop tag. In both cases, we
+	 * will keep the other IRBs from the original Photoshop tag unchanged. 
+	 * 
+	 * @param rin RandomAccessInputStream for the original TIFF
+	 * @param rout RandomAccessOutputStream for the output TIFF with IPTC inserted
+	 * @param pageNumber zero based working page number to insert IPTC
+	 * @param iptcs A list of IPTCDataSet to insert into the TIFF image
+	 * @param update whether we want to keep the original image or create a completely new IPTC data set
+	 * @throws IOException
+	 */
 	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, List<IPTCDataSet> iptcs, boolean update) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
@@ -1063,30 +1099,55 @@ public class TIFFTweaker {
 	
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		
-		if(update) {
-			TiffField<?> f_iptc = workingPage.removeField(TiffTag.IPTC.getValue());
-			if(f_iptc != null) {
+		// See if we also have regular IPTC tag field
+		TiffField<?> f_iptc = workingPage.removeField(TiffTag.IPTC.getValue());		
+		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP.getValue());
+		if(f_photoshop != null) { // Read 8BIMs
+			IRBReader reader = new IRBReader((byte[])f_photoshop.getData());
+			reader.read();
+			Map<Short, _8BIM> bims = reader.get8BIM();
+			_8BIM photoshop_iptc = bims.remove(ImageResourceID.IPTC_NAA.getValue());
+			if(photoshop_iptc != null) { // If we have IPTC
+				if(update) { // If we need to keep the old data, copy it
+					if(f_iptc != null) {// We are going to synchronize the two IPTC data
+						byte[] data = null;
+						if(f_iptc.getType() == FieldType.LONG)
+							data = ArrayUtils.toByteArray(f_iptc.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN);
+						else
+							data = (byte[])f_iptc.getData();
+						copyIPTCDataSet(iptcs, data);
+					}
+					// Now copy the Photoshop IPTC data
+					copyIPTCDataSet(iptcs, photoshop_iptc.getData());
+					// Remove duplicates
+					iptcs = new ArrayList<IPTCDataSet>(new HashSet<IPTCDataSet>(iptcs));
+				}
+			}
+			// Create IPTC 8BIM
+			for(IPTCDataSet dataset : iptcs) {
+				dataset.write(bout);
+			}
+			_8BIM iptc_bim = new _8BIM(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());
+			bout.reset();
+			iptc_bim.write(bout); // Write the IPTC 8BIM first
+			for(_8BIM bim : bims.values()) // Copy the other 8BIMs if any
+				bim.write(bout);
+			// Add a new Photoshop tag field to TIFF
+			workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
+		} else { // We don't have photoshop, add IPTC to regular IPTC tag field
+			if(f_iptc != null && update) {
 				byte[] data = null;
 				if(f_iptc.getType() == FieldType.LONG)
 					data = ArrayUtils.toByteArray(f_iptc.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN);
 				else
 					data = (byte[])f_iptc.getData();
-				IPTCReader reader = new IPTCReader(data);
-				reader.read();
-				Map<String, List<IPTCDataSet>> dataSetMap = reader.getDataSet();
-				for(IPTCDataSet iptc : iptcs)
-					if(!iptc.allowDuplicate())
-						dataSetMap.remove(iptc.getName());
-				for(List<IPTCDataSet> iptcList : dataSetMap.values())
-					iptcs.addAll(iptcList);
+				copyIPTCDataSet(iptcs, data);
 			}
-		}
-		
-		for(IPTCDataSet dataset : iptcs) {
-			dataset.write(bout);
-		}
-		
-		workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
+			for(IPTCDataSet dataset : iptcs) {
+				dataset.write(bout);
+			}		
+			workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
+		}		
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	

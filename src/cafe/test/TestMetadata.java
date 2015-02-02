@@ -33,8 +33,8 @@ public class TestMetadata {
 		System.out.println("End of metadata information.");
 		Metadata.extractThumbnails(args[0], "thumbnail");
 		
-		FileInputStream fin = new FileInputStream("images/iptc.tif");
-		FileOutputStream fout = new FileOutputStream("iptc-iptc-inserted.tif");
+		FileInputStream fin = new FileInputStream("images/iptc-envelope.tif");
+		FileOutputStream fout = new FileOutputStream("iptc-envelope-iptc-inserted.tif");
 			
 		Metadata.insertIPTC(fin, fout, createIPTCDataSet(), true);
 		
