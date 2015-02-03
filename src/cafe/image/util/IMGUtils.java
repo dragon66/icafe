@@ -13,7 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
- * WY    27Jan2015  Added createThumbnail8BIM()
+ * WY    03Feb2015  Added createThumbnail() to create a thumbnail from an image
+ * WY    27Jan2015  Added createThumbnail8BIM() to wrap a BufferedImage to _8BIM
  * WY    22Jan2015  Factored out guessImageType(byte[])
  * WY    24Dec2014  Rename CMYK2RGB() to iccp2rgbRaster()
  * WY    17Dec2014  Bug fix for rgb2bilevelDither() to bypass transparent pixels
@@ -27,6 +28,8 @@
 
 package cafe.image.util;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -44,10 +47,9 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PushbackInputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import cafe.image.ImageIO;
 import cafe.image.ImageType;
@@ -162,7 +164,60 @@ public class IMGUtils {
         return colorInfo;
 	}
 	
-	public static List<_8BIM> createThumbnail8BIM(BufferedImage thumbnail) throws IOException {
+	/**
+	 * Creates a thumbnail from image input stream
+	 * @param is InputStream for the image
+	 * @return thumbnail as a BufferedImage
+	 * @throws IOException
+	 */
+	public static BufferedImage createThumbnail(InputStream is) throws IOException {
+		BufferedImage original = null;
+		if(is instanceof RandomAccessInputStream) {
+			RandomAccessInputStream rin = (RandomAccessInputStream)is;
+			long streamPointer = rin.getStreamPointer();
+			rin.seek(streamPointer);
+			original = javax.imageio.ImageIO.read(rin);
+			if(original == null) { // Java ImageIO failed, try our own stuff
+				rin.seek(streamPointer); // Reset stream pointer
+				try {
+					original = ImageIO.read(rin);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			// Reset the stream pointer
+			rin.seek(streamPointer);
+		} else {
+			original = javax.imageio.ImageIO.read(is);
+		}		
+		int imageWidth = original.getWidth();
+		int imageHeight = original.getHeight();
+		int thumbnailWidth = 160;
+		int thumbnailHeight = 120;
+		if(imageWidth < imageHeight) { 
+			// Swap thumbnail width and height to keep a relative aspect ratio
+			int temp = thumbnailWidth;
+			thumbnailWidth = thumbnailHeight;
+			thumbnailHeight = temp;
+		}			
+		if(imageWidth < thumbnailWidth) thumbnailWidth = imageWidth;			
+		if(imageHeight < thumbnailHeight) thumbnailHeight = imageHeight;
+		BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = thumbnail.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+		        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.drawImage(original, 0, 0, thumbnailWidth, thumbnailHeight, null);
+				
+		return thumbnail;
+	}
+	
+	/**
+	 * Wraps a BufferedImage inside a Photoshop _8BIM
+	 * @param thumbnail input thumbnail image
+	 * @return a Photoshop _8BMI
+	 * @throws IOException
+	 */
+	public static _8BIM createThumbnail8BIM(BufferedImage thumbnail) throws IOException {
 		// Create memory buffer to write data
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		// Compress the thumbnail
@@ -195,10 +250,8 @@ public class IMGUtils {
 		bout.write(data);
 		// Create 8BIM
 		_8BIM bim = new _8BIM(ImageResourceID.THUMBNAIL_RESOURCE_PS5, "thumbnail", bout.toByteArray());
-		List<_8BIM> bims = new ArrayList<_8BIM>();
-		bims.add(bim);
-		
-		return bims;
+	
+		return bim;
 	}
 	
 	/**
