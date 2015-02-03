@@ -12,7 +12,8 @@
  * Metadata.java
  *
  * Who   Date       Description
- * ====  =========  ====================================================================
+ * ====  =========  =================================================
+ * WY    03Feb2015  Added insertICCProfile()
  * WY    27Jan2015  Added insertIRB()
  * WY    26Jan2015  Added insertIPTC()
  * WY    25Jan2015  Added extractThumbnails()
@@ -20,6 +21,7 @@
 
 package cafe.image.meta;
 
+import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,6 +96,38 @@ public abstract class Metadata {
 	
 	public static void extractThumbnails(String image, String pathToThumbnail) throws IOException {
 		extractThumbnails(new File(image), pathToThumbnail);
+	}
+	
+	public static void insertICCProfile(InputStream is, OutputStream out, ICC_Profile icc_profile) throws IOException {
+		insertICCProfile(is, out, icc_profile.getData());
+	}
+	
+	public static void insertICCProfile(InputStream is, OutputStream out, byte[] icc_profile) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate ICCP inserting to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.insertICCProfile(pushbackStream, out, icc_profile);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
+				TIFFTweaker.insertICCProfile(icc_profile, 0, randIS, randOS);
+				randIS.close();
+				randOS.close();
+				break;
+			case GIF:
+			case PCX:
+			case TGA:
+			case BMP:
+				System.out.println(imageType + " image format does not support ICCProfile data");
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("ICCProfile data inserting is not supported for " + imageType + " image");				
+		}		
 	}
 
 	public static void insertIPTC(InputStream is, OutputStream out, List<IPTCDataSet> iptcs) throws IOException {
