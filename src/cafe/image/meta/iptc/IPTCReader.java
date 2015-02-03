@@ -43,6 +43,13 @@ public class IPTCReader implements MetadataReader {
 	}
 	
 	public Map<String, List<IPTCDataSet>> getDataSet() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return datasetMap;
 	}
 	
@@ -89,7 +96,7 @@ public class IPTCReader implements MetadataReader {
 		// Print multiple entry IPTCDataSet
 		for(List<IPTCDataSet> iptcs : datasetMap.values()) {
 			for(IPTCDataSet iptc : iptcs)
-				iptc.print();
+				iptc.show();
 		}
 	}
 }
