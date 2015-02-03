@@ -53,6 +53,10 @@ public class IRB extends Metadata {
 		reader = new IRBReader(data);
 	}
 	
+	public _8BIM get8BIM(short tag) {
+		return reader.get8BIM().get(tag);
+	}
+	
 	public IRBReader getReader() {
 		return reader;
 	}
