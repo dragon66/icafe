@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    03Feb2015  Added removeExif() to remove EXIF and GPS data from TIFF image
  * WY    01Feb2015  Revised to remove duplicates when combining normal and Photoshop IPTC
  * WY    29Jan2015  Revised insertIPTC() and insertIRB() to keep old data
  * WY    27Jan2015  Implemented insertThumbnail() to insert thumbnail to Photoshop IRB
@@ -2416,6 +2417,36 @@ public class TIFFTweaker {
 		System.out.println("*** TIFF snooping ends ***");
 		
 		return metadataMap;
+	}
+	
+	public static void removeExif(RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		removeExif(0, rin, rout);
+	}
+	
+	/**
+	 * Remove EXIF subIFD and GPS subIFD from TIFF image
+	 * @param pageNumber working page from which to remove EXIF and GPS data
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @throws IOException
+	 */
+	public static void removeExif(int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		int offset = copyHeader(rin, rout);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+	
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		workingPage.removeField(TiffTag.EXIF_SUB_IFD.getValue());
+		workingPage.removeField(TiffTag.GPS_SUB_IFD.getValue());
+		
+		offset = copyPages(ifds, offset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();	
+
+		writeToStream(rout, firstIFDOffset);		
 	}
 	
 	/**

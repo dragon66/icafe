@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    03Feb2015  Added removeExif()
  * WY    03Feb2015  Added insertICCProfile()
  * WY    27Jan2015  Added insertIRB()
  * WY    26Jan2015  Added insertIPTC()
@@ -277,6 +278,41 @@ public abstract class Metadata {
 	
 	public static Map<MetadataType, Metadata> readMetadata(String image) throws IOException {
 		return readMetadata(new File(image));
+	}
+	
+	/**
+	 * Remove EXIF data from image
+	 * @param is InputStream for the input image
+	 * @param os OutputStream for the output image
+	 * @throws IOException
+	 */
+	// TODO change to generic removeMetadata(EnumSet<MetadataType>, InputStream, OutputStream)
+	public static void removeExif(InputStream is, OutputStream os) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate EXIF removing to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.removeExif(pushbackStream, os);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
+				TIFFTweaker.removeExif(randIS, randOS);
+				randIS.close();
+				randOS.close();
+				break;
+			case GIF:
+			case PCX:
+			case TGA:
+			case BMP:
+				System.out.println(imageType + " image format does not support EXIF data");
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("EXIF data removing is not supported for " + imageType + " image");				
+		}		
 	}
 	
 	public Metadata(MetadataType type, byte[] data) {
