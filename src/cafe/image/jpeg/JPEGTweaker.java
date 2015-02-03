@@ -505,7 +505,7 @@ public class JPEGTweaker {
 			is.close();
 	}
 	
-	public static void insertICCProfile(InputStream is, OutputStream os, byte[] data) throws Exception {
+	public static void insertICCProfile(InputStream is, OutputStream os, byte[] data) throws IOException {
 		// Copy the original image and insert ICC_Profile data
 		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
 		boolean finished = false;
@@ -598,7 +598,7 @@ public class JPEGTweaker {
 	    }
 	}
 	
-	public static void insertICCProfile(InputStream is, OutputStream os, ICC_Profile icc_profile) throws Exception {
+	public static void insertICCProfile(InputStream is, OutputStream os, ICC_Profile icc_profile) throws IOException {
 		insertICCProfile(is, os, icc_profile.getData());
 	}
 	
