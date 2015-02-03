@@ -39,8 +39,6 @@
 
 package cafe.image.jpeg;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -426,29 +424,8 @@ public class JPEGTweaker {
 		// We need thumbnail image but don't have one, create one from the current image input stream
 		if(exif.isThumbnailRequired() && !exif.hasThumbnail()) {
 			is = new FileCacheRandomAccessInputStream(is);
-			BufferedImage original = javax.imageio.ImageIO.read(is);
-			int imageWidth = original.getWidth();
-			int imageHeight = original.getHeight();
-			// Default thumbnail dimension
-			int thumbnailWidth = 160;
-			int thumbnailHeight = 120;
-			if(imageWidth < imageHeight) {
-				// Swap width and height to keep a relative aspect ratio
-				int temp = thumbnailWidth;
-				thumbnailWidth = thumbnailHeight;
-				thumbnailHeight = temp;
-			}			
-			if(imageWidth < thumbnailWidth) thumbnailWidth = imageWidth;
-			if(imageHeight < thumbnailHeight) thumbnailHeight = imageHeight;
-			BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = thumbnail.createGraphics();
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-			        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g.drawImage(original, 0, 0, thumbnailWidth, thumbnailHeight, null);
 			// Insert thumbnail into EXIF wrapper
-			exif.setThumbnailImage(thumbnail);
-			// Reset the stream pointer
-			((RandomAccessInputStream)is).seek(0);
+			exif.setThumbnailImage(IMGUtils.createThumbnail(is));
 		}
 		// Copy the original image and insert EXIF data
 		boolean finished = false;
@@ -862,7 +839,7 @@ public class JPEGTweaker {
 	public static void insertIRBThumbnail(InputStream is, OutputStream os, BufferedImage thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		insertIRB(is, os, IMGUtils.createThumbnail8BIM(thumbnail), true); // Set true to keep other IRB blocks
+		insertIRB(is, os, Arrays.asList(IMGUtils.createThumbnail8BIM(thumbnail)), true); // Set true to keep other IRB blocks
 	}
 	
 	private static void readAPP0(InputStream is) throws IOException

@@ -61,8 +61,6 @@
 
 package cafe.image.tiff;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -962,34 +960,8 @@ public class TIFFTweaker {
 	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif) throws Exception {
 		// If no thumbnail image is provided in EXIF wrapper, one will be created from the input stream
 		if(exif.isThumbnailRequired() && !exif.hasThumbnail()) {
-			long streamPointer = rin.getStreamPointer();
-			rin.seek(0);
-			BufferedImage original = javax.imageio.ImageIO.read(rin);
-			if(original == null) { // Java ImageIO failed
-				rin.seek(0);
-				original = ImageIO.read(rin); // Try our own stuff
-			}
-			int imageWidth = original.getWidth();
-			int imageHeight = original.getHeight();
-			int thumbnailWidth = 160;
-			int thumbnailHeight = 120;
-			if(imageWidth < imageHeight) { 
-				// Swap thumbnail width and height to keep a relative aspect ratio
-				int temp = thumbnailWidth;
-				thumbnailWidth = thumbnailHeight;
-				thumbnailHeight = temp;
-			}			
-			if(imageWidth < thumbnailWidth) thumbnailWidth = imageWidth;			
-			if(imageHeight < thumbnailHeight) thumbnailHeight = imageHeight;
-			BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = thumbnail.createGraphics();
-			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-			        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-			g.drawImage(original, 0, 0, thumbnailWidth, thumbnailHeight, null);
 			// Insert the thumbnail into EXIF wrapper
-			exif.setThumbnailImage(thumbnail);
-			// Reset the stream pointer
-			rin.seek(streamPointer);
+			exif.setThumbnailImage(IMGUtils.createThumbnail(rin));
 		}
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
@@ -1439,7 +1411,7 @@ public class TIFFTweaker {
 	public static void insertThumbnail(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		insertIRB(rin, rout, IMGUtils.createThumbnail8BIM(thumbnail), true);
+		insertIRB(rin, rout, Arrays.asList(IMGUtils.createThumbnail8BIM(thumbnail)), true);
 	}
 	
 	/**

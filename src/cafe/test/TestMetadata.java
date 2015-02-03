@@ -1,7 +1,5 @@
 package cafe.test;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +14,7 @@ import cafe.image.meta.MetadataType;
 import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.meta.iptc.IPTCRecord;
 import cafe.image.meta.iptc.IPTCApplicationTag;
+import cafe.image.util.IMGUtils;
 
 public class TestMetadata {
 
@@ -77,31 +76,13 @@ public class TestMetadata {
 	
 	private static BufferedImage createThumbnail(String filePath) throws IOException {
 		FileInputStream fin = null;
-		BufferedImage original = null;
 		try {
 			fin = new FileInputStream(filePath);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		original = javax.imageio.ImageIO.read(fin);
-		int imageWidth = original.getWidth();
-		int imageHeight = original.getHeight();
-		// Default thumbnail dimension
-		int thumbnailWidth = 160;
-		int thumbnailHeight = 120;
-		if(imageWidth < imageHeight) {
-			// Swap width and height to keep a relative aspect ratio
-			int temp = thumbnailWidth;
-			thumbnailWidth = thumbnailHeight;
-			thumbnailHeight = temp;
-		}			
-		if(imageWidth < thumbnailWidth) thumbnailWidth = imageWidth;
-		if(imageHeight < thumbnailHeight) thumbnailHeight = imageHeight;
-		BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = thumbnail.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-		        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.drawImage(original, 0, 0, thumbnailWidth, thumbnailHeight, null);
+		
+		BufferedImage thumbnail = IMGUtils.createThumbnail(fin);
 		
 		fin.close();
 		
