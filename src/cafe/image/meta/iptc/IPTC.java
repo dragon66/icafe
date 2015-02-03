@@ -2,14 +2,14 @@ package cafe.image.meta.iptc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import cafe.image.meta.Metadata;
-import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
 import cafe.io.IOUtils;
 
 public class IPTC extends Metadata {
-	private MetadataReader reader;
+	private IPTCReader reader;
 	
 	public static void showIPTC(byte[] iptc) {
 		if(iptc != null && iptc.length > 0) {
@@ -36,7 +36,11 @@ public class IPTC extends Metadata {
 		reader = new IPTCReader(data);
 	}
 	
-	public MetadataReader getReader() {
+	public List<IPTCDataSet> getDataSet(String key) {
+		return reader.getDataSet().get(key);
+	}
+	
+	public IPTCReader getReader() {
 		return reader;
 	}
 }

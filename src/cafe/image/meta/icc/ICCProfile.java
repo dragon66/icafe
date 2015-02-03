@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import cafe.image.meta.Metadata;
-import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
 import cafe.io.IOUtils;
 
@@ -37,7 +36,7 @@ import cafe.io.IOUtils;
 public class ICCProfile extends Metadata {
 
 	public static final int TAG_TABLE_OFFSET = 128;
-	private MetadataReader reader;
+	private ICCProfileReader reader;
 	
 	public static void showProfile(byte[] icc_profile) {
 		if(icc_profile != null && icc_profile.length > 0) {
@@ -68,7 +67,7 @@ public class ICCProfile extends Metadata {
 		this(IOUtils.inputStreamToByteArray(is));
 	}
 	
-	public MetadataReader getReader() {
+	public ICCProfileReader getReader() {
 		return reader;
 	}			
 }

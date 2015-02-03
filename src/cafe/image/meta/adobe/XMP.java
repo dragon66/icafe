@@ -21,12 +21,11 @@ package cafe.image.meta.adobe;
 import org.w3c.dom.Document;
 
 import cafe.image.meta.Metadata;
-import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
 
 public class XMP extends Metadata {
 	
-	private MetadataReader reader;
+	private XMPReader reader;
 
 	public XMP(byte[] data) {
 		super(MetadataType.XMP, data);
@@ -38,7 +37,7 @@ public class XMP extends Metadata {
 	}
 
 	@Override
-	public MetadataReader getReader() {
+	public XMPReader getReader() {
 		return reader;
 	}
 }

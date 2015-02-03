@@ -24,13 +24,12 @@ import java.util.Map;
 import org.w3c.dom.Document;
 
 import cafe.image.meta.Metadata;
-import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.Thumbnail;
 
 public class ImageMetadata extends Metadata {
 	
-	private MetadataReader reader;
+	private ImageMetadataReader reader;
 
 	public ImageMetadata(Document document) {
 		super(MetadataType.IMAGE, null);
@@ -43,7 +42,7 @@ public class ImageMetadata extends Metadata {
 	}
 
 	@Override
-	public MetadataReader getReader() {
+	public ImageMetadataReader getReader() {
 		return reader;
 	}
 }
