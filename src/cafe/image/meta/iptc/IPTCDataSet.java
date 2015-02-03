@@ -168,7 +168,7 @@ public class IPTCDataSet {
 		return true;
 	}
 	
-	public void show() {
+	public void print() {
 		
 		switch (recordNumber) {
 			case 1: //Envelope Record
