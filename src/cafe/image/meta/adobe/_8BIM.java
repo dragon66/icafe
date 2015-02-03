@@ -61,7 +61,7 @@ public class _8BIM {
 		return size;
 	}
 	
-	public void show() {
+	public void print() {
 		ImageResourceID eId  = ImageResourceID.fromShort(id);
 		
 		if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {

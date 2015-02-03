@@ -96,7 +96,7 @@ public class IPTCReader implements MetadataReader {
 		// Print multiple entry IPTCDataSet
 		for(List<IPTCDataSet> iptcs : datasetMap.values()) {
 			for(IPTCDataSet iptc : iptcs)
-				iptc.show();
+				iptc.print();
 		}
 	}
 }

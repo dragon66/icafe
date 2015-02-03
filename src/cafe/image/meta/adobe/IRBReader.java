@@ -112,7 +112,7 @@ public class IRBReader implements MetadataReader {
 		}
 		System.out.println("<<Adobe IRB infomation starts>>");
 		for(_8BIM _8bim : _8bims.values()) {
-			_8bim.show();
+			_8bim.print();
 		}
 		if(containsThumbnail) {
 			System.out.println(thumbnail.getResouceID());
