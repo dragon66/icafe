@@ -10,12 +10,8 @@ import java.util.Date;
 import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
-import cafe.image.tiff.ASCIIField;
-import cafe.image.tiff.IFD;
-import cafe.image.tiff.RationalField;
-import cafe.image.tiff.ShortField;
-import cafe.image.tiff.TiffField;
-import cafe.image.tiff.UndefinedField;
+import cafe.image.meta.exif.JpegExif;
+import cafe.image.tiff.FieldType;
 import cafe.image.util.IMGUtils;
 
 public class TestJPEGTweaker {
@@ -47,27 +43,16 @@ public class TestJPEGTweaker {
 	// This method is for testing only
 	private static Exif populateExif() throws Exception {
 		// Create an EXIF wrapper
-		Exif exif = new Exif(Exif.EXIF_FLAVOR_JPG);		
-		// ExifSubIFD
-		IFD exifSubIFD = new IFD();		
+		Exif exif = new JpegExif();		
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-		TiffField<?> tiffField = new RationalField(ExifTag.EXPOSURE_TIME.getValue(), new int[] {10, 600});
-		exifSubIFD.addField(tiffField);
-		tiffField = new RationalField(ExifTag.FNUMBER.getValue(), new int[] {49, 10});
-		exifSubIFD.addField(tiffField);
-		tiffField = new ShortField(ExifTag.ISO_SPEED_RATINGS.getValue(), new short[]{273});
-		exifSubIFD.addField(tiffField);
+		exif.addExifField(ExifTag.EXPOSURE_TIME, FieldType.RATIONAL, new int[] {10, 600});
+		exif.addExifField(ExifTag.FNUMBER, FieldType.RATIONAL, new int[] {49, 10});
+		exif.addExifField(ExifTag.ISO_SPEED_RATINGS, FieldType.SHORT, new short[]{273});
 		//All four bytes should be interpreted as ASCII values - represents [0220]
-		tiffField = new UndefinedField(ExifTag.EXIF_VERSION.getValue(), new byte[]{48, 50, 50, 48});
-		exifSubIFD.addField(tiffField);
-		tiffField = new ASCIIField(ExifTag.DATE_TIME_ORIGINAL.getValue(), formatter.format(new Date()) + '\0');
-		exifSubIFD.addField(tiffField);
-		tiffField = new ASCIIField(ExifTag.DATE_TIME_DIGITIZED.getValue(), formatter.format(new Date()) + '\0');
-		exifSubIFD.addField(tiffField);
-		tiffField = new RationalField(ExifTag.FOCAL_LENGTH.getValue(), new int[] {240, 10});
-		exifSubIFD.addField(tiffField);
-		// Insert ExifSubIFD
-		exif.addExif(exifSubIFD);
+		exif.addExifField(ExifTag.EXIF_VERSION, FieldType.UNDEFINED, new byte[]{48, 50, 50, 48});
+		exif.addExifField(ExifTag.DATE_TIME_ORIGINAL, FieldType.ASCII, formatter.format(new Date()) + '\0');
+		exif.addExifField(ExifTag.DATE_TIME_DIGITIZED, FieldType.ASCII, formatter.format(new Date()) + '\0');
+		exif.addExifField(ExifTag.FOCAL_LENGTH, FieldType.RATIONAL, new int[] {240, 10});
 		// Insert ThumbNailIFD
 		// Since we don't provide thumbnail image, it will be created later from the input stream
 		exif.addThumbnail(null); 

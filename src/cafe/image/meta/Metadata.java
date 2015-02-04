@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    03Feb2015  Added insertExif()
  * WY    03Feb2015  Added removeExif()
  * WY    03Feb2015  Added insertICCProfile()
  * WY    27Jan2015  Added insertIRB()
@@ -40,6 +41,7 @@ import cafe.image.bmp.BMPTweaker;
 import cafe.image.gif.GIFTweaker;
 import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.meta.adobe._8BIM;
+import cafe.image.meta.exif.Exif;
 import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.png.PNGTweaker;
 import cafe.image.tiff.TIFFTweaker;
@@ -97,6 +99,35 @@ public abstract class Metadata {
 	
 	public static void extractThumbnails(String image, String pathToThumbnail) throws IOException {
 		extractThumbnails(new File(image), pathToThumbnail);
+	}
+	
+	public static void insertExif(InputStream is, OutputStream out, Exif exif) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate EXIF inserting to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.insertExif(pushbackStream, out, exif);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
+				TIFFTweaker.insertExif(randIS, randOS, exif);
+				randIS.close();
+				randOS.close();
+				break;
+			case GIF:
+			case PCX:
+			case TGA:
+			case BMP:
+			case PNG:
+				System.out.println(imageType + " image format does not support EXIF data");
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("EXIF data inserting is not supported for " + imageType + " image");				
+		}		
 	}
 	
 	public static void insertICCProfile(InputStream is, OutputStream out, ICC_Profile icc_profile) throws IOException {

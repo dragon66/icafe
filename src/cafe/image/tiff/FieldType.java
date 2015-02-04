@@ -39,7 +39,74 @@ public enum FieldType {
 	private FieldType(String name, short value) {
 		this.name = name;
 		this.value = value;
-	}	
+	}
+	
+	public static TiffField<?> createField(Tag tag, FieldType type, Object data) {
+		if(data == null) throw new IllegalArgumentException("Input data is null");
+    	TiffField<?> retValue = null;
+    	Class<?> typeClass = data.getClass();
+    	switch(type) {
+    		case ASCII:
+    			if(typeClass == String.class) {
+    				retValue = new ASCIIField(tag.getValue(), (String)data);    				
+    			}
+    			break;
+    		case BYTE:
+    		case SBYTE:
+    		case UNDEFINED:
+    			if(typeClass == byte[].class) {
+    				byte[] byteData = (byte[])data;
+    				if(byteData.length > 0) {
+    					if(type == FieldType.BYTE)
+    						retValue = new ByteField(tag.getValue(), byteData);
+    					else if(type == FieldType.SBYTE)
+    						retValue = new SByteField(tag.getValue(), byteData);
+    					else
+    						retValue = new UndefinedField(tag.getValue(), byteData);
+    				}
+    			}
+    			break;
+    		case SHORT:
+    		case SSHORT:
+    			if(typeClass == short[].class) {
+    				short[] shortData = (short[])data;
+    				if(shortData.length > 0) {
+    					if(type == FieldType.SHORT)
+    						retValue = new ShortField(tag.getValue(), shortData);    
+    					else
+    						retValue = new SShortField(tag.getValue(), shortData); 
+    				}
+    			}
+    			break;
+    		case LONG:
+    		case SLONG:
+    			if(typeClass == int[].class) {
+    				int[] intData = (int[])data;
+    				if(intData.length > 0) {
+    					if(type == FieldType.LONG)
+    						retValue = new LongField(tag.getValue(), intData);
+    					else
+    						retValue = new SLongField(tag.getValue(), intData);
+    				}
+    			}
+    			break;
+    		case RATIONAL:
+    		case SRATIONAL:
+    			if(typeClass == int[].class) {
+    				int[] intData = (int[])data;
+    				if(intData.length > 0 && intData.length % 2 == 0) {
+    					if(type == FieldType.RATIONAL)
+    						retValue = new RationalField(tag.getValue(), intData);
+    					else
+    						retValue = new SRationalField(tag.getValue(), intData);
+    				}
+    			}
+    			break;    			
+    		default:
+    	}
+    	
+		return retValue;
+	}
 	
 	public String getName() {
 		return name;
@@ -67,7 +134,52 @@ public enum FieldType {
     {
       for(FieldType fieldType : values())
            typeMap.put(fieldType.getValue(), fieldType);
-    } 
+    }
+    
+    public static boolean validateData(FieldType type, Object data) {
+    	if(data == null) throw new IllegalArgumentException("Input data is null");
+    	boolean retValue = false;
+    	Class<?> typeClass = data.getClass();
+    	switch(type) {
+    		case ASCII:
+				if(typeClass == String.class) {
+					retValue = true;    				
+				}
+				break;
+    		case BYTE:
+    		case SBYTE:
+    		case UNDEFINED:
+    			if(typeClass == byte[].class) {
+    				byte[] byteData = (byte[])data;
+    				if(byteData.length > 0) retValue = true;
+    			}
+    			break;
+    		case SHORT:
+    		case SSHORT:
+    			if(typeClass == short[].class) {
+    				short[] shortData = (short[])data;
+    				if(shortData.length > 0) retValue = true;    				
+    			}
+    			break;
+    		case LONG:
+    		case SLONG:
+    			if(typeClass == int[].class) {
+    				int[] intData = (int[])data;
+    				if(intData.length > 0) retValue = true;    				
+    			}
+    			break;
+    		case RATIONAL:
+    		case SRATIONAL:
+    			if(typeClass == int[].class) {
+    				int[] intData = (int[])data;
+    				if(intData.length > 0 && intData.length % 2 == 0) retValue = true;  				
+    			}
+    			break;    			
+    		default:
+    	}
+    	
+		return retValue;    	
+    }
 	
 	private final String name;
 	private final short value;

@@ -78,6 +78,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import cafe.image.ImageFrame;
 import cafe.image.ImageIO;
 import cafe.image.ImageParam;
@@ -102,6 +103,7 @@ import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.GPSTag;
 import cafe.image.meta.exif.InteropTag;
+import cafe.image.meta.exif.TiffExif;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCDataSet;
@@ -950,6 +952,10 @@ public class TIFFTweaker {
 		return counts;
 	}
 	
+	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif) throws IOException {
+		insertExif(rin, rout, exif, 0);
+	}
+	
 	/**
 	 * Insert EXIF data with optional thumbnail IFD
 	 * 
@@ -958,34 +964,28 @@ public class TIFFTweaker {
 	 * @param exif EXIF wrapper instance
 	 * @throws Exception
 	 */
-	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif) throws Exception {
-		// If no thumbnail image is provided in EXIF wrapper, one will be created from the input stream
-		if(exif.isThumbnailRequired() && !exif.hasThumbnail()) {
-			// Insert the thumbnail into EXIF wrapper
-			exif.setThumbnailImage(IMGUtils.createThumbnail(rin));
-		}
+	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif, int pageNumber) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
 		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
-		IFD imageIFD = ifds.get(0);
-		if(exif.getIFD(TiffTag.EXIF_SUB_IFD) != null) {
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD imageIFD = ifds.get(pageNumber);
+		if(exif.getExifIFD() != null) {
 			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD.getValue(), new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exif.getIFD(TiffTag.EXIF_SUB_IFD));
+			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exif.getExifIFD());
 		}
-		if(exif.getIFD(TiffTag.GPS_SUB_IFD) != null) {
+		if(exif.getGPSIFD() != null) {
 			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD.getValue(), new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.GPS_SUB_IFD, exif.getIFD(TiffTag.GPS_SUB_IFD));
+			imageIFD.addChild(TiffTag.GPS_SUB_IFD, exif.getGPSIFD());
 		}
 		int writeOffset = FIRST_WRITE_OFFSET;
 		// Copy pages
-		writeOffset = copyPages(ifds.subList(0, 1), writeOffset, rin, rout);
-		if(exif.isThumbnailRequired() && exif.hasThumbnail())
-			imageIFD.setNextIFDOffset(rout, writeOffset);
-		// This line is very important!!!
-		rout.seek(writeOffset);
-		exif.write(rout);
-		int firstIFDOffset = imageIFD.getStartOffset();
+		writeOffset = copyPages(ifds, writeOffset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();
 
 		writeToStream(rout, firstIFDOffset);
 	}
@@ -2411,7 +2411,7 @@ public class TIFFTweaker {
 			}
 			field = currIFD.getField(TiffTag.EXIF_SUB_IFD.getValue());
 			if(field != null) { // We have found EXIF SubIFD
-				metadataMap.put(MetadataType.EXIF, new Exif(currIFD));
+				metadataMap.put(MetadataType.EXIF, new TiffExif(currIFD));
 			}
 		}
 		System.out.println("*** TIFF snooping ends ***");

@@ -72,6 +72,7 @@ import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifReader;
 import cafe.image.meta.exif.ExifThumbnail;
+import cafe.image.meta.exif.JpegExif;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.image.ImageMetadata;
 import cafe.image.meta.iptc.IPTCDataSet;
@@ -420,9 +421,9 @@ public class JPEGTweaker {
 	 * @param exif Exif instance
 	 * @throws Exception 
 	 */
-	public static void insertExif(InputStream is, OutputStream os, Exif exif) throws Exception {
+	public static void insertExif(InputStream is, OutputStream os, Exif exif) throws IOException {
 		// We need thumbnail image but don't have one, create one from the current image input stream
-		if(exif.isThumbnailRequired() && !exif.hasThumbnail()) {
+		if(exif.isThumbnailRequired() && !exif.containsImage()) {
 			is = new FileCacheRandomAccessInputStream(is);
 			// Insert thumbnail into EXIF wrapper
 			exif.setThumbnailImage(IMGUtils.createThumbnail(is));
@@ -886,7 +887,7 @@ public class JPEGTweaker {
 		IOUtils.readFully(is, buf);		
 		// EXIF segment.
 		if (Arrays.equals(ArrayUtils.subArray(buf, 0, 6), exif_id)||Arrays.equals(buf, exif2_id)) {
-			return new Exif(ArrayUtils.subArray(buf, 6, length-8));
+			return new JpegExif(ArrayUtils.subArray(buf, 6, length-8));
 		} else if(new String(ArrayUtils.subArray(buf, 0, xmp_id.length())).equals(xmp_id)) {
 			XMP xmp = new XMP(ArrayUtils.subArray(buf, xmp_id.length(), length - xmp_id.length() - 2));
 			xmp.showMetadata();

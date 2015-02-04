@@ -45,21 +45,12 @@ public class ExifThumbnail extends Thumbnail {
 	// Comprised of an IFD and an associated image
 	// Create thumbnail IFD (IFD1 in the case of JPEG EXIF segment)
 	private IFD thumbnailIFD = new IFD(); 
-	// JPEG and TIFF, perhaps other formats have subtle difference
-	private int flavor;
-	private int quality = 90;
+	private int writeQuality = 90; // Default JPEG write quality
 	
-	public ExifThumbnail() {
-		this(Exif.EXIF_FLAVOR_JPG); // Default to JPEG flavor
-	}
+	public ExifThumbnail() { }
 	
-	public ExifThumbnail(int flavor) {
-		this.flavor = flavor;
-	}
-	
-	public ExifThumbnail(int flavor, BufferedImage thumbnail) {
+	public ExifThumbnail(BufferedImage thumbnail) {
 		super(thumbnail);
-		this.flavor = flavor;
 	}
 	
 	public ExifThumbnail(int width, int height, int dataType, byte[] compressedThumbnail, IFD thumbnailIFD) {
@@ -67,8 +58,8 @@ public class ExifThumbnail extends Thumbnail {
 		this.thumbnailIFD = thumbnailIFD;
 	}
 	
-	public void setImageQuality(int quality) {
-		this.quality = quality;
+	public void setWriteQuality(int quality) {
+		this.writeQuality = quality;
 	}
 	
 	public void write(RandomAccessOutputStream randOS, int offset) throws IOException {
@@ -79,13 +70,8 @@ public class ExifThumbnail extends Thumbnail {
 		int thumbnailHeight = thumbnail.getHeight();
 		thumbnailIFD.addField(new ShortField(TiffTag.IMAGE_WIDTH.getValue(), new short[]{(short)thumbnailWidth}));
 		thumbnailIFD.addField(new ShortField(TiffTag.IMAGE_LENGTH.getValue(), new short[]{(short)thumbnailHeight}));
-		if(flavor == Exif.EXIF_FLAVOR_JPG) {
-			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{0})); // Place holder
-			thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{0})); // Place holder
-		} else {
-			thumbnailIFD.addField(new LongField(TiffTag.STRIP_OFFSETS.getValue(), new int[]{0})); // Place holder
-			thumbnailIFD.addField(new LongField(TiffTag.STRIP_BYTE_COUNTS.getValue(), new int[]{0})); // Place holder
-		}
+		thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{0})); // Place holder
+		thumbnailIFD.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{0})); // Place holder
 		// Other related tags
 		thumbnailIFD.addField(new RationalField(TiffTag.X_RESOLUTION.getValue(), new int[] {thumbnailWidth, 1}));
 		thumbnailIFD.addField(new RationalField(TiffTag.Y_RESOLUTION.getValue(), new int[] {thumbnailHeight, 1}));
@@ -95,10 +81,7 @@ public class ExifThumbnail extends Thumbnail {
 		thumbnailIFD.addField(new ShortField(TiffTag.BITS_PER_SAMPLE.getValue(), new short[]{8, 8, 8}));
 		thumbnailIFD.addField(new ShortField(TiffTag.YCbCr_SUB_SAMPLING.getValue(), new short[]{1, 1}));
 		thumbnailIFD.addField(new ShortField(TiffTag.PLANAR_CONFIGURATTION.getValue(), new short[]{(short)TiffFieldEnum.PlanarConfiguration.CONTIGUOUS.getValue()}));
-		if(flavor == Exif.EXIF_FLAVOR_JPG)
-			thumbnailIFD.addField(new ShortField(TiffTag.COMPRESSION.getValue(), new short[]{(short)TiffFieldEnum.Compression.OLD_JPG.getValue()}));
-		else
-			thumbnailIFD.addField(new ShortField(TiffTag.COMPRESSION.getValue(), new short[]{(short)TiffFieldEnum.Compression.JPG.getValue()}));			
+		thumbnailIFD.addField(new ShortField(TiffTag.COMPRESSION.getValue(), new short[]{(short)TiffFieldEnum.Compression.OLD_JPG.getValue()}));
 		thumbnailIFD.addField(new ShortField(TiffTag.ROWS_PER_STRIP.getValue(), new short[]{(short)thumbnailHeight}));
 		// Write the thumbnail IFD
 		// This line is very important!!!
@@ -109,7 +92,7 @@ public class ExifThumbnail extends Thumbnail {
 		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
 		// Create JPEGOptions		
 		JPEGOptions jpegOptions = new JPEGOptions();			
-		jpegOptions.setQuality(quality);
+		jpegOptions.setQuality(writeQuality);
 		builder.imageOptions(jpegOptions);
 		// Set ImageParam to the writer
 		jpgWriter.setImageParam(builder.build());
@@ -123,16 +106,10 @@ public class ExifThumbnail extends Thumbnail {
 		}
 		long finishOffset = randOS.getStreamPointer();			
 		int totalOut = (int)(finishOffset - startOffset);
-		if(flavor == Exif.EXIF_FLAVOR_JPG) {// Update fields
-			randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue()).getDataOffset());
-			randOS.writeInt((int)startOffset);
-			randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue()).getDataOffset());
-			randOS.writeInt(totalOut);
-		} else if(flavor == Exif.EXIF_FLAVOR_TIFF) {
-			randOS.seek(thumbnailIFD.getField(TiffTag.STRIP_OFFSETS.getValue()).getDataOffset());
-			randOS.writeInt((int)startOffset);
-			randOS.seek(thumbnailIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()).getDataOffset());
-			randOS.writeInt(totalOut);
-		}
+		// Update fields
+		randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue()).getDataOffset());
+		randOS.writeInt((int)startOffset);
+		randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue()).getDataOffset());
+		randOS.writeInt(totalOut);		
 	}
 }

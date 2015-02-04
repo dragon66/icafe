@@ -46,6 +46,18 @@ public class ExifReader implements MetadataReader {
 		ifds.add(0, imageIFD);
 	}
 	
+	public IFD getExifIFD() {
+		return ifds.get(0).getChild(TiffTag.EXIF_SUB_IFD);
+	}
+	
+	public IFD getGPSIFD() {
+		return ifds.get(0).getChild(TiffTag.GPS_SUB_IFD);
+	}
+	
+	public IFD getImageIFD() {
+		return ifds.get(0);
+	}
+	
 	public List<IFD> getIFDs() {
 		return ifds;
 	}
