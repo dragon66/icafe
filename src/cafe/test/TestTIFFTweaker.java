@@ -139,7 +139,7 @@ public class TestTIFFTweaker {
 				TIFFTweaker.splitPages(rin, FileUtils.getNameWithoutExtension(new File(args[0])));
 			} else if(args[1].equalsIgnoreCase("insertexif")) {
 				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("EXIF.tif"));
-				TIFFTweaker.insertExif(rin, rout, populateExif());
+				TIFFTweaker.insertExif(rin, rout, populateExif(), true);
 				rout.close();
 			} else if(args[1].equalsIgnoreCase("removepage")) {
 				int pageCount = TIFFTweaker.getPageCount(rin);

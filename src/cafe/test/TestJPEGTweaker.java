@@ -35,7 +35,7 @@ public class TestJPEGTweaker {
 		fout.close();
 		fin = new FileInputStream(args[0]);
 		fout = new FileOutputStream("exif_inserted.jpg");
-		JPEGTweaker.insertExif(fin, fout, populateExif());
+		JPEGTweaker.insertExif(fin, fout, populateExif(), true);
 		fin.close();
 		fout.close();
 	}
@@ -55,7 +55,7 @@ public class TestJPEGTweaker {
 		exif.addExifField(ExifTag.FOCAL_LENGTH, FieldType.RATIONAL, new int[] {240, 10});
 		// Insert ThumbNailIFD
 		// Since we don't provide thumbnail image, it will be created later from the input stream
-		exif.addThumbnail(null); 
+		exif.addThumbnail(null);
 			
 		return exif;
 	}

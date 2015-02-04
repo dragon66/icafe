@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    04Feb2015  Revised insertExif() to keep original EXIF data is needed
  * WY    03Feb2015  Added removeExif() to remove EXIF and GPS data from TIFF image
  * WY    01Feb2015  Revised to remove duplicates when combining normal and Photoshop IPTC
  * WY    29Jan2015  Revised insertIPTC() and insertIRB() to keep old data
@@ -952,8 +953,8 @@ public class TIFFTweaker {
 		return counts;
 	}
 	
-	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif) throws IOException {
-		insertExif(rin, rout, exif, 0);
+	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif, boolean update) throws IOException {
+		insertExif(rin, rout, exif, 0, update);
 	}
 	
 	/**
@@ -962,9 +963,10 @@ public class TIFFTweaker {
 	 * @param rin input image stream
 	 * @param rout output image stream
 	 * @param exif EXIF wrapper instance
+	 * @param update True to keep the original data, otherwise false
 	 * @throws Exception
 	 */
-	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif, int pageNumber) throws IOException {
+	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif, int pageNumber, boolean update) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
@@ -974,14 +976,31 @@ public class TIFFTweaker {
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD imageIFD = ifds.get(pageNumber);
-		if(exif.getExifIFD() != null) {
+		IFD exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
+		IFD gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
+		IFD newExifSubIFD = exif.getExifIFD();
+		IFD newGpsSubIFD = exif.getGPSIFD();
+		
+		if(update && exifSubIFD != null && newExifSubIFD != null) {
+			exifSubIFD.addFields(newExifSubIFD.getFields());
+			newExifSubIFD = exifSubIFD;
+		}
+		
+		if(newExifSubIFD != null) {
 			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD.getValue(), new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exif.getExifIFD());
+			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);		
 		}
-		if(exif.getGPSIFD() != null) {
+		
+		if(update && gpsSubIFD != null && newGpsSubIFD != null) {
+			gpsSubIFD.addFields(newGpsSubIFD.getFields());
+			newGpsSubIFD = gpsSubIFD;
+		}
+		
+		if(newGpsSubIFD != null) {
 			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD.getValue(), new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.GPS_SUB_IFD, exif.getGPSIFD());
+			imageIFD.addChild(TiffTag.GPS_SUB_IFD, newGpsSubIFD);		
 		}
+		
 		int writeOffset = FIRST_WRITE_OFFSET;
 		// Copy pages
 		writeOffset = copyPages(ifds, writeOffset, rin, rout);

@@ -31,6 +31,7 @@ import cafe.image.meta.MetadataType;
 import cafe.image.tiff.FieldType;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.TiffField;
+import cafe.image.tiff.TiffTag;
 import cafe.io.IOUtils;
 
 /**
@@ -66,7 +67,7 @@ public abstract class Exif extends Metadata {
 	
 	public Exif(IFD imageIFD) {
 		this();
-		this.imageIFD = imageIFD;
+		setImageIFD(imageIFD);
 	}
 	
 	public void addExifField(ExifTag tag, FieldType type, Object data) {
@@ -104,6 +105,10 @@ public abstract class Exif extends Metadata {
 		return thumbnail != null && thumbnail.containsImage();
 	}
 	
+	public IFD getImageIFD() {
+		return imageIFD;
+	}
+	
 	public IFD getExifIFD() {
 		return exifSubIFD;
 	}
@@ -116,8 +121,34 @@ public abstract class Exif extends Metadata {
 		return reader;
 	}
 	
+	public ExifThumbnail getThumbnail() {
+		return thumbnail;
+	}
+	
 	public boolean isThumbnailRequired() {
 		return isThumbnailRequired;
+	}
+	
+	public void setExifIFD(IFD exifSubIFD) {
+		this.exifSubIFD = exifSubIFD;
+	}
+	
+	public void setGPSSubIFD(IFD gpsSubIFD) {
+		this.gpsSubIFD = gpsSubIFD;
+	}
+	
+	public void setImageIFD(IFD imageIFD) {
+		this.imageIFD = imageIFD;
+		IFD exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
+		if(exifSubIFD != null)
+			this.exifSubIFD = exifSubIFD;
+		IFD gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
+		if(gpsSubIFD != null)
+			this.gpsSubIFD = gpsSubIFD;
+	}
+	
+	public void setThumbnail(ExifThumbnail thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 	
 	public void setThumbnailImage(BufferedImage thumbnail) {

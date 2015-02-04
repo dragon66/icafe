@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    04Feb2015  Revised insertExif() to keep existing EXIF data is needed
  * WY    29Jan2015  Revised insertIPTC() and insertIRB() to keep old data
  * WY    27Jan2015  Added insertIRBThumbnail() to insert Photoshop IRB thumbnail
  * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB into APP13
@@ -58,6 +59,8 @@ import java.io.OutputStream;
 
 import cafe.image.ImageIO;
 import cafe.image.ImageType;
+import cafe.image.tiff.IFD;
+import cafe.image.tiff.TiffTag;
 import cafe.image.util.IMGUtils;
 import cafe.image.writer.ImageWriter;
 import cafe.image.meta.Metadata;
@@ -419,15 +422,17 @@ public class JPEGTweaker {
 	 * @param is input image stream 
 	 * @param os output image stream
 	 * @param exif Exif instance
+	 * @param update True to keep the original data, otherwise false
 	 * @throws Exception 
 	 */
-	public static void insertExif(InputStream is, OutputStream os, Exif exif) throws IOException {
+	public static void insertExif(InputStream is, OutputStream os, Exif exif, boolean update) throws IOException {
 		// We need thumbnail image but don't have one, create one from the current image input stream
 		if(exif.isThumbnailRequired() && !exif.containsImage()) {
 			is = new FileCacheRandomAccessInputStream(is);
 			// Insert thumbnail into EXIF wrapper
 			exif.setThumbnailImage(IMGUtils.createThumbnail(is));
 		}
+		Exif oldExif = null;
 		// Copy the original image and insert EXIF data
 		boolean finished = false;
 		int length = 0;	
@@ -481,13 +486,60 @@ public class JPEGTweaker {
 				    	// We add EXIF data right before the SOS segment.
 				    	// Another position to add EXIF data would be right
 				    	// after SOI marker
-				    	exif.write(os);
+				    	IFD newExifSubIFD = exif.getExifIFD();
+				    	IFD newGpsSubIFD = exif.getGPSIFD();
+				    	IFD newImageIFD = exif.getImageIFD();
+				    	ExifThumbnail newThumbnail = exif.getThumbnail();
+				    	// Got to do something to keep the old data
+				    	if(update && oldExif != null) {
+				    		ExifReader reader = oldExif.getReader();
+				    		if(reader != null) reader.read();
+				    		IFD imageIFD = reader.getImageIFD();
+					    	IFD exifSubIFD = reader.getExifIFD();
+					    	IFD gpsSubIFD = reader.getGPSIFD();
+					    	ExifThumbnail thumbnail = reader.getThumbnail();
+					    	
+					    	if(imageIFD != null) {
+					    		if(newImageIFD != null)
+					    			imageIFD.addFields(newImageIFD.getFields());
+					    		newImageIFD = imageIFD;
+			    			}
+					    	if(thumbnail != null) {
+					    		if(newThumbnail == null)
+					    			newThumbnail = thumbnail;
+							}
+					    	if(exifSubIFD != null) {
+					    		if(newExifSubIFD != null)
+					    			exifSubIFD.addFields(newExifSubIFD.getFields());
+					    		newExifSubIFD = exifSubIFD;
+			    			}
+					    	if(gpsSubIFD != null) {
+					    		if(newGpsSubIFD != null)
+					    			gpsSubIFD.addFields(newGpsSubIFD.getFields());
+					    		newGpsSubIFD = gpsSubIFD;
+			    			}
+				    	} 
+				    	// If we have ImageIFD, set Image IFD attached with EXIF and GPS
+				     	if(newImageIFD != null) {
+				    		if(newExifSubIFD != null)
+					    		newImageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);
+				    		if(newGpsSubIFD != null)
+					    		newImageIFD.addChild(TiffTag.GPS_SUB_IFD, newGpsSubIFD);
+				    		exif.setImageIFD(newImageIFD);
+				    	} else { // Otherwise, set EXIF and GPS IFD separately
+				    		exif.setExifIFD(newExifSubIFD);
+				    		exif.setGPSSubIFD(newGpsSubIFD);
+				    	}
+				   		exif.setThumbnail(newThumbnail);
+				     	exif.write(os); // Now insert the new EXIF to the JPEG
 				    	IOUtils.writeShortMM(os, marker);
 						copyToEnd(is, os);
 						finished = true; // No more marker to read, we are done. 
 						break;
 				    case APP1:
-				    	readAPP1(is);
+				    	Metadata meta = readAPP1(is); // Read and remove the old EXIF data
+				    	if(meta != null && meta.getType() == MetadataType.EXIF)
+				    		oldExif = (Exif)meta;
 						marker = IOUtils.readShortMM(is);
 						break;
 				    default:
