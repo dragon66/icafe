@@ -93,7 +93,7 @@ public class JpegExif extends Exif {
 			imageIFD.addChild(TiffTag.GPS_SUB_IFD, gpsSubIFD);
 		}
 		int offset = imageIFD.write(randOS, firstIFDOffset);
-		if(thumbnail != null) {
+		if(thumbnail != null && thumbnail.containsImage()) {
 			imageIFD.setNextIFDOffset(randOS, offset);
 			thumbnail.write(randOS, offset);
 		}

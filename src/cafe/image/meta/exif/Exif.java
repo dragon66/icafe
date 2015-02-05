@@ -90,9 +90,7 @@ public abstract class Exif extends Metadata {
 			throw new IllegalArgumentException("Cannot create required GPS TIFF field");
 	}	
 	
-	/**
-	 * @param thumbnail optional thumbnail image. If null, will be generated from the input image
-	 */
+	
 	public void addThumbnail(ExifThumbnail thumbnail) {
 		if(thumbnail == null)
 			this.thumbnail = new ExifThumbnail(); 
@@ -147,8 +145,16 @@ public abstract class Exif extends Metadata {
 			this.gpsSubIFD = gpsSubIFD;
 	}
 	
+	/**
+	 * @param thumbnail an ExifThumbnail instance. If null, a thumbnail will be
+	 *        generated from the input image.
+	 */	
 	public void setThumbnail(ExifThumbnail thumbnail) {
-		this.thumbnail = thumbnail;
+		if(thumbnail == null)
+			this.thumbnail = new ExifThumbnail(); 
+		else
+			this.thumbnail = thumbnail;
+		this.isThumbnailRequired = true;
 	}
 	
 	public void setThumbnailImage(BufferedImage thumbnail) {
