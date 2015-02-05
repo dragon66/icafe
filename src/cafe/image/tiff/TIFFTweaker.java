@@ -2325,6 +2325,7 @@ public class TIFFTweaker {
 						
 					break;
 				case RATIONAL:
+				case SRATIONAL:
 					int len = 2*field_length;
 					ldata = new int[len];	
 					rin.seek(offset);
@@ -2337,10 +2338,15 @@ public class TIFFTweaker {
 						rin.seek(toOffset);
 						ldata[j+1] = rin.readInt();
 						toOffset += 4;
-					}	
-					tiffIFD.addField(new RationalField(tag, ldata));
+					}
 					System.out.print(indent);
-					System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, true));
+					if(ftype == FieldType.SRATIONAL) {
+						tiffIFD.addField(new SRationalField(tag, ldata));
+						System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, false));
+					} else {
+						tiffIFD.addField(new RationalField(tag, ldata));
+						System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, true));
+					}
 					break;
 				case IFD:
 					ldata = new int[field_length];
