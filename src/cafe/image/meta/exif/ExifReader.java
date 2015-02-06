@@ -1,23 +1,34 @@
+/**
+ * Copyright (c) 2014-2015 by Wen Yu.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Any modifications to this file must keep this entire header intact.
+ *
+ * Change History - most recent changes go on top of previous changes
+ *
+ * ExifReader.java
+ *
+ * Who   Date       Description
+ * ====  =========  =================================================================
+ * WY    06Feb2015  Moved showIFDs() and showIFD() to TIFFTweaker and renamed them to
+ *                  printIFDs() and printIFD()
+ */
+
 package cafe.image.meta.exif;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
 import cafe.image.meta.MetadataReader;
 import cafe.image.meta.Thumbnail;
-import cafe.image.tiff.FieldType;
 import cafe.image.tiff.IFD;
 import cafe.image.tiff.TIFFTweaker;
-import cafe.image.tiff.Tag;
 import cafe.image.tiff.TiffField;
 import cafe.image.tiff.TiffTag;
 import cafe.io.FileCacheRandomAccessInputStream;
@@ -25,7 +36,6 @@ import cafe.io.FileCacheRandomAccessOutputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
 import cafe.io.RandomAccessOutputStream;
-import cafe.string.StringUtils;
 
 public class ExifReader implements MetadataReader {
 	private boolean loaded;
@@ -119,108 +129,6 @@ public class ExifReader implements MetadataReader {
 	    loaded = true;
 	}
 	
-	private static void showIFDs(Collection<IFD> list, String indent) {
-		int id = 0;
-		System.out.print(indent);
-		for(IFD currIFD : list) {
-			System.out.println("IFD #" + id);
-			showIFD(currIFD, TiffTag.class, indent);
-			id++;
-		}
-	}
-	
-	private static void showIFD(IFD currIFD, Class<? extends Tag> tagClass, String indent) {
-		// Use reflection to invoke fromShort(short) method
-		Method method = null;
-		try {
-			method = tagClass.getDeclaredMethod("fromShort", short.class);
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		}
-		Collection<TiffField<?>> fields = currIFD.getFields();
-		int i = 0;
-		for(TiffField<?> field : fields) {
-			System.out.print(indent);
-			System.out.println("Field #" + i);
-			System.out.print(indent);
-			short tag = field.getTag();
-			Tag ftag = TiffTag.UNKNOWN;
-			try {
-				ftag = (Tag)method.invoke(null, tag);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
-			if (ftag == TiffTag.UNKNOWN) {
-				System.out.println("Tag: " + ftag + " [Value: 0x"+ Integer.toHexString(tag&0xffff) + "]" + " (Unknown)");
-			} else {
-				System.out.println("Tag: " + ftag);
-			}
-			FieldType ftype = field.getType();				
-			System.out.print(indent);
-			System.out.println("Field type: " + ftype);
-			int field_length = field.getLength();
-			System.out.print(indent);
-			System.out.println("Field length: " + field_length);
-			System.out.print(indent);			
-			switch (ftype)
-			{
-				case BYTE:
-				case UNDEFINED:
-					byte[] data = (byte[])field.getData();
-					if(ftag == ExifTag.EXIF_VERSION || ftag == ExifTag.FLASH_PIX_VERSION)
-						System.out.println("Field value: " + new String(data));
-					else
-						System.out.println("Field value: " + StringUtils.byteArrayToHexString(data, 0, 10));
-					break;
-				case ASCII:
-					System.out.println("Field value: " + (String)field.getData());
-					break;
-				case SHORT:
-					short[] sdata = (short[])field.getData();
-					System.out.println("Field value: " + StringUtils.shortArrayToString(sdata, 0, 10, true) + " " + ftag.getFieldDescription(sdata[0]&0xffff));
-					break;
-				case LONG:
-					int[] ldata = (int[])field.getData();
-					System.out.println("Field value: " + StringUtils.longArrayToString(ldata, 0, 10, true) + " " + ftag.getFieldDescription(ldata[0]&0xffff));
-					break;
-				case FLOAT:
-					float[] fdata = (float[])field.getData();
-					System.out.println("Field value: " + Arrays.toString(fdata));							
-					break;
-				case DOUBLE:
-					double[] ddata = (double[])field.getData();
-					System.out.println("Field value: " + Arrays.toString(ddata));
-					break;
-				case RATIONAL:
-					ldata = (int[])field.getData();	
-					System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, true));
-					break;
-				default:
-					break;					
-			}
-			i++;
-		}
-		Map<Tag, IFD> children = currIFD.getChildren();
-		
-		if(children.get(TiffTag.EXIF_SUB_IFD) != null) {
-			System.out.print(indent + ">>>>>>>>> ");
-			System.out.println("Exif SubIFD:");
-			showIFD(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, indent + "--------- ");
-		}
-		
-		if(children.get(TiffTag.GPS_SUB_IFD) != null) {
-			System.out.print(indent + ">>>>>>>>> ");
-			System.out.println("GPS SubIFD:");
-			showIFD(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, indent + "--------- ");
-		}		
-	}
-
 	@Override
 	public void showMetadata() {
 		if(!loaded) {
@@ -231,7 +139,7 @@ public class ExifReader implements MetadataReader {
 			}
 		}
 		System.out.println("Exif reader output starts =>");
-		showIFDs(ifds, "");
+		TIFFTweaker.printIFDs(ifds, "");
 		if(containsThumbnail) {
 			System.out.println("Exif thumbnail format: " + (thumbnail.getDataType() == 1? "DATA_TYPE_JPG":"DATA_TYPE_TIFF"));
 			System.out.println("Exif thumbnail data length: " + thumbnail.getCompressedImage().length);
