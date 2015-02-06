@@ -9,17 +9,11 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * GIFTweaker.java
+ * BMPTweaker.java
  *
  * Who   Date       Description
- * ====  =========  ====================================================================
- * WY    20Jan2015  Revised to work with Metadata.showMetadata()
- * WY    28Dec2014  Added snoop() to show GIF image metadata 
- * WY    18Nov2014  Fixed bug with splitFramesEx() disposal method "RESTORE_TO_PREVIOUS" 
- * WY    17Nov2014  Added writeAnimatedGIF(GIFFrame) to work with GIFFrame
- * WY    03Oct2014  Added splitFramesEx2() to split animated GIFs into separate images
- * WY    22Apr2014  Added splitFramesEx() to split animated GIFs into separate images
- * WY    20Apr2014  Added splitFrames() to split animated GIFs into frames
+ * ====  =========  =================================================
+ * WY    29Dec2014  Initial creation
  */
 
 package cafe.image.bmp;
