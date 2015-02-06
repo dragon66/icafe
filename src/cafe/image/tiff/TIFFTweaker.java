@@ -2514,39 +2514,52 @@ public class TIFFTweaker {
 		readIFDs(null, null, TiffTag.class, list, offset, rin);
 	}
 	
-	public static Map<MetadataType, Metadata> readMetadata(RandomAccessInputStream rin) throws IOException	{
+	public static Map<MetadataType, Metadata> readMetadata(RandomAccessInputStream rin) throws IOException {
+		return readMetadata(rin, 0);
+	}
+	
+	public static Map<MetadataType, Metadata> readMetadata(RandomAccessInputStream rin, int pageNumber) throws IOException	{
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		System.out.println("*** TIFF snooping starts ***");
 		int offset = readHeader(rin);
-		List<IFD> list = new ArrayList<IFD>();
-		readIFDs(null, null, TiffTag.class, list, offset, rin);
-		if(list.size() > 0) {
-			IFD currIFD = list.get(0);
-			TiffField<?> field = currIFD.getField(TiffTag.ICC_PROFILE.getValue()); 
-			if(field != null) { // We have found ICC_Profile
-				metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile((byte[])field.getData()));
-			}
-			field = currIFD.getField(TiffTag.XMP.getValue());
-			if(field != null) { // We have found XMP
-				metadataMap.put(MetadataType.XMP, new XMP((byte[])field.getData()));
-			}
-			field = currIFD.getField(TiffTag.PHOTOSHOP.getValue());
-			if(field != null) { // We have found EXIF SubIFD
-				metadataMap.put(MetadataType.PHOTOSHOP_IRB, new IRB((byte[])field.getData()));
-			}
-			field = currIFD.getField(TiffTag.IPTC.getValue());
-			if(field != null) { // We have found EXIF SubIFD
-				FieldType type = field.getType();
-				if(type == FieldType.LONG)
-					metadataMap.put(MetadataType.IPTC, new IPTC(ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN)));
-				else
-					metadataMap.put(MetadataType.IPTC, new IPTC((byte[])field.getData()));
-			}
-			field = currIFD.getField(TiffTag.EXIF_SUB_IFD.getValue());
-			if(field != null) { // We have found EXIF SubIFD
-				metadataMap.put(MetadataType.EXIF, new TiffExif(currIFD));
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD currIFD = ifds.get(pageNumber);
+		TiffField<?> field = currIFD.getField(TiffTag.ICC_PROFILE.getValue()); 
+		if(field != null) { // We have found ICC_Profile
+			metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile((byte[])field.getData()));
+		}
+		field = currIFD.getField(TiffTag.XMP.getValue());
+		if(field != null) { // We have found XMP
+			metadataMap.put(MetadataType.XMP, new XMP((byte[])field.getData()));
+		}
+		field = currIFD.getField(TiffTag.PHOTOSHOP.getValue());
+		if(field != null) { // We have found Photoshop IRB
+			IRB irb = new IRB((byte[])field.getData());
+			metadataMap.put(MetadataType.PHOTOSHOP_IRB, irb);
+			_8BIM photoshop_8bim = irb.get8BIM(ImageResourceID.IPTC_NAA.getValue());
+			if(photoshop_8bim != null) { // If we have IPTC data inside Photoshop, keep it
+				IPTC iptc = new IPTC(photoshop_8bim.getData());
+				metadataMap.put(MetadataType.IPTC, iptc);
 			}
 		}
+		field = currIFD.getField(TiffTag.IPTC.getValue());
+		if(field != null) { // We have found IPTC data
+			FieldType type = field.getType();
+			if(type == FieldType.LONG)
+				metadataMap.put(MetadataType.IPTC, new IPTC(ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN)));
+			else
+				metadataMap.put(MetadataType.IPTC, new IPTC((byte[])field.getData()));
+		}
+		field = currIFD.getField(TiffTag.EXIF_SUB_IFD.getValue());
+		if(field != null) { // We have found EXIF SubIFD
+			metadataMap.put(MetadataType.EXIF, new TiffExif(currIFD));
+		}
+		
 		System.out.println("*** TIFF snooping ends ***");
 		
 		return metadataMap;
