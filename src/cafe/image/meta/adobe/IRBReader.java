@@ -40,6 +40,13 @@ public class IRBReader implements MetadataReader {
 	}
 	
 	public Map<Short, _8BIM> get8BIM() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return _8bims;
 	}
 	
