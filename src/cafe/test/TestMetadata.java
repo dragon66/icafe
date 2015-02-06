@@ -5,15 +5,23 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
+import cafe.image.meta.exif.Exif;
+import cafe.image.meta.exif.ExifTag;
+import cafe.image.meta.exif.JpegExif;
+import cafe.image.meta.exif.TiffExif;
 import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.meta.iptc.IPTCRecord;
 import cafe.image.meta.iptc.IPTCApplicationTag;
+import cafe.image.tiff.FieldType;
 import cafe.image.util.IMGUtils;
 
 public class TestMetadata {
@@ -62,6 +70,22 @@ public class TestMetadata {
 		Metadata.insertIRBThumbnail(fin, fout, createThumbnail("images/f1.tif"));
 		
 		fin.close();
+		fout.close();		
+
+		fin = new FileInputStream("images/exif.tif");
+		fout = new FileOutputStream("exif-exif-inserted.tif");
+		
+		Metadata.insertExif(fin, fout, populateExif(TiffExif.class), true);
+		
+		fin.close();
+		fout.close();
+		
+		fin = new FileInputStream("images/12.jpg");
+		fout = new FileOutputStream("12-exif-inserted.jpg");
+		
+		Metadata.insertExif(fin, fout, populateExif(JpegExif.class), true);
+		
+		fin.close();
 		fout.close();
 	}
 	
@@ -87,5 +111,25 @@ public class TestMetadata {
 		fin.close();
 		
 		return thumbnail;
+	}
+	
+	// This method is for testing only
+	private static Exif populateExif(Class<?> exifClass) throws IOException {
+		// Create an EXIF wrapper
+		Exif exif = exifClass == (TiffExif.class)?new TiffExif() : new JpegExif();		
+		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
+		exif.addExifField(ExifTag.EXPOSURE_TIME, FieldType.RATIONAL, new int[] {10, 600});
+		exif.addExifField(ExifTag.FNUMBER, FieldType.RATIONAL, new int[] {49, 10});
+		exif.addExifField(ExifTag.ISO_SPEED_RATINGS, FieldType.SHORT, new short[]{273});
+		//All four bytes should be interpreted as ASCII values - represents [0220]
+		exif.addExifField(ExifTag.EXIF_VERSION, FieldType.UNDEFINED, new byte[]{48, 50, 50, 48});
+		exif.addExifField(ExifTag.DATE_TIME_ORIGINAL, FieldType.ASCII, formatter.format(new Date()));
+		exif.addExifField(ExifTag.DATE_TIME_DIGITIZED, FieldType.ASCII, formatter.format(new Date()));
+		exif.addExifField(ExifTag.FOCAL_LENGTH, FieldType.RATIONAL, new int[] {240, 10});		
+		// Insert ThumbNailIFD
+		// Since we don't provide thumbnail image, it will be created later from the input stream
+		exif.addThumbnail(null);
+		
+		return exif;
 	}
 }
