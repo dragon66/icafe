@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    06Feb2015  Added printIFDs() and printIFD()
  * WY    04Feb2015  Revised insertExif() to keep original EXIF data is needed
  * WY    03Feb2015  Added removeExif() to remove EXIF and GPS data from TIFF image
  * WY    01Feb2015  Revised to remove duplicates when combining normal and Photoshop IPTC
@@ -75,6 +76,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -2047,7 +2049,113 @@ public class TIFFTweaker {
 		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		
 		return writeOffset;
-	}	
+	}
+	
+	public static void printIFDs(Collection<IFD> list, String indent) {
+		int id = 0;
+		System.out.print(indent);
+		for(IFD currIFD : list) {
+			System.out.println("IFD #" + id);
+			printIFD(currIFD, TiffTag.class, indent);
+			id++;
+		}
+	}
+	
+	public static void printIFD(IFD currIFD, Class<? extends Tag> tagClass, String indent) {
+		// Use reflection to invoke fromShort(short) method
+		Method method = null;
+		try {
+			method = tagClass.getDeclaredMethod("fromShort", short.class);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		Collection<TiffField<?>> fields = currIFD.getFields();
+		int i = 0;
+		for(TiffField<?> field : fields) {
+			System.out.print(indent);
+			System.out.println("Field #" + i);
+			System.out.print(indent);
+			short tag = field.getTag();
+			Tag ftag = TiffTag.UNKNOWN;
+			try {
+				ftag = (Tag)method.invoke(null, tag);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			if (ftag == TiffTag.UNKNOWN) {
+				System.out.println("Tag: " + ftag + " [Value: 0x"+ Integer.toHexString(tag&0xffff) + "]" + " (Unknown)");
+			} else {
+				System.out.println("Tag: " + ftag);
+			}
+			FieldType ftype = field.getType();				
+			System.out.print(indent);
+			System.out.println("Field type: " + ftype);
+			int field_length = field.getLength();
+			System.out.print(indent);
+			System.out.println("Field length: " + field_length);
+			System.out.print(indent);			
+			switch (ftype)
+			{
+				case BYTE:
+				case UNDEFINED:
+					byte[] data = (byte[])field.getData();
+					if(ftag == ExifTag.EXIF_VERSION || ftag == ExifTag.FLASH_PIX_VERSION)
+						System.out.println("Field value: " + new String(data));
+					else
+						System.out.println("Field value: " + StringUtils.byteArrayToHexString(data, 0, 10));
+					break;
+				case ASCII:
+					System.out.println("Field value: " + (String)field.getData());
+					break;
+				case SHORT:
+					short[] sdata = (short[])field.getData();
+					System.out.println("Field value: " + StringUtils.shortArrayToString(sdata, 0, 10, true) + " " + ftag.getFieldDescription(sdata[0]&0xffff));
+					break;
+				case LONG:
+					int[] ldata = (int[])field.getData();
+					System.out.println("Field value: " + StringUtils.longArrayToString(ldata, 0, 10, true) + " " + ftag.getFieldDescription(ldata[0]&0xffff));
+					break;
+				case FLOAT:
+					float[] fdata = (float[])field.getData();
+					System.out.println("Field value: " + Arrays.toString(fdata));							
+					break;
+				case DOUBLE:
+					double[] ddata = (double[])field.getData();
+					System.out.println("Field value: " + Arrays.toString(ddata));
+					break;
+				case RATIONAL:
+				case SRATIONAL:
+					ldata = (int[])field.getData();
+					if(ftype == FieldType.RATIONAL)
+						System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, true));
+					else
+						System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, false));
+					break;
+				default:
+					break;					
+			}
+			i++;
+		}
+		Map<Tag, IFD> children = currIFD.getChildren();
+		
+		if(children.get(TiffTag.EXIF_SUB_IFD) != null) {
+			System.out.print(indent + ">>>>>>>>> ");
+			System.out.println("Exif SubIFD:");
+			printIFD(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, indent + "--------- ");
+		}
+		
+		if(children.get(TiffTag.GPS_SUB_IFD) != null) {
+			System.out.print(indent + ">>>>>>>>> ");
+			System.out.println("GPS SubIFD:");
+			printIFD(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, indent + "--------- ");
+		}		
+	}
 	
 	private static int readHeader(RandomAccessInputStream rin) throws IOException {
 		int offset = 0;
