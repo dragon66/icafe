@@ -11,6 +11,7 @@
 package cafe.image.tiff;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import cafe.io.RandomAccessOutputStream;
 
@@ -25,6 +26,10 @@ public class FloatField extends TiffField<float[]> {
 	public FloatField(short tag, float[] data) {
 		super(tag, FieldType.FLOAT, data.length);
 		this.data = data;
+	}
+	
+	public String getDataAsString() {
+		return Arrays.toString(data);
 	}
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
