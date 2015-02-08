@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import cafe.io.RandomAccessOutputStream;
 
 /**
@@ -90,6 +91,13 @@ public final class IFD {
 	
 	public TiffField<?> getField(short tag) {
 		return tiffFields.get(tag);
+	}
+	
+	public String getFieldAsString(short tag) {
+		TiffField<?> field = tiffFields.get(tag);
+		if(field != null)
+			return field.getDataAsString();
+		return null;
 	}
 	
 	/** Get all the fields for this IFD from the internal map. */
