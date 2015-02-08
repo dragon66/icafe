@@ -100,7 +100,7 @@ public enum InteropTag implements Tag {
 	 * @return a string representation of the field value or empty string if no meaningful string
 	 * 	representation exists.
 	 */
-    public String getFieldDescription(int value) {
+    public String getFieldAsString(Object value) {
     	return "";
 	}
 	

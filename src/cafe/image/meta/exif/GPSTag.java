@@ -10,6 +10,7 @@
 
 package cafe.image.meta.exif;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,12 +29,51 @@ public enum GPSTag implements Tag {
 	// EXIF GPSSubIFD tags
 	GPS_VERSION_ID("GPSVersionID", (short)0x0000),
 	GPS_LATITUDE_REF("GPSLatitudeRef", (short)0x0001),
-	GPS_LATITUDE("GPSLatitude", (short)0x0002),
+	GPS_LATITUDE("GPSLatitude", (short)0x0002) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 6)
+				throw new IllegalArgumentException("Wrong number of GPSLatitute data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.###");
+	        return df.format(1.0*intValues[0]/intValues[1]) + "°" + df.format(1.0*intValues[2]/intValues[3])
+	        		+ "'" + df.format(1.0*intValues[4]/intValues[5]) + "\"";	
+		}
+	},
 	GPS_LONGITUDE_REF("GPSLongitudeRef", (short)0x0003),
-	GPS_LONGITUDE("GPSLongitude", (short)0x0004),
+	GPS_LONGITUDE("GPSLongitude", (short)0x0004) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 6)
+				throw new IllegalArgumentException("Wrong number of GPSLongitude data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.###");
+	        return df.format(1.0*intValues[0]/intValues[1]) + "°" + df.format(1.0*intValues[2]/intValues[3])
+	        		+ "'" + df.format(1.0*intValues[4]/intValues[5]) + "\"";	
+		}
+	},
 	GPS_ALTITUDE_REF("GPSAltitudeRef", (short)0x0005),
-	GPS_ALTITUDE("GPSAltitude", (short)0x0006),
-	GPS_TIME_STAMP("GPSTimeStamp", (short)0x0007),
+	GPS_ALTITUDE("GPSAltitude", (short)0x0006) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of GPSAltitute data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.###");
+	        return df.format(1.0*intValues[0]/intValues[1]) + " m";	
+		}
+	},
+	GPS_TIME_STAMP("GPSTimeStamp", (short)0x0007) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 6)
+				throw new IllegalArgumentException("Wrong number of GPSTimeStamp data number: " + intValues.length);
+			//formatting numbers up to 2 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.##");
+	        return df.format(1.0*intValues[0]/intValues[1]) + ":" + df.format(1.0*intValues[2]/intValues[3])
+	        		+ ":" + df.format(1.0*intValues[4]/intValues[5]);	
+		}
+	},
 	GPS_SATELLITES("GPSSatellites", (short)0x0008),
 	GPS_STATUS("GPSStatus", (short)0x0009),
 	GPS_MEASURE_MODE("GPSMeasureMode", (short)0x000a),	
@@ -43,16 +83,63 @@ public enum GPSTag implements Tag {
 	GPS_TRACK_REF("GPSTrackRef", (short)0x000e),
 	GPS_TRACK("GPSTrack", (short)0x000f),
 	GPS_IMG_DIRECTION_REF("GPSImgDirectionRef", (short)0x0010),
-	GPS_IMG_DIRECTION("GPSImgDirection", (short)0x0011),
+	GPS_IMG_DIRECTION("GPSImgDirection", (short)0x0011) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of GPSImgDirection data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.###");
+	        return df.format(1.0*intValues[0]/intValues[1]) + "°";	
+		}
+	},
 	GPS_MAP_DATUM("GPSMapDatum", (short)0x0012),
 	GPS_DEST_LATITUDE_REF("GPSDestLatitudeRef", (short)0x0013),
-	GPS_DEST_LATITUDE("GPSDestLatitude", (short)0x0014),
+	GPS_DEST_LATITUDE("GPSDestLatitude", (short)0x0014) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 6)
+				throw new IllegalArgumentException("Wrong number of GPSDestLatitute data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.###");
+	        return df.format(1.0*intValues[0]/intValues[1]) + "°" + df.format(1.0*intValues[2]/intValues[3])
+	        		+ "'" + df.format(1.0*intValues[4]/intValues[5]) + "\"";	
+		}
+	},
 	GPS_DEST_LONGITUDE_REF("GPSDestLongitudeRef", (short)0x0015),
-	GPS_DEST_LONGITUDE("GPSDestLongitude", (short)0x0016),
+	GPS_DEST_LONGITUDE("GPSDestLongitude", (short)0x0016) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 6)
+				throw new IllegalArgumentException("Wrong number of GPSDestLongitude data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.###");
+	        return df.format(1.0*intValues[0]/intValues[1]) + "°" + df.format(1.0*intValues[2]/intValues[3])
+	        		+ "'" + df.format(1.0*intValues[4]/intValues[5]) + "\"";	
+		}
+	},
 	GPS_DEST_BEARING_REF("GPSDestBearingRef", (short)0x0017),
-	GPS_DEST_BEARING("GPSDestBearing", (short)0x0018),
+	GPS_DEST_BEARING("GPSDestBearing", (short)0x0018) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of GPSDestBearing data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.###");
+	        return df.format(1.0*intValues[0]/intValues[1]) + " m";	
+		}
+	},
 	GPS_DEST_DISTANCE_REF("GPSDestDistanceRef", (short)0x0019),
-	GPS_DEST_DISTANCE("GPSDestDistance", (short)0x001a),
+	GPS_DEST_DISTANCE("GPSDestDistance", (short)0x001a) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of GPSDestDistance data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.###");
+	        return df.format(1.0*intValues[0]/intValues[1]) + " m";	
+		}
+	},
 	GPS_PROCESSING_METHOD("GPSProcessingMethod", (short)0x001b),
 	GPS_AREA_INFORMATION("GPSAreaInformation", (short)0x001c),
 	GPS_DATE_STAMP("GPSDateStamp", (short)0x001d),
@@ -107,7 +194,7 @@ public enum GPSTag implements Tag {
 	 * @return a string representation of the field value or empty string if no meaningful string
 	 * 	representation exists.
 	 */
-	public String getFieldDescription(int value) {
+	public String getFieldAsString(Object value) {
     	return "";
 	}
 	

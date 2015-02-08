@@ -10,6 +10,7 @@
 
 package cafe.image.tiff;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,11 +25,12 @@ import cafe.string.StringUtils;
 public enum TiffTag implements Tag {	
 	// Definition includes all baseline and extended tags.	
 	NEW_SUBFILE_TYPE("NewSubfileType", (short)0x00FE, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
+			int intValue = ((int[])value)[0];
 			String description = "Warning: unknown new subfile type value: " + value;
 			
-			switch(value) {
+			switch(intValue) {
 				case 0: description = "Default value 0"; break; 
 				case 1:	description = "Reduced-resolution image data"; break;
 				case 2: description = "A single page of a multi-page image";	break;
@@ -44,11 +46,12 @@ public enum TiffTag implements Tag {
 	},
 	
 	SUBFILE_TYPE("SubfileType", (short)0x00FF, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
+			int intValue = ((int[])value)[0];
 			String description = "Unknown subfile type value: " + value;
 			
-			switch(value) {
+			switch(intValue) {
 				case 0: description = "Default value 0"; break;
 				case 1:	description = "Full-resolution image data"; break;
 				case 2: description = "Reduced-resolution image data"; break;
@@ -82,8 +85,8 @@ public enum TiffTag implements Tag {
 	},
 	
 	COMPRESSION("Compression", (short)0x0103, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
-			return TiffFieldEnum.Compression.fromValue(value).getDescription();
+		public String getFieldAsString(Object value) {
+			return TiffFieldEnum.Compression.fromValue(((int[])value)[0]).getDescription();
 		}
 		
 		public FieldType getFieldType() {
@@ -92,8 +95,8 @@ public enum TiffTag implements Tag {
 	},
 	
 	PHOTOMETRIC_INTERPRETATION("PhotometricInterpretation", (short)0x0106, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
-			return TiffFieldEnum.PhotoMetric.fromValue(value).getDescription();
+		public String getFieldAsString(Object value) {
+			return TiffFieldEnum.PhotoMetric.fromValue(((int[])value)[0]).getDescription();
 		}
 		
 		public FieldType getFieldType() {
@@ -102,11 +105,12 @@ public enum TiffTag implements Tag {
 	},
 	
 	THRESHOLDING("Thresholding", (short)0x0107, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
+			int intValue = ((int[])value)[0];
 			String description = "Unknown thresholding value: " + value;
 			
-			switch(value) {
+			switch(intValue) {
 				case 1:	description = "No dithering or halftoning has been applied to the image data"; break;
 				case 2: description = "An ordered dither or halftone technique has been applied to the image data";	break;
 				case 3: description = "A randomized process such as error diffusion has been applied to the image data";	break;
@@ -129,13 +133,14 @@ public enum TiffTag implements Tag {
 	},
 	
 	FILL_ORDER("FillOrder", (short)0x010A, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			// We only has two values for this tag, so we use an array instead of a map
 			String[] values = {"Msb2Lsb", "Lsb2Msb"};
-			if(value != 1 && value != 2) 
-				return "Warning: unknown fill order value: " + value;
+			int intValue = ((int[])value)[0];
+			if(intValue != 1 && intValue != 2) 
+				return "Warning: unknown fill order value: " + intValue;
 			
-			return values[value-1]; 
+			return values[intValue-1]; 
 		}
 		
 		public FieldType getFieldType() {
@@ -174,13 +179,14 @@ public enum TiffTag implements Tag {
 	},
 	
 	ORIENTATION("Orientation", (short)0x0112, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			String[] values = {"TopLeft", "TopRight", "BottomRight", "BottomLeft", "LeftTop",
 								"RightTop",	"RightBottom", "LeftBottom"};
-			if(value >= 1 && value <=8)
-				return values[value - 1];
+			int intValue = ((int[])value)[0];
+			if(intValue >= 1 && intValue <= 8)
+				return values[intValue - 1];
 			
-			return "Warning: unknown planar configuration value: " + value;
+			return "Warning: unknown planar configuration value: " + intValue;
 		}
 	},
 	
@@ -215,20 +221,37 @@ public enum TiffTag implements Tag {
 	},
 	
 	X_RESOLUTION("XResolution", (short)0x011A, Attribute.BASELINE) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of XResolution data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.##");
+	        return df.format(1.0*intValues[0]/intValues[1]);	
+		}
+		
 		public FieldType getFieldType() {
 			return FieldType.RATIONAL;
 		}
 	},
 	
 	Y_RESOLUTION("YResolution", (short)0x011B, Attribute.BASELINE) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of YResolution data number: " + intValues.length);
+			//formatting numbers up to 3 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.##");
+	        return df.format(1.0*intValues[0]/intValues[1]);	
+		}
 		public FieldType getFieldType() {
 			return FieldType.RATIONAL;
 		}
 	},
 	
 	PLANAR_CONFIGURATTION("PlanarConfiguration", (short)0x011C, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
-			return TiffFieldEnum.PlanarConfiguration.fromValue(value).getDescription();
+		public String getFieldAsString(Object value) {
+			return TiffFieldEnum.PlanarConfiguration.fromValue(((int[])value)[0]).getDescription();
 		}
 		
 		public FieldType getFieldType() {
@@ -261,16 +284,17 @@ public enum TiffTag implements Tag {
 	 *  3455, then the resulting actual value is 0.3455. 
 	 */
 	GRAY_RESPONSE_UNIT("GrayResponseUnit", (short)0x0122, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
 			String[] values = {"Number represents tenths of a unit", "Number represents hundredths of a unit",
 					"Number represents thousandths of a unit", "Number represents ten-thousandths of a unit",
 					"Number represents hundred-thousandths of a unit"};
 			// Valid values are from 1 to 5
-			if(value >= 1 && value <= 5)
-				return values[value - 1];
+			int intValue = ((int[])value)[0];
+			if(intValue >= 1 && intValue <= 5)
+				return values[intValue - 1];
 			
-			return "Warning: unknown resolution unit value: " + value;
+			return "Warning: unknown resolution unit value: " + intValue;
 		}
 		
 		public FieldType getFieldType() {
@@ -285,11 +309,12 @@ public enum TiffTag implements Tag {
 	},
 	
 	T4_OPTIONS("T4Options", (short)0x0124, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Warning: unknown T4 options value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Warning: unknown T4 options value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 0: description = "Basic 1-dimensional coding"; break; 
 				case 1:	description = "2-dimensional coding"; break;
 				case 2: description = "Uncompressed mode";	break;
@@ -305,11 +330,12 @@ public enum TiffTag implements Tag {
 	}, 
 	
 	T6_OPTIONS("T6Options", (short)0x0125, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Warning: unknown T6 options value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Warning: unknown T6 options value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 2: description = "Uncompressed mode"; break;
 				case 0: description = "Default value 0";
 			}			
@@ -323,14 +349,15 @@ public enum TiffTag implements Tag {
 	},
 	
 	RESOLUTION_UNIT("ResolutionUnit", (short)0x0128, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			// We only has three values for this tag, so we use an array instead of a map
 			String[] values = {"No absolute unit of measurement (Used for images that may have a non-square aspect ratio, but no meaningful absolute dimensions)", 
 					"Inch", "Centimeter"};
-			if(value != 1 && value != 2 && value != 3) 
-				return "Warning: unknown resolution unit value: " + value;
+			int intValue = ((int[])value)[0];
+			if(intValue != 1 && intValue != 2 && intValue != 3) 
+				return "Warning: unknown resolution unit value: " + intValue;
 			
-			return values[value-1]; 
+			return values[intValue-1]; 
 		}
 		
 		public FieldType getFieldType() {
@@ -367,11 +394,12 @@ public enum TiffTag implements Tag {
 	HOST_COMPUTER("HostComputer", (short)0x013C, Attribute.BASELINE),
 	
 	PREDICTOR("Predictor", (short)0x013D, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Unknown predictor value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Unknown predictor value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 1:	description = "No prediction scheme used before coding"; break;
 				case 2: description = "Horizontal differencing"; break;
 				case 3: description = "Floating point horizontal differencing";	break;
@@ -431,11 +459,12 @@ public enum TiffTag implements Tag {
 	},
 	
 	INK_SET("InkSet", (short)0x014C, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Warning: unknown InkSet value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Warning: unknown InkSet value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 1:	description = "CMYK"; break;
 				case 2: description = "Not CMYK"; break;
 			}
@@ -454,14 +483,15 @@ public enum TiffTag implements Tag {
 	TARGET_PRINTER("TargetPrinter", (short)0x0151, Attribute.EXTENDED),
 	
 	EXTRA_SAMPLES("ExtraSamples", (short)0x0152, Attribute.BASELINE) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			// We only has three values for this tag, so we use an array instead of a map
 			String[] values = {"Unspecified data", "Associated alpha data (with pre-multiplied color)",
 					"Unassociated alpha data"};
-			if(value >= 0 && value <= 2)
-				return values[value]; 
+			int intValue = ((int[])value)[0];
+			if(intValue >= 0 && intValue <= 2)
+				return values[intValue]; 
 			
-			return "Warning: unknown extra samples value: " + value;
+			return "Warning: unknown extra samples value: " + intValue;
 		}
 		
 		public FieldType getFieldType() {
@@ -470,14 +500,15 @@ public enum TiffTag implements Tag {
 	},
 	
 	SAMPLE_FORMAT("SampleFormat", (short)0x0153, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			String[] values = {"Unsigned integer data", "Two's complement signed integer data",
 					"IEEE floating point data",	"Undefined data format", "Complex integer data",
 					"Complex IEED floating point data"};
-			if(value >= 1 && value <= 6)
-				return values[value - 1]; 
+			int intValue = ((int[])value)[0];
+			if(intValue >= 1 && intValue <= 6)
+				return values[intValue - 1]; 
 			
-			return "Warning: unknown sample format value: " + value;
+			return "Warning: unknown sample format value: " + intValue;
 		}
 	},
 	
@@ -489,11 +520,12 @@ public enum TiffTag implements Tag {
 	Y_CLIP_PATH_UNITS("YClipPathUnits", (short)0x0159, Attribute.EXTENDED),
 	
 	INDEXED("Indexed", (short)0x015A, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Warning: unknown Indexed value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Warning: unknown Indexed value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 0:	description = "Not indexde"; break;
 				case 1: description = "Indexed"; break;
 			}
@@ -513,11 +545,12 @@ public enum TiffTag implements Tag {
 	GLOBAL_PARAMETERS_IFD("GlobalParametersIFD", (short)0x0190, Attribute.EXTENDED),
 	
 	PROFILE_TYPE("ProfileType", (short)0x0191, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Warning: unknown profile type value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Warning: unknown profile type value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 0:	description = "Unspecified"; break;
 				case 1: description = "Group 3 fax"; break;
 			}
@@ -531,14 +564,15 @@ public enum TiffTag implements Tag {
 	},
 	
 	FAX_PROFILE("FaxProfile", (short)0x0192, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			String[] values = {"Does not conform to a profile defined for TIFF for facsimile", "Minimal black & white lossless, Profile S",
 					"Extended black & white lossless, Profile F",	"Lossless JBIG black & white, Profile J", "Lossy color and grayscale, Profile C",
 					"Lossless color and grayscale, Profile L", "Mixed Raster Content, Profile M"};
-			if(value >= 0 && value <= 6)
-				return values[value]; 
+			int intValue = ((int[])value)[0];
+			if(intValue >= 0 && intValue <= 6)
+				return values[intValue]; 
 			
-			return "Warning: unknown fax profile value: " + value;
+			return "Warning: unknown fax profile value: " + intValue;
 		}
 		
 		public FieldType getFieldType() {
@@ -547,11 +581,12 @@ public enum TiffTag implements Tag {
 	},
 	
 	CODING_METHODS("CodingMethods", (short)0x0193, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Unknown coding method value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Unknown coding method value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 1:	description  = "Unspecified compression"; break;
 				case 2: description  = "1-dimensional coding, ITU-T Rec. T.4 (MH - Modified Huffman)"; break;
 				case 4: description  = "2-dimensional coding, ITU-T Rec. T.4 (MR - Modified Read)"; break;
@@ -651,11 +686,12 @@ public enum TiffTag implements Tag {
 	},
 	
 	YCbCr_POSITIONING("YCbCrPositioning", (short)0x0213, Attribute.EXTENDED) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Warning: unknown YCbCr positioning value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Warning: unknown YCbCr positioning value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 1:	description = "Centered"; break;
 				case 2: description = "Cosited"; break;
 			}
@@ -817,7 +853,7 @@ public enum TiffTag implements Tag {
 	 * @return a string representation of the field value or empty string if no meaningful string
 	 * 	representation exists.
 	 */
-    public String getFieldDescription(int value) {
+    public String getFieldAsString(Object value) {
     	return "";
 	}
     
