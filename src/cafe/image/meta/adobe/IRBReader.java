@@ -117,7 +117,7 @@ public class IRBReader implements MetadataReader {
 				e.printStackTrace();
 			}			
 		}
-		System.out.println("<<Adobe IRB infomation starts>>");
+		System.out.println("<<Adobe IRB information starts>>");
 		for(_8BIM _8bim : _8bims.values()) {
 			_8bim.print();
 		}
@@ -146,6 +146,6 @@ public class IRBReader implements MetadataReader {
 			System.out.println("Number of planes: "  + thumbnail.getNumOfPlanes());
 		}
 		
-		System.out.println("<<Adobe IRB infomation ends>>");
+		System.out.println("<<Adobe IRB information ends>>");
 	}
 }
