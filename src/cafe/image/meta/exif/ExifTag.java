@@ -10,6 +10,7 @@
 
 package cafe.image.meta.exif;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,14 +35,27 @@ public enum ExifTag implements Tag {
 	ISO_SPEED_RATINGS("ISOSpeedRatings", (short)0x8827),
 	OECF("OECF", (short)0x8828),
 	
-	EXIF_VERSION("ExifVersion", (short)0x9000),
+	EXIF_VERSION("ExifVersion", (short)0x9000) {
+		public String getFieldAsString(Object value) {
+			return new String((byte[])value);
+		}
+	},
 	DATE_TIME_ORIGINAL("DateTimeOriginal", (short)0x9003),
 	DATE_TIME_DIGITIZED("DateTimeDigitized", (short)0x9004),
 	
 	COMPONENT_CONFIGURATION("ComponentConfiguration", (short)0x9101),
 	COMPRESSED_BITS_PER_PIXEL("CompressedBitsPerPixel", (short)0x9102),
 	
-	SHUTTER_SPEED_VALUE("ShutterSpeedValue", (short)0x9201),
+	SHUTTER_SPEED_VALUE("ShutterSpeedValue", (short)0x9201) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of EXIF ShutterSpeedValue data number: " + intValues.length);
+			//formatting numbers up to 2 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.##");
+	        return df.format(1.0*intValues[0]/intValues[1]);	
+		}
+	},
 	APERTURE_VALUE("ApertureValue", (short)0x9202),
 	BRIGHTNESS_VALUE("BrightValue", (short)0x9203),
 	EXPOSURE_BIAS_VALUE("ExposureBiasValue", (short)0x9204),
@@ -60,13 +74,18 @@ public enum ExifTag implements Tag {
 	SUB_SEC_TIME_ORIGINAL("SubSecTimeOriginal", (short)0x9291),
 	SUB_SEC_TIME_DIGITIZED("SubSecTimeDigitized", (short)0x9292),
 	
-	FLASH_PIX_VERSION("FlashPixVersion", (short)0xa000),
+	FLASH_PIX_VERSION("FlashPixVersion", (short)0xa000) {
+		public String getFieldAsString(Object value) {
+			return new String((byte[])value);
+		}
+	},
 	COLOR_SPACE("ColorSpace", (short)0xa001) {
-		public String getFieldDescription(int value) {
+		public String getFieldAsString(Object value) {
 			//
-			String description = "Warning: unknown color space value: " + value;
+			int intValue = ((int[])value)[0];
+			String description = "Warning: unknown color space value: " + intValue;
 			
-			switch(value) {
+			switch(intValue) {
 				case 1:	description = "sRGB"; break;
 				case 65535: description = "Uncalibrated";	break;
 			}
@@ -178,7 +197,7 @@ public enum ExifTag implements Tag {
 	 * @return a string representation of the field value or empty string if no meaningful string
 	 * 	representation exists.
 	 */
-    public String getFieldDescription(int value) {
+    public String getFieldAsString(Object value) {
     	return "";
 	}
 	
