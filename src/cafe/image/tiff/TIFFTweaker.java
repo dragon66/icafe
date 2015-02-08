@@ -2099,61 +2099,33 @@ public class TIFFTweaker {
 			int field_length = field.getLength();
 			System.out.print(indent);
 			System.out.println("Field length: " + field_length);
-			System.out.print(indent);			
-			switch (ftype)
-			{
-				case BYTE:
-				case UNDEFINED:
-					byte[] data = (byte[])field.getData();
-					if(ftag == ExifTag.EXIF_VERSION || ftag == ExifTag.FLASH_PIX_VERSION)
-						System.out.println("Field value: " + new String(data));
-					else
-						System.out.println("Field value: " + StringUtils.byteArrayToHexString(data, 0, 10));
-					break;
-				case ASCII:
-					System.out.println("Field value: " + (String)field.getData());
-					break;
-				case SHORT:
-					short[] sdata = (short[])field.getData();
-					System.out.println("Field value: " + StringUtils.shortArrayToString(sdata, 0, 10, true) + " " + ftag.getFieldDescription(sdata[0]&0xffff));
-					break;
-				case LONG:
-					int[] ldata = (int[])field.getData();
-					System.out.println("Field value: " + StringUtils.longArrayToString(ldata, 0, 10, true) + " " + ftag.getFieldDescription(ldata[0]&0xffff));
-					break;
-				case FLOAT:
-					float[] fdata = (float[])field.getData();
-					System.out.println("Field value: " + Arrays.toString(fdata));							
-					break;
-				case DOUBLE:
-					double[] ddata = (double[])field.getData();
-					System.out.println("Field value: " + Arrays.toString(ddata));
-					break;
-				case RATIONAL:
-				case SRATIONAL:
-					ldata = (int[])field.getData();
-					if(ftype == FieldType.RATIONAL)
-						System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, true));
-					else
-						System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, false));
-					break;
-				default:
-					break;					
-			}
+			System.out.print(indent);
+			
+			System.out.print("Field value: ");
+			
+			if(ftype == FieldType.SHORT || ftype == FieldType.SSHORT)
+				System.out.println(field.getDataAsString() + " => " + ftag.getFieldAsString(field.getDataAsLong()));
+			else
+				System.out.println(field.getDataAsString() + " => " + ftag.getFieldAsString(field.getData()));
 			i++;
 		}
+		
 		Map<Tag, IFD> children = currIFD.getChildren();
 		
 		if(children.get(TiffTag.EXIF_SUB_IFD) != null) {
-			System.out.print(indent + ">>>>>>>>> ");
-			System.out.println("Exif SubIFD:");
+			System.out.print(indent + "--------- ");
+			System.out.println("<<Exif SubIFD starts>>");
 			printIFD(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, indent + "--------- ");
+			System.out.print(indent + "--------- ");
+			System.out.println("<<Exif SubIFD ends>>");
 		}
 		
 		if(children.get(TiffTag.GPS_SUB_IFD) != null) {
-			System.out.print(indent + ">>>>>>>>> ");
-			System.out.println("GPS SubIFD:");
+			System.out.print(indent + "--------- ");
+			System.out.println("<<GPS SubIFD starts>>");
 			printIFD(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, indent + "--------- ");
+			System.out.print(indent + "--------- ");
+			System.out.println("<<GPS SubIFD ends>>");
 		}		
 	}
 	
@@ -2220,7 +2192,7 @@ public class TIFFTweaker {
 			System.out.println("Field "+i+" =>");
 			rin.seek(offset);
 			short tag = rin.readShort();
-			Tag ftag = null;
+			Tag ftag = TiffTag.UNKNOWN;
 			try {
 				ftag = (Tag)method.invoke(null, tag);
 			} catch (IllegalAccessException e) {
@@ -2260,11 +2232,15 @@ public class TIFFTweaker {
 					} else {
 						rin.seek(rin.readInt());
 						rin.readFully(data, 0, field_length);
-					}
+					}					
+					TiffField<byte[]> byteField = null;
+					if(ftype == FieldType.BYTE)
+						byteField = new ByteField(tag, data);
+					else
+						byteField = new UndefinedField(tag, data);
+					tiffIFD.addField(byteField);
 					System.out.print(indent);
-					if(ftag == ExifTag.EXIF_VERSION || ftag == ExifTag.FLASH_PIX_VERSION)
-						System.out.println("Field value: " + new String(data));
-					else if(ftag == TiffTag.ICC_PROFILE) {
+					if(ftag == TiffTag.ICC_PROFILE) {
 						showICCProfile(data);
 					} else if(ftag == TiffTag.PHOTOSHOP) {
 						showPhtoshop(data);
@@ -2272,10 +2248,9 @@ public class TIFFTweaker {
 						XMLUtils.showXML(XMLUtils.createXML(data));
 					} else if(ftag == TiffTag.IPTC) {
 						showIPTC(data);
-					} else
-						System.out.println("Field value: " + StringUtils.byteArrayToHexString(data, 0, 10));
+					}					
+					System.out.println("Field value: " + byteField.getDataAsString() + " => " + ftag.getFieldAsString(data));
 					offset += 4;					
-					tiffIFD.addField((ftype == FieldType.BYTE)?new ByteField(tag, data):new UndefinedField(tag, data));
 					break;
 				case ASCII:
 					data = new byte[field_length];
@@ -2288,13 +2263,14 @@ public class TIFFTweaker {
 						rin.seek(rin.readInt());
 						rin.readFully(data, 0, field_length);
 					}
+					TiffField<String> ascIIField = new ASCIIField(tag, new String(data, 0, data.length));
+					tiffIFD.addField(ascIIField);
 					if(data.length>0) {
 						System.out.print(indent);
-						System.out.println("Field value: " + new String(data, 0, data.length).trim());
+						System.out.println("Field value: " + ascIIField.getDataAsString());
 					}
 					offset += 4;	
-					tiffIFD.addField(new ASCIIField(tag, new String(data, 0, data.length)));
-			        break;
+					break;
 				case SHORT:
 					short[] sdata = new short[field_length];
 					if(field_length == 1) {
@@ -2320,10 +2296,11 @@ public class TIFFTweaker {
 							sdata[j] = rin.readShort();
 							toOffset += 2;
 						}
-					}	
-					tiffIFD.addField(new ShortField(tag, sdata));
+					}
+					TiffField<short[]> shortField = new ShortField(tag, sdata);
+					tiffIFD.addField(shortField);
 					System.out.print(indent);
-					System.out.println("Field value: " + StringUtils.shortArrayToString(sdata, 0, 10, true) + " " + ftag.getFieldDescription(sdata[0]&0xffff));
+					System.out.println("Field value: " + shortField.getDataAsString() + " " + ftag.getFieldAsString(shortField.getDataAsLong()));
 					break;
 				case LONG:
 					int[] ldata = new int[field_length];
@@ -2342,11 +2319,11 @@ public class TIFFTweaker {
 							toOffset += 4;
 						}
 					}
-					
-					tiffIFD.addField(new LongField(tag, ldata));
+					TiffField<int[]> longField = new LongField(tag, ldata);
+					tiffIFD.addField(longField);
 					
 					System.out.print(indent);
-					System.out.println("Field value: " + StringUtils.longArrayToString(ldata, 0, 10, true) + " " + ftag.getFieldDescription(ldata[0]&0xffff));
+					System.out.println("Field value: " + longField.getDataAsString() + " " + ftag.getFieldAsString(ldata));
 					
 					if ((ftag == TiffTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
 						System.out.print(indent);
@@ -2408,11 +2385,11 @@ public class TIFFTweaker {
 							toOffset += 4;
 						}
 					}
-					
-					tiffIFD.addField(new FloatField(tag, fdata));
+					TiffField<float[]> floatField = new FloatField(tag, fdata);
+					tiffIFD.addField(floatField);
 					
 					System.out.print(indent);
-					System.out.println("Field value: " + Arrays.toString(fdata));
+					System.out.println("Field value: " + floatField.getDataAsString());
 						
 					break;
 				case DOUBLE:
@@ -2425,11 +2402,11 @@ public class TIFFTweaker {
 						ddata[j] = rin.readDouble();
 						toOffset += 8;
 					}
-						
-					tiffIFD.addField(new DoubleField(tag, ddata));
+					TiffField<double[]> doubleField = new DoubleField(tag, ddata);
+					tiffIFD.addField(doubleField);
 					
 					System.out.print(indent);
-					System.out.println("Field value: " + Arrays.toString(ddata));
+					System.out.println("Field value: " + doubleField.getDataAsString());
 						
 					break;
 				case RATIONAL:
@@ -2447,14 +2424,16 @@ public class TIFFTweaker {
 						ldata[j+1] = rin.readInt();
 						toOffset += 4;
 					}
-					System.out.print(indent);
+					TiffField<int[]> rationalField = null;
 					if(ftype == FieldType.SRATIONAL) {
-						tiffIFD.addField(new SRationalField(tag, ldata));
-						System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, false));
+						rationalField = new SRationalField(tag, ldata);
 					} else {
-						tiffIFD.addField(new RationalField(tag, ldata));
-						System.out.println("Field value: " + StringUtils.rationalArrayToString(ldata, true));
+						rationalField = new RationalField(tag, ldata);
 					}
+					System.out.print(indent);
+					System.out.println("Field value: " + rationalField.getDataAsString() + " => " + ftag.getFieldAsString(ldata));					
+					tiffIFD.addField(rationalField);
+					
 					break;
 				case IFD:
 					ldata = new int[field_length];
@@ -2473,15 +2452,17 @@ public class TIFFTweaker {
 							toOffset += 4;
 						}
 					}
+					TiffField<int[]> ifdField = new IFDField(tag, ldata);
+					tiffIFD.addField(ifdField);
 					System.out.print(indent);
-					System.out.println("Field value: " + StringUtils.longArrayToString(ldata, true) + " " + ftag.getFieldDescription(ldata[0]&0xffff));
+					System.out.println("Field value: " + ifdField.getDataAsString() + " " + ftag.getFieldAsString(ldata));
 					for(int ifd = 0; ifd < ldata.length; ifd++) {
 						System.out.print(indent);
 						System.out.println("******* SubIFD " + ifd + " *******");
 						readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0], indent2);
 						System.out.println("******* End of SubIFD " + ifd + " *******");
 					}
-					tiffIFD.addField(new IFDField(tag, ldata));			
+								
 					break;
 				default:
 					offset += 4;
@@ -2551,7 +2532,7 @@ public class TIFFTweaker {
 		if(field != null) { // We have found IPTC data
 			FieldType type = field.getType();
 			if(type == FieldType.LONG)
-				metadataMap.put(MetadataType.IPTC, new IPTC(ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN)));
+				;//metadataMap.put(MetadataType.IPTC, new IPTC(ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN)));
 			else
 				metadataMap.put(MetadataType.IPTC, new IPTC((byte[])field.getData()));
 		}
