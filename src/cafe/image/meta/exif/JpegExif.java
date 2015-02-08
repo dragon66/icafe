@@ -48,13 +48,13 @@ public class JpegExif extends Exif {
 	private void createImageIFD() {
 		// Create Image IFD (IFD0)
 		imageIFD = new IFD();
-		TiffField<?> tiffField = new ASCIIField(TiffTag.IMAGE_DESCRIPTION.getValue(), "Exif created by JPEGTweaker\0");
+		TiffField<?> tiffField = new ASCIIField(TiffTag.IMAGE_DESCRIPTION.getValue(), "Exif created by JPEGTweaker");
 		imageIFD.addField(tiffField);
-		String softWare = "JPEGTweaker 1.0\0";
+		String softWare = "JPEGTweaker 1.0";
 		tiffField = new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare);
 		imageIFD.addField(tiffField);
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-		tiffField = new ASCIIField(TiffTag.DATETIME.getValue(), formatter.format(new Date()) + '\0');
+		tiffField = new ASCIIField(TiffTag.DATETIME.getValue(), formatter.format(new Date()));
 		imageIFD.addField(tiffField);		
 	}
 	
