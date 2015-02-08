@@ -52,7 +52,12 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>>{
 	public int[] getDataAsLong() { 
 		throw new UnsupportedOperationException("getDataAsLong() method is only supported by"
 				+ " short, long, and rational data types");
-	}	
+	}
+	
+	/**
+	 * @return a String representation of the field data
+	 */
+	public abstract String getDataAsString();
 	
 	public int getLength() {
 		return length;

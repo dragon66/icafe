@@ -10,6 +10,8 @@
 
 package cafe.image.tiff;
 
+import cafe.string.StringUtils;
+
 /**
  * TIFF SRational type field.
  * 
@@ -20,5 +22,9 @@ public final class SRationalField extends AbstractRationalField {
 
 	public SRationalField(short tag, int[] data) {
 		super(tag, FieldType.SRATIONAL, data);
-	}	
+	}
+	
+	public String getDataAsString() {
+		return StringUtils.rationalArrayToString(data, true);
+	}
 }

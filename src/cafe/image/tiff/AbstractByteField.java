@@ -13,12 +13,17 @@ package cafe.image.tiff;
 import java.io.IOException;
 
 import cafe.io.RandomAccessOutputStream;
+import cafe.string.StringUtils;
 
 public abstract class AbstractByteField extends TiffField<byte[]> {
 
 	public AbstractByteField(short tag, FieldType fieldType, byte[] data) {
 		super(tag, fieldType, data.length);
 		this.data = data;
+	}
+	
+	public String getDataAsString() {
+		return StringUtils.byteArrayToHexString(data, 0, 10);
 	}
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {

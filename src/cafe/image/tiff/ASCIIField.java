@@ -26,6 +26,10 @@ public final class ASCIIField extends TiffField<String> {
 		super(tag, FieldType.ASCII, data.trim().length() + 1); // Remove white spaces
 		this.data = data.trim() + '\0'; // Add NULL to the end of the string
 	}
+	
+	public String getDataAsString() {
+		return data;
+	}
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		

@@ -10,6 +10,8 @@
 
 package cafe.image.tiff;
 
+import cafe.string.StringUtils;
+
 /**
  * TIFF SLong type field.
  * 
@@ -20,5 +22,9 @@ public final class SLongField extends AbstractLongField {
 
 	public SLongField(short tag, int[] data) {
 		super(tag, FieldType.SLONG, data);
+	}
+	
+	public String getDataAsString() {
+		return StringUtils.longArrayToString(data, 0, 10, false);
 	}
 }

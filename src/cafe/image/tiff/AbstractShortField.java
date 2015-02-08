@@ -21,23 +21,6 @@ public abstract class AbstractShortField extends TiffField<short[]> {
 		this.data = data;	
 	}
 
-	public int[] getDataAsLong() {
-		//
-		int[] temp = new int[data.length];
-		
-		if(this instanceof ShortField) {
-			for(int i=0; i<data.length; i++) {
-				temp[i] = data[i]&0xffff;
-			}
-		} else {
-			for(int i=0; i<data.length; i++) {
-				temp[i] = data[i];
-			}
-		}
-		
-		return temp;
-	}
-	
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		if (data.length <= 2) {
 			dataOffset = (int)os.getStreamPointer();

@@ -13,6 +13,7 @@ package cafe.image.tiff;
 import java.io.IOException;
 
 import cafe.io.RandomAccessOutputStream;
+import cafe.string.StringUtils;
 
 /**
  * TIFF Attribute.UNDEFINED type field.
@@ -25,6 +26,10 @@ public final class UndefinedField extends TiffField<byte[]> {
 	public UndefinedField(short tag, byte[] data) {
 		super(tag, FieldType.UNDEFINED, data.length);
 		this.data = data;
+	}
+	
+	public String getDataAsString() {
+		return StringUtils.byteArrayToHexString(data, 0, 10);
 	}
 	
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {

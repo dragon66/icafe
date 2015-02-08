@@ -10,6 +10,8 @@
 
 package cafe.image.tiff;
 
+import cafe.string.StringUtils;
+
 /**
  * TIFF Short type field.
  * 
@@ -20,5 +22,20 @@ public final class ShortField extends AbstractShortField {
 
 	public ShortField(short tag, short[] data) {
 		super(tag, FieldType.SHORT, data);	
+	}
+	
+	public int[] getDataAsLong() {
+		//
+		int[] temp = new int[data.length];
+		
+		for(int i=0; i<data.length; i++) {
+			temp[i] = data[i]&0xffff;
+		}
+				
+		return temp;
+	}
+	
+	public String getDataAsString() {
+		return StringUtils.shortArrayToString(data, 0, 10, true);
 	}
 }

@@ -10,6 +10,8 @@
 
 package cafe.image.tiff;
 
+import cafe.string.StringUtils;
+
 /**
  * TIFF IFD type field.
  * 
@@ -20,5 +22,9 @@ public final class IFDField extends AbstractLongField {
 
 	public IFDField(short tag, int[] data) {
 		super(tag, FieldType.IFD, data);
+	}
+	
+	public String getDataAsString() {
+		return StringUtils.longArrayToString(data, 0, 10, true);
 	}
 }

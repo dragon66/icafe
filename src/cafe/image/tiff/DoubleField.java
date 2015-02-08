@@ -11,6 +11,7 @@
 package cafe.image.tiff;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import cafe.io.RandomAccessOutputStream;
 
@@ -25,6 +26,10 @@ public class DoubleField extends TiffField<double[]> {
 	public DoubleField(short tag, double[] data) {
 		super(tag, FieldType.DOUBLE, data.length);
 		this.data = data;
+	}
+	
+	public String getDataAsString() {
+		return Arrays.toString(data);
 	}
 
 	@Override

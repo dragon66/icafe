@@ -20,5 +20,5 @@ public final class ByteField extends AbstractByteField {
 
 	public ByteField(short tag, byte[] data) {
 		super(tag, FieldType.BYTE, data);
-	}	
+	}
 }
