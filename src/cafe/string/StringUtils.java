@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    07Feb201   Added decimalToDMS() and DMSToDecimal()
  * WY    23Jan2015  Moved XML related methods to XMLUtils
  * WY    10Jan2015  Added showXML() and printNode() to show XML document
  * WY    28Dec2014  Added isInCharset() to test if a String can be encoded with
@@ -222,6 +223,60 @@ public class StringUtils
 		
 		return false;
 	}
+	
+	// From http://stackoverflow.com/questions/15547329/how-to-prettily-format-gps-data-in-java-android
+	// Input a double latitude or longitude in the decimal format
+	public static String decimalToDMS(double coord) {
+		String output;
+		int degrees, minutes, seconds;
+	    // gets the modulus the coordinate divided by one (MOD1).
+	    // in other words gets all the numbers after the decimal point.
+	    // e.g. mod = 87.728056 % 1 == 0.728056
+	    //
+	    // next get the integer part of the coord. In other words the, whole number part.
+	    // e.g. intPart = 87
+	    double mod = coord % 1;
+	    degrees = (int)coord;
+	    // next times the MOD1 of degrees by 60 so we can find the integer part for minutes.
+	    // get the MOD1 of the new coord to find the numbers after the decimal point.
+	    // e.g. coord = 0.728056 * 60 == 43.68336
+	    //      mod = 43.68336 % 1 == 0.68336
+	    //
+	    // next get the value of the integer part of the coord.
+	    // e.g. intPart = 43
+	    coord = mod * 60;
+	    mod = coord % 1;
+	    minutes = (int)coord;
+	    //do the same again for minutes
+	    //e.g. coord = 0.68336 * 60 == 41.0016
+	    //e.g. intPart = 41
+	    coord = mod * 60;
+	    seconds = (int)coord;
+	    //Standard output of D°M'S"
+	    output = degrees + "°" + minutes + "'" + seconds + "\"";
+
+	    return output;
+	}
+
+	/**
+	 * Converts DMS to decimal 
+	 *
+	 * Input: latitude or longitude in the DMS format ( example: N 43° 36' 15.894")
+	 * @param hemisphereOUmeridien => {W,E,S,N}
+	 * @return: latitude or longitude in decimal format
+	 */
+	public double DMSToDecimal(String hemisphereOUmeridien, double degrees, double minutes, double seconds) {
+		double LatOrLon = 0;
+		double sign = 1.0;
+
+		if((hemisphereOUmeridien == "W")||(hemisphereOUmeridien == "S")) {
+			sign = -1.0;
+		}              
+		
+		LatOrLon = sign*(Math.floor(degrees) + Math.floor(minutes)/60.0 + seconds/3600.0);
+
+		return LatOrLon;               
+    }
 	
 	/**
 	 * From www.javapractices.com EscapeChars.java
