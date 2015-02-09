@@ -404,15 +404,15 @@ public class TIFFTweaker {
 		rout.seek(offset);
 
 		// Original image data start from these offsets.
-		TiffField<?> stripOffSets = ifd.removeField(TiffTag.STRIP_OFFSETS.getValue());
+		TiffField<?> stripOffSets = ifd.removeField(TiffTag.STRIP_OFFSETS);
 		
 		if(stripOffSets == null)
-			stripOffSets = ifd.removeField(TiffTag.TILE_OFFSETS.getValue());
+			stripOffSets = ifd.removeField(TiffTag.TILE_OFFSETS);
 				
-		TiffField<?> stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS.getValue());
+		TiffField<?> stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS);
 		
 		if(stripByteCounts == null)
-			stripByteCounts = ifd.getField(TiffTag.TILE_BYTE_COUNTS.getValue());	
+			stripByteCounts = ifd.getField(TiffTag.TILE_BYTE_COUNTS);	
 		/* 
 		 * Make sure this will work in the case when neither STRIP_OFFSETS nor TILE_OFFSETS presents.
 		 * Not sure if this will ever happen for TIFF. JPEG EXIF data do not contain these fields. 
@@ -422,17 +422,17 @@ public class TIFFTweaker {
 			int[] off = stripOffSets.getDataAsLong();
 			int[] temp = new int[off.length];
 			
-			TiffField<?> tiffField = ifd.getField(TiffTag.COMPRESSION.getValue());
+			TiffField<?> tiffField = ifd.getField(TiffTag.COMPRESSION);
 			
 			// Uncompressed image with one strip or tile (may contain wrong StripByteCounts value)
 			// Bug fix for uncompressed image with one strip and wrong StripByteCounts value
 			if((tiffField == null ) || (tiffField != null && tiffField.getDataAsLong()[0] == 1)) { // Uncompressed data
 				int planaryConfiguration = 1;
 				
-				tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+				tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);		
 				if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
 				
-				tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
+				tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
 				
 				int samplesPerPixel = 1;
 				if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
@@ -460,7 +460,7 @@ public class TIFFTweaker {
 				offset += buf.length;
 			}
 						
-			if(ifd.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()) != null)
+			if(ifd.getField(TiffTag.STRIP_BYTE_COUNTS) != null)
 				stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
 			else
 				stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
@@ -477,9 +477,9 @@ public class TIFFTweaker {
 	
 		/* The following are added to work with old-style JPEG compression (type 6) */		
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
-		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
+		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT);
 		if(jpegIFOffset != null) {
-			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());			
+			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);			
 			try {
 				if(jpegIFByteCount != null) {
 					rin.seek(jpegIFOffset.getDataAsLong()[0]);
@@ -499,21 +499,21 @@ public class TIFFTweaker {
 			} catch (EOFException ex) {;};
 		}		
 		/* Another flavor of the old style JPEG compression type 6 contains separate tables */
-		TiffField<?> jpegTable = ifd.removeField(TiffTag.JPEG_DC_TABLES.getValue());
+		TiffField<?> jpegTable = ifd.removeField(TiffTag.JPEG_DC_TABLES);
 		if(jpegTable != null) {
 			try {
 				ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
 			} catch(EOFException ex) {;}
 		}
 		
-		jpegTable = ifd.removeField(TiffTag.JPEG_AC_TABLES.getValue());
+		jpegTable = ifd.removeField(TiffTag.JPEG_AC_TABLES);
 		if(jpegTable != null) {
 			try {
 				ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
 			} catch(EOFException ex) {;}
 		}
 	
-		jpegTable = ifd.removeField(TiffTag.JPEG_Q_TABLES.getValue());
+		jpegTable = ifd.removeField(TiffTag.JPEG_Q_TABLES);
 		if(jpegTable != null) {
 			try {
 				ifd.addField(copyJPEGQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
@@ -561,7 +561,7 @@ public class TIFFTweaker {
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		TiffField<?> f_iccProfile = workingPage.getField(TiffTag.ICC_PROFILE.getValue());
+		TiffField<?> f_iccProfile = workingPage.getField(TiffTag.ICC_PROFILE);
 		if(f_iccProfile != null) {
 			return (byte[])f_iccProfile.getData();
 		}
@@ -584,7 +584,7 @@ public class TIFFTweaker {
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP.getValue());
+		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP);
 		if(f_photoshop != null) {
 			byte[] data = (byte[])f_photoshop.getData();
 			IRBReader reader = new IRBReader(data);
@@ -628,7 +628,7 @@ public class TIFFTweaker {
 	public static void finishInsert(RandomAccessOutputStream rout, List<IFD> list) throws IOException {
 		// Reset pageNumber and total pages
 		for(int i = 0; i < list.size(); i++) {
-			int offset = list.get(i).getField(TiffTag.PAGE_NUMBER.getValue()).getDataOffset();
+			int offset = list.get(i).getField(TiffTag.PAGE_NUMBER).getDataOffset();
 			rout.seek(offset);
 			rout.writeShort((short)i); // Update page number for this page
 			rout.writeShort((short)list.size()); // Update total page number
@@ -645,20 +645,20 @@ public class TIFFTweaker {
 	// Used to calculate how many bytes to read in case we have only one strip or tile
 	private static int[] getBytes2Read(IFD ifd) {
 		// Let's calculate how many bytes we are supposed to read
-		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
+		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH);
 		int imageWidth = tiffField.getDataAsLong()[0];
-		tiffField = ifd.getField(TiffTag.IMAGE_LENGTH.getValue());
+		tiffField = ifd.getField(TiffTag.IMAGE_LENGTH);
 		int imageHeight = tiffField.getDataAsLong()[0];
 		
 		// For YCbCr image only
 		int horizontalSampleFactor = 2; // Default 2X2
 		int verticalSampleFactor = 2; // Not 1X1
 		
-		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
+		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION).getDataAsLong()[0];
 		
 		// Correction for imageWidth and imageHeight for YCbCr image
 		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
-			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
+			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING);
 			
 			if(f_YCbCrSubSampling != null) {
 				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
@@ -671,14 +671,14 @@ public class TIFFTweaker {
 		
 		int samplesPerPixel = 1;
 		
-		tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
+		tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
 		if(tiffField != null) {
 			samplesPerPixel = tiffField.getDataAsLong()[0];
 		}				
 		
 		int bitsPerSample = 1;
 		
-		tiffField = ifd.getField(TiffTag.BITS_PER_SAMPLE.getValue());
+		tiffField = ifd.getField(TiffTag.BITS_PER_SAMPLE);
 		if(tiffField != null) {
 			bitsPerSample = tiffField.getDataAsLong()[0];
 		}
@@ -686,8 +686,8 @@ public class TIFFTweaker {
 		int tileWidth = -1;
 		int tileLength = -1;			
 		
-		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH.getValue());
-		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH.getValue());
+		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH);
+		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH);
 		
 		if(f_tileWidth != null) {
 			tileWidth = f_tileWidth.getDataAsLong()[0];
@@ -697,7 +697,7 @@ public class TIFFTweaker {
 		int rowsPerStrip = imageHeight;
 		int rowWidth = imageWidth;
 		
-		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
+		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP);
 		if(f_rowsPerStrip != null) rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];					
 		
 		if(rowsPerStrip > imageHeight) rowsPerStrip = imageHeight;
@@ -709,7 +709,7 @@ public class TIFFTweaker {
 	
 		int planaryConfiguration = 1;
 		
-		tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());
+		tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);
 		if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
 		
 		int[] totalBytes2Read = new int[samplesPerPixel];		
@@ -767,16 +767,16 @@ public class TIFFTweaker {
 	
 	private static int getRowWidth(IFD ifd) {
 		// Get image dimension first
-		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
+		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH);
 		int imageWidth = tiffField.getDataAsLong()[0];
 		
 		// For YCbCr image only
 		int horizontalSampleFactor = 2; // Default 2X2
-		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
+		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION).getDataAsLong()[0];
 		
 		// Correction for imageWidth and imageHeight for YCbCr image
 		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
-			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
+			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING);
 			
 			if(f_YCbCrSubSampling != null) {
 				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
@@ -789,7 +789,7 @@ public class TIFFTweaker {
 		
 		int tileWidth = -1;
 		
-		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH.getValue());
+		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH);
 		
 		if(f_tileWidth != null) {
 			tileWidth = f_tileWidth.getDataAsLong()[0];
@@ -803,20 +803,20 @@ public class TIFFTweaker {
 	// Calculate the expected StripByteCounts values for uncompressed image
 	public static int[] getUncompressedStripByteCounts(IFD ifd, int strips) {
 		// Get image dimension first
-		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH.getValue());
+		TiffField<?> tiffField = ifd.getField(TiffTag.IMAGE_WIDTH);
 		int imageWidth = tiffField.getDataAsLong()[0];
-		tiffField = ifd.getField(TiffTag.IMAGE_LENGTH.getValue());
+		tiffField = ifd.getField(TiffTag.IMAGE_LENGTH);
 		int imageHeight = tiffField.getDataAsLong()[0];
 		
 		// For YCbCr image only
 		int horizontalSampleFactor = 2; // Default 2X2
 		int verticalSampleFactor = 2; // Not 1X1
 		
-		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue()).getDataAsLong()[0];
+		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION).getDataAsLong()[0];
 		
 		// Correction for imageWidth and imageHeight for YCbCr image
 		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
-			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING.getValue());
+			TiffField<?> f_YCbCrSubSampling = ifd.getField(TiffTag.YCbCr_SUB_SAMPLING);
 			
 			if(f_YCbCrSubSampling != null) {
 				int[] sampleFactors = f_YCbCrSubSampling.getDataAsLong();
@@ -829,14 +829,14 @@ public class TIFFTweaker {
 		
 		int samplesPerPixel = 1;
 		
-		tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());
+		tiffField = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
 		if(tiffField != null) {
 			samplesPerPixel = tiffField.getDataAsLong()[0];
 		}				
 		
 		int bitsPerSample = 1;
 		
-		tiffField = ifd.getField(TiffTag.BITS_PER_SAMPLE.getValue());
+		tiffField = ifd.getField(TiffTag.BITS_PER_SAMPLE);
 		if(tiffField != null) {
 			bitsPerSample = tiffField.getDataAsLong()[0];
 		}
@@ -844,8 +844,8 @@ public class TIFFTweaker {
 		int tileWidth = -1;
 		int tileLength = -1;			
 		
-		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH.getValue());
-		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH.getValue());
+		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH);
+		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH);
 		
 		if(f_tileWidth != null) {
 			tileWidth = f_tileWidth.getDataAsLong()[0];
@@ -855,7 +855,7 @@ public class TIFFTweaker {
 		int rowsPerStrip = imageHeight;
 		int rowWidth = imageWidth;
 		
-		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP.getValue());
+		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP);
 		if(f_rowsPerStrip != null) rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];					
 		
 		if(rowsPerStrip > imageHeight) rowsPerStrip = imageHeight;
@@ -869,7 +869,7 @@ public class TIFFTweaker {
 	
 		int planaryConfiguration = 1;
 		
-		tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+		tiffField = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);		
 		if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];
 		
 		if(planaryConfiguration == 2) {
@@ -1094,8 +1094,8 @@ public class TIFFTweaker {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		
 		// See if we also have regular IPTC tag field
-		TiffField<?> f_iptc = workingPage.removeField(TiffTag.IPTC.getValue());		
-		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP.getValue());
+		TiffField<?> f_iptc = workingPage.removeField(TiffTag.IPTC);		
+		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP);
 		if(f_photoshop != null) { // Read 8BIMs
 			IRBReader reader = new IRBReader((byte[])f_photoshop.getData());
 			reader.read();
@@ -1167,7 +1167,7 @@ public class TIFFTweaker {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		
 		if(update) {
-			TiffField<?> f_irb = workingPage.getField(TiffTag.PHOTOSHOP.getValue());
+			TiffField<?> f_irb = workingPage.getField(TiffTag.PHOTOSHOP);
 			if(f_irb != null) {
 				IRBReader reader = new IRBReader((byte[])f_irb.getData());
 				reader.read();
@@ -1279,18 +1279,18 @@ public class TIFFTweaker {
 		
 		// Reset pageNumber for the existing pages
 		for(int i = 0; i < minPageNumber; i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)maxPageNumber}));
 		}
 		
 		for(int i = minPageNumber; i < list.size(); i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)(i + frames.length), (short)maxPageNumber}));
 		}
 		
 		if(list.size() == 1) { // Make the original image one page of the new multiple page TIFF
-			if(list.get(0).removeField(TiffTag.SUBFILE_TYPE.getValue()) == null)
-				list.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE.getValue());
+			if(list.get(0).removeField(TiffTag.SUBFILE_TYPE) == null)
+				list.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE);
 			list.get(0).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{3}));
 		}
 		
@@ -1383,18 +1383,18 @@ public class TIFFTweaker {
 		
 		// Reset pageNumber for the existing pages
 		for(int i = 0; i < minPageNumber; i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)maxPageNumber}));
 		}
 		
 		for(int i = minPageNumber; i < list.size(); i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)(i + images.length), (short)maxPageNumber}));
 		}
 		
 		if(list.size() == 1) { // Make the original image one page of the new multiple page TIFF
-			if(list.get(0).removeField(TiffTag.SUBFILE_TYPE.getValue()) == null)
-				list.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE.getValue());
+			if(list.get(0).removeField(TiffTag.SUBFILE_TYPE) == null)
+				list.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE);
 			list.get(0).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{3}));
 		}
 		
@@ -1495,7 +1495,7 @@ public class TIFFTweaker {
 		else if(pageNumber > ifds1.size()) pageNumber = ifds1.size();
 		// Remove page number field if any and put in place holder
 		for(int i = 0; i < ifds1.size(); i++) {
-			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
 			// Place holder, to be updated afterwards
 			ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0}));
 		}
@@ -1504,7 +1504,7 @@ public class TIFFTweaker {
 		List<IFD> ifds2 = new ArrayList<IFD>();
 		readIFDs(ifds2, toBeInserted);
 		for(int j = 0; j < ifds2.size(); j++) {
-			ifds2.get(j).removeField(TiffTag.PAGE_NUMBER.getValue());
+			ifds2.get(j).removeField(TiffTag.PAGE_NUMBER);
 			// Place holder, to be updated afterwards
 			ifds2.get(j).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0})); 
 		}
@@ -1518,7 +1518,7 @@ public class TIFFTweaker {
 			for(int j = 0; j < ifds2.size(); j++) {
 				IFD currIFD = ifds2.get(j);
 				int bitsPerSample = 1; // Default
-				TiffField<?> f_bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE.getValue());
+				TiffField<?> f_bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE);
 				if(f_bitsPerSample != null) bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
 				if(bitsPerSample <= 8) { // Just copy data
 					offset = copyPageData(currIFD, offset, toBeInserted, output);							
@@ -1533,12 +1533,12 @@ public class TIFFTweaker {
 					ImageDecoder decoder = null;
 					ImageEncoder encoder = null;
 					// Original image data start from these offsets.
-					TiffField<?> stripOffSets = currIFD.removeField(TiffTag.STRIP_OFFSETS.getValue());							
+					TiffField<?> stripOffSets = currIFD.removeField(TiffTag.STRIP_OFFSETS);							
 					if(stripOffSets == null)
-						stripOffSets = currIFD.removeField(TiffTag.TILE_OFFSETS.getValue());									
-					TiffField<?> stripByteCounts = currIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue());							
+						stripOffSets = currIFD.removeField(TiffTag.TILE_OFFSETS);									
+					TiffField<?> stripByteCounts = currIFD.getField(TiffTag.STRIP_BYTE_COUNTS);							
 					if(stripByteCounts == null)
-						stripByteCounts = currIFD.getField(TiffTag.TILE_BYTE_COUNTS.getValue());
+						stripByteCounts = currIFD.getField(TiffTag.TILE_BYTE_COUNTS);
 					/* 
 					 * Make sure this will work in the case when neither STRIP_OFFSETS nor TILE_OFFSETS presents.
 					 * Not sure if this will ever happen for TIFF. JPEG EXIF data do not contain these fields. 
@@ -1553,19 +1553,19 @@ public class TIFFTweaker {
 						// We are going to write the image data first
 						output.seek(offset);
 								
-						TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION.getValue());
+						TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION);
 						int tiffCompression = 1;
 						if(tiffField != null)
 							tiffCompression = tiffField.getDataAsLong()[0];
 						TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(tiffCompression);
 								
 						int samplesPerPixel = 1;
-						tiffField = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());								
+						tiffField = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL);								
 						if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
 								
 						int planaryConfiguration = 1;
 								
-						tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+						tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION);		
 						if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];										
 						
 						int scanLineStride = getRowWidth(currIFD);
@@ -1657,7 +1657,7 @@ public class TIFFTweaker {
 								offset += encoder.getCompressedDataLen(); // DONE!
 							}
 						}
-						if(currIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()) != null)
+						if(currIFD.getField(TiffTag.STRIP_BYTE_COUNTS) != null)
 							stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
 						else
 							stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
@@ -1693,7 +1693,7 @@ public class TIFFTweaker {
 		int maxPageNumber = newList.size();
 		// Reset pageNumber and total pages
 		for(int i = 0; i < maxPageNumber; i++) {
-			offset = newList.get(i).getField(TiffTag.PAGE_NUMBER.getValue()).getDataOffset();
+			offset = newList.get(i).getField(TiffTag.PAGE_NUMBER).getDataOffset();
 			output.seek(offset);
 			output.writeShort((short)i); // Update page number for this page
 			output.writeShort((short)maxPageNumber); // Update total page number
@@ -1729,11 +1729,11 @@ public class TIFFTweaker {
 		int maxPageNumber = ifds1.size() + ifds2.size();
 		// Reset pageNumber
 		for(int i = 0; i < ifds1.size(); i++) {
-			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
 			ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)maxPageNumber}));
 		}
 		for(int i = 0; i < ifds2.size(); i++) {
-			ifds2.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			ifds2.get(i).removeField(TiffTag.PAGE_NUMBER);
 			ifds2.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)(i+ifds1.size()), (short)maxPageNumber}));
 		}		
 		int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, image1, merged);
@@ -1768,7 +1768,7 @@ public class TIFFTweaker {
 			// Read IFDs for the first image
 			readIFDs(null, null, TiffTag.class, ifds1, offset1, image1);
 			for(int i = 0; i < ifds1.size(); i++) {
-				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
 				// Place holder, to be updated afterwards
 				ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0}));
 			}
@@ -1782,7 +1782,7 @@ public class TIFFTweaker {
 				RandomAccessInputStream image2 = new FileCacheRandomAccessInputStream(fis2); 
 				readIFDs(ifds2, image2);
 				for(int j = 0; j < ifds2.size(); j++) {
-					ifds2.get(j).removeField(TiffTag.PAGE_NUMBER.getValue());
+					ifds2.get(j).removeField(TiffTag.PAGE_NUMBER);
 					// Place holder, to be updated afterwards
 					ifds2.get(j).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0})); 
 				}
@@ -1797,7 +1797,7 @@ public class TIFFTweaker {
 			int maxPageNumber = ifds1.size();
 			// Reset pageNumber and total pages
 			for(int i = 0; i < ifds1.size(); i++) {
-				offset = ifds1.get(i).getField(TiffTag.PAGE_NUMBER.getValue()).getDataOffset();
+				offset = ifds1.get(i).getField(TiffTag.PAGE_NUMBER).getDataOffset();
 				merged.seek(offset);
 				merged.writeShort((short)i); // Update page number for this page
 				merged.writeShort((short)maxPageNumber); // Update total page number
@@ -1825,7 +1825,7 @@ public class TIFFTweaker {
 			// Read IFDs for the first image
 			readIFDs(null, null, TiffTag.class, ifds1, offset1, image1);
 			for(int i = 0; i < ifds1.size(); i++) {
-				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
 				// Place holder, to be updated afterwards
 				ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0}));
 			}
@@ -1840,7 +1840,7 @@ public class TIFFTweaker {
 				RandomAccessInputStream image2 = new FileCacheRandomAccessInputStream(fis2); 
 				readIFDs(ifds2, image2);
 				for(int j = 0; j < ifds2.size(); j++) {
-					ifds2.get(j).removeField(TiffTag.PAGE_NUMBER.getValue());
+					ifds2.get(j).removeField(TiffTag.PAGE_NUMBER);
 					// Place holder, to be updated afterwards
 					ifds2.get(j).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0})); 
 				}
@@ -1853,7 +1853,7 @@ public class TIFFTweaker {
 					for(int j = 0; j < ifds2.size(); j++) {
 						IFD currIFD = ifds2.get(j);
 						int bitsPerSample = 1; // Default
-						TiffField<?> f_bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE.getValue());
+						TiffField<?> f_bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE);
 						if(f_bitsPerSample != null) bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
 						if(bitsPerSample <= 8) { // Just copy data
 							offset = copyPageData(currIFD, offset, image2, merged);							
@@ -1868,12 +1868,12 @@ public class TIFFTweaker {
 							ImageDecoder decoder = null;
 							ImageEncoder encoder = null;
 							// Original image data start from these offsets.
-							TiffField<?> stripOffSets = currIFD.removeField(TiffTag.STRIP_OFFSETS.getValue());							
+							TiffField<?> stripOffSets = currIFD.removeField(TiffTag.STRIP_OFFSETS);							
 							if(stripOffSets == null)
-								stripOffSets = currIFD.removeField(TiffTag.TILE_OFFSETS.getValue());									
-							TiffField<?> stripByteCounts = currIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue());							
+								stripOffSets = currIFD.removeField(TiffTag.TILE_OFFSETS);									
+							TiffField<?> stripByteCounts = currIFD.getField(TiffTag.STRIP_BYTE_COUNTS);							
 							if(stripByteCounts == null)
-								stripByteCounts = currIFD.getField(TiffTag.TILE_BYTE_COUNTS.getValue());
+								stripByteCounts = currIFD.getField(TiffTag.TILE_BYTE_COUNTS);
 							/* 
 							 * Make sure this will work in the case when neither STRIP_OFFSETS nor TILE_OFFSETS presents.
 							 * Not sure if this will ever happen for TIFF. JPEG EXIF data do not contain these fields. 
@@ -1888,19 +1888,19 @@ public class TIFFTweaker {
 								// We are going to write the image data first
 								merged.seek(offset);
 								
-								TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION.getValue());
+								TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION);
 								int tiffCompression = 1;
 								if(tiffField != null)
 									tiffCompression = tiffField.getDataAsLong()[0];
 								TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(tiffCompression);
 								
 								int samplesPerPixel = 1;
-								tiffField = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL.getValue());								
+								tiffField = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL);								
 								if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
 								
 								int planaryConfiguration = 1;
 								
-								tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION.getValue());		
+								tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION);		
 								if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];										
 								
 								int scanLineStride = getRowWidth(currIFD);
@@ -1992,7 +1992,7 @@ public class TIFFTweaker {
 										offset += encoder.getCompressedDataLen(); // DONE!
 									}
 								}
-								if(currIFD.getField(TiffTag.STRIP_BYTE_COUNTS.getValue()) != null)
+								if(currIFD.getField(TiffTag.STRIP_BYTE_COUNTS) != null)
 									stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
 								else
 									stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
@@ -2018,7 +2018,7 @@ public class TIFFTweaker {
 			int maxPageNumber = ifds1.size();
 			// Reset pageNumber and total pages
 			for(int i = 0; i < ifds1.size(); i++) {
-				offset = ifds1.get(i).getField(TiffTag.PAGE_NUMBER.getValue()).getDataOffset();
+				offset = ifds1.get(i).getField(TiffTag.PAGE_NUMBER).getDataOffset();
 				merged.seek(offset);
 				merged.writeShort((short)i); // Update page number for this page
 				merged.writeShort((short)maxPageNumber); // Update total page number
@@ -2035,12 +2035,12 @@ public class TIFFTweaker {
 		// Read the IFDs into a list first
 		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
 		if(ifds.size() == 1) { // Make the original image one page of the new multiple page TIFF
-			if(ifds.get(0).removeField(TiffTag.SUBFILE_TYPE.getValue()) == null)
-				ifds.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE.getValue());
+			if(ifds.get(0).removeField(TiffTag.SUBFILE_TYPE) == null)
+				ifds.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE);
 			ifds.get(0).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{3}));
 		}		
 		for(int i = 0; i < ifds.size(); i++) {
-			ifds.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			ifds.get(i).removeField(TiffTag.PAGE_NUMBER);
 			// Place holder, to be updated later
 			ifds.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0}));
 		}
@@ -2099,14 +2099,16 @@ public class TIFFTweaker {
 			int field_length = field.getLength();
 			System.out.print(indent);
 			System.out.println("Field length: " + field_length);
-			System.out.print(indent);
+			System.out.print(indent);			
 			
-			System.out.print("Field value: ");
-			
+			String suffix = null;
 			if(ftype == FieldType.SHORT || ftype == FieldType.SSHORT)
-				System.out.println(field.getDataAsString() + " => " + ftag.getFieldAsString(field.getDataAsLong()));
+				suffix = ftag.getFieldAsString(field.getDataAsLong());
 			else
-				System.out.println(field.getDataAsString() + " => " + ftag.getFieldAsString(field.getData()));
+				suffix = ftag.getFieldAsString(field.getData());			
+			
+			System.out.println("Field value: " + field.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
+			
 			i++;
 		}
 		
@@ -2220,6 +2222,7 @@ public class TIFFTweaker {
 			System.out.print(indent);
 			System.out.println("Field length: " + field_length);
 			offset += 4;
+			String suffix = null;
 			////// Try to read actual data.
 			switch (ftype)
 			{
@@ -2248,8 +2251,9 @@ public class TIFFTweaker {
 						XMLUtils.showXML(XMLUtils.createXML(data));
 					} else if(ftag == TiffTag.IPTC) {
 						showIPTC(data);
-					}					
-					System.out.println("Field value: " + byteField.getDataAsString() + " => " + ftag.getFieldAsString(data));
+					}
+					suffix = ftag.getFieldAsString(data);
+					System.out.println("Field value: " + byteField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					offset += 4;					
 					break;
 				case ASCII:
@@ -2300,7 +2304,8 @@ public class TIFFTweaker {
 					TiffField<short[]> shortField = new ShortField(tag, sdata);
 					tiffIFD.addField(shortField);
 					System.out.print(indent);
-					System.out.println("Field value: " + shortField.getDataAsString() + " " + ftag.getFieldAsString(shortField.getDataAsLong()));
+					suffix = ftag.getFieldAsString(shortField.getDataAsLong());
+					System.out.println("Field value: " + shortField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					break;
 				case LONG:
 					int[] ldata = new int[field_length];
@@ -2323,7 +2328,8 @@ public class TIFFTweaker {
 					tiffIFD.addField(longField);
 					
 					System.out.print(indent);
-					System.out.println("Field value: " + longField.getDataAsString() + " " + ftag.getFieldAsString(ldata));
+					suffix = ftag.getFieldAsString(ldata);
+					System.out.println("Field value: " + longField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					
 					if ((ftag == TiffTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
 						System.out.print(indent);
@@ -2331,7 +2337,7 @@ public class TIFFTweaker {
 						try { // If something bad happens, we skip the sub IFD
 							readIFD(tiffIFD, TiffTag.EXIF_SUB_IFD, ExifTag.class, rin, null, ldata[0], indent2);
 						} catch(Exception e) {
-							tiffIFD.removeField(TiffTag.EXIF_SUB_IFD.getValue());
+							tiffIFD.removeField(TiffTag.EXIF_SUB_IFD);
 							e.printStackTrace();
 						}
 					} else if ((ftag == TiffTag.GPS_SUB_IFD) && (ldata[0] != 0)) {
@@ -2340,7 +2346,7 @@ public class TIFFTweaker {
 						try {
 							readIFD(tiffIFD, TiffTag.GPS_SUB_IFD, GPSTag.class, rin, null, ldata[0], indent2);
 						} catch(Exception e) {
-							tiffIFD.removeField(TiffTag.GPS_SUB_IFD.getValue());
+							tiffIFD.removeField(TiffTag.GPS_SUB_IFD);
 							e.printStackTrace();
 						}
 					} else if((ftag == ExifTag.EXIF_INTEROPERABILITY_OFFSET) && (ldata[0] != 0)) {
@@ -2349,7 +2355,7 @@ public class TIFFTweaker {
 						try {
 							readIFD(tiffIFD, ExifTag.EXIF_INTEROPERABILITY_OFFSET, InteropTag.class, rin, null, ldata[0], indent2);
 						} catch(Exception e) {
-							tiffIFD.removeField(ExifTag.EXIF_INTEROPERABILITY_OFFSET.getValue());
+							tiffIFD.removeField(ExifTag.EXIF_INTEROPERABILITY_OFFSET);
 							e.printStackTrace();
 						}
 					} else if (ftag == TiffTag.IPTC) {
@@ -2361,7 +2367,7 @@ public class TIFFTweaker {
 							try {
 								readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0], indent2);
 							} catch(Exception e) {
-								tiffIFD.removeField(TiffTag.SUB_IFDS.getValue());
+								tiffIFD.removeField(TiffTag.SUB_IFDS);
 								e.printStackTrace();
 							}
 							System.out.println("******* End of SubIFD " + ifd + " *******");
@@ -2431,7 +2437,8 @@ public class TIFFTweaker {
 						rationalField = new RationalField(tag, ldata);
 					}
 					System.out.print(indent);
-					System.out.println("Field value: " + rationalField.getDataAsString() + " => " + ftag.getFieldAsString(ldata));					
+					suffix = ftag.getFieldAsString(ldata);
+					System.out.println("Field value: " + rationalField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					tiffIFD.addField(rationalField);
 					
 					break;
@@ -2455,7 +2462,8 @@ public class TIFFTweaker {
 					TiffField<int[]> ifdField = new IFDField(tag, ldata);
 					tiffIFD.addField(ifdField);
 					System.out.print(indent);
-					System.out.println("Field value: " + ifdField.getDataAsString() + " " + ftag.getFieldAsString(ldata));
+					suffix = ftag.getFieldAsString(ldata);
+					System.out.println("Field value: " + ifdField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					for(int ifd = 0; ifd < ldata.length; ifd++) {
 						System.out.print(indent);
 						System.out.println("******* SubIFD " + ifd + " *******");
@@ -2510,15 +2518,15 @@ public class TIFFTweaker {
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD currIFD = ifds.get(pageNumber);
-		TiffField<?> field = currIFD.getField(TiffTag.ICC_PROFILE.getValue()); 
+		TiffField<?> field = currIFD.getField(TiffTag.ICC_PROFILE); 
 		if(field != null) { // We have found ICC_Profile
 			metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile((byte[])field.getData()));
 		}
-		field = currIFD.getField(TiffTag.XMP.getValue());
+		field = currIFD.getField(TiffTag.XMP);
 		if(field != null) { // We have found XMP
 			metadataMap.put(MetadataType.XMP, new XMP((byte[])field.getData()));
 		}
-		field = currIFD.getField(TiffTag.PHOTOSHOP.getValue());
+		field = currIFD.getField(TiffTag.PHOTOSHOP);
 		if(field != null) { // We have found Photoshop IRB
 			IRB irb = new IRB((byte[])field.getData());
 			metadataMap.put(MetadataType.PHOTOSHOP_IRB, irb);
@@ -2528,7 +2536,7 @@ public class TIFFTweaker {
 				metadataMap.put(MetadataType.IPTC, iptc);
 			}
 		}
-		field = currIFD.getField(TiffTag.IPTC.getValue());
+		field = currIFD.getField(TiffTag.IPTC);
 		if(field != null) { // We have found IPTC data
 			FieldType type = field.getType();
 			if(type == FieldType.LONG)
@@ -2536,7 +2544,7 @@ public class TIFFTweaker {
 			else
 				metadataMap.put(MetadataType.IPTC, new IPTC((byte[])field.getData()));
 		}
-		field = currIFD.getField(TiffTag.EXIF_SUB_IFD.getValue());
+		field = currIFD.getField(TiffTag.EXIF_SUB_IFD);
 		if(field != null) { // We have found EXIF SubIFD
 			metadataMap.put(MetadataType.EXIF, new TiffExif(currIFD));
 		}
@@ -2567,8 +2575,8 @@ public class TIFFTweaker {
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
 		
 		IFD workingPage = ifds.get(pageNumber);
-		workingPage.removeField(TiffTag.EXIF_SUB_IFD.getValue());
-		workingPage.removeField(TiffTag.GPS_SUB_IFD.getValue());
+		workingPage.removeField(TiffTag.EXIF_SUB_IFD);
+		workingPage.removeField(TiffTag.GPS_SUB_IFD);
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
@@ -2611,7 +2619,7 @@ public class TIFFTweaker {
 		}
 		// Reset pageNumber for the existing pages
 		for(int i = 0; i < list.size(); i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(list.size() - 1)}));
 		}
 		// End of removing pages		
@@ -2656,7 +2664,7 @@ public class TIFFTweaker {
 		// End of removing pages
 		// Reset pageNumber for the existing pages
 		for(int i = 0; i < list.size(); i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(list.size() - 1)}));
 		}
 		// Step 3: copy the remaining pages
@@ -2697,7 +2705,7 @@ public class TIFFTweaker {
 		}
 		// Reset pageNumber for the existing pages
 		for(int i = 0; i < list.size(); i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(list.size() - 1)}));
 		}
 		// End of removing pages		
@@ -2734,7 +2742,7 @@ public class TIFFTweaker {
 		// End of removing pages
 		// Reset pageNumber for the existing pages
 		for(int i = 0; i < list.size(); i++) {
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(list.size() - 1)}));
 		}
 		// Step 3: copy the remaining pages
@@ -2785,9 +2793,9 @@ public class TIFFTweaker {
 			writeOffset = copyPageData(list.get(i), writeOffset, rin, rout);
 			int firstIFDOffset = writeOffset;
 			// Write IFD
-			if(list.get(i).removeField(TiffTag.SUBFILE_TYPE.getValue()) == null)
-				list.get(i).removeField(TiffTag.NEW_SUBFILE_TYPE.getValue());
-			list.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+			if(list.get(i).removeField(TiffTag.SUBFILE_TYPE) == null)
+				list.get(i).removeField(TiffTag.NEW_SUBFILE_TYPE);
+			list.get(i).removeField(TiffTag.PAGE_NUMBER);
 			list.get(i).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{1}));
 			writeOffset = list.get(i).write(rout, writeOffset);
 			writeToStream(rout, firstIFDOffset);

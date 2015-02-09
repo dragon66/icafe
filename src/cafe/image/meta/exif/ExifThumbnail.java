@@ -77,19 +77,19 @@ public class ExifThumbnail extends Thumbnail {
 			randOS.seek(offset);
 			randOS.write(getCompressedImage());
 			// Update fields
-			randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue()).getDataOffset());
+			randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT).getDataOffset());
 			randOS.writeInt(offset);
 		} else if(getDataType() == Thumbnail.DATA_TYPE_TIFF) { // Uncompressed TIFF format
 			// Read the IFDs into a list first
 			List<IFD> list = new ArrayList<IFD>();			   
 			RandomAccessInputStream tiffIn = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(getCompressedImage()));
 			TIFFTweaker.readIFDs(list, tiffIn);
-			TiffField<?> stripOffset = list.get(0).getField(TiffTag.STRIP_OFFSETS.getValue());
+			TiffField<?> stripOffset = list.get(0).getField(TiffTag.STRIP_OFFSETS);
     		if(stripOffset == null) 
-    			stripOffset = list.get(0).getField(TiffTag.TILE_OFFSETS.getValue());
-    		TiffField<?> stripByteCounts = list.get(0).getField(TiffTag.STRIP_BYTE_COUNTS.getValue());
+    			stripOffset = list.get(0).getField(TiffTag.TILE_OFFSETS);
+    		TiffField<?> stripByteCounts = list.get(0).getField(TiffTag.STRIP_BYTE_COUNTS);
     		if(stripByteCounts == null) 
-    			stripByteCounts = list.get(0).getField(TiffTag.TILE_BYTE_COUNTS.getValue());
+    			stripByteCounts = list.get(0).getField(TiffTag.TILE_BYTE_COUNTS);
     		offset = list.get(0).write(randOS, offset); // Write out the thumbnail IFD
     		int[] off = new int[0];;
     		if(stripOffset != null) { // Write out image data and update offset array
@@ -155,9 +155,9 @@ public class ExifThumbnail extends Thumbnail {
 			long finishOffset = randOS.getStreamPointer();			
 			int totalOut = (int)(finishOffset - startOffset);
 			// Update fields
-			randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue()).getDataOffset());
+			randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT).getDataOffset());
 			randOS.writeInt((int)startOffset);
-			randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue()).getDataOffset());
+			randOS.seek(thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH).getDataOffset());
 			randOS.writeInt(totalOut);
 		}
 	}

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import cafe.io.RandomAccessOutputStream;
+import cafe.string.StringUtils;
 
 /**
  * Image File Directory
@@ -89,14 +90,27 @@ public final class IFD {
 		return endOffset;
 	}
 	
-	public TiffField<?> getField(short tag) {
-		return tiffFields.get(tag);
+	public TiffField<?> getField(Tag tag) {
+		return tiffFields.get(tag.getValue());
 	}
 	
-	public String getFieldAsString(short tag) {
-		TiffField<?> field = tiffFields.get(tag);
-		if(field != null)
-			return field.getDataAsString();
+	/**
+	 * Return a String representation of the field 
+	 * @param tag Tag for the field
+	 * @return a String representation of the field
+	 */
+	public String getFieldAsString(Tag tag) {
+		TiffField<?> field = tiffFields.get(tag.getValue());
+		if(field != null) {
+			FieldType ftype = field.getType();
+			String suffix = null;
+			if(ftype == FieldType.SHORT || ftype == FieldType.SSHORT)
+				suffix = tag.getFieldAsString(field.getDataAsLong());
+			else
+				suffix = tag.getFieldAsString(field.getData());			
+			
+			return field.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix);
+		}
 		return null;
 	}
 	
@@ -123,8 +137,8 @@ public final class IFD {
 	}
 	
 	/** Remove a specific field associated with the given tag */
-	public TiffField<?> removeField(short tag) {
-		return tiffFields.remove(tag);
+	public TiffField<?> removeField(Tag tag) {
+		return tiffFields.remove(tag.getValue());
 	}
 	
 	/**
@@ -182,7 +196,7 @@ public final class IFD {
 			    Tag key = entry.getKey();
 			    IFD value = entry.getValue();
 			    // Update parent field if present, otherwise skip
-			    TiffField<?> tiffField = this.getField(key.getValue());
+			    TiffField<?> tiffField = this.getField(key);
 			    if(tiffField != null) {
 			    	int dataPos = tiffField.getDataOffset();
 					os.seek(dataPos);

@@ -44,7 +44,7 @@ public class TIFFImage implements Iterable<IFD> {
 		ifds.get(workingPage).addField(field);
 	}
 	
-	public TiffField<?> getField(short tag) {
+	public TiffField<?> getField(Tag tag) {
 		return ifds.get(workingPage).getField(tag);
 	}
 	
@@ -60,7 +60,7 @@ public class TIFFImage implements Iterable<IFD> {
 		return numOfPages;
 	}
 	
-	public TiffField<?> removeField(short tag) {
+	public TiffField<?> removeField(Tag tag) {
 		return ifds.get(workingPage).removeField(tag);
 	}
 	
@@ -82,7 +82,7 @@ public class TIFFImage implements Iterable<IFD> {
 		// Reset pageNumber if we have more than 1 pages
 		if(numOfPages > 1) { 
 			for(int i = 0; i < ifds.size(); i++) {
-				ifds.get(i).removeField(TiffTag.PAGE_NUMBER.getValue());
+				ifds.get(i).removeField(TiffTag.PAGE_NUMBER);
 				ifds.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)(numOfPages - 1)}));
 			}
 		}

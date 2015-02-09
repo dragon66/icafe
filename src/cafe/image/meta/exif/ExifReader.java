@@ -95,25 +95,25 @@ public class ExifReader implements MetadataReader {
 		    	IFD thumbnailIFD = ifds.get(1);
 		    	int width = -1;
 		    	int height = -1;
-		    	TiffField<?> field = thumbnailIFD.getField(TiffTag.IMAGE_WIDTH.getValue());
+		    	TiffField<?> field = thumbnailIFD.getField(TiffTag.IMAGE_WIDTH);
 		    	if(field != null) 
 		    		width = field.getDataAsLong()[0];
-		    	field = thumbnailIFD.getField(TiffTag.IMAGE_LENGTH.getValue());
+		    	field = thumbnailIFD.getField(TiffTag.IMAGE_LENGTH);
 		    	if(field != null)
 		    		height = field.getDataAsLong()[0];
-		    	field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue());
+		    	field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT);
 		    	if(field != null) { // JPEG format, save as JPEG
 		    		int thumbnailOffset = field.getDataAsLong()[0];
-		    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue());
+		    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
 		    		int thumbnailLen = field.getDataAsLong()[0];
 		    		exifIn.seek(thumbnailOffset);
 		    		byte[] thumbnailData = new byte[thumbnailLen];
 		    		exifIn.readFully(thumbnailData);
 		    		thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
 		    	} else { // Uncompressed, save as TIFF
-		    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS.getValue());
+		    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS);
 		    		if(field == null) 
-		    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS.getValue());
+		    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS);
 		    		if(field != null) {
 		    			 exifIn.seek(0);
 		    			 ByteArrayOutputStream bout = new ByteArrayOutputStream();
