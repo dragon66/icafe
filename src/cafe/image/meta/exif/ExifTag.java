@@ -27,7 +27,16 @@ import cafe.string.StringUtils;
  */
 public enum ExifTag implements Tag {
 	EXPOSURE_TIME("ExposureTime", (short)0x829a),	
-	FNUMBER("FNumber", (short)0x829d),
+	FNUMBER("FNumber", (short)0x829d) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of EXIF FNumber data number: " + intValues.length);
+			//formatting numbers up to 2 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.#");
+	        return "F" + df.format(1.0*intValues[0]/intValues[1]);	
+		}
+	},
   	//EXIF_SUB_IFD("ExifSubIFD", (short)0x8769),	
 	EXPOSURE_PROGRAM("ExposureProgram", (short)0x8822),
 	SPECTRAL_SENSITIVITY("SpectralSensitivity", (short)0x8824),
@@ -64,8 +73,16 @@ public enum ExifTag implements Tag {
 	METERING_MODE("MeteringMode", (short)0x9207),
 	LIGHT_SOURCE("LightSource", (short)0x9208),
 	FLASH("Flash", (short)0x9209),	
-	FOCAL_LENGTH("FocalLength", (short)0x920a),	
-	
+	FOCAL_LENGTH("FocalLength", (short)0x920a) {
+		public String getFieldAsString(Object value) {
+			int[] intValues = (int[])value;
+			if(intValues.length != 2)
+				throw new IllegalArgumentException("Wrong number of EXIF FocalLength data number: " + intValues.length);
+			//formatting numbers up to 2 decimal places in Java
+	        DecimalFormat df = new DecimalFormat("#,###,###.##");
+	        return df.format(1.0*intValues[0]/intValues[1]) + "mm";	
+		}
+	},	
 	SUBJECT_AREA("SubjectArea", (short)0x9214),	
 	MAKER_NODE("MakerNote", (short)0x927c),
 	USER_COMMENT("UserComment", (short)0x9286),
