@@ -36,7 +36,7 @@ public enum GPSTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of GPSLatitute data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return df.format(1.0*intValues[0]/intValues[1]) + "°" + df.format(1.0*intValues[2]/intValues[3])
+	        return df.format(1.0*intValues[0]/intValues[1]) + '\u00B0' + df.format(1.0*intValues[2]/intValues[3])
 	        		+ "'" + df.format(1.0*intValues[4]/intValues[5]) + "\"";	
 		}
 	},
@@ -48,7 +48,7 @@ public enum GPSTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of GPSLongitude data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return df.format(1.0*intValues[0]/intValues[1]) + "°" + df.format(1.0*intValues[2]/intValues[3])
+	        return df.format(1.0*intValues[0]/intValues[1]) + '\u00B0' + df.format(1.0*intValues[2]/intValues[3])
 	        		+ "'" + df.format(1.0*intValues[4]/intValues[5]) + "\"";	
 		}
 	},
@@ -60,7 +60,7 @@ public enum GPSTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of GPSAltitute data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return df.format(1.0*intValues[0]/intValues[1]) + " m";	
+	        return df.format(1.0*intValues[0]/intValues[1]) + "m";	
 		}
 	},
 	GPS_TIME_STAMP("GPSTimeStamp", (short)0x0007) {
@@ -102,7 +102,7 @@ public enum GPSTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of GPSDestLatitute data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return df.format(1.0*intValues[0]/intValues[1]) + "°" + df.format(1.0*intValues[2]/intValues[3])
+	        return df.format(1.0*intValues[0]/intValues[1]) + '\u00B0' + df.format(1.0*intValues[2]/intValues[3])
 	        		+ "'" + df.format(1.0*intValues[4]/intValues[5]) + "\"";	
 		}
 	},
@@ -114,7 +114,7 @@ public enum GPSTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of GPSDestLongitude data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return df.format(1.0*intValues[0]/intValues[1]) + "°" + df.format(1.0*intValues[2]/intValues[3])
+	        return df.format(1.0*intValues[0]/intValues[1]) + '\u00B0' + df.format(1.0*intValues[2]/intValues[3])
 	        		+ "'" + df.format(1.0*intValues[4]/intValues[5]) + "\"";	
 		}
 	},
@@ -126,7 +126,7 @@ public enum GPSTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of GPSDestBearing data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return df.format(1.0*intValues[0]/intValues[1]) + " m";	
+	        return df.format(1.0*intValues[0]/intValues[1]) + "m";	
 		}
 	},
 	GPS_DEST_DISTANCE_REF("GPSDestDistanceRef", (short)0x0019),
@@ -137,7 +137,7 @@ public enum GPSTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of GPSDestDistance data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.###");
-	        return df.format(1.0*intValues[0]/intValues[1]) + " m";	
+	        return df.format(1.0*intValues[0]/intValues[1]) + "m";	
 		}
 	},
 	GPS_PROCESSING_METHOD("GPSProcessingMethod", (short)0x001b),
