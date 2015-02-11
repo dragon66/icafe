@@ -38,7 +38,7 @@ public class TestMetadata {
 			System.out.println("-----------------------------------------");
 		}
 		System.out.println("End of metadata information.");
-		Metadata.extractThumbnails(args[0], "thumbnail");
+		Metadata.extractThumbnails("images/iptc-envelope.tif", "iptc-envelope");
 		
 		FileInputStream fin = new FileInputStream("images/iptc-envelope.tif");
 		FileOutputStream fout = new FileOutputStream("iptc-envelope-iptc-inserted.tif");
