@@ -24,11 +24,11 @@ public class TestPNGTweaker {
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
         	    new FileOutputStream("textinfo.txt"), "UTF-8"));
        	try {
-        	    out.write(text);
+       		out.write(text);
        	} finally {
-        	    out.close();
-       	}         	
-     
+       		out.close();
+       	}
+       	
         TextBuilder builder = new TextBuilder(ChunkType.ITXT).keyword("Author").text("Wen Yu");
         Chunk authorChunk = builder.build();
         builder.keyword("Software").text("PNGTweaker 1.0");

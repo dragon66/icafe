@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    11Feb2015  Added showMetadata()
  * WY    03Feb2015  Factored out TiffExif and JpegExif
  * WY    03Feb2015  Made class abstract
  * WY    14Jan2015  Moved thumbnail related code to ExifThumbnail
@@ -30,6 +31,7 @@ import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.tiff.FieldType;
 import cafe.image.tiff.IFD;
+import cafe.image.tiff.TIFFTweaker;
 import cafe.image.tiff.TiffField;
 import cafe.image.tiff.TiffTag;
 import cafe.io.IOUtils;
@@ -104,45 +106,54 @@ public abstract class Exif extends Metadata {
 	}
 	
 	public IFD getImageIFD() {
-		if(imageIFD != null)
+		if(imageIFD != null) {
 			return imageIFD;
-		if(reader != null && !reader.isDataLoaded()) {
-			try {
-				reader.read();
-			} catch (IOException e) {
-				e.printStackTrace();
+		} else {
+			if (reader != null && !reader.isDataLoaded()) {
+				try {
+					reader.read();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				imageIFD = reader.getImageIFD();
 			}
-			return reader.getImageIFD();
+			
+			return imageIFD;
 		}
-		return null;
 	}
 	
 	public IFD getExifIFD() {
-		if(exifSubIFD != null)
+		if(exifSubIFD != null) {
 			return exifSubIFD;
-		if(reader != null && !reader.isDataLoaded()) {
-			try {
-				reader.read();
-			} catch (IOException e) {
-				e.printStackTrace();
+		} else {
+			if (reader != null && !reader.isDataLoaded()) {
+				try {
+					reader.read();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				exifSubIFD = reader.getImageIFD();
 			}
-			return reader.getExifIFD();
+			
+			return exifSubIFD;
 		}
-		return null;
 	}
 	
 	public IFD getGPSIFD() {
-		if(gpsSubIFD != null)
+		if(gpsSubIFD != null) {
 			return gpsSubIFD;
-		if(reader != null && !reader.isDataLoaded()) {
-			try {
-				reader.read();
-			} catch (IOException e) {
-				e.printStackTrace();
+		} else {
+			if (reader != null && !reader.isDataLoaded()) {
+				try {
+					reader.read();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				gpsSubIFD = reader.getImageIFD();
 			}
-			return reader.getGPSIFD();
+			
+			return gpsSubIFD;
 		}
-		return null;
 	}
 	
 	public ExifReader getReader() {
@@ -201,6 +212,16 @@ public abstract class Exif extends Metadata {
 		if(this.thumbnail == null)
 			this.thumbnail = new ExifThumbnail(); 
 		this.thumbnail.setImage(thumbnail);
+	}
+	
+	@Override
+	public void showMetadata() {
+		if(imageIFD != null) {
+			System.out.println("<<Image IFD starts>>");
+			TIFFTweaker.printIFD(imageIFD, TiffTag.class, "");
+			System.out.println("<<Image IFD ends>>");
+		} else
+			super.showMetadata();
 	}
 	
 	public abstract void write(OutputStream os) throws IOException;

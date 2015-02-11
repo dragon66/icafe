@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    11Feb2015  Moved showMetadata() to Exif
  * WY    06Feb2015  Added showMetadata()
  * WY    03Feb2015  Initial creation
  */
@@ -23,8 +24,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import cafe.image.tiff.IFD;
-import cafe.image.tiff.TiffTag;
-import cafe.image.tiff.TIFFTweaker;
 
 public class TiffExif extends Exif {
 
@@ -36,14 +35,6 @@ public class TiffExif extends Exif {
 		super(imageIFD);		
 	}
 	
-	@Override
-	public void showMetadata() {
-		if(imageIFD != null)
-			System.out.println("<<Image IFD starts>>");
-			TIFFTweaker.printIFD(imageIFD, TiffTag.class, "");
-			System.out.println("<<Image IFD ends>>");
-	}
-	
 	/** 
 	 * Write the EXIF data to the OutputStream
 	 * 
@@ -52,6 +43,6 @@ public class TiffExif extends Exif {
 	 */
 	@Override
 	public void write(OutputStream os) throws IOException {
-		
+		;
 	}
 }

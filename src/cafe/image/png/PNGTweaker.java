@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    11Feb2015  Added code to extract XMP from iTXT chunk
  * WY    20Jan2015  Revised to work with Metadata.showMetadata()
  * WY    13Jan2015  Split remove_ancillary_chunks() arguments
  * WY    22Dec2014  Added read_ICCP_chunk() to read ICC_Profile chunk
@@ -44,6 +45,7 @@ import java.util.zip.InflaterInputStream;
 
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
+import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
@@ -412,6 +414,11 @@ public class PNGTweaker {
 			long length = chunk.getLength();
 			if(type == ChunkType.ICCP)
 				metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile(readICCProfile(chunk.getData())));
+			if(type == ChunkType.ITXT) {// We may find XMP data inside here
+				TextReader reader = new TextReader(chunk);
+				if(reader.getKeyword().equals("XML:com.adobe.xmp")); // We found XMP data
+	   				metadataMap.put(MetadataType.XMP, new XMP(reader.getText()));
+	   		}
 			System.out.print(type.getName() + " (" + type.getAttribute() + ")");
 			System.out.print(" | " + length + " bytes");
 			System.out.println(" | " + "0x" + Long.toHexString(chunk.getCRC()) + " (CRC)");

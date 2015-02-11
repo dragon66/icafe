@@ -21,6 +21,7 @@ package cafe.string;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -36,6 +37,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class XMLUtils {
@@ -89,6 +91,33 @@ public class XMLUtils {
 		}
 		
 		return document;
+	}
+	
+	public static Document createXML(String xml) {
+		//Get the DOM Builder Factory
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		//Get the DOM Builder
+		DocumentBuilder builder = null;
+		try {
+			builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+		//Load and Parse the XML document
+		//document contains the complete XML as a Tree.
+		Document document = null;
+		InputSource source = new InputSource(new StringReader(xml));
+		try {
+			try {
+				document = builder.parse(source);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (SAXException e) {
+			e.printStackTrace();
+		}
+		
+		return document;		 
 	}
 	
 	public static String escapeXML(String input) 
