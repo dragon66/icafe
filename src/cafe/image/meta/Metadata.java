@@ -354,7 +354,7 @@ public abstract class Metadata {
 			default:
 				pushbackStream.close();
 				throw new IllegalArgumentException("EXIF data removing is not supported for " + imageType + " image");				
-		}		
+		}
 	}
 	
 	public Metadata(MetadataType type, byte[] data) {
