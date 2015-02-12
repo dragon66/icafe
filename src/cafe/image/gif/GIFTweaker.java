@@ -288,6 +288,7 @@ public class GIFTweaker {
 		is.read(DTO.logicalScreenDescriptor);
 	}
 	
+	// TODO: rewrite to read Application Block - especially with XMP data embedded
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		// Create a new data transfer object to hold data
