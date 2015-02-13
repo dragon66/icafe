@@ -28,6 +28,7 @@ import java.util.List;
 
 import cafe.image.ImageType;
 import cafe.image.gif.GIFFrame;
+import cafe.image.gif.GIFTweaker;
 import cafe.image.util.IMGUtils;
 
 /**
@@ -50,12 +51,7 @@ public class GIFWriter extends ImageWriter {
 
 	private byte bytes_buf[] = new byte[256];
 	private int[] colorPalette;
- 	private static final byte IMAGE_SEPARATOR = 0x2c; // ","
-	private static final byte EXTENSION_INTRODUCER = 0x21; // "!"
-	private static final byte IMAGE_TRAILER = 0x3b; // ";"
-	private static final byte GRAPHIC_CONTROL_LABEL = (byte)0xf9;
-	
- 	private static final byte APPLICATION_EXTENSION_LABEL = (byte)0xff;
+ 
 	private static int MASK[] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
 	
 	private static Dimension getLogicalScreenSize(BufferedImage[] images) {
@@ -260,7 +256,7 @@ public class GIFWriter extends ImageWriter {
 		// Write the image frame
 		writeFrame(pixels, imageWidth, imageHeight, 0, 0, 0, os, true);
 		// Make a clean end up of the image
-		os.write(IMAGE_TRAILER);
+		os.write(GIFTweaker.IMAGE_TRAILER);
 		os.close();
     }
 
@@ -293,7 +289,7 @@ public class GIFWriter extends ImageWriter {
 			else writeFrame(pixels, imageWidth, imageHeight, 0, 0, delays[i], os, false);
     	}
     	
-    	os.write(IMAGE_TRAILER);
+    	os.write(GIFTweaker.IMAGE_TRAILER);
 		os.close();    	
     }
     
@@ -333,7 +329,7 @@ public class GIFWriter extends ImageWriter {
 					frames[i].getDelay(), frames[i].getDisposalMethod(), frames[i].getUserInputFlag(), os, false);
     	}
     	
-    	os.write(IMAGE_TRAILER);
+    	os.write(GIFTweaker.IMAGE_TRAILER);
 		os.close();    	
     }
     
@@ -421,8 +417,8 @@ public class GIFWriter extends ImageWriter {
     	delay = Math.round(delay/10.0f);
     	
         byte[] buf = new byte[8];
-		buf[0] = EXTENSION_INTRODUCER; // Extension introducer
-		buf[1] = GRAPHIC_CONTROL_LABEL; // Graphic control label
+		buf[0] = GIFTweaker.EXTENSION_INTRODUCER; // Extension introducer
+		buf[1] = GIFTweaker.GRAPHIC_CONTROL_LABEL; // Graphic control label
 		buf[2] = 0x04; // Block size
 		// Add disposalMethod and userInputFlag
 		buf[3] |= (((disposalMethod&0x07) << 2)|((userInputFlag&0x01) << 1));
@@ -448,7 +444,7 @@ public class GIFWriter extends ImageWriter {
     private void writeImageDescriptor(OutputStream os, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition, int colorTableSize) throws Exception
     {
 		byte imageDescriptor[] = new byte[10];
-		imageDescriptor[0] = IMAGE_SEPARATOR;// Image separator ","
+		imageDescriptor[0] = GIFTweaker.IMAGE_SEPARATOR;// Image separator ","
 		imageDescriptor[1] = (byte)(imageLeftPosition&0xff);// Image left position
 		imageDescriptor[2] = (byte)((imageLeftPosition>>8)&0xff);
 		imageDescriptor[3] = (byte)(imageTopPosition&0xff);// Image top position
@@ -488,8 +484,8 @@ public class GIFWriter extends ImageWriter {
     private void writeNetscapeApplicationBlock(OutputStream os, int loopCounts) throws Exception
     {
     	byte[] buf = new byte[19];
- 		buf[0] = EXTENSION_INTRODUCER; // Extension introducer
- 		buf[1] = APPLICATION_EXTENSION_LABEL; // Application extension label
+ 		buf[0] = GIFTweaker.EXTENSION_INTRODUCER; // Extension introducer
+ 		buf[1] = GIFTweaker.APPLICATION_EXTENSION_LABEL; // Application extension label
  		buf[2] = 0x0b; // Block size
  		buf[3] = 'N'; // Application Identifier (8 bytes)
  		buf[4] = 'E';
