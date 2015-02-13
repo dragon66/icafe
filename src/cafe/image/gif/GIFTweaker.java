@@ -12,9 +12,11 @@
  * GIFTweaker.java
  *
  * Who   Date       Description
- * ====  =========  ====================================================================
- * WY    20Jan2015  Revised to work with Metadata.showMetadata()
- * WY    28Dec2014  Added snoop() to show GIF image metadata 
+ * ====  =========  ======================================================================
+ * WY    13Feb2015  Added insertXMPApplicationBlock() to insert XMP meta data
+ * WY    13Feb2015  Added code to readMetadata() Comment and XMP meta data
+ * WY    20Jan2015  Renamed snoop() to readMetadata() to work with Metadata.readMetadata()
+ * WY    28Dec2014  Added snoop() to show GIF image meta data 
  * WY    18Nov2014  Fixed bug with splitFramesEx() disposal method "RESTORE_TO_PREVIOUS" 
  * WY    17Nov2014  Added writeAnimatedGIF(GIFFrame) to work with GIFFrame
  * WY    03Oct2014  Added splitFramesEx2() to split animated GIFs into separate images
@@ -29,17 +31,21 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
+import cafe.image.meta.adobe.XMP;
+import cafe.image.meta.image.Comment;
 import cafe.image.ImageType;
 import cafe.image.options.GIFOptions;
 import cafe.image.reader.GIFReader;
@@ -47,6 +53,7 @@ import cafe.image.writer.GIFWriter;
 import cafe.image.writer.ImageWriter;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
+import cafe.util.ArrayUtils;
 
 /**
  * GIF image tweaking tool
@@ -54,13 +61,23 @@ import cafe.string.StringUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 04/16/2014
  */
-public class GIFTweaker {	
+public class GIFTweaker {
+	// Define constants
+	public static final byte IMAGE_SEPARATOR = 0x2c; // ","
+	public static final byte IMAGE_TRAILER = 0x3b; // ";"
+	public static final byte EXTENSION_INTRODUCER = 0x21; // "!"
+	public static final byte GRAPHIC_CONTROL_LABEL = (byte)0xf9;
+	public static final byte APPLICATION_EXTENSION_LABEL = (byte)0xff;
+	public static final byte COMMENT_EXTENSION_LABEL = (byte)0xfe;
+	public static final byte TEXT_EXTENSION_LABEL = 0x01;
+	
 	// Data transfer object for multiple thread support
 	private static class DataTransferObject {
 		private byte[] header;	
 		private byte[] logicalScreenDescriptor;
 		private byte[] globalPalette;
 		private byte[] imageDescriptor;
+		private Map<MetadataType, Metadata> metadataMap;
 	}
 	
 	private static boolean copyFrame(InputStream is, OutputStream os, DataTransferObject DTO) throws IOException {
@@ -134,6 +151,65 @@ public class GIFTweaker {
 		return true;
 	}
 	
+	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, byte[] xmp) throws IOException {
+    	byte[] buf = new byte[14];
+ 		buf[0] = EXTENSION_INTRODUCER; // Extension introducer
+ 		buf[1] = APPLICATION_EXTENSION_LABEL; // Application extension label
+ 		buf[2] = 0x0b; // Block size
+ 		buf[3] = 'X'; // Application Identifier (8 bytes)
+ 		buf[4] = 'M';
+ 		buf[5] = 'P';
+ 		buf[6] = '\0';
+ 		buf[7] = 'D';
+ 		buf[8] = 'a';
+ 		buf[9] = 't';
+ 		buf[10]= 'a';
+ 		buf[11]= 'X';// Application Authentication Code (3 bytes)
+ 		buf[12]= 'M';
+ 		buf[13]= 'P'; 		
+ 		// Create a byte array from 0x01, 0xFF - 0x00, 0x00
+ 		byte[] magic_trailer = new byte[258];
+ 		
+ 		magic_trailer[0] = 0x01;
+ 		
+ 		for(int i = 255; i >= 0; i--)
+ 			magic_trailer[256 - i] = (byte)i;
+ 	
+ 		// Read and copy header and LSD
+ 		// Create a new data transfer object to hold data
+ 		DataTransferObject DTO = new DataTransferObject();
+ 		readHeader(is, DTO);
+ 		readLSD(is, DTO);
+ 		os.write(DTO.header);
+ 		os.write(DTO.logicalScreenDescriptor);
+
+		if((DTO.logicalScreenDescriptor[4]&0x80) == 0x80) 
+		{
+			int bitsPerPixel = (DTO.logicalScreenDescriptor[4]&0x07)+1;
+			int colorsUsed = (1 << bitsPerPixel);
+			
+			readGlobalPalette(is, colorsUsed, DTO);
+			os.write(DTO.globalPalette);
+		}
+ 		
+ 		// Insert XMP here
+ 		// Write extension introducer and application identifier
+ 		os.write(buf);
+ 		// Write the XMP packet
+ 		os.write(xmp);
+ 		// Write the magic trailer
+ 		os.write(magic_trailer);
+ 		// End of XMP data 		
+ 		// Copy the rest of the input stream
+ 		buf = new byte[10240]; // 10K
+ 		int bytesRead = is.read(buf);
+ 		
+ 		while(bytesRead != -1) {
+ 			os.write(buf, 0, bytesRead);
+ 			bytesRead = is.read(buf);
+ 		}
+    }
+	
 	private static boolean readFrame(InputStream is, DataTransferObject DTO) throws IOException {
 		// Need to reset some of the fields
 		int disposalMethod = -1;
@@ -151,8 +227,7 @@ public class GIFTweaker {
 				return false;
 			}
 			    
-			if (image_separator == 0x21) // (!) Extension Block
-			{
+			if (image_separator == 0x21) { // (!) Extension Block
 				int func = is.read();
 				int len = is.read();
 				
@@ -195,14 +270,35 @@ public class GIFTweaker {
 						len = is.read();// len=0, block terminator!
 					}
 					System.out.println("<<End of graphic control block>>");
-				} else if(func == 0xff) { // Application label
+				} else if(func == 0xff) { // Application block
 					System.out.println(" - Application block");
-					IOUtils.skipFully(is, len);
-					len = is.read(); // Block terminator
+					byte[] xmp_id = {'X', 'M', 'P', '\0', 'D', 'a', 't', 'a', 'X', 'M', 'P' };
+					byte[] temp = new byte[0x0B];
+					IOUtils.readFully(is, temp);
+					// If we have XMP data. This part is not tested because I haven't found a test image
+					if(Arrays.equals(xmp_id, temp)) {
+						ByteArrayOutputStream bout = new ByteArrayOutputStream();
+						len = is.read();
+						while(len != 0) {
+							bout.write(len);
+							temp = new byte[len];
+							IOUtils.readFully(is, temp);
+							bout.write(temp);
+							len = is.read();
+						}
+						byte[] xmp = bout.toByteArray();
+						// Remove the magic trailer - 258 bytes minus the block terminator
+						len = xmp.length - 257;
+						if(len > 0) // Put it into the Meta data map
+							DTO.metadataMap.put(MetadataType.XMP, new XMP(ArrayUtils.subArray(xmp, 0, len)));
+						len = 0; // We already at block terminator
+					} else 
+						len = is.read(); // Block terminator					
 				} else if(func == 0xfe) { // Comment block
 					System.out.println(" - Comment block");
 					byte[] comment = new byte[len];
 					IOUtils.readFully(is, comment);
+					DTO.metadataMap.put(MetadataType.COMMENT, new Comment(comment));
 					System.out.println("Comment: " + new String(comment));
 					len = is.read();
 				} else {
@@ -274,7 +370,7 @@ public class GIFTweaker {
 	}
 	
 	private static void readHeader(InputStream is, DataTransferObject DTO) throws IOException {
-		DTO.header = new byte[6];
+		DTO.header = new byte[6]; // GIFXXa
 		is.read(DTO.header);
 	}
 	
@@ -288,12 +384,11 @@ public class GIFTweaker {
 		is.read(DTO.logicalScreenDescriptor);
 	}
 	
-	// TODO: rewrite to read Application Block - especially with XMP data embedded
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
-		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
-		
+		DTO.metadataMap = new HashMap<MetadataType, Metadata>(); // Created a Map for the Meta data
+				
 		readHeader(is, DTO);
 		readLSD(is, DTO);
 		
@@ -335,7 +430,7 @@ public class GIFTweaker {
 		System.out.println("Total number of frames: " + frameCount);
 		System.out.println("... GIF snoop ends ...");
 		
-		return metadataMap;
+		return DTO.metadataMap;		
 	}
 	
 	/**
