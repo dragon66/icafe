@@ -209,7 +209,7 @@ public class PNGWriter extends ImageWriter {
 		compressionLevel = 4;	
 	}
 	
-	protected void write (int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception 
+	protected void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception 
     {	
 		IOUtils.writeLongMM(os, SIGNATURE);
 		
