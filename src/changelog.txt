@@ -1,6 +1,7 @@
 ***************************
-Last modified on 02/03/2015
+Last modified on 02/13/2015
 ***************************
+13Feb2015  Added code to insert and read XMP to/from GIF image
 03Feb2015  Completely rewritten EXIF related code
 30Jan2015  Added code to handle multiple occurrence of IPTC tag
 27Jan2015  Added code to insert thumbnail into Photoshop IRB
