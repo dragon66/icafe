@@ -291,7 +291,7 @@ public class GIFTweaker {
 						len = xmp.length - 257;
 						if(len > 0) // Put it into the Meta data map
 							DTO.metadataMap.put(MetadataType.XMP, new XMP(ArrayUtils.subArray(xmp, 0, len)));
-						len = 0; // We already at block terminator
+						len = 0; // We're already at block terminator
 					} else 
 						len = is.read(); // Block terminator					
 				} else if(func == 0xfe) { // Comment block
