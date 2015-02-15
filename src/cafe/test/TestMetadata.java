@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import cafe.image.gif.GIFTweaker;
 import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
