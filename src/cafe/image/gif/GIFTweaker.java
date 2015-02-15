@@ -275,7 +275,7 @@ public class GIFTweaker {
 					byte[] xmp_id = {'X', 'M', 'P', '\0', 'D', 'a', 't', 'a', 'X', 'M', 'P' };
 					byte[] temp = new byte[0x0B];
 					IOUtils.readFully(is, temp);
-					// If we have XMP data. This part is not tested because I haven't found a test image
+					// If we have XMP data
 					if(Arrays.equals(xmp_id, temp)) {
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						len = is.read();
