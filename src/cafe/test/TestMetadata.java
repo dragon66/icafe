@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import cafe.image.gif.GIFTweaker;
+import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.exif.Exif;
@@ -45,9 +46,9 @@ public class TestMetadata {
 		
 		if(metadataMap.get(MetadataType.XMP) != null) {
 			byte[] xmp = metadataMap.get(MetadataType.XMP).getData();
-			fin = new FileInputStream("images/happy_trans.gif");
-			fout = new FileOutputStream("happy_trans-xmp-inserted.gif");
-			GIFTweaker.insertXMPApplicationBlock(fin, fout, xmp);
+			fin = new FileInputStream("images/1.jpg");
+			fout = new FileOutputStream("1-xmp-inserted.jpg");
+			JPEGTweaker.insertXMP(fin, fout, xmp);
 			fin.close();
 			fout.close();
 		}
