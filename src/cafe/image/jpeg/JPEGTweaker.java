@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    14Feb2015  Added insertXMP() to add XMP meta data
  * WY    04Feb2015  Revised insertExif() to keep existing EXIF data is needed
  * WY    29Jan2015  Revised insertIPTC() and insertIRB() to keep old data
  * WY    27Jan2015  Added insertIRBThumbnail() to insert Photoshop IRB thumbnail
@@ -99,6 +100,12 @@ import java.util.Map;
  * @version 1.0 01/25/2013
  */
 public class JPEGTweaker {
+	// Constants
+	public static final byte[] XMP_ID = "http://ns.adobe.com/xap/1.0/\0".getBytes();
+	// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
+	public static final byte[] EXIF_ID = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
+	public static final byte[] EXIF_EXT_ID = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
+
 	/** Copy a single SOS segment */	
 	@SuppressWarnings("unused")
 	private static short copySOS(InputStream is, OutputStream os) throws IOException {
@@ -538,8 +545,14 @@ public class JPEGTweaker {
 						break;
 				    case APP1:
 				    	Metadata meta = readAPP1(is); // Read and remove the old EXIF data
-				    	if(meta != null && meta.getType() == MetadataType.EXIF)
-				    		oldExif = (Exif)meta;
+				    	if(meta != null) {
+				    		if(meta.getType() == MetadataType.EXIF){
+				    			oldExif = (Exif)meta;
+				    		} else if(meta.getType() == MetadataType.XMP) {
+				    			// Write it back
+				    			writeXMP(os, meta.getData());
+				    		}				    			
+				    	}
 						marker = IOUtils.readShortMM(is);
 						break;
 				    default:
@@ -665,6 +678,7 @@ public class JPEGTweaker {
 	 * @param is InputStream for the original image
 	 * @param os OutputStream for the image with IPTC APP13 inserted
 	 * @param iptcs a list of IPTCDataSet to be inserted
+	 * @param update if true, keep the original data, otherwise, replace the complete APP13 data 
 	 * @throws IOException
 	 */
 	public static void insertIPTC(InputStream is, OutputStream os, List<IPTCDataSet> iptcs, boolean update) throws IOException {
@@ -736,7 +750,7 @@ public class JPEGTweaker {
 							for(_8BIM bim : bimMap.values())
 								bim.write(bout);
 						// Write segment length
-						IOUtils.writeShortMM(os, 14 + 2 +  bout.size());
+						IOUtils.writeShortMM(os, 14 + 2 + bout.size());
 						// Write segment data
 						os.write(photoshop.getBytes());
 						os.write(bout.toByteArray());
@@ -744,10 +758,6 @@ public class JPEGTweaker {
 				    	IOUtils.writeShortMM(os, marker);
 						copyToEnd(is, os); // Copy the rest of the data
 						finished = true; // No more marker to read, we are done. 
-						break;
-				    case APP1:
-				    	readAPP1(is);
-						marker = IOUtils.readShortMM(is);
 						break;
 				    case APP13:
 				    	if(update) {
@@ -855,10 +865,6 @@ public class JPEGTweaker {
 						copyToEnd(is, os); // Copy the rest of the data
 						finished = true; // No more marker to read, we are done. 
 						break;
-				    case APP1:
-				    	readAPP1(is);
-						marker = IOUtils.readShortMM(is);
-						break;
 				    case APP13: // We will keep the other IRBs from the original APP13
 				    	if(update) {
 					    	IRB irb = (IRB)readAPP13(is);
@@ -893,6 +899,91 @@ public class JPEGTweaker {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
 		insertIRB(is, os, Arrays.asList(IMGUtils.createThumbnail8BIM(thumbnail)), true); // Set true to keep other IRB blocks
+	}
+	
+	public static void insertXMP(InputStream is, OutputStream os, byte[] xmp) throws IOException {
+		boolean finished = false;
+		int length = 0;	
+		short marker;
+		Marker emarker;
+		
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+		{
+			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+			is.close();
+			os.close();		
+			return;
+		}
+		
+		System.out.println(Marker.SOI);
+		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished)
+	    {	        
+			if (Marker.fromShort(marker) == Marker.EOI)
+			{
+				IOUtils.writeShortMM(os, Marker.EOI.getValue());
+				System.out.println(Marker.EOI);
+				finished = true;
+			}
+		   	else // Read markers
+			{
+		   		emarker = Marker.fromShort(marker);
+				System.out.println(emarker); 
+	
+				switch (emarker) {
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
+						IOUtils.writeShortMM(os, marker);
+				    	marker = IOUtils.readShortMM(is);
+						break;
+				    case PADDING:	
+				    	IOUtils.writeShortMM(os, marker);
+				    	int nextByte = 0;
+				    	while((nextByte = IOUtils.read(is)) == 0xff) {
+				    		IOUtils.write(os, nextByte);
+				    	}
+				    	marker = (short)((0xff<<8)|nextByte);
+				    	break;				
+				    case SOS:
+				    	writeXMP(os, xmp);
+				    	// We add XMP APP1 data right before the SOS segment.
+				    	//Copy sos
+				    	IOUtils.writeShortMM(os, marker);
+						copyToEnd(is, os); // Copy the rest of the data
+						finished = true; // No more marker to read, we are done. 
+						break;
+				    case APP1:
+				    	// Read and remove the old XMP data
+				    	Metadata meta = readAPP1(is); 
+				    	if(meta != null && meta.getType() == MetadataType.EXIF){
+				    		// Write it back
+				    		byte[] exif = meta.getData();
+				    		IOUtils.writeShortMM(os, Marker.APP1.getValue());
+				    	 	// Write segment length
+				    		IOUtils.writeShortMM(os, EXIF_ID.length + 2 + exif.length);
+				    		// Write segment data
+				    		os.write(EXIF_ID);
+				    		os.write(exif);
+				    	}
+						marker = IOUtils.readShortMM(is);
+						break;
+				    default:
+					    length = IOUtils.readUnsignedShortMM(is);					
+					    byte[] buf = new byte[length - 2];
+					    IOUtils.writeShortMM(os, marker);
+					    IOUtils.writeShortMM(os, (short)length);
+					    IOUtils.readFully(is, buf);
+					    IOUtils.write(os, buf);
+					    marker = IOUtils.readShortMM(is);
+				}
+			}
+	    }
 	}
 	
 	private static void readAPP0(InputStream is) throws IOException
@@ -930,22 +1021,16 @@ public class JPEGTweaker {
 	}
 	
 	private static Metadata readAPP1(InputStream is) throws IOException {
-		// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
-		byte[] exif_id = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-		byte[] exif2_id = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
-		String xmp_id = "http://ns.adobe.com/xap/1.0/\0";
 		int length = IOUtils.readUnsignedShortMM(is);
-		byte[] buf = new byte[length-2];
+		byte[] buf = new byte[length - 2];
 		IOUtils.readFully(is, buf);		
 		// EXIF segment.
-		if (Arrays.equals(ArrayUtils.subArray(buf, 0, 6), exif_id)||Arrays.equals(buf, exif2_id)) {
-			return new JpegExif(ArrayUtils.subArray(buf, 6, length-8));
-		} else if(new String(ArrayUtils.subArray(buf, 0, xmp_id.length())).equals(xmp_id)) {
-			XMP xmp = new XMP(ArrayUtils.subArray(buf, xmp_id.length(), length - xmp_id.length() - 2));
-			xmp.showMetadata();
-			return xmp;
+		if (Arrays.equals(ArrayUtils.subArray(buf, 0, 6), EXIF_ID)||Arrays.equals(ArrayUtils.subArray(buf, 0, 6), EXIF_EXT_ID)) {
+			return new JpegExif(ArrayUtils.subArray(buf, 6, length - 8));
+		} else if(Arrays.equals(ArrayUtils.subArray(buf, 0, XMP_ID.length), XMP_ID)) {
+			return new XMP(ArrayUtils.subArray(buf, XMP_ID.length, length - XMP_ID.length - 2));
 			// For comparison purpose only
-			//System.out.println(new String(ArrayUtils.subArray(buf, xmp_id.length(), length - xmp_id.length() - 2), "utf-8"));
+			//System.out.println(new String(ArrayUtils.subArray(buf, XMP_ID.length, length - XMP_ID.length - 2), "UTF-8"));
   		}
 		
 		return null;
@@ -1712,6 +1797,15 @@ public class JPEGTweaker {
 	public static void writeICCProfile(OutputStream os, ICCProfile icc_profile) throws IOException {
 		byte[] data = icc_profile.getData();
 		writeICCProfile(os, data);
+	}
+	
+	public static void writeXMP(OutputStream os, byte[] xmp) throws IOException {
+		IOUtils.writeShortMM(os, Marker.APP1.getValue());
+		// Write segment length
+		IOUtils.writeShortMM(os, XMP_ID.length + 2 + xmp.length);
+		// Write segment data
+		os.write(XMP_ID);
+		os.write(xmp);
 	}
 	
 	// Prevent from instantiation

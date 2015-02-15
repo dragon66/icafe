@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    14Feb2015  Added insertXMP() to insert XMP data to TIFF
  * WY    06Feb2015  Added printIFDs() and printIFD()
  * WY    04Feb2015  Revised insertExif() to keep original EXIF data is needed
  * WY    03Feb2015  Added removeExif() to remove EXIF and GPS data from TIFF image
@@ -965,6 +966,7 @@ public class TIFFTweaker {
 	 * @param rin input image stream
 	 * @param rout output image stream
 	 * @param exif EXIF wrapper instance
+	 * @param pageNumber page offset where to insert EXIF (zero based)
 	 * @param update True to keep the original data, otherwise false
 	 * @throws Exception
 	 */
@@ -1012,10 +1014,10 @@ public class TIFFTweaker {
 	}
 	
 	/**
-	 * Inserts ICC_Profile into TIFF page
+	 * Insert ICC_Profile into TIFF page
 	 * 
 	 * @param icc_profile byte array holding the ICC_Profile
-	 * @param pageNumber page number to insert the ICC_Profile
+	 * @param pageNumber page offset where to insert ICC_Profile
 	 * @param rin RandomAccessInputStream for the input image
 	 * @param rout RandomAccessOutputStream for the output image
 	 * @throws Exception
@@ -1043,7 +1045,7 @@ public class TIFFTweaker {
 	}
 	
 	/**
-	 * Inserts ICC_Profile into TIFF page
+	 * Insert ICC_Profile into TIFF page
 	 * 
 	 * @param icc_profile ICC_Profile
 	 * @param pageNumber page number to insert the ICC_Profile
@@ -1060,7 +1062,7 @@ public class TIFFTweaker {
 	}
 	
 	/**
-	 * Inserts IPTC data into TIFF image. If the original TIFF image contains IPTC data, we either keep
+	 * Insert IPTC data into TIFF image. If the original TIFF image contains IPTC data, we either keep
 	 * or override them depending on the input parameter "update."
 	 * <p>
 	 * There is a possibility that IPTC data presents in more than one places such as a normal TIFF
@@ -1075,7 +1077,7 @@ public class TIFFTweaker {
 	 * 
 	 * @param rin RandomAccessInputStream for the original TIFF
 	 * @param rout RandomAccessOutputStream for the output TIFF with IPTC inserted
-	 * @param pageNumber zero based working page number to insert IPTC
+	 * @param pageNumber page offset where to insert IPTC
 	 * @param iptcs A list of IPTCDataSet to insert into the TIFF image
 	 * @param update whether we want to keep the original image or create a completely new IPTC data set
 	 * @throws IOException
@@ -1423,7 +1425,7 @@ public class TIFFTweaker {
 	}
 	
 	/**
-	 * Inserts a thumbnail into PHOTOSHOP private tag field
+	 * Insert a thumbnail into PHOTOSHOP private tag field
 	 *  
 	 * @param rin RandomAccessInputStream for the input TIFF
 	 * @param rout RandomAccessOutputStream for the output TIFF
@@ -1445,7 +1447,7 @@ public class TIFFTweaker {
 	 *
 	 * @param original File for the original TIFF image
 	 * @param toBeInserted File for the TIFF image to be inserted
-	 * @param pageNumber offset where to insert the TIFF image (zero based)
+	 * @param pageNumber page offset where to insert the TIFF image (zero based)
 	 * @param output File for the output TIFF image
 	 * 
 	 * @throws IOException
@@ -1702,6 +1704,36 @@ public class TIFFTweaker {
 		int firstIFDOffset = newList.get(0).getStartOffset();
 		// And write the IFDs
 		writeToStream(output, firstIFDOffset); // DONE!	
+	}
+	
+	public static void insertXMP(byte[] xmp, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		insertXMP(xmp, 0, rin, rout);
+	}
+	
+	/**
+	 * Insert XMP data into TIFF image
+	 * @param xmp byte array for the XMP data to be inserted
+	 * @param pageNumber page offset where to insert XMP
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @throws IOException
+	 */
+	public static void insertXMP(byte[] xmp, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		int offset = copyHeader(rin, rout);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		workingPage.addField(new UndefinedField(TiffTag.XMP.getValue(), xmp));
+		
+		offset = copyPages(ifds, offset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();	
+
+		writeToStream(rout, firstIFDOffset);	
 	}
 	
 	/**
