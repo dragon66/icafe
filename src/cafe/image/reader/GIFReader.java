@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==========================================================
+ * WY    16Feb2015  Removed unnecessary variables - flags and flags2 
  * WY    02Jan2015  Added getFrames() and getFrameCount() for animated GIF 
  * WY    18Nov2014  Fixed getFrameAsBufferedImageEx() bug with disposal method 
  *                  "RESTORE_TO_PREVIOUS" 
@@ -53,8 +54,6 @@ import cafe.io.IOUtils;
  */
 public class GIFReader extends ImageReader {	   
 	private GifHeader gifHeader;
-	private int flags;
-	private int flags2;
 	private int disposalMethod = -1;
 	private boolean transparent;
 	private int transparent_color = -1;
@@ -68,7 +67,7 @@ public class GIFReader extends ImageReader {
 	private List<BufferedImage> frames; // To keep track of all the frames
 	
 	// BufferedImage with the width and height of the logical screen to draw frames upon
-	BufferedImage baseImage;
+	private BufferedImage baseImage;
 	
 	private byte[] decodeLZW(InputStream is) throws Exception
 	{
@@ -324,7 +323,7 @@ public class GIFReader extends ImageReader {
 			}
 		} while(image_separator != 0x2c); // ","
 	
-		readImageDescriptor(is);
+		byte flags2 = readImageDescriptor(is);
 		   
 		boolean hasLocalColorMap = false;
 	
@@ -385,7 +384,7 @@ public class GIFReader extends ImageReader {
 			return false;
 		}
 	      
-		flags = gifHeader.flags;
+		byte flags = gifHeader.flags;
 					
 		if((flags&0x80) == 0x80) // A global color map is present 
 		{
@@ -419,7 +418,7 @@ public class GIFReader extends ImageReader {
 		return frames.get(0);
 	}
     
-	private void readImageDescriptor(InputStream is) throws Exception {	 	
+	private byte readImageDescriptor(InputStream is) throws Exception {	 	
 		int nindex = 0;
 		byte ides[] = new byte[9];
 	
@@ -429,7 +428,8 @@ public class GIFReader extends ImageReader {
 		image_y = (ides[nindex++]&0xff)|((ides[nindex++]&0xff)<<8);
 		width =  (ides[nindex++]&0xff)|((ides[nindex++]&0xff)<<8);
 		height = (ides[nindex++]&0xff)|((ides[nindex++]&0xff)<<8);
-		flags2 = ides[nindex++];
+
+		return ides[nindex++];
 	}
     
 	private void readLocalPalette(InputStream is,int num_of_color) throws Exception	{
