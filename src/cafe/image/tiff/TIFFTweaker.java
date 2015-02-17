@@ -2299,7 +2299,7 @@ public class TIFFTweaker {
 						rin.seek(rin.readInt());
 						rin.readFully(data, 0, field_length);
 					}
-					TiffField<String> ascIIField = new ASCIIField(tag, new String(data, 0, data.length));
+					TiffField<String> ascIIField = new ASCIIField(tag, new String(data, 0, data.length, "UTF-8"));
 					tiffIFD.addField(ascIIField);
 					if(data.length>0) {
 						System.out.print(indent);
