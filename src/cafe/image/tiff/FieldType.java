@@ -10,6 +10,7 @@
 
 package cafe.image.tiff;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,8 @@ public enum FieldType {
 	FLOAT("Float", (short)0x000b),
 	DOUBLE("Double", (short)0x000c),
 	IFD("IFD", (short)0x000d),
+	// This is a actually not a TIFF field type, internally it is a BYTE field
+	WINDOWSXP("WindowsXP", (short)0x000e),
 	
 	UNKNOWN("Unknown", (short)0x0000);
 	
@@ -101,7 +104,17 @@ public enum FieldType {
     						retValue = new SRationalField(tag.getValue(), intData);
     				}
     			}
-    			break;    			
+    			break;
+    		case WINDOWSXP: // Not a real TIFF field type, just a convenient way to add Windows XP field as a sting
+    			if(typeClass == String.class) {
+    				try {
+						byte[] xp = ((String)data).getBytes("UTF-16LE");
+						retValue = new ByteField(tag.getValue(), xp); 
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}    				   				
+    			}
+    			break;
     		default:
     	}
     	
@@ -142,6 +155,7 @@ public enum FieldType {
     	Class<?> typeClass = data.getClass();
     	switch(type) {
     		case ASCII:
+    		case WINDOWSXP: // Not a real TIFF field type, just a convenient way to add Windows XP field as a sting
 				if(typeClass == String.class) {
 					retValue = true;    				
 				}
@@ -174,7 +188,7 @@ public enum FieldType {
     				int[] intData = (int[])data;
     				if(intData.length > 0 && intData.length % 2 == 0) retValue = true;  				
     			}
-    			break;    			
+    			break;
     		default:
     	}
     	
