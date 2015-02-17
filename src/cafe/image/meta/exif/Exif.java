@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    17Feb2015  Added addImageField() to add TIFF image tag
  * WY    11Feb2015  Added showMetadata()
  * WY    03Feb2015  Factored out TiffExif and JpegExif
  * WY    03Feb2015  Made class abstract
@@ -90,8 +91,17 @@ public abstract class Exif extends Metadata {
 			gpsSubIFD.addField(field);
 		else
 			throw new IllegalArgumentException("Cannot create required GPS TIFF field");
-	}	
+	}
 	
+	public void addImageField(TiffTag tag, FieldType type, Object data) {
+		if(imageIFD == null)
+			imageIFD = new IFD();
+		TiffField<?> field = FieldType.createField(tag, type, data);
+		if(field != null)
+			imageIFD.addField(field);
+		else
+			throw new IllegalArgumentException("Cannot create required Image TIFF field");
+	}
 	
 	public void addThumbnail(ExifThumbnail thumbnail) {
 		if(thumbnail == null)
