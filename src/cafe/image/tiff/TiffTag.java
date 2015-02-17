@@ -10,6 +10,7 @@
 
 package cafe.image.tiff;
 
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -720,7 +721,10 @@ public enum TiffTag implements Tag {
 		public FieldType getFieldType() {
 			return FieldType.BYTE;
 		}
-	},	
+	},
+	
+	RATING("Rating", (short)0x4746, Attribute.PRIVATE),
+	RATING_PERCENT("RatingPercent", (short)0x4749, Attribute.PRIVATE),
 	
 	IMAGE_ID("ImageID", (short)0x800D, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
@@ -800,6 +804,81 @@ public enum TiffTag implements Tag {
 	 * string of "Adobe Photoshop Document Data Block"
 	 */
 	IMAGE_SOURCE_DATA("ImageSourceData", (short)0x935C, Attribute.PRIVATE),
+	
+	WINDOWS_XP_TITLE("WindowsXPTitle", (short) 0x9c9b, Attribute.PRIVATE) {
+		public String getFieldAsString(Object value) {
+			//
+			byte[] byteValue = (byte[]) value;
+			String description = "";
+			try {
+				description = new String(byteValue, "UTF-16LE");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+
+			return description;
+		}
+	},
+	
+	WINDOWS_XP_COMMENT("WindowsXPComment", (short)0x9c9c, Attribute.PRIVATE) {
+		public String getFieldAsString(Object value) {
+			//
+			byte[] byteValue = (byte[])value;
+			String description = "";
+			try {
+				description = new String(byteValue, "UTF-16LE");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			return description;
+		}
+	},
+	
+	WINDOWS_XP_AUTHOR("WindowsXPAuthor", (short)0x9c9d, Attribute.PRIVATE) {
+		public String getFieldAsString(Object value) {
+			//
+			byte[] byteValue = (byte[])value;
+			String description = "";
+			try {
+				description = new String(byteValue, "UTF-16LE");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			return description;
+		}
+	},
+	
+	WINDOWS_XP_KEYWORDS("WindowsXPKeywords", (short)0x9c9e, Attribute.PRIVATE){
+		public String getFieldAsString(Object value) {
+			//
+			byte[] byteValue = (byte[])value;
+			String description = "";
+			try {
+				description = new String(byteValue, "UTF-16LE");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			
+			return description;
+		}
+	},
+	
+	WINDOWS_XP_SUBJECT("WindowsXPSubject", (short) 0x9c9f, Attribute.PRIVATE) {
+		public String getFieldAsString(Object value) {
+			//
+			byte[] byteValue = (byte[]) value;
+			String description = "";
+			try {
+				description = new String(byteValue, "UTF-16LE");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+
+			return description;
+		}
+	},
 	
 	// Ranking unknown tag the least significant.
 	UNKNOWN("Unknown", (short)0xffff, Attribute.UNKNOWN); 
