@@ -23,6 +23,7 @@ import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.meta.iptc.IPTCRecord;
 import cafe.image.meta.iptc.IPTCApplicationTag;
 import cafe.image.tiff.FieldType;
+import cafe.image.tiff.TiffTag;
 import cafe.image.util.IMGUtils;
 
 public class TestMetadata {
@@ -130,7 +131,9 @@ public class TestMetadata {
 	// This method is for testing only
 	private static Exif populateExif(Class<?> exifClass) throws IOException {
 		// Create an EXIF wrapper
-		Exif exif = exifClass == (TiffExif.class)?new TiffExif() : new JpegExif();		
+		Exif exif = exifClass == (TiffExif.class)?new TiffExif() : new JpegExif();
+		exif.addImageField(TiffTag.WINDOWS_XP_AUTHOR, FieldType.WINDOWSXP, "Author");
+		exif.addImageField(TiffTag.WINDOWS_XP_KEYWORDS, FieldType.WINDOWSXP, "Copyright;Author");
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
 		exif.addExifField(ExifTag.EXPOSURE_TIME, FieldType.RATIONAL, new int[] {10, 600});
 		exif.addExifField(ExifTag.FNUMBER, FieldType.RATIONAL, new int[] {49, 10});
