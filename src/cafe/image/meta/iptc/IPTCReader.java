@@ -20,6 +20,7 @@ package cafe.image.meta.iptc;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class IPTCReader implements MetadataReader {
 				e.printStackTrace();
 			}
 		}
-		return datasetMap;
+		return Collections.unmodifiableMap(datasetMap);
 	}
 	
 	public boolean isDataLoaded() {
