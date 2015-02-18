@@ -11,6 +11,7 @@
 package cafe.image.meta.adobe;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class IRBReader implements MetadataReader {
 				e.printStackTrace();
 			}
 		}
-		return _8bims;
+		return Collections.unmodifiableMap(_8bims);
 	}
 	
 	public IRBThumbnail getThumbnail()  {
