@@ -13,8 +13,9 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    18Feb2015  Replaced removeExif() with a generic removeMetadata()
  * WY    14Feb2015  Added insertXMP() to add XMP meta data
- * WY    04Feb2015  Revised insertExif() to keep existing EXIF data is needed
+ * WY    04Feb2015  Revised insertExif() to keep existing EXIF data if needed
  * WY    29Jan2015  Revised insertIPTC() and insertIRB() to keep old data
  * WY    27Jan2015  Added insertIRBThumbnail() to insert Photoshop IRB thumbnail
  * WY    27Jan2015  Added insertIRB() to insert Photoshop IRB into APP13
@@ -79,8 +80,8 @@ import cafe.image.meta.exif.ExifThumbnail;
 import cafe.image.meta.exif.JpegExif;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.image.ImageMetadata;
+import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCDataSet;
-import cafe.image.meta.iptc.IPTCReader;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -89,9 +90,12 @@ import cafe.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * JPEG image tweaking tool
@@ -102,10 +106,19 @@ import java.util.Map;
 public class JPEGTweaker {
 	// Constants
 	public static final byte[] XMP_ID = "http://ns.adobe.com/xap/1.0/\0".getBytes();
-	// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
+	// Photoshop IRB identification with trailing byte [0x00].
+	public static final byte[] PHOTOSHOP_IRB_ID = "Photoshop 3.0\0".getBytes();
+	// EXIF identifier with trailing bytes [0x00, 0x00] or [0x00, 0xff].
 	public static final byte[] EXIF_ID = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
 	public static final byte[] EXIF_EXT_ID = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
-
+	// ICC_PROFILE identifier with trailing byte [0x00].
+	public static final byte[] ICC_PROFILE_ID = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
+	public static final byte[] JFIF_ID = {0x4A, 0x46, 0x49, 0x46, 0x00}; // JFIF
+	public static final byte[] JFXX_ID = {0x4A, 0x46, 0x58, 0x58, 0x00}; // JFXX
+	public static final byte[] DUCKY_ID = {0x44, 0x75, 0x63, 0x6B, 0x79}; // "Ducky"
+	public static final byte[] PICTURE_INFO_ID = {0x51, 0x69, 0x63, 0x74, 0x75, 0x49, 0x6E, 0x66, 0x70}; // "PictureInfo"
+	
+	
 	/** Copy a single SOS segment */	
 	@SuppressWarnings("unused")
 	private static short copySOS(InputStream is, OutputStream os) throws IOException {
@@ -691,8 +704,7 @@ public class JPEGTweaker {
 		Map<Short, _8BIM> bimMap = null;
 				
 		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
 			System.out.println("Invalid JPEG image, expected SOI marker not found!");
 			is.close();
 			os.close();		
@@ -704,16 +716,13 @@ public class JPEGTweaker {
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI)	{
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
 				System.out.println(Marker.EOI);
 				finished = true;
 			}
-		   	else // Read markers
-			{
+		   	else {// Read markers
 		   		emarker = Marker.fromShort(marker);
 				System.out.println(emarker); 
 	
@@ -734,26 +743,20 @@ public class JPEGTweaker {
 				    	marker = (short)((0xff<<8)|nextByte);
 				    	break;				
 				    case SOS:
-				    	IOUtils.writeShortMM(os, Marker.APP13.getValue());
-				    	// We add APP13 data right before the SOS segment.
-				    	String photoshop = "Photoshop 3.0\0";
-						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						// Copy image and insert IPTC data as one of the IRB 8BIM block
+				     	// We add APP13 data right before the SOS segment.
+				    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
+						// Insert IPTC data as one of the IRB 8BIM block
 						// Write IPTC
 						for(IPTCDataSet iptc : iptcs)
 							iptc.write(bout);
-						// Create 8BIM for IPTC and write it to memory
+						// Create 8BIM for IPTC
 						_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
-						bout.reset();
-						newBIM.write(bout);
-						if(bimMap != null)
-							for(_8BIM bim : bimMap.values())
-								bim.write(bout);
-						// Write segment length
-						IOUtils.writeShortMM(os, 14 + 2 + bout.size());
-						// Write segment data
-						os.write(photoshop.getBytes());
-						os.write(bout.toByteArray());
+						if(bimMap != null) {
+							bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
+							writeIRB(os, bimMap.values()); // Write the whole thing as APP13
+						} else {
+							writeIRB(os, newBIM); // Write the one and only one 8BIM as APP13
+						}						
 						//Copy sos
 				    	IOUtils.writeShortMM(os, marker);
 						copyToEnd(is, os); // Copy the rest of the data
@@ -763,17 +766,16 @@ public class JPEGTweaker {
 				    	if(update) {
 					    	IRB irb = (IRB)readAPP13(is);
 					    	if(irb != null) {
-						    	IRBReader reader = irb.getReader();
-								reader.read();
-								bimMap = reader.get8BIM();
+					    		// Shallow copy the map.
+					    		bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
 								_8BIM iptcBIM = bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
 								if(iptcBIM != null) { // Keep the original values
-									IPTCReader iptcReader = new IPTCReader(iptcBIM.getData());
-									iptcReader.read();
-									Map<String, List<IPTCDataSet>> dataSetMap = iptcReader.getDataSet();
-									for(IPTCDataSet iptc : iptcs)
-										if(!iptc.allowDuplicate())
-											dataSetMap.remove(iptc.getName());
+									IPTC iptc = new IPTC(iptcBIM.getData());
+									// Shallow copy the map
+									Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSet());
+									for(IPTCDataSet set : iptcs)
+										if(!set.allowDuplicate())
+											dataSetMap.remove(set.getName());
 									for(List<IPTCDataSet> iptcList : dataSetMap.values())
 										iptcs.addAll(iptcList);
 								}
@@ -805,8 +807,7 @@ public class JPEGTweaker {
 		Marker emarker;
 				
 		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
 			System.out.println("Invalid JPEG image, expected SOI marker not found!");
 			is.close();
 			os.close();		
@@ -818,16 +819,14 @@ public class JPEGTweaker {
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
+		while (!finished) {	        
 			if (Marker.fromShort(marker) == Marker.EOI)
 			{
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
 				System.out.println(Marker.EOI);
 				finished = true;
 			}
-		   	else // Read markers
-			{
+		   	else {// Read markers
 		   		emarker = Marker.fromShort(marker);
 				System.out.println(emarker); 
 	
@@ -848,18 +847,7 @@ public class JPEGTweaker {
 				    	marker = (short)((0xff<<8)|nextByte);
 				    	break;				
 				    case SOS:
-				    	IOUtils.writeShortMM(os, Marker.APP13.getValue());
-				    	// We add APP13 data right before the SOS segment.
-				    	String photoshop = "Photoshop 3.0\0";
-						ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						// Write IPTC
-						for(_8BIM bim : bims)
-							bim.write(bout);
-						// Write segment length
-						IOUtils.writeShortMM(os, 14 + 2 +  bout.size());
-						// Write segment data
-						os.write(photoshop.getBytes());
-						os.write(bout.toByteArray());
+				    	writeIRB(os, bims);
 						//Copy sos
 				    	IOUtils.writeShortMM(os, marker);
 						copyToEnd(is, os); // Copy the rest of the data
@@ -869,10 +857,9 @@ public class JPEGTweaker {
 				    	if(update) {
 					    	IRB irb = (IRB)readAPP13(is);
 					    	if(irb != null) {
-						    	IRBReader reader = irb.getReader();
-								reader.read();
-								Map<Short, _8BIM> bimMap = reader.get8BIM();
-								for(_8BIM bim : bims)
+					    		// Shallow copy the map.
+					    		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
+								for(_8BIM bim : bims) // Replace the original data
 									bimMap.remove(bim.getID());
 								bims.addAll(bimMap.values());
 					    	}					    	
@@ -986,15 +973,12 @@ public class JPEGTweaker {
 	    }
 	}
 	
-	private static void readAPP0(InputStream is) throws IOException
-	{
-		byte[] jfif = {0x4A, 0x46, 0x49, 0x46, 0x00}; // JFIF
-		byte[] jfxx = {0x4A, 0x46, 0x58, 0x58, 0x00}; // JFXX
+	private static void readAPP0(InputStream is) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
-		byte[] buf = new byte[length-2];
+		byte[] buf = new byte[length - 2];
 	    IOUtils.readFully(is, buf);
 	    // JFIF segment
-	    if(Arrays.equals(ArrayUtils.subArray(buf, 0, 5), jfif) || Arrays.equals(ArrayUtils.subArray(buf, 0, 5), jfxx)) {
+	    if(Arrays.equals(ArrayUtils.subArray(buf, 0, 5), JFIF_ID) || Arrays.equals(ArrayUtils.subArray(buf, 0, 5), JFXX_ID)) {
 	    	System.out.print(new String(buf, 0, 4));
 	    	System.out.println(" - version " + (buf[5]&0xff) + "." + (buf[6]&0xff));
 	    	System.out.print("Density unit: ");
@@ -1040,17 +1024,15 @@ public class JPEGTweaker {
 		// APP12 is either used by some old cameras to set PictureInfo
 		// or Adobe PhotoShop to store Save for Web data - called Ducky segment.
 		String[] duckyInfo = {"Ducky", "Photoshop Save For Web Quality: ", "Comment: ", "Copyright: "};
-		byte[] ducky = {0x44, 0x75, 0x63, 0x6B, 0x79}; // "Ducky"
-		byte[] pictureInfo = {0x51, 0x69, 0x63, 0x74, 0x75, 0x49, 0x6E, 0x66, 0x70}; // "PictureInfo"
 		int length = IOUtils.readUnsignedShortMM(is);
-		byte[] data = new byte[length-2];
+		byte[] data = new byte[length - 2];
 		System.out.println("Length: " + length);
 		IOUtils.readFully(is, data);
 		int currPos = 0;
 		byte[] buf = ArrayUtils.subArray(data, 0, 5);
 		currPos += 5;
 		
-		if(Arrays.equals(ducky, buf)) {
+		if(Arrays.equals(DUCKY_ID, buf)) {
 			System.out.println("=>" + duckyInfo[0]);
 			short tag = IOUtils.readShortMM(data, currPos);
 			currPos += 2;
@@ -1086,8 +1068,7 @@ public class JPEGTweaker {
 			}			
 		} else {
 			buf = ArrayUtils.subArray(data, 0, 10);
-			
-			if (Arrays.equals(pictureInfo, buf)) {
+			if (Arrays.equals(PICTURE_INFO_ID, buf)) {
 				// TODO process PictureInfo.
 			}			
 		}
@@ -1095,15 +1076,12 @@ public class JPEGTweaker {
 	
 	private static Metadata readAPP13(InputStream is) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
-		byte[] data = new byte[length-2];
-		IOUtils.readFully(is, data, 0, length-2);
-		int i = 0;
+		byte[] temp = new byte[length - 2];
+		IOUtils.readFully(is, temp, 0, length - 2);
 		
-		while(data[i] != 0) i++;
-		
-		if(new String(data, 0, i++).equals("Photoshop 3.0")) {
+		if (Arrays.equals(ArrayUtils.subArray(temp, 0, PHOTOSHOP_IRB_ID.length), PHOTOSHOP_IRB_ID)) {
 			System.out.println("Photoshop 3.0");
-			return new IRB(ArrayUtils.subArray(data, i, data.length - i));						
+			return new IRB(ArrayUtils.subArray(temp, PHOTOSHOP_IRB_ID.length, temp.length - PHOTOSHOP_IRB_ID.length));	
 		}
 		
 		return null;
@@ -1115,8 +1093,8 @@ public class JPEGTweaker {
 		int expectedLen = 14; // Expected length of this segment is 14.
 		int length = IOUtils.readUnsignedShortMM(is);
 		if (length >= expectedLen) { 
-			byte[] data = new byte[length-2];
-			IOUtils.readFully(is, data, 0, length-2);
+			byte[] data = new byte[length - 2];
+			IOUtils.readFully(is, data, 0, length - 2);
 			byte[] buf = ArrayUtils.subArray(data, 0, 5);
 			
 			if(Arrays.equals(buf, adobe)) {
@@ -1130,20 +1108,18 @@ public class JPEGTweaker {
 	}
 	
 	private static void readAPP2(InputStream is, ByteArrayOutputStream bo) throws IOException {
-		// ICC_PROFILE identifier with trailing bytes [0x00].
-		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
 		byte[] icc_profile_buf = new byte[12];
 		int length = IOUtils.readUnsignedShortMM(is);						
 		IOUtils.readFully(is, icc_profile_buf);		
 		// ICC_PROFILE segment.
-		if (Arrays.equals(icc_profile_buf, icc_profile_id)) {
-			icc_profile_buf = new byte[length-14];
+		if (Arrays.equals(icc_profile_buf, ICC_PROFILE_ID)) {
+			icc_profile_buf = new byte[length - 14];
 		    IOUtils.readFully(is, icc_profile_buf);
-		    bo.write(icc_profile_buf, 2, length-16);
+		    bo.write(icc_profile_buf, 2, length - 16);
 		    System.out.println("ICC_Profile marker #" + (icc_profile_buf[0]&0xff) + " of " + (icc_profile_buf[1]&0xff));
 		    System.out.println("ICC_Profile data length : " + (length-16));
   		} else {
-  			IOUtils.skipFully(is, length-14);
+  			IOUtils.skipFully(is, length - 14);
   		}
 	}
 	
@@ -1601,93 +1577,160 @@ public class JPEGTweaker {
 	    }
 	}
 	
+	public static void removeMetadata(InputStream is, OutputStream os, MetadataType ... metadataTypes) throws IOException {
+		removeMetadata(new HashSet<MetadataType>(Arrays.asList(metadataTypes)), is, os);
+	}
+	
 	// Remove EXIF segment
-	public static void removeExif(InputStream is, OutputStream os) throws IOException {
+	public static void removeMetadata(Set<MetadataType> metadataTypes, InputStream is, OutputStream os) throws IOException {
 		// Flag when we are done
 		boolean finished = false;
-		int length = 0;	
+		int length = 0;
 		short marker;
 		Marker emarker;
-				
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
+
+		// The very first marker should be the start_of_image marker!
+		if (Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI) {
 			System.out.println("Invalid JPEG image, expected SOI marker not found!");
 			return;
 		}
-		
+
 		System.out.println(Marker.SOI);
 		IOUtils.writeShortMM(os, Marker.SOI.getValue());
-		
+
 		marker = IOUtils.readShortMM(is);
-		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
+
+		while (!finished) {
+			if (Marker.fromShort(marker) == Marker.EOI) {
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
 				System.out.println(Marker.EOI);
 				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
+				System.out.println(emarker);
+
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
+					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
 						IOUtils.writeShortMM(os, marker);
-				    	marker = IOUtils.readShortMM(is);
-						break;
-				    case PADDING:	
-				    	IOUtils.writeShortMM(os, marker);
-				    	int nextByte = 0;
-				    	while((nextByte = IOUtils.read(is)) == 0xff) {
-				    		IOUtils.write(os, nextByte);
-				    	}
-				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;				
-				    case SOS:	
-				    	IOUtils.writeShortMM(os, marker);
-						// use copyToEnd instead for multiple SOS
-				    	//marker = copySOS(is, os);
-				    	copyToEnd(is, os);
-						finished = true; 
-						break;
-				    case APP1:
-				    	// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
-						byte[] exif = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-						byte[] exif2 = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
-						byte[] exif_buf = new byte[6];
-						length = IOUtils.readUnsignedShortMM(is);						
-						IOUtils.readFully(is, exif_buf);		
-						// EXIF segment.
-						if (Arrays.equals(exif_buf, exif)||Arrays.equals(exif_buf, exif2)) {
-						    IOUtils.skipFully(is, length-8);
-						} else { // Might be XMP
-							byte[] tmp = new byte[length-2];
-							IOUtils.readFully(is, tmp, 6, length-8);
-							System.arraycopy(exif_buf, 0, tmp, 0, 6);
-							IOUtils.writeShortMM(os, marker);
-						   	IOUtils.writeShortMM(os, (short)length);
-						   	IOUtils.write(os, tmp);		
-				  		}
 						marker = IOUtils.readShortMM(is);
 						break;
-				    default:
-					    length = IOUtils.readUnsignedShortMM(is);					
-					    byte[] buf = new byte[length - 2];
-					    IOUtils.readFully(is, buf);
-					   	IOUtils.writeShortMM(os, marker);
-					   	IOUtils.writeShortMM(os, (short)length);
-					   	IOUtils.write(os, buf);
-					    marker = IOUtils.readShortMM(is);
+					case PADDING:
+						IOUtils.writeShortMM(os, marker);
+						int nextByte = 0;
+						while ((nextByte = IOUtils.read(is)) == 0xff) {
+							IOUtils.write(os, nextByte);
+						}
+						marker = (short) ((0xff << 8) | nextByte);
+						break;
+					case SOS:
+						IOUtils.writeShortMM(os, marker);
+						copyToEnd(is, os);
+						finished = true;
+						break;
+					case COM:
+						length = IOUtils.readUnsignedShortMM(is);
+						IOUtils.skipFully(is, length - 2);
+						marker = IOUtils.readShortMM(is);
+						break;
+					case APP1:
+						// We are only interested in EXIF and XMP
+						if(metadataTypes.contains(MetadataType.EXIF) || metadataTypes.contains(MetadataType.XMP)) {
+							length = IOUtils.readUnsignedShortMM(is);
+							byte[] temp = new byte[XMP_ID.length];
+							IOUtils.readFully(is, temp);
+							// XMP segment.
+							if (Arrays.equals(temp, XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
+								IOUtils.skipFully(is, length - XMP_ID.length  - 2);
+							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, EXIF_ID.length), EXIF_ID)
+									&& metadataTypes.contains(MetadataType.EXIF)) { // EXIF
+								IOUtils.skipFully(is, length - XMP_ID.length - 2);
+							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, EXIF_EXT_ID.length), EXIF_EXT_ID)
+									&& metadataTypes.contains(MetadataType.EXIF)) { // EXIF Extension
+								IOUtils.skipFully(is, length - XMP_ID.length - 2);
+							} else { // We don't want to remove any of them
+								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, (short) length);
+								IOUtils.write(os, temp); // Write the already read bytes
+								temp = new byte[length - XMP_ID.length - 2];
+								IOUtils.readFully(is, temp);
+								IOUtils.write(os, temp);
+							}
+							marker = IOUtils.readShortMM(is);
+							break;
+						} // Otherwise go to default
+					case APP2:
+						if(metadataTypes.contains(MetadataType.ICC_PROFILE)) {
+							length = IOUtils.readUnsignedShortMM(is);
+							byte[] temp = new byte[ICC_PROFILE_ID.length];
+							IOUtils.readFully(is, temp);	
+							// ICC_Profile segment
+							if (Arrays.equals(temp, ICC_PROFILE_ID) && metadataTypes.contains(MetadataType.ICC_PROFILE)) {
+								IOUtils.skipFully(is, length - ICC_PROFILE_ID.length  - 2);
+							} else {
+								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, (short) length);
+								IOUtils.write(os, temp); // Write the already read bytes
+								temp = new byte[length - ICC_PROFILE_ID.length - 2];
+								IOUtils.readFully(is, temp);
+								IOUtils.write(os, temp);
+							}
+							marker = IOUtils.readShortMM(is);
+							break;
+						}
+					case APP13:
+						if(metadataTypes.contains(MetadataType.PHOTOSHOP_IRB) || metadataTypes.contains(MetadataType.IPTC)) {
+							length = IOUtils.readUnsignedShortMM(is);
+							byte[] temp = new byte[PHOTOSHOP_IRB_ID.length];
+							IOUtils.readFully(is, temp);	
+							// PHOTOSHOP IRB segment
+							if (Arrays.equals(temp, PHOTOSHOP_IRB_ID)) {
+								temp = new byte[length - PHOTOSHOP_IRB_ID.length - 2];
+								IOUtils.readFully(is, temp);
+								IRB irb = new IRB(temp);
+								// Shallow copy the map.
+								Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());								
+								if(metadataTypes.contains(MetadataType.PHOTOSHOP_IRB)) {
+									IOUtils.skipFully(is, length - PHOTOSHOP_IRB_ID.length  - 2);
+								} else {
+									if(metadataTypes.contains(MetadataType.IPTC)) {
+										// We only remove IPTC_NAA and keep the other IRB data untouched.
+										bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
+									} else if(metadataTypes.contains(MetadataType.XMP)) {
+										// We only remove XMP and keep the other IRB data untouched.
+										bimMap.remove(ImageResourceID.XMP_METADATA.getValue());
+									} else if(metadataTypes.contains(MetadataType.EXIF)) {
+										// We only remove EXIF and keep the other IRB data untouched.
+										bimMap.remove(ImageResourceID.EXIF_DATA1.getValue());
+										bimMap.remove(ImageResourceID.EXIF_DATA3.getValue());
+									}
+									// Write back the IRB
+									writeIRB(os, bimMap.values());
+								}							
+							} else {
+								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, (short) length);
+								IOUtils.write(os, temp); // Write the already read bytes
+								temp = new byte[length - PHOTOSHOP_IRB_ID.length - 2];
+								IOUtils.readFully(is, temp);
+								IOUtils.write(os, temp);
+							}
+							marker = IOUtils.readShortMM(is);
+							break;
+						}
+					default:
+						length = IOUtils.readUnsignedShortMM(is);
+						byte[] buf = new byte[length - 2];
+						IOUtils.readFully(is, buf);
+						IOUtils.writeShortMM(os, marker);
+						IOUtils.writeShortMM(os, (short) length);
+						IOUtils.write(os, buf);
+						marker = IOUtils.readShortMM(is);
 				}
 			}
-	    }
+		}
 	}
 	
 	public static void showICCProfile(InputStream is) throws IOException {
@@ -1753,7 +1796,6 @@ public class JPEGTweaker {
 	 */
 	public static void writeICCProfile(OutputStream os, byte[] data) throws IOException {
 		// ICC_Profile ID
-		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
 		int maxSegmentLen = 65535;
 		int maxICCDataLen = 65519;
 		int numOfSegment = data.length/maxICCDataLen;
@@ -1762,14 +1804,14 @@ public class JPEGTweaker {
 		for(int i = 0; i < numOfSegment; i++) {
 			IOUtils.writeShortMM(os, Marker.APP2.getValue());
 			IOUtils.writeShortMM(os, maxSegmentLen);
-			IOUtils.write(os, icc_profile_id);
+			IOUtils.write(os, ICC_PROFILE_ID);
 			IOUtils.writeShortMM(os, totalSegment|(i+1)<<8);
 			IOUtils.write(os, data, i*maxICCDataLen, maxICCDataLen);
 		}
 		if(leftOver != 0) {
 			IOUtils.writeShortMM(os, Marker.APP2.getValue());
 			IOUtils.writeShortMM(os, leftOver + 16);
-			IOUtils.write(os, icc_profile_id);
+			IOUtils.write(os, ICC_PROFILE_ID);
 			IOUtils.writeShortMM(os, totalSegment|totalSegment<<8);
 			IOUtils.write(os, data, data.length - leftOver, leftOver);
 		}
@@ -1806,6 +1848,25 @@ public class JPEGTweaker {
 		// Write segment data
 		os.write(XMP_ID);
 		os.write(xmp);
+	}
+	
+	public static void writeIRB(OutputStream os, _8BIM ... bims) throws IOException {
+		if(bims != null && bims.length > 0)
+			writeIRB(os, Arrays.asList(bims));
+	}
+	
+	public static void writeIRB(OutputStream os, Collection<_8BIM> bims) throws IOException {
+		if(bims != null && bims.size() > 0) {
+			IOUtils.writeShortMM(os, Marker.APP13.getValue());
+	    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			for(_8BIM bim : bims)
+				bim.write(bout);
+			// Write segment length
+			IOUtils.writeShortMM(os, 14 + 2 +  bout.size());
+			// Write segment data
+			os.write(PHOTOSHOP_IRB_ID);
+			os.write(bout.toByteArray());
+		}
 	}
 	
 	// Prevent from instantiation
