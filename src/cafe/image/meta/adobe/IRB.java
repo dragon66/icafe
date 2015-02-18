@@ -20,6 +20,7 @@ package cafe.image.meta.adobe;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
@@ -51,6 +52,10 @@ public class IRB extends Metadata {
 	public IRB(byte[] data) {
 		super(MetadataType.PHOTOSHOP_IRB, data);
 		reader = new IRBReader(data);
+	}
+	
+	public Map<Short, _8BIM> get8BIM() {
+		return reader.get8BIM();
 	}
 	
 	public _8BIM get8BIM(short tag) {
