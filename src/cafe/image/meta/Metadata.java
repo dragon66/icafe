@@ -109,7 +109,7 @@ public abstract class Metadata {
 	 * @throws IOException 
 	 */
 	public static void insertExif(InputStream is, OutputStream out, Exif exif) throws IOException {
-		insertExif(is, out, exif, false);
+		insertExif(is, out, exif);
 	}
 	
 	public static void insertExif(InputStream is, OutputStream out, Exif exif, boolean update) throws IOException {
@@ -323,37 +323,36 @@ public abstract class Metadata {
 	}
 	
 	/**
-	 * Remove EXIF data from image
+	 * Remove meta data from image
+	 * 
 	 * @param is InputStream for the input image
 	 * @param os OutputStream for the output image
 	 * @throws IOException
 	 */
-	// TODO change to generic removeMetadata(EnumSet<MetadataType>, InputStream, OutputStream)
-	public static void removeExif(InputStream is, OutputStream os) throws IOException {
+	public static void removeMetadata(InputStream is, OutputStream os, MetadataType ...metadataTypes) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
-		// Delegate EXIF removing to corresponding image tweaker.
+		// Delegate meta data removing to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
-				JPEGTweaker.removeExif(pushbackStream, os);
+				JPEGTweaker.removeMetadata(pushbackStream, os, metadataTypes);
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
-				TIFFTweaker.removeExif(randIS, randOS);
+				TIFFTweaker.removeMetadata(randIS, randOS, metadataTypes);
 				randIS.close();
 				randOS.close();
 				break;
-			case GIF:
 			case PCX:
 			case TGA:
 			case BMP:
-				System.out.println(imageType + " image format does not support EXIF data");
+				System.out.println(imageType + " image format does not support meta data");
 				break;
 			default:
 				pushbackStream.close();
-				throw new IllegalArgumentException("EXIF data removing is not supported for " + imageType + " image");				
+				throw new IllegalArgumentException("Metadata removing is not supported for " + imageType + " image");				
 		}
 	}
 	
