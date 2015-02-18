@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cafe.image.jpeg.JPEGTweaker;
+import cafe.image.meta.MetadataType;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.JpegExif;
@@ -29,8 +30,8 @@ public class TestJPEGTweaker {
 		JPEGTweaker.extractThumbnails(fin, "thumbnail");
 		fin.close();
 		fin = new FileInputStream(args[2]);
-		fout = new FileOutputStream("exif_removed.jpg");
-		JPEGTweaker.removeExif(fin, fout);
+		fout = new FileOutputStream("metadata_removed.jpg");
+		JPEGTweaker.removeMetadata(fin, fout, MetadataType.XMP, MetadataType.EXIF, MetadataType.IPTC, MetadataType.ICC_PROFILE);
 		fin.close();
 		fout.close();
 		fin = new FileInputStream(args[0]);

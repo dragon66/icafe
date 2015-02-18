@@ -102,6 +102,14 @@ public class TestMetadata {
 		
 		fin.close();
 		fout.close();
+		
+		fin = new FileInputStream("images/iptc.tif");
+		fout = new FileOutputStream("iptc-metadata-removed.tif");
+		
+		Metadata.removeMetadata(fin, fout, MetadataType.IPTC, MetadataType.PHOTOSHOP_IRB, MetadataType.ICC_PROFILE, MetadataType.XMP, MetadataType.EXIF);
+		
+		fin.close();
+		fout.close();
 	}
 	
 	private static List<IPTCDataSet> createIPTCDataSet() {
