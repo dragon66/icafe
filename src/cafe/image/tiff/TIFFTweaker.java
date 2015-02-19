@@ -224,7 +224,7 @@ public class TIFFTweaker {
 		// Shallow copy the map
 		Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSet());
 		for(IPTCDataSet set : iptcs)
-			if(!set.allowDuplicate())
+			if(!set.allowMultiple())
 				dataSetMap.remove(set.getName());
 		for(List<IPTCDataSet> iptcList : dataSetMap.values())
 			iptcs.addAll(iptcList);
@@ -2574,7 +2574,7 @@ public class TIFFTweaker {
 		if(field != null) { // We have found IPTC data
 			FieldType type = field.getType();
 			if(type == FieldType.LONG)
-				;//metadataMap.put(MetadataType.IPTC, new IPTC(ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN)));
+				metadataMap.put(MetadataType.IPTC, new IPTC(ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN)));
 			else
 				metadataMap.put(MetadataType.IPTC, new IPTC((byte[])field.getData()));
 		}

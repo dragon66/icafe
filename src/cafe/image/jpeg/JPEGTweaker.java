@@ -774,7 +774,7 @@ public class JPEGTweaker {
 									// Shallow copy the map
 									Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSet());
 									for(IPTCDataSet set : iptcs)
-										if(!set.allowDuplicate())
+										if(!set.allowMultiple())
 											dataSetMap.remove(set.getName());
 									for(List<IPTCDataSet> iptcList : dataSetMap.values())
 										iptcs.addAll(iptcList);
