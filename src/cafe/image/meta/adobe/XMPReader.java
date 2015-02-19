@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    19Feb2015  Added Adobe XMPMeta as one of the meta data format
  * WY    19Jan2015  Initial creation
  */
 
@@ -22,26 +23,55 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
+import com.adobe.xmp.XMPException;
+import com.adobe.xmp.XMPMeta;
+import com.adobe.xmp.XMPMetaFactory;
+
 import cafe.image.meta.MetadataReader;
 import cafe.string.XMLUtils;
 
 public class XMPReader implements MetadataReader {
 	private byte[] data;
+	private String xmp;
 	private boolean loaded;
 	//document contains the complete XML as a Tree.
-	Document document = null;
-
+	private Document document = null;
+	// Adobe XMPMeta object
+	private XMPMeta meta = null;
+	
 	public XMPReader(byte[] data) {
 		this.data = data;
 	}
 	
-	public Document getXMLDocument() {
+	public XMPReader(String xmp) {
+		this.xmp = xmp;
+	}
+	
+	public Document getXmpDocument() {
 		return document;
+	}
+	
+	public XMPMeta getXmpMeta() {
+		return meta;
 	}
 	
 	@Override
 	public void read() throws IOException {
-		document = XMLUtils.createXML(data);
+		if(xmp != null) {
+			document = XMLUtils.createXML(xmp);
+			try {
+				meta = XMPMetaFactory.parseFromString(xmp);
+			} catch (XMPException e) {
+				e.printStackTrace();
+			}
+		} else if(data != null) {
+			document = XMLUtils.createXML(data);
+			try {
+				meta = XMPMetaFactory.parseFromBuffer(data);
+			} catch (XMPException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -58,6 +88,6 @@ public class XMPReader implements MetadataReader {
 			}
 			if(document != null)
 				XMLUtils.showXML(document);
-		}		
+		}
 	}
 }

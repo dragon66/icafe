@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    19Feb2015  Removed showMetadata() and added getXmpMeta()
+ * WY    19Feb2015  Renamed getXMLDocument() to getXmpDocument()
  * WY    11Feb2015  Added getXMLDocument() and showMetadata()
  * WY    19Jan2015  Initial creation
  */
@@ -23,15 +25,15 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
+import com.adobe.xmp.XMPMeta;
+
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
-import cafe.string.XMLUtils;
 
 public class XMP extends Metadata {
 	
 	private XMPReader reader;
-	private Document xmp;
-
+	
 	public XMP(byte[] data) {
 		super(MetadataType.XMP, data);
 		reader = new XMPReader(data);
@@ -39,36 +41,39 @@ public class XMP extends Metadata {
 	
 	public XMP(String xmp) {
 		super(MetadataType.XMP, null);
-		this.xmp = XMLUtils.createXML(xmp);
+		reader = new XMPReader(xmp);
 	}
 	
 	public XMP(Document document) {
 		this((byte[])null);		
 	}
 	
-	public Document getXMLDocument() {
-		if(xmp != null) {
-			return xmp;
-		} else {
-			if(reader != null && !reader.isDataLoaded()) {
-				try {
-					reader.read();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				xmp = reader.getXMLDocument();
+	public Document getXmpDocument() {
+		if(reader != null && !reader.isDataLoaded()) {
+			try {
+				reader.read();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-			return xmp;
+			return reader.getXmpDocument();
 		}
+		
+		return null;
 	}
 	
-	public void showMetadata() {
-		if(xmp != null)
-			XMLUtils.showXML(xmp);
-		else
-			super.showMetadata();
+	public XMPMeta getXmpMeta() {
+		if(reader != null && !reader.isDataLoaded()) {
+			try {
+				reader.read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return reader.getXmpMeta();
+		}
+		
+		return null;
 	}
-
+		
 	@Override
 	public XMPReader getReader() {
 		return reader;
