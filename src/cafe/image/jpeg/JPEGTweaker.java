@@ -1393,13 +1393,13 @@ public class JPEGTweaker {
 			}
 		}
 		
-		meta = metadataMap.get(MetadataType.PHOTOSHOP_IRB);
+		meta = metadataMap.get(MetadataType.PHOTOSHOP);
 		if(meta != null) {
 			IRB irb = (IRB)meta;
 			IRBReader reader = irb.getReader();
 			reader.read();
 			if(reader.containsThumbnail()) {
-				thumbnails.put("PHOTOSHOP_IRB", reader.getThumbnail());
+				thumbnails.put("PHOTOSHOP", reader.getThumbnail());
 			}
 		}
 		
@@ -1681,7 +1681,7 @@ public class JPEGTweaker {
 							break;
 						}
 					case APP13:
-						if(metadataTypes.contains(MetadataType.PHOTOSHOP_IRB) || metadataTypes.contains(MetadataType.IPTC)) {
+						if(metadataTypes.contains(MetadataType.PHOTOSHOP) || metadataTypes.contains(MetadataType.IPTC)) {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[PHOTOSHOP_IRB_ID.length];
 							IOUtils.readFully(is, temp);	
@@ -1692,7 +1692,7 @@ public class JPEGTweaker {
 								IRB irb = new IRB(temp);
 								// Shallow copy the map.
 								Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());								
-								if(metadataTypes.contains(MetadataType.PHOTOSHOP_IRB)) {
+								if(metadataTypes.contains(MetadataType.PHOTOSHOP)) {
 									IOUtils.skipFully(is, length - PHOTOSHOP_IRB_ID.length  - 2);
 								} else {
 									if(metadataTypes.contains(MetadataType.IPTC)) {

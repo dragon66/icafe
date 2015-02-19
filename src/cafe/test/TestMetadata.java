@@ -106,7 +106,7 @@ public class TestMetadata {
 		fin = new FileInputStream("images/iptc.tif");
 		fout = new FileOutputStream("iptc-metadata-removed.tif");
 		
-		Metadata.removeMetadata(fin, fout, MetadataType.IPTC, MetadataType.PHOTOSHOP_IRB, MetadataType.ICC_PROFILE, MetadataType.XMP, MetadataType.EXIF);
+		Metadata.removeMetadata(fin, fout, MetadataType.IPTC, MetadataType.PHOTOSHOP, MetadataType.ICC_PROFILE, MetadataType.XMP, MetadataType.EXIF);
 		
 		fin.close();
 		fout.close();

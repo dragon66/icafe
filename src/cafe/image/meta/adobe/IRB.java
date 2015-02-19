@@ -50,7 +50,7 @@ public class IRB extends Metadata {
 	}
 	
 	public IRB(byte[] data) {
-		super(MetadataType.PHOTOSHOP_IRB, data);
+		super(MetadataType.PHOTOSHOP, data);
 		reader = new IRBReader(data);
 	}
 	
