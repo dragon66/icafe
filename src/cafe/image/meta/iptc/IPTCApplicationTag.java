@@ -10,8 +10,11 @@
 
 package cafe.image.meta.iptc;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import cafe.string.StringUtils;
 
 /**
  * Defines DataSet tags for IPTC Application Record - Record number 2.
@@ -24,7 +27,7 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 OBJECT_TYPE_REF(3, "ObjectTypeRef"),
 	 OBJECT_ATTR_REF(4, "ObjectAttribRef") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
@@ -34,33 +37,33 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 URGENCY(10, "Urgency"),
 	 SUBJECT_REF(12, "SubjectReference") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
 	 CATEGORY(15, "Category"),
 	 SUPP_CATEGORY(20, "SupplementalCategories") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
 	 FIXTURE_ID(22, "FixtureID"),
 	 KEY_WORDS(25, "Keywords") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
 	 CONTENT_LOCATION_CODE(26, "ContentLocationCode") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
 	 CONTENT_LOCATION_NAME(27, "ContentLocationName") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
@@ -72,19 +75,19 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 ACTION_ADVISED(42, "ActionAdvised"),
 	 REFERENCE_SERVICE(45, "ReferenceService") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
 	 REFERENCE_DATE(47, "ReferenceDate") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
 	 REFERENCE_NUMBER(50, "ReferenceNumber") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
@@ -97,13 +100,13 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 OBJECT_CYCLE(75, "ObjectCycle"),
 	 BY_LINE(80, "ByLine") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
 	 BY_LINE_TITLE(85, "ByLineTitle") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
@@ -119,14 +122,14 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 COPYRIGHT_NOTICE(116, "CopyrightNotice"),
 	 CONTACT(118, "Contact") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
 	 CAPTION_ABSTRACT(120, "CaptionAbstract"),
 	 WRITER_EDITOR(122, "WriterEditor") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
@@ -150,7 +153,7 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 EXIF_CAMERA_INFO(232, "ExifCameraInfo"),
 	 CATALOG_SETS(255, "CatalogSets") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
@@ -163,8 +166,18 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 }
 	 
 	 @Override
-	 public boolean allowDuplicate() {
+	 public boolean allowMultiple() {
 		 return false;
+	 }
+	 
+	 public String getDataAsString(byte[] data) {
+		 try {
+			 return new String(data, "UTF-8").trim();
+		 } catch (UnsupportedEncodingException e) {
+			 e.printStackTrace();
+		 }
+		 // Hex representation of the data
+		 return StringUtils.byteArrayToHexString(data, 0, 10);
 	 }
 	 
 	 public String getName() {

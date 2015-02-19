@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    19Dec2015  Added getDataAsString()
  * WY    01Feb2015  Added equals() and hashCode()
  * WY    29Jan2015  Fixed bug with write() write wrong data and size
  * WY    29Jan2015  Added name field as a key to HashMap usage
@@ -22,7 +23,6 @@ package cafe.image.meta.iptc;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import cafe.io.IOUtils;
@@ -72,8 +72,8 @@ public class IPTCDataSet {
 		this(record, tag, value.getBytes());
 	}
 	
-	public boolean allowDuplicate() {
-		return tagEnum.allowDuplicate();
+	public boolean allowMultiple() {
+		return tagEnum.allowMultiple();
 	}
 	
 	@Override
@@ -126,8 +126,12 @@ public class IPTCDataSet {
 		return tagEnum.getName();
 	}
 	
+	public String getDataAsString() {
+		return tagEnum.getDataAsString(getData());
+	}
+	
 	public byte[] getData() {
-		return data;
+		return ArrayUtils.subArray(data, offset, size);
 	}
 	
 	public String getName() {
@@ -164,10 +168,6 @@ public class IPTCDataSet {
 		return result;
 	}
 	
-	public static boolean multipleDataSetAllowed(String name) {
-		return true;
-	}
-	
 	public void print() {
 		
 		switch (recordNumber) {
@@ -201,8 +201,7 @@ public class IPTCDataSet {
 		System.out.println("Dataset tag: " + tag + "[" + StringUtils.shortToHexStringMM((short)tag) + "]");
 		System.out.println("Dataset size: " + size);
 		
-		try { System.out.println("Dataset value: " + new String(data, offset, size, "UTF-8").trim());
-		} catch (UnsupportedEncodingException e) { e.printStackTrace(); }
+		System.out.println("Dataset value: " + getDataAsString());
 	}
 	
 	/**

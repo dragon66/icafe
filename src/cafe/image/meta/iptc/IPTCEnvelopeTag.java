@@ -10,8 +10,11 @@
 
 package cafe.image.meta.iptc;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import cafe.string.StringUtils;
 
 /**
  * Defines DataSet tags for IPTC Envelope Record - Record number 1.
@@ -23,7 +26,7 @@ public enum IPTCEnvelopeTag implements IPTCTag {
 	 RECORD_VERSION(0, "EnvelopeRecordVersion"),
 	 DESTINATION(5, "Destination") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
@@ -33,7 +36,7 @@ public enum IPTCEnvelopeTag implements IPTCTag {
 	 ENVELOPE_NUMBER(40, "EnvelopeNumber"),
 	 PRODUCT_ID(50, "ProductID") {
 		 @Override
-		 public boolean allowDuplicate() {
+		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
@@ -53,8 +56,18 @@ public enum IPTCEnvelopeTag implements IPTCTag {
 	 }
 	 
 	 @Override
-	 public boolean allowDuplicate() {
+	 public boolean allowMultiple() {
 		 return false;
+	 }
+	 
+	 public String getDataAsString(byte[] data) {
+		 try {
+			 return new String(data, "UTF-8").trim();
+		 } catch (UnsupportedEncodingException e) {
+			 e.printStackTrace();
+		 }
+		 // Hex representation of the data
+		 return StringUtils.byteArrayToHexString(data, 0, 10);
 	 }
 	 
 	 public String getName() {

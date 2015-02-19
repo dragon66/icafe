@@ -10,8 +10,11 @@
 
 package cafe.image.meta.iptc;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
+import cafe.string.StringUtils;
 
 /**
  * Defines DataSet tags for IPTC PreObjectData Record - Record number 7.
@@ -33,8 +36,18 @@ public enum IPTCPreObjectDataTag implements IPTCTag {
 	 }
 	 
 	 @Override
-	 public boolean allowDuplicate() {
+	 public boolean allowMultiple() {
 		 return false;
+	 }
+	 
+	 public String getDataAsString(byte[] data) {
+		 try {
+			 return new String(data, "UTF-8").trim();
+		 } catch (UnsupportedEncodingException e) {
+			 e.printStackTrace();
+		 }
+		 // Hex representation of the data
+		 return StringUtils.byteArrayToHexString(data, 0, 10);
 	 }
 	 
 	 public String getName() {
