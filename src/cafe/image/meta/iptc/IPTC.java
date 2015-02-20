@@ -2,6 +2,8 @@ package cafe.image.meta.iptc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +13,7 @@ import cafe.io.IOUtils;
 
 public class IPTC extends Metadata {
 	private IPTCReader reader;
+	private Map<String, List<IPTCDataSet>> datasetMap;
 	
 	public static void showIPTC(byte[] iptc) {
 		if(iptc != null && iptc.length > 0) {
@@ -32,9 +35,27 @@ public class IPTC extends Metadata {
 		}
 	}
 	
+	public IPTC() {
+		super(MetadataType.IPTC, null);
+		datasetMap =  new HashMap<String, List<IPTCDataSet>>();
+	}
+	
 	public IPTC(byte[] data) {
 		super(MetadataType.IPTC, data);
 		reader = new IPTCReader(data);
+	}
+	
+	public void addDataSet(IPTCDataSet dataSet) {
+		if(datasetMap != null) {
+			String name = dataSet.getName();
+			if(datasetMap.get(name) == null) {
+				List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
+				list.add(dataSet);
+				datasetMap.put(name, list);
+			} else if(dataSet.allowMultiple()) {
+				datasetMap.get(name).add(dataSet);
+			}
+		}
 	}
 
 	/**
@@ -69,6 +90,8 @@ public class IPTC extends Metadata {
 	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
 	 */
 	public Map<String, List<IPTCDataSet>> getDataSet() {
+		if(datasetMap != null)
+			return datasetMap;
 		return reader.getDataSet();
 	}
 	
@@ -79,7 +102,7 @@ public class IPTC extends Metadata {
 	 * @return a list of IPTCDataSet associated with the key
 	 */
 	public List<IPTCDataSet> getDataSet(String key) {
-		return reader.getDataSet().get(key);
+		return getDataSet().get(key);
 	}
 	
 	public IPTCReader getReader() {
