@@ -27,11 +27,11 @@ import cafe.string.StringUtils;
 public class _8BIM {
 	private short id;
 	private String name;
-	private int size;
-	private byte[] data;
+	protected int size;
+	protected byte[] data;
 	
 	public _8BIM(short id, String name, byte[] data) {
-		this( id, name, data.length, data);
+		this(id, name, (data == null)?0:data.length, data);
 	}
 	
 	public _8BIM(short id, String name, int size, byte[] data) {
@@ -79,9 +79,7 @@ public class _8BIM {
 		
 		System.out.println("Type: 8BIM");
 		System.out.println("Name: " + name);
-		System.out.println("Size: " + size);
-		
-		eId.show(getData());
+		System.out.println("Size: " + size);	
 	}
 	
 	public void write(OutputStream os) throws IOException {
