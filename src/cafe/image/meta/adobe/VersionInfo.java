@@ -114,11 +114,11 @@ public class VersionInfo extends _8BIM {
 			bout.write(hasRealMergedData?1:0);
 			byte[] writerNameBytes = null;
 			writerNameBytes = writerName.getBytes("UTF-16BE");
-			IOUtils.writeIntMM(bout, writerNameBytes.length/2);
+			IOUtils.writeIntMM(bout, writerName.length());
 			bout.write(writerNameBytes);
 			byte[] readerNameBytes = null;
 			readerNameBytes = readerName.getBytes("UTF-16BE");
-			IOUtils.writeIntMM(bout, readerNameBytes.length/2);
+			IOUtils.writeIntMM(bout, readerName.length());
 			bout.write(readerNameBytes);
 			bout.write(fileVersion);
 			data = bout.toByteArray();
