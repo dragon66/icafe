@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ import java.util.Map;
 import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
+import cafe.image.meta.adobe.PhotoshopIPTC;
+import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.JpegExif;
@@ -54,7 +57,7 @@ public class TestMetadata {
 		}
 		
 		Metadata.extractThumbnails("images/iptc-envelope.tif", "iptc-envelope");
-		
+	
 		fin = new FileInputStream("images/iptc-envelope.tif");
 		fout = new FileOutputStream("iptc-envelope-iptc-inserted.tif");
 			
@@ -97,7 +100,7 @@ public class TestMetadata {
 		
 		fin = new FileInputStream("images/12.jpg");
 		fout = new FileOutputStream("12-exif-inserted.jpg");
-		
+
 		Metadata.insertExif(fin, fout, populateExif(JpegExif.class), true);
 		
 		fin.close();
@@ -110,6 +113,14 @@ public class TestMetadata {
 		
 		fin.close();
 		fout.close();
+		
+		fin = new FileInputStream("images/12.jpg");
+		fout = new FileOutputStream("12-photoshop-iptc-inserted.jpg");
+		
+		Metadata.insertIRB(fin, fout, createPhotoshopIPTC(), true);
+		
+		fin.close();
+		fout.close();
 	}
 	
 	private static List<IPTCDataSet> createIPTCDataSet() {
@@ -119,6 +130,15 @@ public class TestMetadata {
 		iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
 		
 		return iptcs;
+	}
+	
+	private static List<_8BIM> createPhotoshopIPTC() {
+		PhotoshopIPTC iptc = new PhotoshopIPTC();
+		iptc.addDataSet(new IPTCDataSet(IPTCRecord.APPLICATION, IPTCApplicationTag.COPYRIGHT_NOTICE.getTag(), "Copyright 2014-2015, yuwen_66@yahoo.com"));
+		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
+		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.CATEGORY.getTag(), "ICAFE"));
+		
+		return new ArrayList<_8BIM>(Arrays.asList(iptc));
 	}
 	
 	private static BufferedImage createThumbnail(String filePath) throws IOException {
