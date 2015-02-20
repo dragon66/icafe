@@ -78,9 +78,21 @@ public class IRBReader implements MetadataReader {
 				int size = IOUtils.readIntMM(data, i);
 				i += 4;
 				
-				ImageResourceID eId =ImageResourceID.fromShort(id); 
+				ImageResourceID eId = ImageResourceID.fromShort(id); 
 				
-				_8bims.put(id, new _8BIM(id, name, size, ArrayUtils.subArray(data, i, size)));
+				switch(eId){
+					case JPEG_QUALITY:
+						_8bims.put(id, new JPEGQuality(name, ArrayUtils.subArray(data, i, size)));
+						break;
+					case VERSION_INFO:
+						_8bims.put(id, new VersionInfo(name, ArrayUtils.subArray(data, i, size)));
+						break;
+					case IPTC_NAA:
+						_8bims.put(id, new PhotoshopIPTC(name, ArrayUtils.subArray(data,  i,  size)));
+						break;
+					default:
+						_8bims.put(id, new _8BIM(id, name, size, ArrayUtils.subArray(data, i, size)));
+				}				
 				
 				if(eId == ImageResourceID.THUMBNAIL_RESOURCE_PS4 || eId == ImageResourceID.THUMBNAIL_RESOURCE_PS5) {
 					containsThumbnail = true;
