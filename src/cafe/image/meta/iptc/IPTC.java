@@ -72,7 +72,7 @@ public class IPTC extends Metadata {
 		String value = "";
 	
 		if(list != null) {
-			if(list.size() == 0) {
+			if(list.size() == 1) {
 				value = list.get(0).getDataAsString();
 			} else {
 				for(int i = 0; i < list.size() - 1; i++)
