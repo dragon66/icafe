@@ -21,8 +21,6 @@
 
 package cafe.image.meta.adobe;
 
-import java.io.IOException;
-
 import org.w3c.dom.Document;
 
 import com.adobe.xmp.XMPMeta;
@@ -49,29 +47,11 @@ public class XMP extends Metadata {
 	}
 	
 	public Document getXmpDocument() {
-		if(reader != null && !reader.isDataLoaded()) {
-			try {
-				reader.read();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return reader.getXmpDocument();
-		}
-		
-		return null;
+		return reader.getXmpDocument();		
 	}
 	
 	public XMPMeta getXmpMeta() {
-		if(reader != null && !reader.isDataLoaded()) {
-			try {
-				reader.read();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return reader.getXmpMeta();
-		}
-		
-		return null;
+		return reader.getXmpMeta();
 	}
 		
 	@Override

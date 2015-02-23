@@ -48,10 +48,26 @@ public class XMPReader implements MetadataReader {
 	}
 	
 	public Document getXmpDocument() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return document;
 	}
 	
 	public XMPMeta getXmpMeta() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return meta;
 	}
 	
@@ -72,6 +88,7 @@ public class XMPReader implements MetadataReader {
 				e.printStackTrace();
 			}
 		}
+		loaded = true;
 	}
 
 	@Override
