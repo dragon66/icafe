@@ -88,7 +88,7 @@ public class IRBReader implements MetadataReader {
 						_8bims.put(id, new VersionInfo(name, ArrayUtils.subArray(data, i, size)));
 						break;
 					case IPTC_NAA:
-						_8bims.put(id, new PhotoshopIPTC(name, ArrayUtils.subArray(data,  i,  size)));
+						_8bims.put(id, new PhotoshopIPTC(name, ArrayUtils.subArray(data, i, size)));
 						break;
 					default:
 						_8bims.put(id, new _8BIM(id, name, size, ArrayUtils.subArray(data, i, size)));
