@@ -920,5 +920,17 @@ public class StringUtils
 		};
 	}
 	
+	public static String toUTF16BE(byte[] data, int start, int length) {
+		String retVal = "";
+		
+		 try {
+			 retVal = new String(data, start, length, "UTF-16BE");
+		 } catch (UnsupportedEncodingException e) {
+			 e.printStackTrace();
+		 }
+		
+		 return retVal;		 
+	}
+	
 	private StringUtils(){} // Prevents instantiation	
 }
