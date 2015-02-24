@@ -3,8 +3,6 @@ package cafe.image.meta.adobe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
@@ -57,19 +55,11 @@ public class VersionInfo extends _8BIM {
 	    hasRealMergedData = ((data[i++]!=0)?true:false);
 	    int writer_size = IOUtils.readIntMM(data, i);
 	    i += 4;
-	    try {
-	    	writerName = new String(data, i, writer_size*2, "UTF-16BE");
-	    } catch (UnsupportedEncodingException e) {
-	    	e.printStackTrace();
-	    }
+	    writerName = StringUtils.toUTF16BE(data, i, writer_size*2);
 	    i += writer_size*2;
 	    int reader_size = IOUtils.readIntMM(data, i);
     	i += 4;
-    	try {
-			readerName = new String(data, i, reader_size*2, "UTF-16BE");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+    	readerName = StringUtils.toUTF16BE(data, i, reader_size*2);
     	i += reader_size*2;
 	    fileVersion = ArrayUtils.subArray(data, i, 4);  
 	}
