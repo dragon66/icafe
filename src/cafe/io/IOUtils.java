@@ -59,7 +59,7 @@ public class IOUtils {
      
 	public static int read(InputStream is, byte[] bytes, int off, int len) throws IOException {
 		return is.read(bytes, off, len);
-	}     
+	}
      
 	public static double readDouble(InputStream is) throws IOException {
 		return Double.longBitsToDouble(readLong(is));
