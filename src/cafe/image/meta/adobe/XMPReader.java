@@ -23,10 +23,6 @@ import java.io.IOException;
 
 import org.w3c.dom.Document;
 
-import com.adobe.xmp.XMPException;
-import com.adobe.xmp.XMPMeta;
-import com.adobe.xmp.XMPMetaFactory;
-
 import cafe.image.meta.MetadataReader;
 import cafe.string.XMLUtils;
 
@@ -36,8 +32,6 @@ public class XMPReader implements MetadataReader {
 	private boolean loaded;
 	//document contains the complete XML as a Tree.
 	private Document document = null;
-	// Adobe XMPMeta object
-	private XMPMeta meta = null;
 	
 	public XMPReader(byte[] data) {
 		this.data = data;
@@ -59,35 +53,13 @@ public class XMPReader implements MetadataReader {
 		return document;
 	}
 	
-	public XMPMeta getXmpMeta() {
-		if(!loaded) {
-			try {
-				read();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return meta;
-	}
-	
 	@Override
 	public void read() throws IOException {
-		if(xmp != null) {
+		if(xmp != null)
 			document = XMLUtils.createXML(xmp);
-			try {
-				meta = XMPMetaFactory.parseFromString(xmp);
-			} catch (XMPException e) {
-				e.printStackTrace();
-			}
-		} else if(data != null) {
+		else if(data != null)
 			document = XMLUtils.createXML(data);
-			try {
-				meta = XMPMetaFactory.parseFromBuffer(data);
-			} catch (XMPException e) {
-				e.printStackTrace();
-			}
-		}
+		
 		loaded = true;
 	}
 
@@ -102,9 +74,9 @@ public class XMPReader implements MetadataReader {
 				read();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
-			if(document != null)
-				XMLUtils.showXML(document);
-		}
+			}		
+		}	
+		if(document != null)
+			XMLUtils.showXML(document);
 	}
 }

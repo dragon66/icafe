@@ -108,4 +108,15 @@ public class IPTC extends Metadata {
 	public IPTCReader getReader() {
 		return reader;
 	}
+	
+	public void showMetadata() {
+		if(datasetMap != null){
+			// Print multiple entry IPTCDataSet
+			for(List<IPTCDataSet> iptcs : datasetMap.values()) {
+				for(IPTCDataSet iptc : iptcs)
+					iptc.print();
+			}
+		} else
+			super.showMetadata();
+	}
 }

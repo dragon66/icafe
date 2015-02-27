@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    27Feb2015  Added code to read XMP extension segment
+ * WY    24Feb2015  Added code to remove XMP extension segment
  * WY    18Feb2015  Replaced removeExif() with a generic removeMetadata()
  * WY    14Feb2015  Added insertXMP() to add XMP meta data
  * WY    04Feb2015  Revised insertExif() to keep existing EXIF data if needed
@@ -79,6 +81,7 @@ import cafe.image.meta.exif.ExifReader;
 import cafe.image.meta.exif.ExifThumbnail;
 import cafe.image.meta.exif.JpegExif;
 import cafe.image.meta.icc.ICCProfile;
+import cafe.image.meta.image.Comment;
 import cafe.image.meta.image.ImageMetadata;
 import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCDataSet;
@@ -86,11 +89,13 @@ import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
 import cafe.string.StringUtils;
+import cafe.string.XMLUtils;
 import cafe.util.ArrayUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -105,19 +110,32 @@ import java.util.Set;
  */
 public class JPEGTweaker {
 	// Constants
-	public static final byte[] XMP_ID = "http://ns.adobe.com/xap/1.0/\0".getBytes();
+	public static final byte[] XMP_ID = { // "http://ns.adobe.com/xap/1.0/\0"
+		0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x6E, 0x73, 0x2E, 0x61, 0x64,
+		0x6F, 0x62, 0x65, 0x2E, 0x63, 0x6F, 0x6D, 0x2F, 0x78, 0x61, 0x70, 0x2F,
+		0x31, 0x2E, 0x30, 0x2F, 0x00
+	};
+	public static final byte[] XMP_EXT_ID = { // "http://ns.adobe.com/xmp/extension/\0"
+		0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x6E, 0x73, 0x2E, 0x61, 0x64,
+		0x6F, 0x62, 0x65, 0x2E, 0x63, 0x6F, 0x6D, 0x2F, 0x78, 0x6D,	0x70, 0x2F,
+		0x65, 0x78, 0x74, 0x65, 0x6E, 0x73, 0x69, 0x6F, 0x6E, 0x2F, 0x00
+	};
 	// Photoshop IRB identification with trailing byte [0x00].
-	public static final byte[] PHOTOSHOP_IRB_ID = "Photoshop 3.0\0".getBytes();
-	// EXIF identifier with trailing bytes [0x00, 0x00] or [0x00, 0xff].
+	public static final byte[] PHOTOSHOP_IRB_ID = { // "Photoshop 3.0\0"
+		0x50, 0x68, 0x6F, 0x74, 0x6F, 0x73, 0x68, 0x6F, 0x70, 0x20, 0x33, 0x2E, 0x30, 0x00
+	};
+	// EXIF identifier with trailing bytes [0x00, 0x00].
 	public static final byte[] EXIF_ID = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-	public static final byte[] EXIF_EXT_ID = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
 	// ICC_PROFILE identifier with trailing byte [0x00].
 	public static final byte[] ICC_PROFILE_ID = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
 	public static final byte[] JFIF_ID = {0x4A, 0x46, 0x49, 0x46, 0x00}; // JFIF
 	public static final byte[] JFXX_ID = {0x4A, 0x46, 0x58, 0x58, 0x00}; // JFXX
-	public static final byte[] DUCKY_ID = {0x44, 0x75, 0x63, 0x6B, 0x79}; // "Ducky"
-	public static final byte[] PICTURE_INFO_ID = {0x51, 0x69, 0x63, 0x74, 0x75, 0x49, 0x6E, 0x66, 0x70}; // "PictureInfo"
+	public static final byte[] DUCKY_ID = {0x44, 0x75, 0x63, 0x6B, 0x79}; // "Ducky" no trailing NULL
+	public static final byte[] PICTURE_INFO_ID = //	"[picture info]" no trailing NULL
+		{0x5B, 0x70, 0x69, 0x63, 0x74, 0x75, 0x72, 0x65, 0x20, 0x69, 0x6E, 0x66, 0x6F, 0x5D};
+	public static final byte[] ADOBE_ID = {0x41, 0x64, 0x6f, 0x62, 0x65}; //"Adobe" no trailing NULL
 	
+	public static final EnumSet<Marker> APPnMarkers = EnumSet.range(Marker.APP0, Marker.APP15);
 	
 	/** Copy a single SOS segment */	
 	@SuppressWarnings("unused")
@@ -126,18 +144,15 @@ public class JPEGTweaker {
 		int nextByte = 0;
 		short marker = 0;	
 		
-		while((nextByte = IOUtils.read(is)) != -1)
-		{
-			if(nextByte == 0xff)
-			{
+		while((nextByte = IOUtils.read(is)) != -1) {
+			if(nextByte == 0xff) {
 				nextByte = IOUtils.read(is);
 				
 				if (nextByte == -1) {
 					throw new IOException("Premature end of SOS segment!");					
 				}								
 				
-				if (nextByte != 0x00) // This is a marker
-				{
+				if (nextByte != 0x00) { // This is a marker
 					marker = (short)((0xff<<8)|nextByte);
 					
 					switch (Marker.fromShort(marker)) {										
@@ -158,8 +173,7 @@ public class JPEGTweaker {
 				}
 				IOUtils.write(os, 0xff);
 				IOUtils.write(os, nextByte);
-			}
-			else {
+			} else {
 				IOUtils.write(os,  nextByte);				
 			}			
 		}
@@ -190,26 +204,15 @@ public class JPEGTweaker {
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
-			return null;
-		}
-		
-		System.out.println(Marker.SOI);
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
-				System.out.println(Marker.EOI);
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI)	{
 				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
 	
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
@@ -274,27 +277,16 @@ public class JPEGTweaker {
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
-			return;
-		}
-		
-		System.out.println(Marker.SOI);
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
-				System.out.println(Marker.EOI);
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI)	{
 				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
+		
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
@@ -311,13 +303,11 @@ public class JPEGTweaker {
 						finished = true;
 						break;
 				    case APP0:
-				    	byte[] jfif = {0x4A, 0x46, 0x49, 0x46, 0x00}; // JFIF
-						byte[] jfxx = {0x4A, 0x46, 0x58, 0x58, 0x00}; // JFXX
-						length = IOUtils.readUnsignedShortMM(is);
-						byte[] jfif_buf = new byte[length-2];
+				    	length = IOUtils.readUnsignedShortMM(is);
+						byte[] jfif_buf = new byte[length - 2];
 					    IOUtils.readFully(is, jfif_buf);
 					    // EXIF segment
-					    if(Arrays.equals(ArrayUtils.subArray(jfif_buf, 0, 5), jfif) || Arrays.equals(ArrayUtils.subArray(jfif_buf, 0, 5), jfxx)) {
+					    if(Arrays.equals(ArrayUtils.subArray(jfif_buf, 0, JFIF_ID.length), JFIF_ID) || Arrays.equals(ArrayUtils.subArray(jfif_buf, 0, JFXX_ID.length), JFXX_ID)) {
 					      	int thumbnailWidth = jfif_buf[12]&0xff;
 					    	int thumbnailHeight = jfif_buf[13]&0xff;
 					    	String outpath = "";
@@ -352,15 +342,13 @@ public class JPEGTweaker {
 				    	marker = IOUtils.readShortMM(is);
 						break;
 				    case APP1:
-				    	// EXIF identifier with trailing bytes [0x00,0x00] or [0x00,0xff].
-						byte[] exif = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
-						byte[] exif2 = {0x45, 0x78, 0x69, 0x66, 0x00, (byte)0xff};
-						byte[] exif_buf = new byte[6];
+				    	// EXIF identifier with trailing bytes [0x00,0x00].
+						byte[] exif_buf = new byte[EXIF_ID.length];
 						length = IOUtils.readUnsignedShortMM(is);						
 						IOUtils.readFully(is, exif_buf);						
 						// EXIF segment.
-						if (Arrays.equals(exif_buf, exif)||Arrays.equals(exif_buf, exif2)) {
-							exif_buf = new byte[length-8];
+						if (Arrays.equals(exif_buf, EXIF_ID)) {
+							exif_buf = new byte[length - 8];
 						    IOUtils.readFully(is, exif_buf);
 						    ExifReader reader = new ExifReader(exif_buf);
 						    reader.read();
@@ -387,8 +375,8 @@ public class JPEGTweaker {
 						break;
 				    case APP13:
 				    	length = IOUtils.readUnsignedShortMM(is);
-						byte[] data = new byte[length-2];
-						IOUtils.readFully(is, data, 0, length-2);						
+						byte[] data = new byte[length - 2];
+						IOUtils.readFully(is, data, 0, length - 2);						
 						int i = 0;
 						
 						while(data[i] != 0) i++;
@@ -460,32 +448,23 @@ public class JPEGTweaker {
 		Marker emarker;
 				
 		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
 			is.close();
-			os.close();		
-			return;
+			os.close();
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
 		}
 		
-		System.out.println(Marker.SOI);
 		IOUtils.writeShortMM(os, Marker.SOI.getValue());
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI) {
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				System.out.println(Marker.EOI);
 				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
+		
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
@@ -557,17 +536,25 @@ public class JPEGTweaker {
 						finished = true; // No more marker to read, we are done. 
 						break;
 				    case APP1:
-				    	Metadata meta = readAPP1(is); // Read and remove the old EXIF data
-				    	if(meta != null) {
-				    		if(meta.getType() == MetadataType.EXIF){
-				    			oldExif = (Exif)meta;
-				    		} else if(meta.getType() == MetadataType.XMP) {
-				    			// Write it back
-				    			writeXMP(os, meta.getData());
-				    		}				    			
-				    	}
+				    	// Read and remove the old XMP data
+				    	length = IOUtils.readUnsignedShortMM(is);
+						byte[] temp = new byte[EXIF_ID.length];
+						IOUtils.readFully(is, temp);
+						// Read the EXIF data.
+						if(Arrays.equals(temp, EXIF_ID)) { // We assume EXIF data exist only in one APP1
+							byte[] exifBytes = new byte[length - EXIF_ID.length - 2];
+							IOUtils.readFully(is, exifBytes);
+							oldExif = new JpegExif(exifBytes);
+						} else { // We are going to keep other type of data
+							IOUtils.writeShortMM(os, marker);
+							IOUtils.writeShortMM(os, (short) length);
+							IOUtils.write(os, temp); // Write the already read bytes
+							temp = new byte[length - EXIF_ID.length - 2];
+							IOUtils.readFully(is, temp);
+							IOUtils.write(os, temp);
+						}
 						marker = IOUtils.readShortMM(is);
-						break;
+						break;				
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
@@ -594,29 +581,19 @@ public class JPEGTweaker {
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
-			return;
-		}
-		
-		System.out.println(Marker.SOI);
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+	
 		IOUtils.writeShortMM(os, Marker.SOI.getValue());
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI) {
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				System.out.println(Marker.EOI);
 				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
+			
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
@@ -705,13 +682,11 @@ public class JPEGTweaker {
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
 			is.close();
 			os.close();		
-			return;
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");			
 		}
 		
-		System.out.println(Marker.SOI);
 		IOUtils.writeShortMM(os, Marker.SOI.getValue());
 		
 		marker = IOUtils.readShortMM(is);
@@ -719,13 +694,10 @@ public class JPEGTweaker {
 		while (!finished) {	        
 			if (Marker.fromShort(marker) == Marker.EOI)	{
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				System.out.println(Marker.EOI);
 				finished = true;
-			}
-		   	else {// Read markers
+			} else {// Read markers
 		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
+		
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
@@ -808,28 +780,22 @@ public class JPEGTweaker {
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
 			is.close();
-			os.close();		
-			return;
+			os.close();
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
 		}
 		
-		System.out.println(Marker.SOI);
 		IOUtils.writeShortMM(os, Marker.SOI.getValue());
 		
 		marker = IOUtils.readShortMM(is);
 		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
+			if (Marker.fromShort(marker) == Marker.EOI) {
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				System.out.println(Marker.EOI);
 				finished = true;
-			}
-		   	else {// Read markers
+			} else {// Read markers
 		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
+		
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
@@ -895,31 +861,23 @@ public class JPEGTweaker {
 		Marker emarker;
 		
 		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
 			is.close();
 			os.close();		
-			return;
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
 		}
 		
-		System.out.println(Marker.SOI);
 		IOUtils.writeShortMM(os, Marker.SOI.getValue());
 		
 		marker = IOUtils.readShortMM(is);
 		
 		while (!finished)
 	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
+			if (Marker.fromShort(marker) == Marker.EOI)	{
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				System.out.println(Marker.EOI);
 				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
 	
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
@@ -947,19 +905,24 @@ public class JPEGTweaker {
 						break;
 				    case APP1:
 				    	// Read and remove the old XMP data
-				    	Metadata meta = readAPP1(is); 
-				    	if(meta != null && meta.getType() == MetadataType.EXIF){
-				    		// Write it back
-				    		byte[] exif = meta.getData();
-				    		IOUtils.writeShortMM(os, Marker.APP1.getValue());
-				    	 	// Write segment length
-				    		IOUtils.writeShortMM(os, EXIF_ID.length + 2 + exif.length);
-				    		// Write segment data
-				    		os.write(EXIF_ID);
-				    		os.write(exif);
-				    	}
+				    	length = IOUtils.readUnsignedShortMM(is);
+						byte[] temp = new byte[XMP_EXT_ID.length];
+						IOUtils.readFully(is, temp);
+						// Remove XMP and ExtendedXMP segments.
+						if(Arrays.equals(temp, XMP_EXT_ID)) {
+							IOUtils.skipFully(is, length - XMP_EXT_ID.length  - 2);
+						} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, XMP_ID.length), XMP_ID)) {
+							IOUtils.skipFully(is,  length - XMP_EXT_ID.length - 2);
+						} else { // We are going to keep other type of data
+							IOUtils.writeShortMM(os, marker);
+							IOUtils.writeShortMM(os, (short) length);
+							IOUtils.write(os, temp); // Write the already read bytes
+							temp = new byte[length - XMP_EXT_ID.length - 2];
+							IOUtils.readFully(is, temp);
+							IOUtils.write(os, temp);
+						}
 						marker = IOUtils.readShortMM(is);
-						break;
+						break;						
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
@@ -973,17 +936,19 @@ public class JPEGTweaker {
 	    }
 	}
 	
+	@SuppressWarnings("unused")
 	private static void readAPP0(InputStream is) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
 		byte[] buf = new byte[length - 2];
 	    IOUtils.readFully(is, buf);
+	    int i = JFIF_ID.length;
 	    // JFIF segment
-	    if(Arrays.equals(ArrayUtils.subArray(buf, 0, 5), JFIF_ID) || Arrays.equals(ArrayUtils.subArray(buf, 0, 5), JFXX_ID)) {
-	    	System.out.print(new String(buf, 0, 4));
-	    	System.out.println(" - version " + (buf[5]&0xff) + "." + (buf[6]&0xff));
+	    if(Arrays.equals(ArrayUtils.subArray(buf, 0, i), JFIF_ID) || Arrays.equals(ArrayUtils.subArray(buf, 0, i), JFXX_ID)) {
+	    	System.out.print(new String(buf, 0, i).trim());
+	    	System.out.println(" - version " + (buf[i++]&0xff) + "." + (buf[i++]&0xff));
 	    	System.out.print("Density unit: ");
 	    	
-	    	switch(buf[7]&0xff) {
+	    	switch(buf[i++]&0xff) {
 	    		case 0:
 	    			System.out.println("No units, aspect ratio only specified");
 	    			break;
@@ -996,30 +961,17 @@ public class JPEGTweaker {
 	    		default:
 	    	}
 	    	
-	    	System.out.println("X density: " + IOUtils.readUnsignedShortMM(buf, 8));
-	    	System.out.println("Y density: " + IOUtils.readUnsignedShortMM(buf, 10));
-	    	int thumbnailWidth = buf[12]&0xff;
-	    	int thumbnailHeight = buf[13]&0xff;
+	    	System.out.println("X density: " + IOUtils.readUnsignedShortMM(buf, i));
+	    	i += 2;
+	    	System.out.println("Y density: " + IOUtils.readUnsignedShortMM(buf, i));
+	    	i += 2;
+	    	int thumbnailWidth = buf[i++]&0xff;
+	    	int thumbnailHeight = buf[i++]&0xff;
 	    	System.out.println("Thumbnail dimension: " + thumbnailWidth + "X" + thumbnailHeight);	   
 	    }
 	}
 	
-	private static Metadata readAPP1(InputStream is) throws IOException {
-		int length = IOUtils.readUnsignedShortMM(is);
-		byte[] buf = new byte[length - 2];
-		IOUtils.readFully(is, buf);		
-		// EXIF segment.
-		if (Arrays.equals(ArrayUtils.subArray(buf, 0, 6), EXIF_ID)||Arrays.equals(ArrayUtils.subArray(buf, 0, 6), EXIF_EXT_ID)) {
-			return new JpegExif(ArrayUtils.subArray(buf, 6, length - 8));
-		} else if(Arrays.equals(ArrayUtils.subArray(buf, 0, XMP_ID.length), XMP_ID)) {
-			return new XMP(ArrayUtils.subArray(buf, XMP_ID.length, length - XMP_ID.length - 2));
-			// For comparison purpose only
-			//System.out.println(new String(ArrayUtils.subArray(buf, XMP_ID.length, length - XMP_ID.length - 2), "UTF-8"));
-  		}
-		
-		return null;
-	}
-	
+	@SuppressWarnings("unused")
 	private static void readAPP12(InputStream is) throws IOException {
 		// APP12 is either used by some old cameras to set PictureInfo
 		// or Adobe PhotoShop to store Save for Web data - called Ducky segment.
@@ -1029,8 +981,8 @@ public class JPEGTweaker {
 		System.out.println("Length: " + length);
 		IOUtils.readFully(is, data);
 		int currPos = 0;
-		byte[] buf = ArrayUtils.subArray(data, 0, 5);
-		currPos += 5;
+		byte[] buf = ArrayUtils.subArray(data, 0, DUCKY_ID.length);
+		currPos += DUCKY_ID.length;
 		
 		if(Arrays.equals(DUCKY_ID, buf)) {
 			System.out.println("=>" + duckyInfo[0]);
@@ -1080,15 +1032,14 @@ public class JPEGTweaker {
 		IOUtils.readFully(is, temp, 0, length - 2);
 		
 		if (Arrays.equals(ArrayUtils.subArray(temp, 0, PHOTOSHOP_IRB_ID.length), PHOTOSHOP_IRB_ID)) {
-			System.out.println("Photoshop 3.0");
 			return new IRB(ArrayUtils.subArray(temp, PHOTOSHOP_IRB_ID.length, temp.length - PHOTOSHOP_IRB_ID.length));	
 		}
 		
 		return null;
 	}
 	
-	private static void readAPP14(InputStream is) throws IOException {
-		byte[] adobe = {0x41, 0x64, 0x6f, 0x62, 0x65};
+	@SuppressWarnings("unused")
+	private static void readAPP14(InputStream is) throws IOException {	
 		String[] app14Info = {"DCTEncodeVersion: ", "APP14Flags0: ", "APP14Flags1: ", "ColorTransform: "};		
 		int expectedLen = 14; // Expected length of this segment is 14.
 		int length = IOUtils.readUnsignedShortMM(is);
@@ -1097,58 +1048,28 @@ public class JPEGTweaker {
 			IOUtils.readFully(is, data, 0, length - 2);
 			byte[] buf = ArrayUtils.subArray(data, 0, 5);
 			
-			if(Arrays.equals(buf, adobe)) {
+			if(Arrays.equals(buf, ADOBE_ID)) {
 				for (int i = 0, j = 5; i < 3; i++, j += 2) {
 					System.out.println(app14Info[i] + StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
 				}
 				System.out.println(app14Info[3] + (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
 					((data[11]&0xff) == 1)? "YCbCr":"YCCK" ));
 			}
-		}		
+		}
 	}
 	
 	private static void readAPP2(InputStream is, ByteArrayOutputStream bo) throws IOException {
 		byte[] icc_profile_buf = new byte[12];
-		int length = IOUtils.readUnsignedShortMM(is);						
-		IOUtils.readFully(is, icc_profile_buf);		
+		int length = IOUtils.readUnsignedShortMM(is);
+		IOUtils.readFully(is, icc_profile_buf);
 		// ICC_PROFILE segment.
 		if (Arrays.equals(icc_profile_buf, ICC_PROFILE_ID)) {
 			icc_profile_buf = new byte[length - 14];
 		    IOUtils.readFully(is, icc_profile_buf);
 		    bo.write(icc_profile_buf, 2, length - 16);
-		    System.out.println("ICC_Profile marker #" + (icc_profile_buf[0]&0xff) + " of " + (icc_profile_buf[1]&0xff));
-		    System.out.println("ICC_Profile data length : " + (length-16));
-  		} else {
+		} else {
   			IOUtils.skipFully(is, length - 14);
   		}
-	}
-	
-	private static Metadata readAPPn(InputStream is, Marker marker, Map<MetadataType, Metadata> matadataMap) throws IOException {
-		switch (marker) {
-			case APP0:
-				readAPP0(is);
-				break;
-			case APP1:
-				return readAPP1(is);
-			case APP12:
-				readAPP12(is);
-				break;
-			case APP13:
-				return readAPP13(is);
-			case APP14:
-				readAPP14(is);
-				break;
-			default:
-		}
-		
-		return null;
-	}
-	
-	private static String readCOM(InputStream is) throws IOException {
-		int length = IOUtils.readUnsignedShortMM(is);
-		byte[] data = new byte[length-2];
-		IOUtils.readFully(is, data, 0, length-2);
-		return new String(data).trim();
 	}
 	
 	private static void readDHT(InputStream is, List<HTable> m_acTables, List<HTable> m_dcTables) throws IOException {	
@@ -1263,19 +1184,23 @@ public class JPEGTweaker {
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
 		// Need to wrap the input stream with a BufferedInputStream to
-		// speed up reading the SOS
+		// speed up reading SOS
 		is = new BufferedInputStream(is);
 		// Definitions
 		List<QTable> m_qTables = new ArrayList<QTable>(4);
 		List<HTable> m_acTables = new ArrayList<HTable>(4);	
-		List<HTable> m_dcTables = new ArrayList<HTable>(4);
-		
+		List<HTable> m_dcTables = new ArrayList<HTable>(4);		
 		// Each SOFReader is associated with a single SOF segment
 		// Usually there is only one SOF segment, but for hierarchical
 		// JPEG, there could be more than one SOF
 		List<SOFReader> readers = new ArrayList<SOFReader>();
-		// Used to read ICCProfile
-		ByteArrayOutputStream bo = new ByteArrayOutputStream();
+		// Used to read multiple segment ICCProfile
+		ByteArrayOutputStream iccProfileStream = null;
+		// Used to read multiple segment XMP
+		byte[] extendedXMP = null;
+		String xmpGUID = ""; // 32 byte ASCII hex string
+		
+		List<Segment> appnSegments = new ArrayList<Segment>();
 	
 		boolean finished = false;
 		int length = 0;	
@@ -1284,46 +1209,39 @@ public class JPEGTweaker {
 		
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
-			return metadataMap;
-		}
-		
-		System.out.println("*** JPEG snooping starts ***");
-		
-		System.out.println(Marker.SOI);
+			throw new IllegalArgumentException("Invalid JPEG image, expected SOI marker not found!");
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
-				System.out.println(Marker.EOI);
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI)	{
 				finished = true;
-			}
-		   	else {// Read markers
+			} else {// Read markers
 				emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
 	
 				switch (emarker) {
 					case APP0:
 					case APP1:
-					case APP12:						
-					case APP13:						
+					case APP2:
+					case APP3:
+					case APP4:
+					case APP5:
+					case APP6:
+					case APP7:
+					case APP8:
+					case APP9:
+					case APP10:
+					case APP11:
+					case APP12:
+					case APP13:
 					case APP14:
-						Metadata meta = readAPPn(is, emarker, metadataMap);
-						if(meta != null)
-							metadataMap.put(meta.getType(), meta);						
+					case APP15:
+						byte[] appBytes = readSegmentData(is);
+						appnSegments.add(new Segment(emarker, appBytes.length + 2, appBytes));
 						marker = IOUtils.readShortMM(is);
 						break;
-					case APP2:
-						readAPP2(is, bo);
-						marker = IOUtils.readShortMM(is);
-						break;	
 					case COM:
-				    	String comment = JPEGTweaker.readCOM(is);
-				    	System.out.println("=>" + comment);	
+						metadataMap.put(MetadataType.COMMENT, new Comment(readSegmentData(is)));
 				    	marker = IOUtils.readShortMM(is);
 				    	break;				   				
 					case DHT:
@@ -1350,7 +1268,7 @@ public class JPEGTweaker {
 						readers.add(readSOF(is, emarker));
 						marker = IOUtils.readShortMM(is);
 						break;
-					case SOS:					
+					case SOS:	
 						marker = readSOS(is, readers.get(readers.size() - 1));
 						break;
 					case JPG: // JPG and JPGn shouldn't appear in the image.
@@ -1359,28 +1277,81 @@ public class JPEGTweaker {
 				    case TEM: // The only stand alone mark besides SOI, EOI, and RSTn. 
 						marker = IOUtils.readShortMM(is);
 						break;
-				    case PADDING:	
+				    case PADDING:
 				    	int nextByte = 0;
 				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
 				    	marker = (short)((0xff<<8)|nextByte);
 				    	break;
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);
-					    IOUtils.skipFully(is, length-2);
-					    marker = IOUtils.readShortMM(is);					    
+					    IOUtils.skipFully(is, length - 2);
+					    marker = IOUtils.readShortMM(is);			    
 				}
 			}
 	    }
 		
 		is.close();
 		
-		System.out.println("*** JPEG snooping ends ***");
+		for(Segment segment : appnSegments) {
+			byte[] data = segment.getData();
+			length = segment.getLength();
+			if(segment.getMarker() == Marker.APP1) {
+				// Check for EXIF
+				if(Arrays.equals(ArrayUtils.subArray(data, 0, EXIF_ID.length), EXIF_ID)) {
+					// We found EXIF
+					JpegExif exif = new JpegExif(ArrayUtils.subArray(data, EXIF_ID.length, length - EXIF_ID.length - 2));
+					metadataMap.put(MetadataType.EXIF, exif);
+				} else if(Arrays.equals(ArrayUtils.subArray(data, 0, XMP_ID.length), XMP_ID)) {
+					// We found XMP, add it to metadata list (We may later revise it if we have ExtendedXMP)
+					XMP xmp = new XMP(ArrayUtils.subArray(data, XMP_ID.length, length - XMP_ID.length - 2));
+					metadataMap.put(MetadataType.XMP, xmp);
+					// Retrieve and remove XMP GUID if available
+					xmpGUID = XMLUtils.findAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
+				} else if(Arrays.equals(ArrayUtils.subArray(data, 0, XMP_EXT_ID.length), XMP_EXT_ID)) {
+					// We found ExtendedXMP, add the data to ExtendedXMP memory buffer				
+					int i = XMP_EXT_ID.length;
+					// 128-bit MD5 digest of the full ExtendedXMP serialization
+					byte[] guid = ArrayUtils.subArray(data, i, 32);
+					if(Arrays.equals(guid, xmpGUID.getBytes())) { // We have matched the GUID, copy it
+						i += 32;
+						long extendedXMPLength = IOUtils.readUnsignedIntMM(data, i);
+						i += 4;
+						if(extendedXMP == null)
+							extendedXMP = new byte[(int)extendedXMPLength];
+						// Offset for the current segment
+						long offset = IOUtils.readUnsignedIntMM(data, i);
+						i += 4;
+						byte[] xmpBytes = ArrayUtils.subArray(data, i, length - XMP_EXT_ID.length - 42);
+						System.arraycopy(xmpBytes, 0, extendedXMP, (int)offset, xmpBytes.length);
+					}
+				}
+			} else if(segment.getMarker() == Marker.APP2) {
+				// We're only interested in ICC_Profile
+				if (Arrays.equals(ArrayUtils.subArray(data, 0, ICC_PROFILE_ID.length), ICC_PROFILE_ID)) {
+					if(iccProfileStream == null)
+						iccProfileStream = new ByteArrayOutputStream();
+					iccProfileStream.write(ArrayUtils.subArray(data, ICC_PROFILE_ID.length + 2, length - ICC_PROFILE_ID.length - 4));
+				}
+			} else if(segment.getMarker() == Marker.APP13) {
+				if (Arrays.equals(ArrayUtils.subArray(data, 0, PHOTOSHOP_IRB_ID.length), PHOTOSHOP_IRB_ID)) {
+					IRB irb = new IRB(ArrayUtils.subArray(data, PHOTOSHOP_IRB_ID.length, length - PHOTOSHOP_IRB_ID.length - 2));	
+					metadataMap.put(MetadataType.PHOTOSHOP, irb);
+				}
+			}
+		}
 		
-		if(bo.size() > 0) { // We have ICCProfile data
-			ICCProfile icc_profile = new ICCProfile(bo.toByteArray());
+		// Now it's time to join multiple segments ICC_PROFILE and/or XMP		
+		if(iccProfileStream != null) { // We have ICCProfile data
+			ICCProfile icc_profile = new ICCProfile(iccProfileStream.toByteArray());
 			icc_profile.showMetadata();
 			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
 		}
+		
+		if(extendedXMP != null) {
+			XMP xmp = ((XMP)metadataMap.get(MetadataType.XMP));
+			if(xmp != null)
+				xmp.setExtendedXMPData(extendedXMP);
+		}		
 		
 		// Extract thumbnails to ImageMetadata
 		Metadata meta = metadataMap.get(MetadataType.EXIF);
@@ -1406,6 +1377,14 @@ public class JPEGTweaker {
 		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(null, thumbnails));
 		
 		return metadataMap;
+	}
+	
+	private static byte[] readSegmentData(InputStream is) throws IOException {
+		int length = IOUtils.readUnsignedShortMM(is);
+		byte[] data = new byte[length - 2];
+		IOUtils.readFully(is, data);
+		
+		return data;
 	}
 	
 	private static SOFReader readSOF(InputStream is, Marker marker) throws IOException {		
@@ -1514,29 +1493,19 @@ public class JPEGTweaker {
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
-			return;
-		}
-		
-		System.out.println(Marker.SOI);
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+
 		IOUtils.writeShortMM(os, Marker.SOI.getValue());
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI)	{
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				System.out.println(Marker.EOI);
 				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
-	
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
+		
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
@@ -1565,7 +1534,7 @@ public class JPEGTweaker {
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
 					    
-					    if(emarker != APPn) {
+					    if(emarker != APPn) { // Copy the data
 					    	IOUtils.writeShortMM(os, marker);
 					    	IOUtils.writeShortMM(os, (short)length);
 					    	IOUtils.write(os, buf);
@@ -1581,7 +1550,7 @@ public class JPEGTweaker {
 		removeMetadata(new HashSet<MetadataType>(Arrays.asList(metadataTypes)), is, os);
 	}
 	
-	// Remove EXIF segment
+	// Remove meta data segments
 	public static void removeMetadata(Set<MetadataType> metadataTypes, InputStream is, OutputStream os) throws IOException {
 		// Flag when we are done
 		boolean finished = false;
@@ -1590,12 +1559,9 @@ public class JPEGTweaker {
 		Marker emarker;
 
 		// The very first marker should be the start_of_image marker!
-		if (Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI) {
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
-			return;
-		}
-
-		System.out.println(Marker.SOI);
+		if (Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+			
 		IOUtils.writeShortMM(os, Marker.SOI.getValue());
 
 		marker = IOUtils.readShortMM(is);
@@ -1603,12 +1569,10 @@ public class JPEGTweaker {
 		while (!finished) {
 			if (Marker.fromShort(marker) == Marker.EOI) {
 				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				System.out.println(Marker.EOI);
 				finished = true;
 			} else { // Read markers
 				emarker = Marker.fromShort(marker);
-				System.out.println(emarker);
-
+		
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
@@ -1625,36 +1589,37 @@ public class JPEGTweaker {
 						}
 						marker = (short) ((0xff << 8) | nextByte);
 						break;
-					case SOS:
+					case SOS: // There should be no meta data after this segment
 						IOUtils.writeShortMM(os, marker);
 						copyToEnd(is, os);
 						finished = true;
 						break;
 					case COM:
-						length = IOUtils.readUnsignedShortMM(is);
-						IOUtils.skipFully(is, length - 2);
-						marker = IOUtils.readShortMM(is);
-						break;
+						if(metadataTypes.contains(MetadataType.COMMENT)) {
+							length = IOUtils.readUnsignedShortMM(is);
+							IOUtils.skipFully(is, length - 2);
+							marker = IOUtils.readShortMM(is);
+							break;
+						} // Otherwise go to default
 					case APP1:
 						// We are only interested in EXIF and XMP
 						if(metadataTypes.contains(MetadataType.EXIF) || metadataTypes.contains(MetadataType.XMP)) {
 							length = IOUtils.readUnsignedShortMM(is);
-							byte[] temp = new byte[XMP_ID.length];
+							byte[] temp = new byte[XMP_EXT_ID.length];
 							IOUtils.readFully(is, temp);
 							// XMP segment.
-							if (Arrays.equals(temp, XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
-								IOUtils.skipFully(is, length - XMP_ID.length  - 2);
+							if(Arrays.equals(temp, XMP_EXT_ID) && metadataTypes.contains(MetadataType.XMP)) {
+								IOUtils.skipFully(is, length - XMP_EXT_ID.length  - 2);
+							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, XMP_ID.length), XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
+								IOUtils.skipFully(is,  length - XMP_EXT_ID.length - 2);
 							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, EXIF_ID.length), EXIF_ID)
 									&& metadataTypes.contains(MetadataType.EXIF)) { // EXIF
-								IOUtils.skipFully(is, length - XMP_ID.length - 2);
-							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, EXIF_EXT_ID.length), EXIF_EXT_ID)
-									&& metadataTypes.contains(MetadataType.EXIF)) { // EXIF Extension
-								IOUtils.skipFully(is, length - XMP_ID.length - 2);
+								IOUtils.skipFully(is, length - XMP_EXT_ID.length - 2);
 							} else { // We don't want to remove any of them
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp); // Write the already read bytes
-								temp = new byte[length - XMP_ID.length - 2];
+								temp = new byte[length - XMP_EXT_ID.length - 2];
 								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
@@ -1679,7 +1644,7 @@ public class JPEGTweaker {
 							}
 							marker = IOUtils.readShortMM(is);
 							break;
-						}
+						} // Otherwise go to default
 					case APP13:
 						if(metadataTypes.contains(MetadataType.PHOTOSHOP) || metadataTypes.contains(MetadataType.IPTC)) {
 							length = IOUtils.readUnsignedShortMM(is);
@@ -1719,7 +1684,7 @@ public class JPEGTweaker {
 							}
 							marker = IOUtils.readShortMM(is);
 							break;
-						}
+						} // Otherwise go to default
 					default:
 						length = IOUtils.readUnsignedShortMM(is);
 						byte[] buf = new byte[length - 2];

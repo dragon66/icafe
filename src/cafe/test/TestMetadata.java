@@ -43,7 +43,7 @@ public class TestMetadata {
 			System.out.println("-----------------------------------------");
 		}
 		System.out.println("End of metadata information.");
-		
+//		
 		FileInputStream fin = null;
 		FileOutputStream fout = null;
 		
@@ -106,8 +106,8 @@ public class TestMetadata {
 		fin.close();
 		fout.close();
 		
-		fin = new FileInputStream("images/iptc.tif");
-		fout = new FileOutputStream("iptc-metadata-removed.tif");
+		fin = new FileInputStream("images/table.jpg");
+		fout = new FileOutputStream("table-metadata-removed.jpg");
 		
 		Metadata.removeMetadata(fin, fout, MetadataType.IPTC, MetadataType.PHOTOSHOP, MetadataType.ICC_PROFILE, MetadataType.XMP, MetadataType.EXIF);
 		

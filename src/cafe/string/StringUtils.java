@@ -48,11 +48,11 @@ public class StringUtils
 	 * @param bytes an array of byte.
 	 * @return a hex string representation of the byte array.
 	 */
-	public static String byteArrayToHexString(byte [] bytes) {	    
+	public static String byteArrayToHexString(byte[] bytes) {	    
 	    return byteArrayToHexString(bytes, 0, bytes.length);
 	}
 	
-	public static String byteArrayToHexString(byte [] bytes, int offset, int length) {
+	public static String byteArrayToHexString(byte[] bytes, int offset, int length) {
 		
 		if ( bytes == null ) {
 	      return null;

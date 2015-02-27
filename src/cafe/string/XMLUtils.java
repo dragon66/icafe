@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    27Feb2015  Added findAttribute() and removeAttribute()
  * WY    23Jan2015  Initial creation - moved XML related methods to here
  */
 
@@ -39,6 +40,8 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import org.w3c.dom.NodeList;
 
 public class XMLUtils {
 	public static void addChild(Node parent, Node child) {
@@ -154,6 +157,19 @@ public class XMLUtils {
 		return result.toString();
 	}
 	
+	// Retrieve the first non-empty, non-null attribute value for the attribute name
+	public static String findAttribute(Document doc, String tagName, String attribute) {
+		NodeList nodes = doc.getElementsByTagName(tagName);
+		
+		for(int i = 0; i < nodes.getLength(); i++) {
+			String attr = ((Element)nodes.item(i)).getAttribute(attribute);
+			if(!StringUtils.isNullOrEmpty(attr))
+				return attr;
+		}
+		
+		return "";
+	}
+	
 	public static void printNode(Node node, String indent) {
 		if(node != null) {
 			if(indent == null) indent = "";
@@ -225,6 +241,25 @@ public class XMLUtils {
 		            break;
 			}
 		}
+	}
+	
+	// Retrieve and remove the first non-empty, non-null attribute value for the attribute name
+	public static String removeAttribute(Document doc, String tagName, String attribute) {
+		NodeList nodes = doc.getElementsByTagName(tagName);
+		String retVal = "";
+		
+		for(int i = 0; i < nodes.getLength(); i++) {
+			Element ele = (Element)nodes.item(i);
+			String attr = ele.getAttribute(attribute);
+			
+			if(!StringUtils.isNullOrEmpty(attr)) {
+				retVal = attr;
+				ele.removeAttribute(attribute);
+				break;
+			}
+		}
+		
+		return retVal;		
 	}
 	
 	public static void showXML(Document document) {

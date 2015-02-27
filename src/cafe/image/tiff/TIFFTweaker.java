@@ -984,8 +984,13 @@ public class TIFFTweaker {
 		IFD imageIFD = ifds.get(pageNumber);
 		IFD exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
 		IFD gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
+		IFD newImageIFD = exif.getImageIFD();
 		IFD newExifSubIFD = exif.getExifIFD();
 		IFD newGpsSubIFD = exif.getGPSIFD();
+		
+		if(newImageIFD != null) { // Copy the Image IFD fields - this is dangerous.
+			imageIFD.addFields(newImageIFD.getFields());
+		}
 		
 		if(update && exifSubIFD != null && newExifSubIFD != null) {
 			exifSubIFD.addFields(newExifSubIFD.getFields());
