@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    27Feb2015  Fixed bug for missing TIFF JPEG_INTERCHANGE_FORMAT tag
  * WY    06Feb2015  Moved showIFDs() and showIFD() to TIFFTweaker and renamed them to
  *                  printIFDs() and printIFD()
  */
@@ -91,7 +92,6 @@ public class ExifReader implements MetadataReader {
 	    	TIFFTweaker.readIFDs(ifds, exifIn);		
 		    // We have thumbnail IFD
 		    if(ifds.size() >= 2) {
-		    	containsThumbnail = true;
 		    	IFD thumbnailIFD = ifds.get(1);
 		    	int width = -1;
 		    	int height = -1;
@@ -110,6 +110,7 @@ public class ExifReader implements MetadataReader {
 		    		byte[] thumbnailData = new byte[thumbnailLen];
 		    		exifIn.readFully(thumbnailData);
 		    		thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
+		    		containsThumbnail = true;				    
 		    	} else { // Uncompressed, save as TIFF
 		    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS);
 		    		if(field == null) 
@@ -121,6 +122,7 @@ public class ExifReader implements MetadataReader {
 		    			 TIFFTweaker.retainPages(exifIn, tiffout, 1);
 		    			 tiffout.close(); // Auto flush when closed
 		    			 thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_TIFF, bout.toByteArray(), thumbnailIFD);
+		    			 containsThumbnail = true;		    			    
 		    		}
 		    	}
 		    }
