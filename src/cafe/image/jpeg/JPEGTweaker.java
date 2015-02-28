@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    28Feb2015  Added code to extract depthMap from google phone images
  * WY    27Feb2015  Added code to read XMP extension segment
  * WY    24Feb2015  Added code to remove XMP extension segment
  * WY    18Feb2015  Replaced removeExif() with a generic removeMetadata()
@@ -56,6 +57,7 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -88,6 +90,7 @@ import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
+import cafe.string.Base64;
 import cafe.string.StringUtils;
 import cafe.string.XMLUtils;
 import cafe.util.ArrayUtils;
@@ -101,6 +104,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.w3c.dom.Document;
 
 /**
  * JPEG image tweaking tool
@@ -259,6 +264,40 @@ public class JPEGTweaker {
 			os.write(icc_profile);
 			os.close();
 		}	
+	}
+	
+	// Extract depth map from google phones
+	public static void extractDepthMap(InputStream is, String pathToDepthMap) throws IOException {
+		Map<MetadataType, Metadata> meta = readMetadata(is);
+		XMP xmp = (XMP)meta.get(MetadataType.XMP);
+		if(xmp != null && xmp.hasExtendedXmp()) {
+			Document xmpDocument = xmp.getMergedDocument();
+			String depthMapMime = XMLUtils.findAttribute(xmpDocument, "rdf:Description", "GDepth:Mime");
+			if(!StringUtils.isNullOrEmpty(depthMapMime)) {
+				String data = XMLUtils.findAttribute(xmpDocument, "rdf:Description", "GDepth:Data");
+				if(!StringUtils.isNullOrEmpty(data)) {
+					String outpath = "";
+					if(pathToDepthMap.endsWith("\\") || pathToDepthMap.endsWith("/"))
+						outpath = pathToDepthMap + "google_depthmap";
+					else
+						outpath = pathToDepthMap.replaceFirst("[.][^.]+$", "") + "_depthmap";
+					if(depthMapMime.equalsIgnoreCase("image/png")) {
+						outpath += ".png";
+					} else if(depthMapMime.equalsIgnoreCase("image/jpeg")) {
+						outpath += ".jpg";
+					}
+					try {
+						byte[] image = Base64.decodeToByteArray(data);							
+						FileOutputStream fout = new FileOutputStream(new File(outpath));
+						fout.write(image);
+						fout.close();
+					} catch (Exception e) {							
+						e.printStackTrace();
+					}
+				}		
+			}
+		}
+		
 	}
 	
 	/**

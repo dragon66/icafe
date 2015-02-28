@@ -121,6 +121,11 @@ public class TestMetadata {
 		
 		fin.close();
 		fout.close();
+		
+		fin = new FileInputStream("images/table.jpg");
+		JPEGTweaker.extractDepthMap(fin, "table");
+		
+		fin.close();
 	}
 	
 	private static List<IPTCDataSet> createIPTCDataSet() {
