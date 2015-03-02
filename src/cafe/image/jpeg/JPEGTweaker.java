@@ -13,7 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
- * WY    28Feb2015  Added code to extract depthMap from google phone images
+ * WY    28Feb2015  Added code to extract Google depthMap from JPEG images
  * WY    27Feb2015  Added code to read XMP extension segment
  * WY    24Feb2015  Added code to remove XMP extension segment
  * WY    18Feb2015  Replaced removeExif() with a generic removeMetadata()
@@ -170,7 +170,6 @@ public class JPEGTweaker {
 						case RST6:
 						case RST7:
 							IOUtils.writeShortMM(os, marker);
-							System.out.println(Marker.fromShort(marker));
 							continue;
 						default:											
 					}
@@ -975,6 +974,110 @@ public class JPEGTweaker {
 	    }
 	}
 	
+	public static void printHTables(List<HTable> tables) {
+		final String[] HT_class_table = {"DC Component", "AC Component"};
+		System.out.println("Huffman table information =>:");
+		for(HTable table : tables )
+		{
+			System.out.println("Class: " + table.getComponentClass() + " (" + HT_class_table[table.getComponentClass()] + ")");
+			System.out.println("Destination ID: " + table.getDestinationID());
+			
+			byte[] bits = table.getBits();
+			byte[] values = table.getValues();
+			
+		    int count = 0;
+			
+			for (int i = 0; i < bits.length; i++)
+			{
+				count += (bits[i]&0xff);
+			}
+			
+            System.out.println("Number of codes: " + count);
+			
+            if (count > 256)
+			{
+				System.out.println("invalid huffman code count!");			
+				return;
+			}
+	        
+            int j = 0;
+            
+			for (int i = 0; i < 16; i++) {
+			
+				System.out.print("Codes of length " + (i+1) + " (" + (bits[i]&0xff) +  " total): [ ");
+				
+				for (int k = 0; k < (bits[i]&0xff); k++) {
+					System.out.print((values[j++]&0xff) + " ");
+				}
+				
+				System.out.println("]");
+			}
+			
+			System.out.println("<<End of Huffman table information>>");
+		}
+	}
+	
+	public static void printQTables(List<QTable> qTables) {
+		System.out.println("Quantization table information =>:");
+		
+		int count = 0;
+		
+		for(QTable table : qTables) {
+			int QT_precision = table.getPrecision();
+			short[] qTable = table.getTable();
+			System.out.println("precision of QT is " + QT_precision);
+			System.out.println("Quantization table #" + table.getIndex() + ":");
+			
+		   	if(QT_precision == 0) {
+				for (int j = 0; j < 64; j++)
+			    {
+					if (j != 0 && j%8 == 0) {
+						System.out.println();
+					}
+					
+					System.out.print((qTable[j]&0xff) + " ");			
+			    }
+			} else { // 16 bit big-endian
+								
+				for (int j = 0; j < 64; j++) {
+					if (j != 0 && j%8 == 0) {
+						System.out.println();
+					}
+					System.out.print((qTable[j]&0xffff) + " ");	
+				}				
+			}
+		   	
+		   	count++;
+		
+			System.out.println();
+			System.out.println("***************************");
+		}
+		
+		System.out.println("Total number of Quantation tables: " + count);
+		System.out.println("End of quantization table information");
+	}
+	
+	public static void printSOF(SOFReader reader) {
+		System.out.println("SOF informtion =>");
+		System.out.println("Precision: " + reader.getPrecision());
+		System.out.println("Image height: " + reader.getFrameHeight());
+		System.out.println("Image width: " + reader.getFrameWidth());
+		System.out.println("# of Components: " + reader.getNumOfComponents());
+		System.out.println(" (1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)");		
+		    
+		for(Component component : reader.getComponents()) {
+			System.out.println();
+			System.out.println("Component ID: " + component.getId());
+			System.out.println("Herizontal sampling factor: " + component.getHSampleFactor());
+			System.out.println("Vertical sampling factor: " + component.getVSampleFactor());
+			System.out.println("Quantization table #: " + component.getQTableNumber());
+			System.out.println("DC table number: " + component.getDCTableNumber());
+			System.out.println("AC table number: " + component.getACTableNumber());
+		}
+		
+		System.out.println("End of SOF information");
+	}
+	
 	@SuppressWarnings("unused")
 	private static void readAPP0(InputStream is) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
@@ -1112,10 +1215,7 @@ public class JPEGTweaker {
 	}
 	
 	private static void readDHT(InputStream is, List<HTable> m_acTables, List<HTable> m_dcTables) throws IOException {	
-		final String[] HT_class_table = {"DC Component", "AC Component"};
-	 			
 		int len = IOUtils.readUnsignedShortMM(is);
-        System.out.println("DHT segment length: " + len);       	
         byte buf[] = new byte[len - 2];
         IOUtils.readFully(is, buf);
 		
@@ -1126,48 +1226,6 @@ public class JPEGTweaker {
 		
 		m_acTables.addAll(acTables);
 		m_dcTables.addAll(dcTables);
-		
-		List<HTable> tables = new ArrayList<HTable>(dcTables);
-		tables.addAll(acTables);
-		
-		for(HTable table : tables )
-		{
-			System.out.println("Class: " + table.getComponentClass() + " (" + HT_class_table[table.getComponentClass()] + ")");
-			System.out.println("Destination ID: " + table.getDestinationID());
-			
-			byte[] bits = table.getBits();
-			byte[] values = table.getValues();
-			
-		    int count = 0;
-			
-			for (int i = 0; i < bits.length; i++)
-			{
-				count += (bits[i]&0xff);
-			}
-			
-            System.out.println("Number of codes: " + count);
-			
-            if (count > 256)
-			{
-				System.out.println("invalid huffman code count!");			
-				return;
-			}
-	        
-            int j = 0;
-            
-			for (int i = 0; i < 16; i++) {
-			
-				System.out.print("Codes of length " + (i+1) + " (" + (bits[i]&0xff) +  " total): [ ");
-				
-				for (int k = 0; k < (bits[i]&0xff); k++) {
-					System.out.print((values[j++]&0xff) + " ");
-				}
-				
-				System.out.println("]");
-			}
-			
-			System.out.println("**********************************");
-		}
    	}
 	
 	// Process define Quantization table
@@ -1178,45 +1236,7 @@ public class JPEGTweaker {
 		
 		DQTReader reader = new DQTReader(new Segment(Marker.DQT, len, buf));
 		List<QTable> qTables = reader.getTables();
-		m_qTables.addAll(qTables);
-		
-		int count = 0;
-		  
-		for(QTable table : qTables)
-		{
-			int QT_precision = table.getPrecision();
-			short[] qTable = table.getTable();
-			System.out.println("precision of QT is " + QT_precision);
-			System.out.println("Quantization table #" + table.getIndex() + ":");
-			
-		   	if(QT_precision == 0) {
-				for (int j = 0; j < 64; j++)
-			    {
-					if (j != 0 && j%8 == 0) {
-						System.out.println();
-					}
-					
-					System.out.print((qTable[j]&0xff) + " ");			
-			    }
-			} else { // 16 bit big-endian
-								
-				for (int j = 0; j < 64; j++) {
-					if (j != 0 && j%8 == 0) {
-						System.out.println();
-					}
-					
-					System.out.print((qTable[j]&0xffff) + " ");	
-				}				
-			}
-		   	
-		   	count++;
-		
-			System.out.println();
-			System.out.println("***************************");
-		}
-		
-		System.out.println("Total number of Quantation tables: " + count);
-		System.out.println("**********************************");
+		m_qTables.addAll(qTables);		
 	}
 	
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
@@ -1434,23 +1454,6 @@ public class JPEGTweaker {
 		Segment segment = new Segment(marker, len, buf);		
 		SOFReader reader = new SOFReader(segment);
 		
-		System.out.println("Data length: " + len);		
-		System.out.println("Precision: " + reader.getPrecision());
-		System.out.println("Image height: " + reader.getFrameHeight());
-		System.out.println("Image width: " + reader.getFrameWidth());
-		System.out.println("# of Components: " + reader.getNumOfComponents());
-		System.out.println(" (1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)");		
-		    
-		for(Component component:reader.getComponents()) {
-			System.out.println();
-			System.out.println("Component ID: " + component.getId());
-			System.out.println("Herizontal sampling factor: " + component.getHSampleFactor());
-			System.out.println("Vertical sampling factor: " + component.getVSampleFactor());
-			System.out.println("Quantization table #: " + component.getQTableNumber());
-		}
-		
-		System.out.println("**********************************");
-		
 		return reader;
 	}	
 	
@@ -1461,21 +1464,8 @@ public class JPEGTweaker {
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(is, buf);
 		
-		Segment segment = new Segment(Marker.SOS, len, buf);	
+		Segment segment = new Segment(Marker.SOS, len, buf);
 		new SOSReader(segment, sofReader);
-		
-		Component[] components = sofReader.getComponents();
-		
-		for(Component component : components) {
-			System.out.println("Component ID: " + component.getId());
-			System.out.println("Horizontal sampling factor: " + component.getHSampleFactor());
-			System.out.println("Vertical sampling factor: " + component.getVSampleFactor());
-			System.out.println("Quantization table #: " + component.getQTableNumber());
-			System.out.println("DC table number: " + component.getDCTableNumber());
-			System.out.println("AC table number: " + component.getACTableNumber());
-		}
-		
-		System.out.println("****************************************");
 		
 		// Actual image data follow.
 		int nextByte = 0;
@@ -1504,7 +1494,6 @@ public class JPEGTweaker {
 						case RST5:
 						case RST6:
 						case RST7:
-							System.out.println(Marker.fromShort(marker));
 							continue;
 						default:											
 					}
@@ -1770,7 +1759,6 @@ public class JPEGTweaker {
 						case RST5:
 						case RST6:
 						case RST7:
-							System.out.println(Marker.fromShort(marker));
 							continue;
 						default:											
 					}
