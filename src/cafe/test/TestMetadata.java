@@ -13,10 +13,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.Document;
 import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.PhotoshopIPTC;
+import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
@@ -28,6 +30,7 @@ import cafe.image.meta.iptc.IPTCApplicationTag;
 import cafe.image.tiff.FieldType;
 import cafe.image.tiff.TiffTag;
 import cafe.image.util.IMGUtils;
+import cafe.string.XMLUtils;
 
 public class TestMetadata {
 
@@ -43,15 +46,16 @@ public class TestMetadata {
 			System.out.println("-----------------------------------------");
 		}
 		System.out.println("End of metadata information.");
-//		
+	
 		FileInputStream fin = null;
 		FileOutputStream fout = null;
 		
 		if(metadataMap.get(MetadataType.XMP) != null) {
-			byte[] xmp = metadataMap.get(MetadataType.XMP).getData();
+			XMP xmp = (XMP)metadataMap.get(MetadataType.XMP);
+			Document doc = xmp.getXmpDocument();
 			fin = new FileInputStream("images/1.jpg");
 			fout = new FileOutputStream("1-xmp-inserted.jpg");
-			JPEGTweaker.insertXMP(fin, fout, xmp);
+			Metadata.insertXMP(fin, fout, XMLUtils.serializeToStringLS(doc, doc.getDocumentElement()));
 			fin.close();
 			fout.close();
 		}
