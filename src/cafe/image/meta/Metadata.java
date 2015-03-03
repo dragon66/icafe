@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    03Mar2015  Added insertXMP()
  * WY    03Feb2015  Added insertExif()
  * WY    03Feb2015  Added removeExif()
  * WY    03Feb2015  Added insertICCProfile()
@@ -265,6 +266,39 @@ public abstract class Metadata {
 			default:
 				pushbackStream.close();
 				throw new IllegalArgumentException("IRB thumbnail inserting is not supported for " + imageType + " image");				
+		}		
+	}
+	
+	public static void insertXMP(InputStream is, OutputStream out, String xmp) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate XMP inserting to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.insertXMP(pushbackStream, out, xmp);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
+				TIFFTweaker.insertXMP(xmp, randIS, randOS);
+				randIS.close();
+				randOS.close();
+				break;
+			case PNG:
+				PNGTweaker.insertXMP(pushbackStream, out, xmp);
+				break;
+			case GIF:
+				GIFTweaker.insertXMPApplicationBlock(pushbackStream, out, xmp);
+				break;
+			case PCX:
+			case TGA:
+			case BMP:
+				System.out.println(imageType + " image format does not support XMP data");
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("XMP inserting is not supported for " + imageType + " image");				
 		}		
 	}
 	
