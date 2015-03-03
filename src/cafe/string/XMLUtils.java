@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    03Mar2015  Added serializeToString() and serializeToByteArray()
  * WY    27Feb2015  Added findAttribute() and removeAttribute()
  * WY    23Jan2015  Initial creation - moved XML related methods to here
  */
@@ -21,13 +22,23 @@
 package cafe.string;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -40,8 +51,10 @@ import org.w3c.dom.ProcessingInstruction;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSOutput;
+import org.w3c.dom.ls.LSSerializer;
 
 public class XMLUtils {
 	public static void addChild(Node parent, Node child) {
@@ -170,6 +183,18 @@ public class XMLUtils {
 		return "";
 	}
 	
+	public static void insertLeadingPI(Document doc, String target, String data) {
+		Element element = doc.getDocumentElement();
+	    ProcessingInstruction pi = doc.createProcessingInstruction(target, data);
+	    element.getParentNode().insertBefore(pi, element);
+	}
+	
+	public static void insertTrailingPI(Document doc, String target, String data) {
+		Element element = doc.getDocumentElement();
+	    ProcessingInstruction pi = doc.createProcessingInstruction(target, data);
+	    element.getParentNode().appendChild(pi);
+	}
+		
 	public static void printNode(Node node, String indent) {
 		if(node != null) {
 			if(indent == null) indent = "";
@@ -260,6 +285,120 @@ public class XMLUtils {
 		}
 		
 		return retVal;		
+	}
+	
+	public static byte[] serializeToByteArray(Document doc) throws IOException {
+		TransformerFactory tFactory = TransformerFactory.newInstance();
+		Transformer transformer = null;
+		try {
+			transformer = tFactory.newTransformer();
+		} catch (TransformerConfigurationException e) {
+			throw new IOException("Unable to serialize XML document");
+		}
+		transformer.setOutputProperty(OutputKeys.INDENT, "no");
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		String encoding = doc.getInputEncoding();
+		if(encoding == null) encoding = "UTF-8";
+		transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+		DOMSource source = new DOMSource(doc);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Result result = new StreamResult(out);
+		try {
+			transformer.transform(source, result);
+		} catch (TransformerException e) {
+			throw new IOException("Unable to serialize XML document");
+		}
+		
+		return out.toByteArray();
+	}
+	
+	/**
+	 * Serialize XML Document to string using DOM Level 3 Load/Save
+	 * 
+	 * @param doc XML Document
+	 * @return String representation of the Document
+	 * @throws IOException
+	 */
+	public static String serializeToStringLS(Document doc) throws IOException {
+		return serializeToStringLS(doc, doc);
+	}
+	
+	/**
+	 * Serialize XML Document to string using DOM Level 3 Load/Save
+	 * 
+	 * @param doc XML Document
+	 * @param node the Node to serialize
+	 * @return String representation of the Document
+	 * @throws IOException
+	 */
+	public static String serializeToStringLS(Document doc, Node node) throws IOException {
+		String encoding = doc.getInputEncoding();
+        if(encoding == null) encoding = "UTF-8";
+        
+        return serializeToStringLS(doc, node, encoding);
+	}
+	
+	/**
+	 * Serialize XML Node to string
+	 * <p>
+	 * Note: this method is supposed to be faster than the Transform version but the output control
+	 * is limited. If node is Document node, it will output XML PI which sometimes we want to avoid.
+	 * 
+	 * @param doc XML document
+	 * @param node Node to be serialized
+	 * @param encoding encoding for the output
+	 * @return String representation of the Document
+	 * @throws IOException
+	 */
+	public static String serializeToStringLS(Document doc, Node node, String encoding) throws IOException {
+		DOMImplementationLS domImpl = (DOMImplementationLS) doc.getImplementation();
+        LSSerializer lsSerializer = domImpl.createLSSerializer();
+        LSOutput output = domImpl.createLSOutput();
+        output.setEncoding(encoding);
+        StringWriter writer = new StringWriter();
+        output.setCharacterStream(writer);
+        lsSerializer.write(node, output);
+        writer.flush();
+        
+        return writer.toString();
+	}
+	
+	public static String serializeToString(Document doc) throws IOException {
+		String encoding = doc.getInputEncoding();
+		if(encoding == null) encoding = "UTF-8";
+		
+		return serializeToString(doc, encoding);
+	}
+	
+	/**
+	 * Serialize XML Document to string using Transformer
+	 * 
+	 * @param doc XML Document
+	 * @return String representation of the the Document
+	 * @throws IOException
+	 */
+	public static String serializeToString(Node node, String encoding) throws IOException {
+		TransformerFactory tFactory = TransformerFactory.newInstance();
+		Transformer transformer = null;
+		try {
+			transformer = tFactory.newTransformer();
+		} catch (TransformerConfigurationException e) {
+			throw new IOException("Unable to serialize XML document");
+		}
+		transformer.setOutputProperty(OutputKeys.INDENT, "no");
+		transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
+		DOMSource source = new DOMSource(node);
+		StringWriter writer = new StringWriter();
+        Result result = new StreamResult(writer);
+		try {
+			transformer.transform(source, result);
+		} catch (TransformerException e) {
+			throw new IOException("Unable to serialize XML document");
+		}		
+	    writer.flush();
+	    
+        return writer.toString();
 	}
 	
 	public static void showXML(Document document) {
