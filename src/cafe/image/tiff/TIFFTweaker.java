@@ -85,6 +85,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.w3c.dom.Document;
+
 import cafe.image.ImageFrame;
 import cafe.image.ImageIO;
 import cafe.image.ImageParam;
@@ -1741,6 +1743,14 @@ public class TIFFTweaker {
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
 		writeToStream(rout, firstIFDOffset);	
+	}
+	
+	public static void insertXMP(String xmp, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		Document doc = XMLUtils.createXML(xmp);
+		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
+		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
+		byte[] xmpBytes = XMLUtils.serializeToByteArray(doc);
+		insertXMP(xmpBytes, rin, rout);
 	}
 	
 	/**
