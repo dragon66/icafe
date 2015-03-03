@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    03Mar2015  Added overloaded insertXMPApplicationBlock() with XMP string as input
  * WY    13Feb2015  Added insertXMPApplicationBlock() to insert XMP meta data
  * WY    13Feb2015  Added code to readMetadata() Comment and XMP meta data
  * WY    20Jan2015  Renamed snoop() to readMetadata() to work with Metadata.readMetadata()
@@ -42,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.XMP;
@@ -53,6 +56,7 @@ import cafe.image.writer.GIFWriter;
 import cafe.image.writer.ImageWriter;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
+import cafe.string.XMLUtils;
 import cafe.util.ArrayUtils;
 
 /**
@@ -209,6 +213,15 @@ public class GIFTweaker {
  			bytesRead = is.read(buf);
  		}
     }
+	
+	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, String xmp) throws IOException {
+		Document doc = XMLUtils.createXML(xmp);
+		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
+		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
+		// Serialize doc to byte array
+		byte[] xmpBytes = XMLUtils.serializeToByteArray(doc);
+		insertXMPApplicationBlock(is, os, xmpBytes);
+	}
 	
 	private static boolean readFrame(InputStream is, DataTransferObject DTO) throws IOException {
 		// Need to reset some of the fields
