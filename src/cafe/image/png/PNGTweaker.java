@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    03Mar2015  Added insertXMP() to insert XMP to iTXT chunk
  * WY    11Feb2015  Added code to extract XMP from iTXT chunk
  * WY    20Jan2015  Revised to work with Metadata.showMetadata()
  * WY    13Jan2015  Split remove_ancillary_chunks() arguments
@@ -43,12 +44,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.InflaterInputStream;
 
+import org.w3c.dom.Document;
+
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
+import cafe.string.XMLUtils;
 import cafe.util.ArrayUtils;
 /**
  * PNG image tweaking tool
@@ -104,6 +108,19 @@ public class PNGTweaker {
 	
         serializeChunks(list, os);
   	}
+  	
+  	public static void insertXMP(InputStream is, OutputStream os, String xmp) throws IOException {
+  		Document doc = XMLUtils.createXML(xmp);
+		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
+		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
+		String newXmp = XMLUtils.serializeToString(doc); // DONOT use XMLUtils.serializeToStringLS()
+  		// Adds XMP chunk
+		TextBuilder xmpBuilder = new TextBuilder(ChunkType.ITXT).keyword("XML:com.adobe.xmp");
+		xmpBuilder.text(newXmp);
+	    Chunk xmpChunk = xmpBuilder.build();
+	    
+	    insertChunk(xmpChunk, is, os);
+    }
   	
   	public static List<Chunk> mergeIDATChunks(List<Chunk> chunks) {
    		
@@ -529,8 +546,7 @@ public class PNGTweaker {
 	    }
     }
   	
-   	private static void remove_chunks(InputStream is, File outfileDir, String outfileName) throws IOException
-    {
+   	private static void remove_chunks(InputStream is, File outfileDir, String outfileName) throws IOException {
   		//Local variables for reading chunks
         int data_len = 0;
         int chunk_value = 0;
@@ -538,8 +554,7 @@ public class PNGTweaker {
       
         long signature = IOUtils.readLongMM(is);
 
-        if (signature != SIGNATURE)
-        {
+        if (signature != SIGNATURE) {
             System.out.println("--- NOT A PNG IMAGE ---");
             return;
         }   
@@ -603,8 +618,7 @@ public class PNGTweaker {
    			
    			Chunk chunk = iter.next();
    		
-   			if (chunk.getChunkType() == chunkType)
-   			{   				
+   			if (chunk.getChunkType() == chunkType) {   				
    				iter.remove();
    			}   			
    		}
@@ -628,8 +642,7 @@ public class PNGTweaker {
    			
    			Chunk chunk = iter.next();
    		
-   			if (chunkEnumSet.contains(chunk.getChunkType()))
-   			{   				
+   			if (chunkEnumSet.contains(chunk.getChunkType())) {   				
    				iter.remove();
    			}   			
    		}
@@ -646,8 +659,7 @@ public class PNGTweaker {
    			Chunk chunk = iter.next();
    		
    			if ((chunk.getChunkType() == ChunkType.TEXT) || (chunk.getChunkType() == ChunkType.ZTXT) ||
-   					(chunk.getChunkType() == ChunkType.ITXT))
-   			{   				
+   					(chunk.getChunkType() == ChunkType.ITXT)) {   				
    				iter.remove();
    			}   			
    		}
@@ -659,8 +671,7 @@ public class PNGTweaker {
   		
   		Collections.sort(chunks);
   	    
-  		for(Chunk chunk : chunks)
-        {
+  		for(Chunk chunk : chunks) {
         	chunk.write(os);
         }
   	}
