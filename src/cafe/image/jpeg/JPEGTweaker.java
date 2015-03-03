@@ -892,6 +892,14 @@ public class JPEGTweaker {
 		insertIRB(is, os, Arrays.asList(IMGUtils.createThumbnail8BIM(thumbnail)), true); // Set true to keep other IRB blocks
 	}
 	
+	/**
+	 * Insert XMP into single APP1 segment. ExtendedXMP is not supported.
+	 * 
+	 * @param is InputStream for the image.
+	 * @param os OutputStream for the image.
+	 * @param xmp XMP byte array - should be a packeted XMP for the standard XMP.
+	 * @throws IOException
+	 */	
 	public static void insertXMP(InputStream is, OutputStream os, byte[] xmp) throws IOException {
 		boolean finished = false;
 		int length = 0;	
@@ -972,6 +980,25 @@ public class JPEGTweaker {
 				}
 			}
 	    }
+	}
+	
+	/**
+	 * Insert a XMP string into the image
+	 * 
+	 * @param is InputStream for the image.
+	 * @param os OutputStream for the image.
+	 * @param xmp XML string for the XMP - Assuming in UTF-8 format.
+	 * @throws IOException
+	 */
+	public static void insertXMP(InputStream is, OutputStream os, String xmp) throws IOException {
+		// Add packet wrapper to the XMP document
+		// Add PI at the beginning and end of the document, we will support only UTF-8, no BOM
+		Document doc = XMLUtils.createXML(xmp);
+		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
+		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
+		// Serialize doc to byte array
+		byte[] xmpBytes = XMLUtils.serializeToByteArray(doc);
+		insertXMP(is, os, xmpBytes); // Insert XMP into image
 	}
 	
 	public static void printHTables(List<HTable> tables) {
