@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    04Mar2015  Added toHexString()
+ * WY    04Mar2015  Added generateMD5()
  * WY    07Feb201   Added decimalToDMS() and DMSToDecimal()
  * WY    23Jan2015  Moved XML related methods to XMLUtils
  * WY    10Jan2015  Added showXML() and printNode() to show XML document
@@ -27,6 +29,8 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.*;
@@ -52,11 +56,9 @@ public class StringUtils
 	    return byteArrayToHexString(bytes, 0, bytes.length);
 	}
 	
-	public static String byteArrayToHexString(byte[] bytes, int offset, int length) {
-		
-		if ( bytes == null ) {
-	      return null;
-	    }
+	public static String byteArrayToHexString(byte[] bytes, int offset, int length) {		
+		if ( bytes == null )
+			return null;
 		
 		if(bytes.length == 0) return "[]";
 	    
@@ -508,6 +510,23 @@ public class StringUtils
 		return result.toString();
 	}
 	
+	/**
+	 * Generate MD5 digest from a byte array
+	 * 
+	 * @param message byte array to generate MD5
+	 * @return MD5 string
+	 */
+	public static String generateMD5(byte[] message) {
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException("No such algorithm: MD5");
+		}
+		
+		return toHexString(md.digest(message));
+    }
+   
 	public static String intToHexString(int value) {
 		StringBuilder buffer = new StringBuilder(10);
 		
@@ -918,6 +937,43 @@ public class StringUtils
 				throw new UnsupportedOperationException();
 			}
 		};
+	}
+	
+	public static String toHexString(byte[] bytes) {
+		return toHexString(bytes, 0, bytes.length);
+	}
+	
+	/**
+	 * Convert byte array to hex string
+	 * 
+	 * @param bytes input byte array
+	 * @param offset start offset
+	 * @param length number of items to include
+	 *  
+	 * @return a hex string representation for the byte array without 0x prefix
+	 */
+	public static String toHexString(byte[] bytes, int offset, int length) {		
+		if ( bytes == null )
+			return null;
+	    
+		if(bytes.length == 0) return "";
+	    
+	    if(offset < 0 || offset >= bytes.length)
+	    	throw new IllegalArgumentException("Offset out of array bound!");
+	    
+	    int endOffset = offset + Math.min(length, bytes.length);
+		 
+	    if(endOffset > bytes.length)
+	    	length = bytes.length - offset;
+	    
+	    StringBuilder hex = new StringBuilder(5*length + 2);	    
+		    
+	    for (int i = offset; i < endOffset; i++) {
+	    	hex.append(HEXES[(bytes[i] & 0xf0) >> 4])
+	         .append(HEXES[bytes[i] & 0x0f]);
+	    }
+	    
+	    return hex.toString();
 	}
 	
 	public static String toUTF16BE(byte[] data, int start, int length) {
