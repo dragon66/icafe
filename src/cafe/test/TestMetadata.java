@@ -52,10 +52,15 @@ public class TestMetadata {
 		
 		if(metadataMap.get(MetadataType.XMP) != null) {
 			XMP xmp = (XMP)metadataMap.get(MetadataType.XMP);
-			Document doc = xmp.getXmpDocument();
+			Document xmpDoc = xmp.getXmpDocument();
 			fin = new FileInputStream("images/1.jpg");
 			fout = new FileOutputStream("1-xmp-inserted.jpg");
-			Metadata.insertXMP(fin, fout, XMLUtils.serializeToStringLS(doc, doc.getDocumentElement()));
+			if(!xmp.hasExtendedXmp())
+				Metadata.insertXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()));
+			else {
+				Document extendedXmpDoc = xmp.getExtendedXmpDocument();
+				JPEGTweaker.insertExtendedXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()), XMLUtils.serializeToStringLS(extendedXmpDoc));
+			}
 			fin.close();
 			fout.close();
 		}
