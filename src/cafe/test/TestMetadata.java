@@ -59,7 +59,7 @@ public class TestMetadata {
 				Metadata.insertXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()));
 			else {
 				Document extendedXmpDoc = xmp.getExtendedXmpDocument();
-				JPEGTweaker.insertExtendedXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()), XMLUtils.serializeToStringLS(extendedXmpDoc));
+				JPEGTweaker.insertXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()), XMLUtils.serializeToStringLS(extendedXmpDoc));
 			}
 			fin.close();
 			fout.close();

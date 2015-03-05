@@ -276,7 +276,7 @@ public abstract class Metadata {
 		// Delegate XMP inserting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
-				JPEGTweaker.insertXMP(pushbackStream, out, xmp);
+				JPEGTweaker.insertXMP(pushbackStream, out, xmp, null); // No ExtendedXMP
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);

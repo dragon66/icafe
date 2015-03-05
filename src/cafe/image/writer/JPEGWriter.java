@@ -376,7 +376,7 @@ public class JPEGWriter extends ImageWriter {
 	
 	private void writeICCProfile(OutputStream os) throws Exception {
 		ICC_Profile icc_profile = cmykColorSpace.getProfile();
-		JPEGTweaker.writeICCProfile(os, icc_profile); // delegate to JPEGTweaker
+		JPEGTweaker.writeICCProfile(os, icc_profile.getData()); // delegate to JPEGTweaker
 	}
 	
 	// Write actual image data

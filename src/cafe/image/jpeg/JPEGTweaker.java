@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    05Mar2015  Combined insertXMP() and insertExtendedXMP() to one
  * WY    04Mar2015  Added insertExtendedXMP() to insert ExtendedXMP data
  * WY    28Feb2015  Added code to extract Google depthMap from JPEG images
  * WY    27Feb2015  Added code to read XMP extension segment
@@ -616,6 +617,14 @@ public class JPEGTweaker {
 			is.close();
 	}
 	
+	/**
+	 * Insert ICC_Profile as one or more APP2 segments
+	 * 
+	 * @param is input stream for the original image
+	 * @param os output stream to write the ICC_Profile
+	 * @param data ICC_Profile data array to be inserted
+	 * @throws IOException
+	 */	
 	public static void insertICCProfile(InputStream is, OutputStream os, byte[] data) throws IOException {
 		// Copy the original image and insert ICC_Profile data
 		byte[] icc_profile_id = {0x49, 0x43, 0x43, 0x5f, 0x50, 0x52, 0x4f, 0x46, 0x49, 0x4c, 0x45, 0x00};
@@ -899,15 +908,13 @@ public class JPEGTweaker {
 		insertIRB(is, os, Arrays.asList(IMGUtils.createThumbnail8BIM(thumbnail)), true); // Set true to keep other IRB blocks
 	}
 	
-	/**
-	 * Insert XMP into single APP1 segment. ExtendedXMP is not supported.
+	/*
+	 * Insert XMP into single APP1 or multiple segments. Support ExtendedXMP.
 	 * 
-	 * @param is InputStream for the image.
-	 * @param os OutputStream for the image.
-	 * @param xmp XMP byte array - should be a packeted XMP for the standard XMP.
-	 * @throws IOException
+	 * The standard part of the XMP must be a valid XMP with packet wrapper and,
+	 * should already include the GUID for the ExtendedXMP in case of ExtendedXMP.
 	 */	
-	public static void insertXMP(InputStream is, OutputStream os, byte[] xmp, byte[] extendedXmp, String guid) throws IOException {
+	private static void insertXMP(InputStream is, OutputStream os, byte[] xmp, byte[] extendedXmp, String guid) throws IOException {
 		boolean finished = false;
 		int length = 0;	
 		short marker;
@@ -947,12 +954,10 @@ public class JPEGTweaker {
 				    		IOUtils.write(os, nextByte);
 				    	}
 				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;				
+				    	break;
 				    case SOS:
-				    	writeXMP(os, xmp);
-				    	if(extendedXmp != null)
-				    		writeExtendedXMP(os, extendedXmp, guid);
 				    	// We add XMP APP1 data right before the SOS segment.
+				     	writeXMP(os, xmp, extendedXmp, guid);						   
 				    	//Copy sos
 				    	IOUtils.writeShortMM(os, marker);
 						copyToEnd(is, os); // Copy the rest of the data
@@ -992,48 +997,40 @@ public class JPEGTweaker {
 	}
 	
 	/**
-	 * Insert a XMP string into the image
+	 * Insert a XMP string into the image. When converted to bytes, 
+	 * the XMP part should be able to fit into one APP1.
 	 * 
 	 * @param is InputStream for the image.
 	 * @param os OutputStream for the image.
 	 * @param xmp XML string for the XMP - Assuming in UTF-8 format.
 	 * @throws IOException
 	 */
-	public static void insertXMP(InputStream is, OutputStream os, String xmp) throws IOException {
-		// Add packet wrapper to the XMP document
-		// Add PI at the beginning and end of the document, we will support only UTF-8, no BOM
-		Document doc = XMLUtils.createXML(xmp);
-		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
-		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
-		// Serialize doc to byte array
-		byte[] xmpBytes = XMLUtils.serializeToByteArray(doc);
-		if(xmpBytes.length > MAX_XMP_CHUNK_SIZE)
-			throw new RuntimeException("XMP data size exceeded JPEG segment size");
-		insertXMP(is, os, xmpBytes, null, null); // Insert XMP into image
-	}
-	
-	// When converted to bytes, the xmp part should be able to fit into one APP1
-	public static void insertExtendedXMP(InputStream is, OutputStream os, String xmp, String extendedXmp) throws IOException {
+	public static void insertXMP(InputStream is, OutputStream os, String xmp, String extendedXmp) throws IOException {
 		// Add packet wrapper to the XMP document
 		// Add PI at the beginning and end of the document, we will support only UTF-8, no BOM
 		Document xmpDoc = XMLUtils.createXML(xmp);
-		Document extendedDoc = XMLUtils.createXML(extendedXmp);
 		XMLUtils.insertLeadingPI(xmpDoc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
 		XMLUtils.insertTrailingPI(xmpDoc, "xpacket", "end='w'");
-		byte[] extendedXmpBytes = XMLUtils.serializeToByteArray(extendedDoc);
-		String guid = StringUtils.generateMD5(extendedXmpBytes);
-		NodeList descriptions = xmpDoc.getElementsByTagName("rdf:Description");
-		int length = descriptions.getLength();
-		if(length > 0) {
-			Element node = (Element)descriptions.item(length - 1);
-			node.setAttribute("xmlns:xmpNote", "http://ns.adobe.com/xmp/extension/");
-			node.setAttribute("xmpNote:HasExtendedXMP", guid);
+		Document extendedDoc = null;
+		byte[] extendedXmpBytes = null;
+		String guid = null;
+		if(extendedXmp != null) { // We have ExtendedXMP
+			extendedDoc = XMLUtils.createXML(extendedXmp);
+			extendedXmpBytes = XMLUtils.serializeToByteArray(extendedDoc);
+			guid = StringUtils.generateMD5(extendedXmpBytes);
+			NodeList descriptions = xmpDoc.getElementsByTagName("rdf:Description");
+			int length = descriptions.getLength();
+			if(length > 0) {
+				Element node = (Element)descriptions.item(length - 1);
+				node.setAttribute("xmlns:xmpNote", "http://ns.adobe.com/xmp/extension/");
+				node.setAttribute("xmpNote:HasExtendedXMP", guid);
+			}
 		}
 		// Serialize XMP to byte array
 		byte[] xmpBytes = XMLUtils.serializeToByteArray(xmpDoc);
 		if(xmpBytes.length > MAX_XMP_CHUNK_SIZE)
 			throw new RuntimeException("XMP data size exceededs JPEG segment size");
-		// Insert XMP into image
+		// Insert XMP and ExtendedXMP into image
 		insertXMP(is, os, xmpBytes, extendedXmpBytes, guid);
 	}
 	
@@ -1872,70 +1869,47 @@ public class JPEGTweaker {
 		}
 	}
 	
-	/**
-	 * Write ICC_Profile as one or more APP2 segments
-	 * 
-	 * @param os output stream to write the ICC_Profile
-	 * @param icc_profile ICC_Profile read from a file or other means
-	 * @throws IOException
-	 */
-	public static void writeICCProfile(OutputStream os, ICC_Profile icc_profile) throws IOException {
-		byte[] data = icc_profile.getData();
-		writeICCProfile(os, data);
-	}
-	
-	/**
-	 * Write ICCProfile as one or more APP2 segments
-	 * 
-	 * @param os output stream to write the ICC_Profile
-	 * @param icc_profile ICCProfile read from a file or other means
-	 * @throws IOException
-	 */
-	public static void writeICCProfile(OutputStream os, ICCProfile icc_profile) throws IOException {
-		byte[] data = icc_profile.getData();
-		writeICCProfile(os, data);
-	}
-	
-	private static void writeXMP(OutputStream os, byte[] xmp) throws IOException {
+	private static void writeXMP(OutputStream os, byte[] xmp, byte[] extendedXmp, String guid) throws IOException {
+		// Write XMP
 		IOUtils.writeShortMM(os, Marker.APP1.getValue());
 		// Write segment length
 		IOUtils.writeShortMM(os, XMP_ID.length + 2 + xmp.length);
 		// Write segment data
 		os.write(XMP_ID);
 		os.write(xmp);
-	}
-	
-	private static void writeExtendedXMP(OutputStream os, byte[] extendedXmp, String guid) throws IOException {
-		int numOfChunks = extendedXmp.length / MAX_EXTENDED_XMP_CHUNK_SIZE;
-		int extendedXmpLen = extendedXmp.length;
-		int offset = 0;
-		
-		for(int i = 0; i < numOfChunks; i++) {
-			IOUtils.writeShortMM(os, Marker.APP1.getValue());
-			// Write segment length
-			IOUtils.writeShortMM(os, 2 + XMP_EXT_ID.length + GUID_LEN + 4 + 4 + MAX_EXTENDED_XMP_CHUNK_SIZE);
-			// Write segment data
-			os.write(XMP_EXT_ID);
-			os.write(guid.getBytes());
-			IOUtils.writeIntMM(os, extendedXmpLen);
-			IOUtils.writeIntMM(os, offset);
-			os.write(ArrayUtils.subArray(extendedXmp, offset, MAX_EXTENDED_XMP_CHUNK_SIZE));
-			offset += MAX_EXTENDED_XMP_CHUNK_SIZE;			
+		// Write ExtendedXMP if we have
+		if(extendedXmp != null) {
+			int numOfChunks = extendedXmp.length / MAX_EXTENDED_XMP_CHUNK_SIZE;
+			int extendedXmpLen = extendedXmp.length;
+			int offset = 0;
+			
+			for(int i = 0; i < numOfChunks; i++) {
+				IOUtils.writeShortMM(os, Marker.APP1.getValue());
+				// Write segment length
+				IOUtils.writeShortMM(os, 2 + XMP_EXT_ID.length + GUID_LEN + 4 + 4 + MAX_EXTENDED_XMP_CHUNK_SIZE);
+				// Write segment data
+				os.write(XMP_EXT_ID);
+				os.write(guid.getBytes());
+				IOUtils.writeIntMM(os, extendedXmpLen);
+				IOUtils.writeIntMM(os, offset);
+				os.write(ArrayUtils.subArray(extendedXmp, offset, MAX_EXTENDED_XMP_CHUNK_SIZE));
+				offset += MAX_EXTENDED_XMP_CHUNK_SIZE;			
+			}
+			
+			int leftOver = extendedXmp.length % MAX_EXTENDED_XMP_CHUNK_SIZE;
+			
+			if(leftOver != 0) {
+				IOUtils.writeShortMM(os, Marker.APP1.getValue());
+				// Write segment length
+				IOUtils.writeShortMM(os, 2 + XMP_EXT_ID.length + GUID_LEN + 4 + 4 + leftOver);
+				// Write segment data
+				os.write(XMP_EXT_ID);
+				os.write(guid.getBytes());
+				IOUtils.writeIntMM(os, extendedXmpLen);
+				IOUtils.writeIntMM(os, offset);
+				os.write(ArrayUtils.subArray(extendedXmp, offset, leftOver));
+			}
 		}
-		
-		int leftOver = extendedXmp.length % MAX_EXTENDED_XMP_CHUNK_SIZE;
-		
-		if(leftOver != 0) {
-			IOUtils.writeShortMM(os, Marker.APP1.getValue());
-			// Write segment length
-			IOUtils.writeShortMM(os, 2 + XMP_EXT_ID.length + GUID_LEN + 4 + 4 + leftOver);
-			// Write segment data
-			os.write(XMP_EXT_ID);
-			os.write(guid.getBytes());
-			IOUtils.writeIntMM(os, extendedXmpLen);
-			IOUtils.writeIntMM(os, offset);
-			os.write(ArrayUtils.subArray(extendedXmp, offset, leftOver));
-		}			
 	}
 	
 	public static void writeIRB(OutputStream os, _8BIM ... bims) throws IOException {
