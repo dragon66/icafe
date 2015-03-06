@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    05Mar2015  Revised getMergedDocument()
  * WY    27Feb2015  Added support for ExtendedXMP data
  * WY    19Feb2015  Removed showMetadata() and added getXmpMeta()
  * WY    19Feb2015  Renamed getXMLDocument() to getXmpDocument()
@@ -22,10 +23,8 @@
 
 package cafe.image.meta.adobe;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -93,16 +92,20 @@ public class XMP extends Metadata {
 		else if(getExtendedXmpDocument() != null) { // Merge document
 			mergedXmpDocument = XMLUtils.createDocumentNode();
 			Document rootDoc = getXmpDocument();
-			Node importedNode = mergedXmpDocument.importNode(rootDoc.getDocumentElement(), true);
-			mergedXmpDocument.appendChild(importedNode);
+			NodeList children = rootDoc.getChildNodes();
+			for(int i = 0; i< children.getLength(); i++) {
+				Node importedNode = mergedXmpDocument.importNode(children.item(i), true);
+				mergedXmpDocument.appendChild(importedNode);
+			}
 			// Remove GUID from the standard XMP
 			XMLUtils.removeAttribute(mergedXmpDocument, "rdf:Description", "xmpNote:HasExtendedXMP");
-			// Copy the x:xmpmeta element
-			NodeList list = extendedXmpDocument.getElementsByTagName("x:xmpmeta").item(0).getChildNodes();
+			// Copy all the children of rdf:RDF element
+			NodeList list = extendedXmpDocument.getElementsByTagName("rdf:RDF").item(0).getChildNodes();
+			Element rdf = (Element)(mergedXmpDocument.getElementsByTagName("rdf:RDF").item(0));
 		  	for(int i = 0; i < list.getLength(); i++) {
 	    		Node curr = list.item(i);
 	    		Node newNode = mergedXmpDocument.importNode(curr, true);
-    			mergedXmpDocument.getDocumentElement().appendChild(newNode);
+    			rdf.appendChild(newNode);
 	    	}
 	    	return mergedXmpDocument;
 		} else
@@ -116,9 +119,5 @@ public class XMP extends Metadata {
 	
 	public void showMetadata() {
 		XMLUtils.printNode(getMergedDocument(), "");
-	}
-	
-	public void write(OutputStream os) throws IOException {
-		// TODO: write standard and extended XMP as well
 	}
 }

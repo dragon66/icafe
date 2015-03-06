@@ -303,8 +303,7 @@ public class JPEGTweaker {
 					}
 				}		
 			}
-		}
-		
+		}	
 	}
 	
 	/**
