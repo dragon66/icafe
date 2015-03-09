@@ -11,9 +11,10 @@
 package cafe.image.options;
 
 import cafe.image.ImageType;
+import cafe.image.png.Chunk;
 import cafe.image.png.Filter;
 
-public class PNGOptions extends ImageOptions {
+public class PNGOptions extends ImageOptions<Chunk> {
 	//
 	private boolean isApplyAdaptiveFilter;
 	private int filterType = Filter.NONE;

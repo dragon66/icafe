@@ -13,7 +13,7 @@ package cafe.image.options;
 import cafe.image.ImageType;
 import cafe.image.bmp.BmpCompression;
 
-public class BMPOptions extends ImageOptions {
+public class BMPOptions extends ImageOptions<Object> {
 	// Image alignment
     public static final int ALIGN_BOTTOM_UP = 0; // Height > 0
     public static final int ALIGN_TOP_DOWN  = 1; // Height < 0

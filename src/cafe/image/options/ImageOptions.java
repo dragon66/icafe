@@ -6,12 +6,32 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * ImageOptions.java
+ *
+ * Who   Date       Description
+ * ====  =========  =================================================
+ * WY    09Mar2015  Make ImageOptions generic
+ * WY    09Mar2015  Added setNativeMetadata() and getNativeMetadata()
  */
 
 package cafe.image.options;
 
 import cafe.image.ImageType;
+import cafe.image.meta.NativeMetadata;
 
-public abstract class ImageOptions {
+public abstract class ImageOptions<T> {
+	NativeMetadata<T> metadata;
+	
 	public abstract ImageType getImageType();
+	
+	public NativeMetadata<T> getNativeMetadata() {
+		return metadata;
+	}
+	
+	public void setNativeMetadata(NativeMetadata<T> metadata) {
+		this.metadata = metadata;
+	}	
 }

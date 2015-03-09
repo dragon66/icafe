@@ -49,7 +49,7 @@ public class ImageParam {
     private final boolean containsThumbnail;    
     private final BufferedImage thumbnails[];
     
-    private final ImageOptions imageOptions;
+    private final ImageOptions<?> imageOptions;
     
     // DEFAULT_IMAGE_PARAM is immutable given the fact the arrays it contains are empty
     public static final ImageParam DEFAULT_IMAGE_PARAM = new ImageParamBuilder().build();
@@ -101,7 +101,7 @@ public class ImageParam {
     	return height;
     }
     
-    public ImageOptions getImageOptions() {
+    public ImageOptions<?> getImageOptions() {
     	return imageOptions;
     }
     
@@ -169,7 +169,7 @@ public class ImageParam {
 	    private BufferedImage thumbnails[];
 	 	    
 	    // Additional format-specific parameters
-	    private ImageOptions imageOptions;
+	    private ImageOptions<?> imageOptions;
 		
 	    public ImageParamBuilder() {	}
 	    
@@ -227,7 +227,7 @@ public class ImageParam {
 	    	return this;
 	    }
 	    
-	    public ImageParamBuilder imageOptions(ImageOptions imageOptions) {
+	    public ImageParamBuilder imageOptions(ImageOptions<?> imageOptions) {
 			this.imageOptions = imageOptions;
 			return this;
 		}

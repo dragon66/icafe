@@ -17,8 +17,9 @@
 package cafe.image.options;
 
 import cafe.image.ImageType;
+import cafe.image.gif.ApplicationExtension;
 
-public class GIFOptions extends ImageOptions {	
+public class GIFOptions extends ImageOptions<ApplicationExtension> {	
 	// Default frame parameters
 	private int leftPosition = 0;
 	private int topPosition = 0;
