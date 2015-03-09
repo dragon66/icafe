@@ -591,8 +591,8 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 	
 	private void writePageData(int[] pixels, int imageWidth, int imageHeight) throws Exception {
 		//
-		ImageParam meta = getImageParam();
-		ImageOptions options = meta.getImageOptions();
+		ImageParam param = getImageParam();
+		ImageOptions<?> options = param.getImageOptions();
 		
 		Compression compression = Compression.PACKBITS;
 		
@@ -601,11 +601,11 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 			compression = tiffOptions.getTiffCompression();
 		}
 		// Start writing image data				
-		if(meta.getColorType() == ImageColorType.INDEXED) {
+		if(param.getColorType() == ImageColorType.INDEXED) {
 			writeIndexed(pixels, imageWidth, imageHeight, compression);
-		} else if(meta.getColorType() == ImageColorType.BILEVEL) {
-			if(meta.isApplyDither()) {
-				writeBilevel(IMGUtils.rgb2bilevelDither(pixels, imageWidth, imageHeight, meta.getDitherThreshold()), imageWidth, imageHeight, compression);
+		} else if(param.getColorType() == ImageColorType.BILEVEL) {
+			if(param.isApplyDither()) {
+				writeBilevel(IMGUtils.rgb2bilevelDither(pixels, imageWidth, imageHeight, param.getDitherThreshold()), imageWidth, imageHeight, compression);
 			} else 
 				writeBilevel(IMGUtils.rgb2bilevel(pixels), imageWidth, imageHeight, compression);
 		} else {
@@ -613,10 +613,10 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 			if(compression == Compression.JPG) {
 				if(getImageParam().hasAlpha())
 					System.out.println("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
-				jpegCompress(pixels, imageWidth, imageHeight, meta.getColorType() == ImageColorType.GRAY_SCALE);			
+				jpegCompress(pixels, imageWidth, imageHeight, param.getColorType() == ImageColorType.GRAY_SCALE);			
 			} else {
-				if(meta.getColorType() == ImageColorType.GRAY_SCALE) {
-					if(meta.hasAlpha()) {
+				if(param.getColorType() == ImageColorType.GRAY_SCALE) {
+					if(param.hasAlpha()) {
 						writeGrayScale(IMGUtils.rgb2grayscaleA(pixels), imageWidth, imageHeight, compression, true);
 					} else {
 						writeGrayScale(IMGUtils.rgb2grayscale(pixels), imageWidth, imageHeight, compression, false);

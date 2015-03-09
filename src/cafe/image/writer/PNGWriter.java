@@ -219,7 +219,7 @@ public class PNGWriter extends ImageWriter {
 		addTimeChunk(chunks);
 		
 		imageParam = getImageParam();		
-		ImageOptions options = imageParam.getImageOptions();
+		ImageOptions<?> options = imageParam.getImageOptions();
 		
 		if(options instanceof PNGOptions) {
 			PNGOptions pngOptions = (PNGOptions)options;

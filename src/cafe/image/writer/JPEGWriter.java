@@ -135,7 +135,7 @@ public class JPEGWriter extends ImageWriter {
 		// Grab the ImageParam
 		imageParam = getImageParam();
 		grayScale = imageParam.getColorType() == ImageColorType.GRAY_SCALE;
-		ImageOptions options = imageParam.getImageOptions();
+		ImageOptions<?> options = imageParam.getImageOptions();
 		// Read and set options if any
 		if(options instanceof JPEGOptions) {
 			jpegOptions = (JPEGOptions)options;
