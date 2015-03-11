@@ -185,8 +185,7 @@ public class HuffmanEncoder implements ImageEncoder {
 				bytes_buf[bufIndex] |= 0x00;
 			}
 			
-			if(temp >= 8)
-			{	
+			if(temp >= 8) {	
 				if (++bufIndex >= buf_length)
 					flush_buf(buf_length);
 			

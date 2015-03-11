@@ -14,8 +14,7 @@ package cafe.image.compression.huffman;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 04/20/2007
  */
-public class HuffmanTbl
-{
+public class HuffmanTbl {
 	private byte[] BITS;
 	private byte[] HUFFVAL;
 	// Tables to be constructed from the above two tables
@@ -44,7 +43,7 @@ public class HuffmanTbl
 		int k = 0, code = 0;
 		int size = HUFFSIZE[0];
       
-		while(true){
+		while(true) {
 			HUFFCODE[k++] = code++;
 
 			if(HUFFSIZE[k] == size) continue;

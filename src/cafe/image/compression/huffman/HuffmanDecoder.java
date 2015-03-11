@@ -63,8 +63,7 @@ public class HuffmanDecoder {
 			SSSS = (RS%16);
 			R = (RS>>4);
             
-			if (SSSS == 0)
-			{
+			if (SSSS == 0) {
 				if (R == 15) {
 					K += 16;
 					continue;
@@ -83,15 +82,13 @@ public class HuffmanDecoder {
     }
 	
 	// CCITT Rec. T.81(1992 E) Annex F, Page 107, Figure F.14
-    private void decode_ZZ(int K, int SSSS)
-    {
+    private void decode_ZZ(int K, int SSSS) {
 		ZZ[K] = RECEIVE(SSSS);
 		ZZ[K] = EXTEND(ZZ[K],SSSS);
     }
     
 	// CCITT Rec. T.81(1992 E) Annex F, Page 105, Figure F.12
-	private static int EXTEND(int V, int T)
-    {
+	private static int EXTEND(int V, int T) {
 		int Vt = (1<<(T-1));
 
 		if (V < Vt) {
@@ -106,8 +103,7 @@ public class HuffmanDecoder {
 	private int NEXTBIT() {
 		int BIT, B = 0, B2;
 
-		if (CNT == 0)
-		{
+		if (CNT == 0) {
 			B = NEXTBYTE();
 			CNT = 8;
 
@@ -136,16 +132,14 @@ public class HuffmanDecoder {
 		try {
         	readByte = is.read();
         } catch (IOException ioe) {
-			System.out.println("Error reading NEXTBYTE...");
-			return -1;
+			throw new RuntimeException("Error reading NEXTBYTE...");
         }
 		
 		return readByte;
 	}
 
 	// CCITT Rec. T.81(1992 E) Annex F, Page 110, Figure F.17
-	private int RECEIVE(int SSSS)
-	{
+	private int RECEIVE(int SSSS) {
 		int I = 0, V = 0;
 
 		while (I != SSSS) {
