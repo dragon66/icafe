@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    10Mar2015  Added code to read and merge multiple APP13 segments
  * WY    05Mar2015  Combined insertXMP() and insertExtendedXMP() to one
  * WY    04Mar2015  Added insertExtendedXMP() to insert ExtendedXMP data
  * WY    28Feb2015  Added code to extract Google depthMap from JPEG images
@@ -1314,6 +1315,7 @@ public class JPEGTweaker {
 		List<SOFReader> readers = new ArrayList<SOFReader>();
 		// Used to read multiple segment ICCProfile
 		ByteArrayOutputStream iccProfileStream = null;
+		ByteArrayOutputStream eightBIMStream = null;
 		// Used to read multiple segment XMP
 		byte[] extendedXMP = null;
 		String xmpGUID = ""; // 32 byte ASCII hex string
@@ -1452,8 +1454,9 @@ public class JPEGTweaker {
 				}
 			} else if(segment.getMarker() == Marker.APP13) {
 				if (Arrays.equals(ArrayUtils.subArray(data, 0, PHOTOSHOP_IRB_ID.length), PHOTOSHOP_IRB_ID)) {
-					IRB irb = new IRB(ArrayUtils.subArray(data, PHOTOSHOP_IRB_ID.length, length - PHOTOSHOP_IRB_ID.length - 2));	
-					metadataMap.put(MetadataType.PHOTOSHOP, irb);
+					if(eightBIMStream == null)
+						eightBIMStream = new ByteArrayOutputStream();
+					eightBIMStream.write(ArrayUtils.subArray(data, PHOTOSHOP_IRB_ID.length, length - PHOTOSHOP_IRB_ID.length - 2));
 				}
 			}
 		}
@@ -1465,18 +1468,24 @@ public class JPEGTweaker {
 			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
 		}
 		
+		if(eightBIMStream != null) {
+			IRB irb = new IRB(eightBIMStream.toByteArray());	
+			metadataMap.put(MetadataType.PHOTOSHOP, irb);
+		}
+		
 		if(extendedXMP != null) {
 			XMP xmp = ((XMP)metadataMap.get(MetadataType.XMP));
 			if(xmp != null)
 				xmp.setExtendedXMPData(extendedXMP);
-		}		
+		}
 		
 		// Extract thumbnails to ImageMetadata
 		Metadata meta = metadataMap.get(MetadataType.EXIF);
 		if(meta != null) {
 			Exif exif = (Exif)meta;
 			ExifReader reader = exif.getReader();
-			reader.read();
+			if(!reader.isDataLoaded())
+				reader.read();
 			if(reader.containsThumbnail()) {
 				thumbnails.put("EXIF", reader.getThumbnail());
 			}
@@ -1486,7 +1495,8 @@ public class JPEGTweaker {
 		if(meta != null) {
 			IRB irb = (IRB)meta;
 			IRBReader reader = irb.getReader();
-			reader.read();
+			if(!reader.isDataLoaded())
+				reader.read();
 			if(reader.containsThumbnail()) {
 				thumbnails.put("PHOTOSHOP", reader.getThumbnail());
 			}
