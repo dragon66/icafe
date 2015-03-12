@@ -7,8 +7,7 @@
 
 package cafe.image.compression.lzw;
 
-public class LZWCompressionTable
-{
+public class LZWCompressionTable {
     private final static int RES_CODES = 2;
     private final static short EMPTY = (short)0xFFFF;
     private final static int MAXBITS = 12;
@@ -58,6 +57,7 @@ public class LZWCompressionTable
 		     return (short)nxtidx;//Found it
 	      hshidx = (hshidx + HASHSTEP) % HASHSIZE;//Linear probing hash
 	   }
+	   
 	   return EMPTY;
     }
 

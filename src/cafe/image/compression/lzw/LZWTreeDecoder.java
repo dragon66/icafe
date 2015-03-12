@@ -32,8 +32,7 @@ import cafe.io.IOUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/11/2012
  */
-public class LZWTreeDecoder implements ImageDecoder
-{
+public class LZWTreeDecoder implements ImageDecoder {
 	// Variables for code reading
 	private int bits_remain = 0;
 	private int bytes_available = 0;
@@ -120,48 +119,41 @@ public class LZWTreeDecoder implements ImageDecoder
 	   	codeIndex = endOfImage;	
 	}
 	
-	public int decode(byte[] pix, int offset, int len) throws Exception
-	{
+	public int decode(byte[] pix, int offset, int len) throws Exception {
 		int counter = 0;// Keep track of how many bytes have been decoded.
 		///////////////
 		int tempcode = 0;
 		int i = 0;
         //////////////////////////////////////////////////////////
 		if(leftOver>0){//flush out left over first.
-			for( int j = leftOver-1; j >= 0; j--, leftOver-- )
-		       {
+			for( int j = leftOver-1; j >= 0; j--, leftOver-- ) {
 				   if ((offset >= pix.length)||(counter>=len))// Will this ever happen?!
 					   return counter;
 				   pix[offset++] = (byte)buf[j];
 				   counter++;
-		       }
+	       }
 		}
         //////////////////////////////////////////////////////////
         label:
-		do{
-	       i = 0;
-		   code = readLZWCode();
-		   tempcode = code;
+		do {
+			i = 0;
+			code = readLZWCode();
+			tempcode = code;
 
-		   if(code == clearCode) {
-			    clearStringTable();
-			}		   
-		    else if(code == endOfImage)  
+			if(code == clearCode) {
+				clearStringTable();
+			} else if(code == endOfImage) {  
 			    break;
-		    else
-		    {
-			   if(code >= codeIndex)
-		       {
+			} else {
+			   if(code >= codeIndex) {
                     tempcode = oldcode;
   				    buf[i++] = first_char;
 			   }
-
-		       while (tempcode >= first_code_index)
-		       {
+		       while (tempcode >= first_code_index) {
 			       buf[i++] = suffix[tempcode];
 		           tempcode = prefix[tempcode];
 		       }
-		       buf[i++] = tempcode;     
+		       buf[i++] = tempcode;
 
 			   suffix[codeIndex] = first_char = tempcode;
 		       prefix[codeIndex] = oldcode;
@@ -170,15 +162,13 @@ public class LZWTreeDecoder implements ImageDecoder
 		       
 		       oldcode = code;
 	           
-			   if((codeIndex > (isTIFF && isCodeBigEndian?limit-1:limit)) && (codeLen<12))
-			   {
+			   if((codeIndex > (isTIFF && isCodeBigEndian?limit-1:limit)) && (codeLen<12)) {
 		           codeLen++;
 			       limit = (1<<codeLen)-1;			  
 			   }
 			   // Output strings for the current code
 		       leftOver = i;
-			   for( int j = i-1; j >= 0; j--, leftOver--, counter++ )
-		       {
+			   for( int j = i-1; j >= 0; j--, leftOver--, counter++ ) {
 				   if ((offset >= pix.length)||(counter>=len))
 			             break label;
 				   pix[offset++] = (byte)buf[j];
@@ -189,8 +179,7 @@ public class LZWTreeDecoder implements ImageDecoder
 		return counter;
  	}
    
-	private int readLZWCode() throws Exception
-	{
+	private int readLZWCode() throws Exception {
         int temp = 0;
 	
 		if(!isTIFF || !isCodeBigEndian) 
@@ -200,25 +189,20 @@ public class LZWTreeDecoder implements ImageDecoder
 			temp = (temp_byte & MASK[bits_remain]); 
 		}			
 	
-		while (codeLen > bits_remain)
-		{
+		while (codeLen > bits_remain) {
 			if(!isTIFF) { // GIF
-				if (bytes_available == 0)// find another data block available
-				{
+				if(bytes_available == 0) {
+					// find another data block available
 					// Start a new image data sub-block if possible!
 	            	// The block size bytes_available is no bigger than 0xff
 					bytes_available = is.read();
 					
-					if (bytes_available > 0)
-					{
+					if(bytes_available > 0) {
 						IOUtils.readFully(is,bytes_buf,0,bytes_available);
 						bufIndex = 0;
-					}
-					else if (bytes_available == 0)
+					} else if(bytes_available == 0)
 						return endOfImage;
-					else 
-					{
-						System.out.println("bad image format");
+					else {
 						return endOfImage;
 					}
 				}				

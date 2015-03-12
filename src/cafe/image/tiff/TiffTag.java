@@ -940,14 +940,14 @@ public enum TiffTag implements Tag {
 		return FieldType.UNKNOWN;
 	}
     
-    public String getName()
-	{
+    public String getName()	{
 		return this.name;
 	}
-    public short getValue()
-	{
+    
+    public short getValue()	{
 		return this.value;
 	}
+    
     @Override
     public String toString() {
 		if (this == UNKNOWN)

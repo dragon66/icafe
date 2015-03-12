@@ -22,8 +22,7 @@ import cafe.util.Updatable;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/20/2012
  */
-public class LZWHashEncoder implements ImageEncoder
-{
+public class LZWHashEncoder implements ImageEncoder {
 	private static short EMPTY = -1;         
  	
 	private int codeSize;
@@ -46,8 +45,7 @@ public class LZWHashEncoder implements ImageEncoder
 	private static final short mask[] = {0x00,0x01,0x03,0x07,0x0f,0x1f,0x3f,0x7f,0xff};
 
     // Constructor for GIF
- 	public LZWHashEncoder(OutputStream os, int codesize, int buf_length)
- 	{ 		  
+ 	public LZWHashEncoder(OutputStream os, int codesize, int buf_length) { 		  
  		codeSize = codesize; 		
  		bytes_buf = new byte[buf_length];
  		
@@ -56,15 +54,13 @@ public class LZWHashEncoder implements ImageEncoder
  	}
  	
  	// Constructor for TIFF    
-    public LZWHashEncoder(OutputStream os, int codesize, int buf_length, Updatable writer)
- 	{
+    public LZWHashEncoder(OutputStream os, int codesize, int buf_length, Updatable writer) {
      	this(os, codesize, buf_length);
  		this.isTIFF = true;
  		this.writer = writer;
  	}    
     
-	public void initialize() throws Exception
-	{
+	public void initialize() throws Exception {
 		clearCode = 1 << codeSize;
  	    endOfImage = clearCode + 1;
    	    codeLen = codeSize + 1;
@@ -87,8 +83,7 @@ public class LZWHashEncoder implements ImageEncoder
 	/**
 	 * @param len the number of bytes to be encoded
 	 */
-	public void encode(byte[] pixels, int start, int len) throws Exception
-	{	
+	public void encode(byte[] pixels, int start, int len) throws Exception {	
 		if(start < 0 || len <= 0) {
 			return;
 		}
@@ -96,19 +91,15 @@ public class LZWHashEncoder implements ImageEncoder
 		byte c = 0;
 		short cur_str = 0;// Current string
 		
-		for (int i=start;i<start+len;i++)
-		{
+		for (int i=start;i<start+len;i++) {
 			c = pixels[i];
 			
             if((cur_str = stringTable.findCharString(prefix, c)) != EMPTY)// In table
 				prefix = cur_str;
-			else// Not in table
-			{
+			else {// Not in table
 				send_code_to_buffer(prefix);
-				if(stringTable.addCharString(prefix, c) > (isTIFF?limit-1:limit))
-				{
-					if(++codeLen > 12)
-					{
+				if(stringTable.addCharString(prefix, c) > (isTIFF?limit-1:limit)) {
+					if(++codeLen > 12) {
 						codeLen--;
 						send_code_to_buffer(clearCode);
 						stringTable.clearTable(codeSize);
@@ -126,8 +117,7 @@ public class LZWHashEncoder implements ImageEncoder
 	 * useful when compression is done through multiple calls
 	 * to encode.
 	 */
-	public void finish() throws Exception
-	{
+	public void finish() throws Exception {
 	   // Send the last color code to the buffer
 	   if(prefix != EMPTY)
 	      send_code_to_buffer(prefix);
@@ -146,16 +136,14 @@ public class LZWHashEncoder implements ImageEncoder
 	}
 	
 	// Translate codes into bytes
-    private void send_code_to_buffer(int code)throws Exception
-	{
+    private void send_code_to_buffer(int code)throws Exception {
     	int temp = codeLen;
     	
     	if(isTIFF) {
     		temp = codeLen - empty_bits;
     		bytes_buf[bufIndex] |= ((code>>>temp)&mask[empty_bits]);
     		
-    		while (temp > 8)
-			{
+    		while (temp > 8) {
     			if (++bufIndex >= buf_length)
 					flush_buf(buf_length);
 				bytes_buf[bufIndex] |= ((code>>>(temp - 8))&mask[8]);
@@ -169,14 +157,13 @@ public class LZWHashEncoder implements ImageEncoder
     			temp -= 8;
     		}
        	} else { // GIF
-			
 			// Shift the code to the left of the last byte in bytes_buf
 			bytes_buf[bufIndex] |= ((code&mask[empty_bits])<<(8-empty_bits));
 			code >>= empty_bits;
 	        temp -= empty_bits;
 	        // If the code is longer than the empty_bits
-			while (temp > 0)
-			{	// For GIF, the buf_length is no longer than 0xff
+			while (temp > 0) {
+				// For GIF, the buf_length is no longer than 0xff
 				if (++bufIndex >= buf_length)
 					flush_buf(buf_length);
 				bytes_buf[bufIndex] |= (code&0xff);
@@ -188,8 +175,7 @@ public class LZWHashEncoder implements ImageEncoder
 	}
     
     // Flush the buffer as needed
-	private void flush_buf(int len) throws Exception
-	{
+	private void flush_buf(int len) throws Exception {
 		if(!isTIFF) {
 			os.write(len);
 		}

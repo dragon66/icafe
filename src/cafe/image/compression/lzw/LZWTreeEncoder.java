@@ -24,8 +24,7 @@ import cafe.util.Updatable;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/20/2012
  */
-public class LZWTreeEncoder implements ImageEncoder
-{             
+public class LZWTreeEncoder implements ImageEncoder {             
  	private int codeSize;
 	private int codeLen;
 	private int codeIndex;
@@ -58,8 +57,7 @@ public class LZWTreeEncoder implements ImageEncoder
 	int compressedDataLen = 0;
 	
 	// Constructor for GIF
-	public LZWTreeEncoder(OutputStream os, int codesize, int buf_length)
-	{		    
+	public LZWTreeEncoder(OutputStream os, int codesize, int buf_length) {		    
 		codeSize = codesize;
 		bytes_buf = new byte[buf_length];
 		
@@ -93,8 +91,7 @@ public class LZWTreeEncoder implements ImageEncoder
 	 * table is initialized to have a length equal to the End of Information Code + 1.	
 	 */
 	// Constructor for TIFF    
-    public LZWTreeEncoder(OutputStream os, int codesize, int buf_length, Updatable writer)
-	{
+    public LZWTreeEncoder(OutputStream os, int codesize, int buf_length, Updatable writer) {
     	this(os, codesize, buf_length);
 		this.isTIFF = true;
 		this.writer = writer;
@@ -103,8 +100,7 @@ public class LZWTreeEncoder implements ImageEncoder
 	/**
 	 * @param len the number of bytes to be encoded
 	 */
-	public void encode(byte[] pixels, int start, int len) throws Exception
-	{
+	public void encode(byte[] pixels, int start, int len) throws Exception {
 		if(start < 0 || len <= 0) {
 			return;
 		}
@@ -114,53 +110,42 @@ public class LZWTreeEncoder implements ImageEncoder
 		int color = 0;
 		int counter = 0;
 		
-		if(firstTime)
-		{
+		if(firstTime) {
 			// Get the first color and assign it to parent
 			parent = (pixels[start++]&0xff);
 			counter++;
 			firstTime = false;
 	    }
 		
-		while (counter < len)
-		{
+		while (counter < len) {
 			color = (pixels[start++]&0xff);
 			counter++;
 			son = child[parent];
 
-			if ( son > 0){
+			if ( son > 0) {
 				if (suffix[son] == color) {
 					parent = son;
-				}
-				else {
+				} else {
 					brother = son;
-					while (true)
-					{
-						if (siblings[brother] > 0)
-						{
+					while (true) {
+						if (siblings[brother] > 0) {
 							brother = siblings[brother];
-							if (suffix[brother] == color)
-						    {
+							if (suffix[brother] == color) {
 							   parent = brother;
 							   break;
 						    }
-						}
-						else {
+						} else {
 							siblings[brother] = codeIndex;
 							suffix[codeIndex] = color;
 							send_code_to_buffer(parent);
 							parent = color;
 							codeIndex++;
                				// Check code length
-				            if(codeIndex > (isTIFF?limit-1:limit))
-			                {
-								if (codeLen == 12) 
- 			                    {
+				            if(codeIndex > (isTIFF?limit-1:limit)) {
+								if (codeLen == 12) {
 				                    send_code_to_buffer(clearCode);
 				                    init_encoder(codeSize);
-			                    }
-				                else
-								{
+			                    } else {
 					                codeLen++;
 									limit = 1<<codeLen;
 								}
@@ -169,29 +154,24 @@ public class LZWTreeEncoder implements ImageEncoder
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				child[parent] = codeIndex;
 				suffix[codeIndex] = color;
 				send_code_to_buffer(parent);
 				parent = color;
 				codeIndex++;
 				// Check code length
-				if(codeIndex > (isTIFF?limit-1:limit))
-			    {
-                   if (codeLen == 12) 
-			       { 
+				if(codeIndex > (isTIFF?limit-1:limit)) {
+                   if (codeLen == 12) { 
 				       send_code_to_buffer(clearCode);
 				       init_encoder(codeSize);
-			       }
-				   else
-				   {
+			       } else {
 					   codeLen++;
 					   limit = 1<<codeLen;
 				   }
 			    }
 			}
-		}	
+		}
 	}
 	
 	/**
@@ -199,8 +179,7 @@ public class LZWTreeEncoder implements ImageEncoder
 	 * useful when compression is done through multiple calls
 	 * to encode.
 	 */
-	public void finish() throws Exception
-	{
+	public void finish() throws Exception {
 	   	// Send the last color code to the buffer
 		send_code_to_buffer(parent);
 		// Send the endOfImage code to the buffer
@@ -214,12 +193,11 @@ public class LZWTreeEncoder implements ImageEncoder
 	}
 	
 	// Flush the buffer as needed
-	private void flush_buf(int len) throws Exception
-	{	
+	private void flush_buf(int len) throws Exception {	
 		if(!isTIFF) {
 			os.write(len);
 		}
-		os.write(bytes_buf,0,len);		
+		os.write(bytes_buf,0,len);
 		// Reset the bytes buffer index
 		bufIndex = 0;
 		Arrays.fill(bytes_buf, 0, len, (byte)0x00);
@@ -235,8 +213,7 @@ public class LZWTreeEncoder implements ImageEncoder
 		return compressedDataLen;
 	}
     
-    private void init_encoder(int codesize)
-	{
+    private void init_encoder(int codesize) {
 		Arrays.fill(child, 0x00);
 		Arrays.fill(siblings, 0x00);
 		codeLen = codesize + 1;
@@ -244,8 +221,7 @@ public class LZWTreeEncoder implements ImageEncoder
 	    codeIndex = endOfImage + 1;
     }
 	
-	public void initialize() throws Exception
-	{
+	public void initialize() throws Exception {
 		clearCode = 1 << codeSize;
 	    endOfImage = clearCode + 1;
   	   	firstTime = true;
@@ -263,21 +239,19 @@ public class LZWTreeEncoder implements ImageEncoder
 	}
 	
 	// Translate codes into bytes
-    private void send_code_to_buffer(int code)throws Exception
-	{
+    private void send_code_to_buffer(int code)throws Exception {
     	int temp = codeLen;
     	
     	if(isTIFF) {
     		temp = codeLen - empty_bits;
     		bytes_buf[bufIndex] |= ((code>>>temp)&MASK[empty_bits]);
     		
-    		while (temp > 8)
-			{
+    		while (temp > 8) {
     			if (++bufIndex >= buf_length)
 					flush_buf(buf_length);
 				bytes_buf[bufIndex] |= ((code>>>(temp - 8))&MASK[8]);
 				temp -= 8;
-			} 
+			}
     		
     		if(temp > 0) {
     			if (++bufIndex >= buf_length)
@@ -291,8 +265,7 @@ public class LZWTreeEncoder implements ImageEncoder
 			code >>= empty_bits;
 	        temp -= empty_bits;
 	        // If the code is longer than the empty_bits
-			while (temp > 0)
-			{	// For GIF, the buf_length is no longer than 0xff
+			while (temp > 0) {	// For GIF, the buf_length is no longer than 0xff
 				if (++bufIndex >= buf_length)
 					flush_buf(buf_length);
 				bytes_buf[bufIndex] |= (code&0xff);
@@ -300,6 +273,6 @@ public class LZWTreeEncoder implements ImageEncoder
 				temp -= 8;
 			}
 		}
-		empty_bits = -temp;	    
+		empty_bits = -temp;   
 	}
 }
