@@ -13,7 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
- * WY    19Jan2015  Intitial creation
+ * WY    19Jan2015  Initial creation
  */
 
 package cafe.image.meta.adobe;

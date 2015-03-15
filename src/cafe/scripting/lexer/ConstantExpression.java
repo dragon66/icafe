@@ -20,8 +20,6 @@ package cafe.scripting.lexer;
 
 import java.util.Hashtable;
 
-
-
 /**
  * This class implements the simplest possible expression, a constant.
  */
