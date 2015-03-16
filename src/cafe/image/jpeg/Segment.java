@@ -6,6 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * Segment.java
+ *
+ * Who   Date       Description
+ * ====  =========  =================================================
+ * WY    16Mar2015  Changed write() to work with stand-alone segments
  */
 
 package cafe.image.jpeg;
@@ -47,8 +55,11 @@ public class Segment {
 	
 	public void write(OutputStream os) throws IOException {
 		IOUtils.writeShortMM(os, marker.getValue());
-		IOUtils.writeShortMM(os, length);
-		IOUtils.write(os, data);	
+		// If this is not a stand-alone segment, write the content as well
+		if(length > 0) {
+			IOUtils.writeShortMM(os, length);
+			IOUtils.write(os, data);
+		}
 	}
 	
 	@Override public String toString() {
