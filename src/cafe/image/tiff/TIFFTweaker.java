@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    15Mar2015  Cleanup debugging output
  * WY    18Feb2015  Added removeMetadata() to remove meta data from TIFF
  * WY    14Feb2015  Added insertXMP() to insert XMP data to TIFF
  * WY    06Feb2015  Added printIFDs() and printIFD()
@@ -115,7 +116,6 @@ import cafe.image.meta.exif.TiffExif;
 import cafe.image.meta.icc.ICCProfile;
 import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCDataSet;
-import cafe.image.meta.iptc.IPTCReader;
 import cafe.image.util.IMGUtils;
 import cafe.image.writer.ImageWriter;
 import cafe.image.writer.TIFFWriter;
@@ -190,11 +190,9 @@ public class TIFFTweaker {
 	    short endian = rin.readShort();
 	
 		if (endian == IOUtils.BIG_ENDIAN) {
-		    System.out.println("Byte order: Motorola BIG_ENDIAN");
 		    rin.setReadStrategy(ReadStrategyMM.getInstance());
 		    rout.setWriteStrategy(WriteStrategyMM.getInstance());
 		} else if(endian == IOUtils.LITTLE_ENDIAN) {
-		    System.out.println("Byte order: Intel LITTLE_ENDIAN");
 		    rin.setReadStrategy(ReadStrategyII.getInstance());
 		    rout.setWriteStrategy(WriteStrategyII.getInstance());
 		} else {
@@ -234,8 +232,7 @@ public class TIFFTweaker {
 		return iptcs;
 	}
 	
-	private static TiffField<?> copyJPEGHufTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException
-	{
+	private static TiffField<?> copyJPEGHufTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException	{
 		int[] data = field.getDataAsLong();
 		int[] tmp = new int[data.length];
 	
@@ -266,8 +263,7 @@ public class TIFFTweaker {
 		return new LongField(TiffTag.JPEG_DC_TABLES.getValue(), tmp);
 	}
 	
-	private static void copyJPEGIFByteCount(RandomAccessInputStream rin, RandomAccessOutputStream rout, int offset, int outOffset) throws IOException 
-	{		
+	private static void copyJPEGIFByteCount(RandomAccessInputStream rin, RandomAccessOutputStream rout, int offset, int outOffset) throws IOException {		
 		boolean finished = false;
 		int length = 0;	
 		short marker;
@@ -276,29 +272,20 @@ public class TIFFTweaker {
 		rin.seek(offset);
 		rout.seek(outOffset);
 		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(rin)) != Marker.SOI)
-		{
-			System.out.println("Invalid JPEG image, expected SOI marker not found!");
+		if(Marker.fromShort(IOUtils.readShortMM(rin)) != Marker.SOI) {
 			return;
 		}
 		
-		System.out.println(Marker.SOI);
 		IOUtils.writeShortMM(rout, Marker.SOI.getValue());
 		
 		marker = IOUtils.readShortMM(rin);
 			
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)
-			{
-				System.out.println(Marker.EOI);
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI) {
 				IOUtils.writeShortMM(rout, marker);
 				finished = true;
-			}
-		   	else // Read markers
-			{
-		   		emarker = Marker.fromShort(marker);
-				System.out.println(emarker); 
+			} else { // Read markers
+		  		emarker = Marker.fromShort(marker);
 				
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
@@ -328,8 +315,7 @@ public class TIFFTweaker {
 	    }
 	}
 	
-	private static TiffField<?> copyJPEGQTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException
-	{
+	private static TiffField<?> copyJPEGQTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException {
 		byte[] qtable = new byte[64];
 		int[] data = field.getDataAsLong();
 		int[] tmp = new int[data.length];
@@ -345,8 +331,7 @@ public class TIFFTweaker {
 		return new LongField(TiffTag.JPEG_Q_TABLES.getValue(), tmp);
 	}
 	
-	private static short copyJPEGSOS(RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException 
-	{
+	private static short copyJPEGSOS(RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException	{
 		int len = IOUtils.readUnsignedShortMM(rin);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(rin, buf);
@@ -357,8 +342,7 @@ public class TIFFTweaker {
 		int nextByte = 0;
 		short marker = 0;	
 		
-		while((nextByte = IOUtils.read(rin)) != -1)
-		{
+		while((nextByte = IOUtils.read(rin)) != -1)	{
 			rout.write(nextByte);
 			
 			if(nextByte == 0xff)
@@ -370,8 +354,7 @@ public class TIFFTweaker {
 					throw new IOException("Premature end of SOS segment!");					
 				}								
 				
-				if (nextByte != 0x00)
-				{
+				if (nextByte != 0x00) {
 					marker = (short)((0xff<<8)|nextByte);
 					
 					switch (Marker.fromShort(marker)) {										
@@ -383,7 +366,6 @@ public class TIFFTweaker {
 						case RST5:
 						case RST6:
 						case RST7:
-							System.out.println(Marker.fromShort(marker));
 							continue;
 						default:
 					}
@@ -2187,17 +2169,13 @@ public class TIFFTweaker {
 	    short endian = rin.readShort();
 	    offset += 2;
 	
-		if (endian == IOUtils.BIG_ENDIAN)
-		{
-		    System.out.println("Byte order: Motorola BIG_ENDIAN");
+		if (endian == IOUtils.BIG_ENDIAN) {
+		    //Byte order: Motorola BIG_ENDIAN
 		    rin.setReadStrategy(ReadStrategyMM.getInstance());
-		}
-		else if(endian == IOUtils.LITTLE_ENDIAN)
-		{
-		    System.out.println("Byte order: Intel LITTLE_ENDIAN");
+		} else if(endian == IOUtils.LITTLE_ENDIAN) {
+		    // Byte order: Intel LITTLE_ENDIAN"
 		    rin.setReadStrategy(ReadStrategyII.getInstance());
-		}
-		else {		
+		} else {		
 			rin.close();
 			throw new RuntimeException("Invalid TIFF byte order");
 	    }
@@ -2206,8 +2184,7 @@ public class TIFFTweaker {
 		rin.seek(offset);
 		short tiff_id = rin.readShort();
 		offset +=2;
-		if(tiff_id!=0x2a)//"*" 42 decimal
-		{
+		if(tiff_id!=0x2a) { //"*" 42 decimal
 			rin.close();
 			throw new RuntimeException("Invalid TIFF identifier");
 		}
@@ -2218,29 +2195,22 @@ public class TIFFTweaker {
 		return offset;
 	}
 	
-	private static int readIFD(IFD parent, Tag parentTag, Class<? extends Tag> tagClass, RandomAccessInputStream rin, List<IFD> list, int offset, String indent) throws IOException 
-	{	
+	private static int readIFD(IFD parent, Tag parentTag, Class<? extends Tag> tagClass, RandomAccessInputStream rin, List<IFD> list, int offset) throws IOException	{	
 		// Use reflection to invoke fromShort(short) method
 		Method method = null;
 		try {
 			method = tagClass.getDeclaredMethod("fromShort", short.class);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			throw new RuntimeException("The static method 'fromShort' doesn't exist");
 		} catch (SecurityException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Current security doesn't allow this operation");
 		}
-		String indent2 = indent + "----- "; // Increment indentation
 		IFD tiffIFD = new IFD();
 		rin.seek(offset);
 		int no_of_fields = rin.readShort();
-		System.out.print(indent);
-		System.out.println("Total number of fields: " + no_of_fields);
 		offset += 2;
 		
-		for (int i = 0; i < no_of_fields; i++)
-		{
-			System.out.print(indent);
-			System.out.println("Field "+i+" =>");
+		for (int i = 0; i < no_of_fields; i++) {
 			rin.seek(offset);
 			short tag = rin.readShort();
 			Tag ftag = TiffTag.UNKNOWN;
@@ -2253,28 +2223,16 @@ public class TIFFTweaker {
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
-			System.out.print(indent);
-			if (ftag == TiffTag.UNKNOWN) {
-				System.out.println("Tag: " + ftag + " [Value: 0x"+ Integer.toHexString(tag&0xffff) + "]" + " (Unknown)");
-			} else {
-				System.out.println("Tag: " + ftag);
-			}
 			offset += 2;
 			rin.seek(offset);
 			short type = rin.readShort();
 			FieldType ftype = FieldType.fromShort(type);
-			System.out.print(indent);
-			System.out.println("Data type: " + ftype);
 			offset += 2;
 			rin.seek(offset);
 			int field_length = rin.readInt();
-			System.out.print(indent);
-			System.out.println("Field length: " + field_length);
 			offset += 4;
-			String suffix = null;
 			////// Try to read actual data.
-			switch (ftype)
-			{
+			switch (ftype) {
 				case BYTE:
 				case UNDEFINED:
 					byte[] data = new byte[field_length];
@@ -2291,18 +2249,6 @@ public class TIFFTweaker {
 					else
 						byteField = new UndefinedField(tag, data);
 					tiffIFD.addField(byteField);
-					System.out.print(indent);
-					if(ftag == TiffTag.ICC_PROFILE) {
-						showICCProfile(data);
-					} else if(ftag == TiffTag.PHOTOSHOP) {
-						showPhtoshop(data);
-					} else if(ftag == TiffTag.XMP) {						
-						XMLUtils.showXML(XMLUtils.createXML(data));
-					} else if(ftag == TiffTag.IPTC) {
-						showIPTC(data);
-					}
-					suffix = ftag.getFieldAsString(data);
-					System.out.println("Field value: " + byteField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					offset += 4;					
 					break;
 				case ASCII:
@@ -2318,10 +2264,6 @@ public class TIFFTweaker {
 					}
 					TiffField<String> ascIIField = new ASCIIField(tag, new String(data, 0, data.length, "UTF-8"));
 					tiffIFD.addField(ascIIField);
-					if(data.length>0) {
-						System.out.print(indent);
-						System.out.println("Field value: " + ascIIField.getDataAsString());
-					}
 					offset += 4;	
 					break;
 				case SHORT:
@@ -2330,21 +2272,18 @@ public class TIFFTweaker {
 					  rin.seek(offset);
 					  sdata[0] = rin.readShort();
 					  offset += 4;
-					}
-					else if (field_length == 2)
-					{
+					} else if (field_length == 2) {
 						rin.seek(offset);
 						sdata[0] = rin.readShort();
 						offset += 2;
 						rin.seek(offset);
 						sdata[1] = rin.readShort();
 						offset += 2;
-					}
-					else {
+					} else {
 						rin.seek(offset);
 						int toOffset = rin.readInt();
 						offset += 4;
-						for (int j = 0; j  <field_length; j++){
+						for (int j = 0; j  <field_length; j++) {
 							rin.seek(toOffset);
 							sdata[j] = rin.readShort();
 							toOffset += 2;
@@ -2352,9 +2291,6 @@ public class TIFFTweaker {
 					}
 					TiffField<short[]> shortField = new ShortField(tag, sdata);
 					tiffIFD.addField(shortField);
-					System.out.print(indent);
-					suffix = ftag.getFieldAsString(shortField.getDataAsLong());
-					System.out.println("Field value: " + shortField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					break;
 				case LONG:
 					int[] ldata = new int[field_length];
@@ -2362,8 +2298,7 @@ public class TIFFTweaker {
 					  rin.seek(offset);
 					  ldata[0] = rin.readInt();
 					  offset += 4;
-					}
-					else {
+					} else {
 						rin.seek(offset);
 						int toOffset = rin.readInt();
 						offset += 4;
@@ -2376,50 +2311,35 @@ public class TIFFTweaker {
 					TiffField<int[]> longField = new LongField(tag, ldata);
 					tiffIFD.addField(longField);
 					
-					System.out.print(indent);
-					suffix = ftag.getFieldAsString(ldata);
-					System.out.println("Field value: " + longField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
-					
 					if ((ftag == TiffTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
-						System.out.print(indent);
-						System.out.println("<<ExifSubIFD: offset byte " + offset + ">>");
 						try { // If something bad happens, we skip the sub IFD
-							readIFD(tiffIFD, TiffTag.EXIF_SUB_IFD, ExifTag.class, rin, null, ldata[0], indent2);
+							readIFD(tiffIFD, TiffTag.EXIF_SUB_IFD, ExifTag.class, rin, null, ldata[0]);
 						} catch(Exception e) {
 							tiffIFD.removeField(TiffTag.EXIF_SUB_IFD);
 							e.printStackTrace();
 						}
 					} else if ((ftag == TiffTag.GPS_SUB_IFD) && (ldata[0] != 0)) {
-						System.out.print(indent);
-						System.out.println("<<GPSSubIFD: offset byte " + offset + ">>");
 						try {
-							readIFD(tiffIFD, TiffTag.GPS_SUB_IFD, GPSTag.class, rin, null, ldata[0], indent2);
+							readIFD(tiffIFD, TiffTag.GPS_SUB_IFD, GPSTag.class, rin, null, ldata[0]);
 						} catch(Exception e) {
 							tiffIFD.removeField(TiffTag.GPS_SUB_IFD);
 							e.printStackTrace();
 						}
 					} else if((ftag == ExifTag.EXIF_INTEROPERABILITY_OFFSET) && (ldata[0] != 0)) {
-						System.out.print(indent);
-						System.out.println("<<ExifInteropSubIFD: offset byte " + offset + ">>");
 						try {
-							readIFD(tiffIFD, ExifTag.EXIF_INTEROPERABILITY_OFFSET, InteropTag.class, rin, null, ldata[0], indent2);
+							readIFD(tiffIFD, ExifTag.EXIF_INTEROPERABILITY_OFFSET, InteropTag.class, rin, null, ldata[0]);
 						} catch(Exception e) {
 							tiffIFD.removeField(ExifTag.EXIF_INTEROPERABILITY_OFFSET);
 							e.printStackTrace();
 						}
-					} else if (ftag == TiffTag.IPTC) {
-						showIPTC(ArrayUtils.toByteArray(ldata, rin.getEndian() == IOUtils.BIG_ENDIAN));						
 					} else if (ftag == TiffTag.SUB_IFDS) {						
 						for(int ifd = 0; ifd < ldata.length; ifd++) {
-							System.out.print(indent);
-							System.out.println("******* SubIFD " + ifd + " *******");
 							try {
-								readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0], indent2);
+								readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0]);
 							} catch(Exception e) {
 								tiffIFD.removeField(TiffTag.SUB_IFDS);
 								e.printStackTrace();
 							}
-							System.out.println("******* End of SubIFD " + ifd + " *******");
 						}
 					}				
 					break;
@@ -2429,12 +2349,11 @@ public class TIFFTweaker {
 					  rin.seek(offset);
 					  fdata[0] = rin.readFloat();
 					  offset += 4;
-					}
-					else {
+					} else {
 						rin.seek(offset);
 						int toOffset = rin.readInt();
 						offset += 4;
-						for (int j=0;j<field_length; j++){
+						for (int j=0;j<field_length; j++) {
 							rin.seek(toOffset);
 							fdata[j] = rin.readFloat();
 							toOffset += 4;
@@ -2443,16 +2362,13 @@ public class TIFFTweaker {
 					TiffField<float[]> floatField = new FloatField(tag, fdata);
 					tiffIFD.addField(floatField);
 					
-					System.out.print(indent);
-					System.out.println("Field value: " + floatField.getDataAsString());
-						
 					break;
 				case DOUBLE:
 					double[] ddata = new double[field_length];
 					rin.seek(offset);
 					int toOffset = rin.readInt();
 					offset += 4;
-					for (int j=0;j<field_length; j++){
+					for (int j=0;j<field_length; j++) {
 						rin.seek(toOffset);
 						ddata[j] = rin.readDouble();
 						toOffset += 8;
@@ -2460,9 +2376,6 @@ public class TIFFTweaker {
 					TiffField<double[]> doubleField = new DoubleField(tag, ddata);
 					tiffIFD.addField(doubleField);
 					
-					System.out.print(indent);
-					System.out.println("Field value: " + doubleField.getDataAsString());
-						
 					break;
 				case RATIONAL:
 				case SRATIONAL:
@@ -2485,9 +2398,6 @@ public class TIFFTweaker {
 					} else {
 						rationalField = new RationalField(tag, ldata);
 					}
-					System.out.print(indent);
-					suffix = ftag.getFieldAsString(ldata);
-					System.out.println("Field value: " + rationalField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					tiffIFD.addField(rationalField);
 					
 					break;
@@ -2497,12 +2407,11 @@ public class TIFFTweaker {
 					  rin.seek(offset);
 					  ldata[0] = rin.readInt();
 					  offset += 4;
-					}
-					else {
+					} else {
 						rin.seek(offset);
 						toOffset = rin.readInt();
 						offset += 4;
-						for (int j=0;j<field_length; j++){
+						for (int j=0;j<field_length; j++) {
 							rin.seek(toOffset);
 							ldata[j] = rin.readInt();
 							toOffset += 4;
@@ -2510,14 +2419,8 @@ public class TIFFTweaker {
 					}
 					TiffField<int[]> ifdField = new IFDField(tag, ldata);
 					tiffIFD.addField(ifdField);
-					System.out.print(indent);
-					suffix = ftag.getFieldAsString(ldata);
-					System.out.println("Field value: " + ifdField.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
 					for(int ifd = 0; ifd < ldata.length; ifd++) {
-						System.out.print(indent);
-						System.out.println("******* SubIFD " + ifd + " *******");
-						readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0], indent2);
-						System.out.println("******* End of SubIFD " + ifd + " *******");
+						readIFD(tiffIFD, TiffTag.SUB_IFDS, TiffTag.class, rin, null, ldata[0]);
 					}
 								
 					break;
@@ -2537,13 +2440,9 @@ public class TIFFTweaker {
 	}
 	
 	private static void readIFDs(IFD parent, Tag parentTag, Class<? extends Tag> tagClass, List<IFD> list, int offset, RandomAccessInputStream rin) throws IOException {
-		int ifd = 0;
 		// Read the IFDs into a list first	
-		while (offset != 0)
-		{
-			System.out.println("************************************************");
-			System.out.println("IFD " + ifd++ + " => offset byte " + offset);
-			offset = readIFD(parent, parentTag, tagClass, rin, list, offset, "");
+		while (offset != 0) {
+			offset = readIFD(parent, parentTag, tagClass, rin, list, offset);
 		}
 	}
 	
@@ -2558,7 +2457,6 @@ public class TIFFTweaker {
 	
 	public static Map<MetadataType, Metadata> readMetadata(RandomAccessInputStream rin, int pageNumber) throws IOException	{
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
-		System.out.println("*** TIFF snooping starts ***");
 		int offset = readHeader(rin);
 		List<IFD> ifds = new ArrayList<IFD>();
 		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
@@ -2597,8 +2495,6 @@ public class TIFFTweaker {
 		if(field != null) { // We have found EXIF SubIFD
 			metadataMap.put(MetadataType.EXIF, new TiffExif(currIFD));
 		}
-		
-		System.out.println("*** TIFF snooping ends ***");
 		
 		return metadataMap;
 	}
@@ -2875,18 +2771,6 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);
 		
 		return pagesRetained;
-	}
-	
-	private static void showICCProfile(byte[] icc_profile) {
-		ICCProfile.showProfile(icc_profile);
-	}
-	
-	private static void showIPTC(byte[] iptc) {
-		new IPTCReader(iptc).showMetadata();			
-	}
-	
-	private static void showPhtoshop(byte[] data) {
-		new IRBReader(data).showMetadata();		
 	}
 	
 	/**
