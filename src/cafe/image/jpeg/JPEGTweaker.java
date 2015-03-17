@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    17Mar2015  Revised insertExif() and insertXMP() to conform to EXIF and 
+ *                  JPEG specifications
  * WY    10Mar2015  Added code to read and merge multiple APP13 segments
  * WY    05Mar2015  Combined insertXMP() and insertExtendedXMP() to one
  * WY    04Mar2015  Added insertExtendedXMP() to insert ExtendedXMP data
@@ -487,6 +489,7 @@ public class JPEGTweaker {
 			exif.setThumbnailImage(IMGUtils.createThumbnail(is));
 		}
 		Exif oldExif = null;
+		int oldExifIndex = -1;
 		// Copy the original image and insert EXIF data
 		boolean finished = false;
 		int length = 0;	
@@ -495,8 +498,6 @@ public class JPEGTweaker {
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
-			is.close();
-			os.close();
 			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
 		}
 		
@@ -504,9 +505,71 @@ public class JPEGTweaker {
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI) {
-				IOUtils.writeShortMM(os, Marker.EOI.getValue());
+		// Create a list to hold the temporary Segments 
+		List<Segment> segments = new ArrayList<Segment>();
+		
+		while (!finished) { // Read through and add the segments to a list until SOS 
+			if (Marker.fromShort(marker) == Marker.SOS) {
+				// Write the items in segments list excluding the old EXIF
+				for(int i = 0; i < oldExifIndex; i++) {
+					segments.get(i).write(os);
+				}
+				// Now we insert the EXIF data
+		    	IFD newExifSubIFD = exif.getExifIFD();
+		    	IFD newGpsSubIFD = exif.getGPSIFD();
+		    	IFD newImageIFD = exif.getImageIFD();
+		    	ExifThumbnail newThumbnail = exif.getThumbnail();
+		    	// Got to do something to keep the old data
+		    	if(update && oldExif != null) {
+		    		ExifReader reader = oldExif.getReader();
+		    		if(reader != null) reader.read();
+		    		IFD imageIFD = reader.getImageIFD();
+			    	IFD exifSubIFD = reader.getExifIFD();
+			    	IFD gpsSubIFD = reader.getGPSIFD();
+			    	ExifThumbnail thumbnail = reader.getThumbnail();
+			    	
+			    	if(imageIFD != null) {
+			    		if(newImageIFD != null)
+			    			imageIFD.addFields(newImageIFD.getFields());
+			    		newImageIFD = imageIFD;
+	    			}
+			    	if(thumbnail != null) {
+			    		if(newThumbnail == null)
+			    			newThumbnail = thumbnail;
+					}
+			    	if(exifSubIFD != null) {
+			    		if(newExifSubIFD != null)
+			    			exifSubIFD.addFields(newExifSubIFD.getFields());
+			    		newExifSubIFD = exifSubIFD;
+	    			}
+			    	if(gpsSubIFD != null) {
+			    		if(newGpsSubIFD != null)
+			    			gpsSubIFD.addFields(newGpsSubIFD.getFields());
+			    		newGpsSubIFD = gpsSubIFD;
+	    			}
+		    	} 
+		    	// If we have ImageIFD, set Image IFD attached with EXIF and GPS
+		     	if(newImageIFD != null) {
+		    		if(newExifSubIFD != null)
+			    		newImageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);
+		    		if(newGpsSubIFD != null)
+			    		newImageIFD.addChild(TiffTag.GPS_SUB_IFD, newGpsSubIFD);
+		    		exif.setImageIFD(newImageIFD);
+		    	} else { // Otherwise, set EXIF and GPS IFD separately
+		    		exif.setExifIFD(newExifSubIFD);
+		    		exif.setGPSSubIFD(newGpsSubIFD);
+		    	}
+		   		exif.setThumbnail(newThumbnail);
+		   		// Now insert the new EXIF to the JPEG
+		   		exif.write(os);		     	
+		     	// Copy the remaining segments
+				for(int i = (oldExifIndex < 0 ? 0 : oldExifIndex + 1); i < segments.size(); i++) {
+					segments.get(i).write(os);
+				}	    	
+				// Copy the leftover stuff
+				IOUtils.writeShortMM(os, marker);
+				copyToEnd(is, os);
+				// We are done
 				finished = true;
 			} else { // Read markers
 				emarker = Marker.fromShort(marker);
@@ -515,99 +578,34 @@ public class JPEGTweaker {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-						IOUtils.writeShortMM(os, marker);
-				    	marker = IOUtils.readShortMM(is);
-						break;
-				    case PADDING:	
-				    	IOUtils.writeShortMM(os, marker);
-				    	int nextByte = 0;
-				    	while((nextByte = IOUtils.read(is)) == 0xff) {
-				    		IOUtils.write(os, nextByte);
-				    	}
-				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;				
-				    case SOS: 
-				    	// We add EXIF data right before the SOS segment.
-				    	// Another position to add EXIF data would be right
-				    	// after SOI marker
-				    	IFD newExifSubIFD = exif.getExifIFD();
-				    	IFD newGpsSubIFD = exif.getGPSIFD();
-				    	IFD newImageIFD = exif.getImageIFD();
-				    	ExifThumbnail newThumbnail = exif.getThumbnail();
-				    	// Got to do something to keep the old data
-				    	if(update && oldExif != null) {
-				    		ExifReader reader = oldExif.getReader();
-				    		if(reader != null) reader.read();
-				    		IFD imageIFD = reader.getImageIFD();
-					    	IFD exifSubIFD = reader.getExifIFD();
-					    	IFD gpsSubIFD = reader.getGPSIFD();
-					    	ExifThumbnail thumbnail = reader.getThumbnail();
-					    	
-					    	if(imageIFD != null) {
-					    		if(newImageIFD != null)
-					    			imageIFD.addFields(newImageIFD.getFields());
-					    		newImageIFD = imageIFD;
-			    			}
-					    	if(thumbnail != null) {
-					    		if(newThumbnail == null)
-					    			newThumbnail = thumbnail;
-							}
-					    	if(exifSubIFD != null) {
-					    		if(newExifSubIFD != null)
-					    			exifSubIFD.addFields(newExifSubIFD.getFields());
-					    		newExifSubIFD = exifSubIFD;
-			    			}
-					    	if(gpsSubIFD != null) {
-					    		if(newGpsSubIFD != null)
-					    			gpsSubIFD.addFields(newGpsSubIFD.getFields());
-					    		newGpsSubIFD = gpsSubIFD;
-			    			}
-				    	} 
-				    	// If we have ImageIFD, set Image IFD attached with EXIF and GPS
-				     	if(newImageIFD != null) {
-				    		if(newExifSubIFD != null)
-					    		newImageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);
-				    		if(newGpsSubIFD != null)
-					    		newImageIFD.addChild(TiffTag.GPS_SUB_IFD, newGpsSubIFD);
-				    		exif.setImageIFD(newImageIFD);
-				    	} else { // Otherwise, set EXIF and GPS IFD separately
-				    		exif.setExifIFD(newExifSubIFD);
-				    		exif.setGPSSubIFD(newGpsSubIFD);
-				    	}
-				   		exif.setThumbnail(newThumbnail);
-				     	exif.write(os); // Now insert the new EXIF to the JPEG
-				    	IOUtils.writeShortMM(os, marker);
-						copyToEnd(is, os);
-						finished = true; // No more marker to read, we are done. 
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
+				    	segments.add(new Segment(emarker, 0, null));
+						marker = IOUtils.readShortMM(is);
 						break;
 				    case APP1:
-				    	// Read and remove the old XMP data
+				    	// Read and remove the old EXIF data
 				    	length = IOUtils.readUnsignedShortMM(is);
-						byte[] temp = new byte[EXIF_ID.length];
-						IOUtils.readFully(is, temp);
+						byte[] exifId = new byte[EXIF_ID.length];
+						IOUtils.readFully(is, exifId);
 						// Read the EXIF data.
-						if(Arrays.equals(temp, EXIF_ID)) { // We assume EXIF data exist only in one APP1
+						if(Arrays.equals(exifId, EXIF_ID)) { // We assume EXIF data exist only in one APP1
 							byte[] exifBytes = new byte[length - EXIF_ID.length - 2];
 							IOUtils.readFully(is, exifBytes);
+							segments.add(new Segment(emarker, length, exifBytes));
 							oldExif = new JpegExif(exifBytes);
-						} else { // We are going to keep other type of data
-							IOUtils.writeShortMM(os, marker);
-							IOUtils.writeShortMM(os, (short) length);
-							IOUtils.write(os, temp); // Write the already read bytes
-							temp = new byte[length - EXIF_ID.length - 2];
+							oldExifIndex = segments.size() - 1;
+						} else { // We are going to keep other types of data
+							byte[] temp = new byte[length - EXIF_ID.length - 2];
 							IOUtils.readFully(is, temp);
-							IOUtils.write(os, temp);
+							segments.add(new Segment(emarker, length, ArrayUtils.concat(exifId, temp)));
 						}
 						marker = IOUtils.readShortMM(is);
 						break;				
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
-					    IOUtils.writeShortMM(os, marker);
-					    IOUtils.writeShortMM(os, (short)length);
 					    IOUtils.readFully(is, buf);
-					    IOUtils.write(os, buf);
+					    segments.add(new Segment(emarker, length, buf));
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
@@ -677,18 +675,18 @@ public class JPEGTweaker {
 						if(length < 14) { // This is not an ICC_Profile segment, copy it
 							IOUtils.writeShortMM(os, marker);
 							IOUtils.writeShortMM(os, (short)length);
-							IOUtils.readFully(is, icc_profile_buf, 0, length-2);
-							IOUtils.write(os, icc_profile_buf, 0, length-2);
+							IOUtils.readFully(is, icc_profile_buf, 0, length - 2);
+							IOUtils.write(os, icc_profile_buf, 0, length - 2);
 						} else {
 							IOUtils.readFully(is, icc_profile_buf);		
 							// ICC_PROFILE segment.
 							if (Arrays.equals(icc_profile_buf, icc_profile_id)) {
-								IOUtils.skipFully(is, length-14);
+								IOUtils.skipFully(is, length - 14);
 							} else {// Not an ICC_Profile segment, copy it
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short)length);
 								IOUtils.write(os, icc_profile_buf);
-								icc_profile_buf = new byte[length-14];
+								icc_profile_buf = new byte[length - 14];
 								IOUtils.readFully(is, icc_profile_buf);
 								IOUtils.write(os, icc_profile_buf);
 							}
@@ -919,11 +917,11 @@ public class JPEGTweaker {
 		int length = 0;	
 		short marker;
 		Marker emarker;
+		int app0Index = -1;
+		int exifIndex = -1;
 		
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
-			is.close();
-			os.close();		
 			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
 		}
 		
@@ -931,65 +929,64 @@ public class JPEGTweaker {
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished)
-	    {	        
-			if (Marker.fromShort(marker) == Marker.EOI)	{
-				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				finished = true;
+		// Create a list to hold the temporary Segments 
+		List<Segment> segments = new ArrayList<Segment>();
+		
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.SOS)	{
+				int index = Math.max(app0Index, exifIndex);
+				// Write the items in segments list excluding the old XMP
+				for(int i = 0; i <= index; i++)
+					segments.get(i).write(os);				
+				// Now we insert the XMP data
+				writeXMP(os, xmp, extendedXmp, guid);
+				// Copy the remaining segments
+				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
+					segments.get(i).write(os);
+				}	
+				// Copy the leftover stuff
+				IOUtils.writeShortMM(os, marker);
+				copyToEnd(is, os); // Copy the rest of the data
+				finished = true; // No more marker to read, we are done.				
 			} else { // Read markers
 				emarker = Marker.fromShort(marker);
-	
+				
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-						IOUtils.writeShortMM(os, marker);
-				    	marker = IOUtils.readShortMM(is);
-						break;
-				    case PADDING:	
-				    	IOUtils.writeShortMM(os, marker);
-				    	int nextByte = 0;
-				    	while((nextByte = IOUtils.read(is)) == 0xff) {
-				    		IOUtils.write(os, nextByte);
-				    	}
-				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;
-				    case SOS:
-				    	// We add XMP APP1 data right before the SOS segment.
-				     	writeXMP(os, xmp, extendedXmp, guid);						   
-				    	//Copy sos
-				    	IOUtils.writeShortMM(os, marker);
-						copyToEnd(is, os); // Copy the rest of the data
-						finished = true; // No more marker to read, we are done. 
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
+				    	segments.add(new Segment(emarker, 0, null));
+						marker = IOUtils.readShortMM(is);
 						break;
 				    case APP1:
 				    	// Read and remove the old XMP data
 				    	length = IOUtils.readUnsignedShortMM(is);
-						byte[] temp = new byte[XMP_EXT_ID.length];
-						IOUtils.readFully(is, temp);
+						byte[] xmpExtId = new byte[XMP_EXT_ID.length];
+						IOUtils.readFully(is, xmpExtId);
 						// Remove XMP and ExtendedXMP segments.
-						if(Arrays.equals(temp, XMP_EXT_ID)) {
-							IOUtils.skipFully(is, length - XMP_EXT_ID.length  - 2);
-						} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, XMP_ID.length), XMP_ID)) {
+						if(Arrays.equals(xmpExtId, XMP_EXT_ID)) {
+							IOUtils.skipFully(is, length - XMP_EXT_ID.length - 2);
+						} else if(Arrays.equals(ArrayUtils.subArray(xmpExtId, 0, XMP_ID.length), XMP_ID)) {
 							IOUtils.skipFully(is,  length - XMP_EXT_ID.length - 2);
-						} else { // We are going to keep other type of data
-							IOUtils.writeShortMM(os, marker);
-							IOUtils.writeShortMM(os, (short) length);
-							IOUtils.write(os, temp); // Write the already read bytes
-							temp = new byte[length - XMP_EXT_ID.length - 2];
+						} else { // We are going to keep other types of data							
+							byte[] temp = new byte[length - XMP_EXT_ID.length - 2];
 							IOUtils.readFully(is, temp);
-							IOUtils.write(os, temp);
+							segments.add(new Segment(emarker, length, ArrayUtils.concat(xmpExtId, temp)));
+							// If it's EXIF, we keep the index
+							if(Arrays.equals(ArrayUtils.subArray(xmpExtId, 0, EXIF_ID.length), EXIF_ID)) {
+								exifIndex = segments.size() - 1;
+							}
 						}
 						marker = IOUtils.readShortMM(is);
-						break;						
+						break;
+				    case APP0:
+				    	app0Index = segments.size();
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
-					    IOUtils.writeShortMM(os, marker);
-					    IOUtils.writeShortMM(os, (short)length);
 					    IOUtils.readFully(is, buf);
-					    IOUtils.write(os, buf);
+					    segments.add(new Segment(emarker, length, buf));
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
