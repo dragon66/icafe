@@ -13,7 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
- * WY    17Mar2015  Revised insertExif() and insertXMP() to conform to EXIF and 
+ * WY    17Mar2015  Revised meta data insertion code to conform to EXIF and 
  *                  JPEG specifications
  * WY    10Mar2015  Added code to read and merge multiple APP13 segments
  * WY    05Mar2015  Combined insertXMP() and insertExtendedXMP() to one
@@ -630,6 +630,8 @@ public class JPEGTweaker {
 		int length = 0;	
 		short marker;
 		Marker emarker;
+		int app0Index = -1;
+		int app1Index = -1;
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
@@ -639,44 +641,43 @@ public class JPEGTweaker {
 		
 		marker = IOUtils.readShortMM(is);
 		
+		// Create a list to hold the temporary Segments 
+		List<Segment> segments = new ArrayList<Segment>();
+		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI) {
-				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				finished = true;
-			} else { // Read markers
+			if (Marker.fromShort(marker) == Marker.SOS) {
+				int index = Math.max(app0Index, app1Index);
+				// Write the items in segments list excluding the APP13
+				for(int i = 0; i <= index; i++)
+					segments.get(i).write(os);	
+				writeICCProfile(os, data);
+		    	// Copy the remaining segments
+				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
+					segments.get(i).write(os);
+				}
+				// Copy the rest of the data
+				IOUtils.writeShortMM(os, marker);
+				copyToEnd(is, os);
+				// No more marker to read, we are done.
+				finished = true;  
+			}  else { // Read markers
 				emarker = Marker.fromShort(marker);
 			
 				switch (emarker) {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-						IOUtils.writeShortMM(os, marker);
-				    	marker = IOUtils.readShortMM(is);
-						break;
-				    case PADDING:	
-				    	IOUtils.writeShortMM(os, marker);
-				    	int nextByte = 0;
-				    	while((nextByte = IOUtils.read(is)) == 0xff) {
-				    		IOUtils.write(os, nextByte);
-				    	}
-				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;				
-				    case SOS: 
-				    	// We add ICC_Profile data right before the SOS segment.
-				    	writeICCProfile(os, data);
-				    	IOUtils.writeShortMM(os, marker);
-						copyToEnd(is, os);
-						finished = true; // No more marker to read, we are done. 
+					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
+						segments.add(new Segment(emarker, 0, null));
+						marker = IOUtils.readShortMM(is);
 						break;
 				    case APP2: // Remove old ICC_Profile
 				    	byte[] icc_profile_buf = new byte[12];
 						length = IOUtils.readUnsignedShortMM(is);						
 						if(length < 14) { // This is not an ICC_Profile segment, copy it
-							IOUtils.writeShortMM(os, marker);
-							IOUtils.writeShortMM(os, (short)length);
-							IOUtils.readFully(is, icc_profile_buf, 0, length - 2);
-							IOUtils.write(os, icc_profile_buf, 0, length - 2);
+							icc_profile_buf = new byte[length - 2];
+							IOUtils.readFully(is, icc_profile_buf);
+							segments.add(new Segment(emarker, length, icc_profile_buf));
 						} else {
 							IOUtils.readFully(is, icc_profile_buf);		
 							// ICC_PROFILE segment.
@@ -686,21 +687,23 @@ public class JPEGTweaker {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short)length);
 								IOUtils.write(os, icc_profile_buf);
-								icc_profile_buf = new byte[length - 14];
-								IOUtils.readFully(is, icc_profile_buf);
-								IOUtils.write(os, icc_profile_buf);
+								byte[] temp = new byte[length - ICC_PROFILE_ID.length - 2];
+								IOUtils.readFully(is, temp);
+								segments.add(new Segment(emarker, length, ArrayUtils.concat(icc_profile_buf, temp)));
 							}
 						}						
 						marker = IOUtils.readShortMM(is);
 						break;
+				    case APP0:
+				    	app0Index = segments.size();
+				    case APP1:
+				    	app1Index = segments.size();
 				    default:
-					    length = IOUtils.readUnsignedShortMM(is);					
-					    byte[] buf = new byte[length - 2];
-					    IOUtils.writeShortMM(os, marker);
-					    IOUtils.writeShortMM(os, (short)length);
-					    IOUtils.readFully(is, buf);
-					    IOUtils.write(os, buf);
-					    marker = IOUtils.readShortMM(is);
+				    	 length = IOUtils.readUnsignedShortMM(is);					
+				    	 byte[] buf = new byte[length - 2];
+				    	 IOUtils.readFully(is, buf);
+				    	 segments.add(new Segment(emarker, length, buf));
+				    	 marker = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -729,6 +732,8 @@ public class JPEGTweaker {
 		int length = 0;	
 		short marker;
 		Marker emarker;
+		int app0Index = -1;
+		int app1Index = -1;		
 		
 		Map<Short, _8BIM> bimMap = null;
 				
@@ -743,10 +748,37 @@ public class JPEGTweaker {
 		
 		marker = IOUtils.readShortMM(is);
 		
+		// Create a list to hold the temporary Segments 
+		List<Segment> segments = new ArrayList<Segment>();
+		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI)	{
-				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				finished = true;
+			if (Marker.fromShort(marker) == Marker.SOS) {
+				int index = Math.max(app0Index, app1Index);
+				// Write the items in segments list excluding the APP13
+				for(int i = 0; i <= index; i++)
+					segments.get(i).write(os);	
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				// Insert IPTC data as one of the IRB 8BIM block
+				// Write IPTC
+				for(IPTCDataSet iptc : iptcs)
+					iptc.write(bout);
+				// Create 8BIM for IPTC
+				_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
+				if(bimMap != null) {
+					bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
+					writeIRB(os, bimMap.values()); // Write the whole thing as APP13
+				} else {
+					writeIRB(os, newBIM); // Write the one and only one 8BIM as APP13
+				}						
+				// Copy the remaining segments
+				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
+					segments.get(i).write(os);
+				}
+				// Copy the rest of the data
+				IOUtils.writeShortMM(os, marker);
+				copyToEnd(is, os);
+				// No more marker to read, we are done.
+				finished = true;  
 			} else {// Read markers
 		   		emarker = Marker.fromShort(marker);
 		
@@ -754,39 +786,11 @@ public class JPEGTweaker {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-						IOUtils.writeShortMM(os, marker);
-				    	marker = IOUtils.readShortMM(is);
+					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
+						segments.add(new Segment(emarker, 0, null));
+						marker = IOUtils.readShortMM(is);
 						break;
-				    case PADDING:	
-				    	IOUtils.writeShortMM(os, marker);
-				    	int nextByte = 0;
-				    	while((nextByte = IOUtils.read(is)) == 0xff) {
-				    		IOUtils.write(os, nextByte);
-				    	}
-				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;				
-				    case SOS:
-				     	// We add APP13 data right before the SOS segment.
-				    	ByteArrayOutputStream bout = new ByteArrayOutputStream();
-						// Insert IPTC data as one of the IRB 8BIM block
-						// Write IPTC
-						for(IPTCDataSet iptc : iptcs)
-							iptc.write(bout);
-						// Create 8BIM for IPTC
-						_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
-						if(bimMap != null) {
-							bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
-							writeIRB(os, bimMap.values()); // Write the whole thing as APP13
-						} else {
-							writeIRB(os, newBIM); // Write the one and only one 8BIM as APP13
-						}						
-						//Copy sos
-				    	IOUtils.writeShortMM(os, marker);
-						copyToEnd(is, os); // Copy the rest of the data
-						finished = true; // No more marker to read, we are done. 
-						break;
-				    case APP13:
+					case APP13:
 				    	if(update) {
 					    	IRB irb = (IRB)readAPP13(is);
 					    	if(irb != null) {
@@ -809,14 +813,16 @@ public class JPEGTweaker {
 						    IOUtils.skipFully(is, length - 2);
 				    	}
 				    	marker = IOUtils.readShortMM(is);
-				    	break;				    	
+				    	break;
+					case APP0:
+						app0Index = segments.size();
+					case APP1:
+						app1Index = segments.size();
 				    default:
-					    length = IOUtils.readUnsignedShortMM(is);					
+				    	length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
-					    IOUtils.writeShortMM(os, marker);
-					    IOUtils.writeShortMM(os, (short)length);
 					    IOUtils.readFully(is, buf);
-					    IOUtils.write(os, buf);
+					    segments.add(new Segment(emarker, length, buf));
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
@@ -829,6 +835,8 @@ public class JPEGTweaker {
 		int length = 0;	
 		short marker;
 		Marker emarker;
+		int app0Index = -1;
+		int app1Index = -1;
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
@@ -841,10 +849,25 @@ public class JPEGTweaker {
 		
 		marker = IOUtils.readShortMM(is);
 		
+		// Create a list to hold the temporary Segments 
+		List<Segment> segments = new ArrayList<Segment>();
+		
 		while (!finished) {	        
-			if (Marker.fromShort(marker) == Marker.EOI) {
-				IOUtils.writeShortMM(os, Marker.EOI.getValue());
-				finished = true;
+			if (Marker.fromShort(marker) == Marker.SOS) {
+				int index = Math.max(app0Index, app1Index);
+				// Write the items in segments list excluding the APP13
+				for(int i = 0; i <= index; i++)
+					segments.get(i).write(os);	
+				writeIRB(os, bims);
+				// Copy the remaining segments
+				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
+					segments.get(i).write(os);
+				}
+				// Copy the rest of the data
+				IOUtils.writeShortMM(os, marker);
+				copyToEnd(is, os);
+				// No more marker to read, we are done.
+				finished = true;  
 			} else {// Read markers
 		   		emarker = Marker.fromShort(marker);
 		
@@ -852,24 +875,9 @@ public class JPEGTweaker {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
-						IOUtils.writeShortMM(os, marker);
-				    	marker = IOUtils.readShortMM(is);
-						break;
-				    case PADDING:	
-				    	IOUtils.writeShortMM(os, marker);
-				    	int nextByte = 0;
-				    	while((nextByte = IOUtils.read(is)) == 0xff) {
-				    		IOUtils.write(os, nextByte);
-				    	}
-				    	marker = (short)((0xff<<8)|nextByte);
-				    	break;				
-				    case SOS:
-				    	writeIRB(os, bims);
-						//Copy sos
-				    	IOUtils.writeShortMM(os, marker);
-						copyToEnd(is, os); // Copy the rest of the data
-						finished = true; // No more marker to read, we are done. 
+					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
+						segments.add(new Segment(emarker, 0, null));
+						marker = IOUtils.readShortMM(is);
 						break;
 				    case APP13: // We will keep the other IRBs from the original APP13
 				    	if(update) {
@@ -886,14 +894,16 @@ public class JPEGTweaker {
 						    IOUtils.skipFully(is, length - 2);
 				    	}
 				    	marker = IOUtils.readShortMM(is);
-				    	break;				    	
+				    	break;
+				    case APP0:
+				    	app0Index = segments.size();
+				    case APP1:
+				    	app1Index = segments.size();
 				    default:
-					    length = IOUtils.readUnsignedShortMM(is);					
+				    	length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
-					    IOUtils.writeShortMM(os, marker);
-					    IOUtils.writeShortMM(os, (short)length);
 					    IOUtils.readFully(is, buf);
-					    IOUtils.write(os, buf);
+					    segments.add(new Segment(emarker, length, buf));
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
