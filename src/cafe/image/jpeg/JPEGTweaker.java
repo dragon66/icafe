@@ -1231,7 +1231,7 @@ public class JPEGTweaker {
 			buf = ArrayUtils.subArray(data, 0, 10);
 			if (Arrays.equals(PICTURE_INFO_ID, buf)) {
 				// TODO process PictureInfo.
-			}			
+			}
 		}
 	}
 	
@@ -1322,6 +1322,7 @@ public class JPEGTweaker {
 		List<SOFReader> readers = new ArrayList<SOFReader>();
 		// Used to read multiple segment ICCProfile
 		ByteArrayOutputStream iccProfileStream = null;
+		// Used to read multiple segment Adobe APP13
 		ByteArrayOutputStream eightBIMStream = null;
 		// Used to read multiple segment XMP
 		byte[] extendedXMP = null;
@@ -1547,18 +1548,15 @@ public class JPEGTweaker {
 		int nextByte = 0;
 		short marker = 0;	
 		
-		while((nextByte = IOUtils.read(is)) != -1)
-		{
-			if(nextByte == 0xff)
-			{
+		while((nextByte = IOUtils.read(is)) != -1) {
+			if(nextByte == 0xff) {
 				nextByte = IOUtils.read(is);
 				
 				if (nextByte == -1) {
 					throw new IOException("Premature end of SOS segment!");					
 				}								
 				
-				if (nextByte != 0x00)
-				{
+				if (nextByte != 0x00) {
 					marker = (short)((0xff<<8)|nextByte);
 					
 					switch (Marker.fromShort(marker)) {										
@@ -1812,18 +1810,15 @@ public class JPEGTweaker {
 		int nextByte = 0;
 		short marker = 0;	
 		
-		while((nextByte = IOUtils.read(is)) != -1)
-		{
-			if(nextByte == 0xff)
-			{
+		while((nextByte = IOUtils.read(is)) != -1) {
+			if(nextByte == 0xff) {
 				nextByte = IOUtils.read(is);
 						
 				if (nextByte == -1) {
 					throw new IOException("Premature end of SOS segment!");					
 				}								
 				
-				if (nextByte != 0x00) // This is a marker
-				{
+				if (nextByte != 0x00) { // This is a marker
 					marker = (short)((0xff<<8)|nextByte);
 					
 					switch (Marker.fromShort(marker)) {										
