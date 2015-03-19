@@ -41,7 +41,12 @@ public enum IPTCApplicationTag implements IPTCTag {
 			 return true;
 		 }
 	 },
-	 CATEGORY(15, "Category"),
+	 CATEGORY(15, "Category"){
+		 @Override
+		 public boolean allowMultiple() {
+			 return true;
+		 }
+	 },
 	 SUPP_CATEGORY(20, "SupplementalCategories") {
 		 @Override
 		 public boolean allowMultiple() {
@@ -117,9 +122,19 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 COUNTRY_NAME(101, "CountryName"),
 	 ORIGINAL_TRANSMISSION_REF(103, "OriginalTransmissionRef"),
 	 HEADLINE(105, "Headline"),
-	 CREDIT(110, "Credit"),
+	 CREDIT(110, "Credit") {
+		 @Override
+		 public boolean allowMultiple() {
+			 return true;
+		 }
+	 },
 	 SOURCE(115, "Source"),
-	 COPYRIGHT_NOTICE(116, "CopyrightNotice"),
+	 COPYRIGHT_NOTICE(116, "CopyrightNotice") {
+		 @Override
+		 public boolean allowMultiple() {
+			 return true;
+		 }
+	 },
 	 CONTACT(118, "Contact") {
 		 @Override
 		 public boolean allowMultiple() {
