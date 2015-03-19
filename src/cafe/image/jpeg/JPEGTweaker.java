@@ -13,6 +13,9 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    18Mar2015  Revised readAPP13(), insertIPTC() and insertIRB() to work
+ *                  with multiple APP13 segments
+ * WY    18Mar2015  Removed a few unused readAPPn methods
  * WY    17Mar2015  Revised meta data insertion code to conform to EXIF and 
  *                  JPEG specifications
  * WY    10Mar2015  Added code to read and merge multiple APP13 segments
@@ -736,6 +739,8 @@ public class JPEGTweaker {
 		int app1Index = -1;		
 		
 		Map<Short, _8BIM> bimMap = null;
+		// Used to read multiple segment Adobe APP13
+		ByteArrayOutputStream eightBIMStream = null;
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
@@ -753,22 +758,37 @@ public class JPEGTweaker {
 		
 		while (!finished) {	        
 			if (Marker.fromShort(marker) == Marker.SOS) {
+				if(eightBIMStream != null) {
+					IRB irb = new IRB(eightBIMStream.toByteArray());
+		    		// Shallow copy the map.
+		    		bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
+					_8BIM iptcBIM = bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
+					if(iptcBIM != null) { // Keep the original values
+						IPTC iptc = new IPTC(iptcBIM.getData());
+						// Shallow copy the map
+						Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSet());
+						for(IPTCDataSet set : iptcs)
+							if(!set.allowMultiple())
+								dataSetMap.remove(set.getName());
+						for(List<IPTCDataSet> iptcList : dataSetMap.values())
+							iptcs.addAll(iptcList);
+					}
+			  	}				
 				int index = Math.max(app0Index, app1Index);
 				// Write the items in segments list excluding the APP13
 				for(int i = 0; i <= index; i++)
 					segments.get(i).write(os);	
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
-				// Insert IPTC data as one of the IRB 8BIM block
-				// Write IPTC
+				// Insert IPTC data as one of IRB 8BIM block
 				for(IPTCDataSet iptc : iptcs)
 					iptc.write(bout);
 				// Create 8BIM for IPTC
 				_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());
 				if(bimMap != null) {
 					bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
-					writeIRB(os, bimMap.values()); // Write the whole thing as APP13
+					writeIRB(os, bimMap.values()); // Write the whole thing as one APP13
 				} else {
-					writeIRB(os, newBIM); // Write the one and only one 8BIM as APP13
+					writeIRB(os, newBIM); // Write the one and only one 8BIM as one APP13
 				}						
 				// Copy the remaining segments
 				for(int i = (index < 0 ? 0 : index + 1); i < segments.size(); i++) {
@@ -792,22 +812,9 @@ public class JPEGTweaker {
 						break;
 					case APP13:
 				    	if(update) {
-					    	IRB irb = (IRB)readAPP13(is);
-					    	if(irb != null) {
-					    		// Shallow copy the map.
-					    		bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
-								_8BIM iptcBIM = bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
-								if(iptcBIM != null) { // Keep the original values
-									IPTC iptc = new IPTC(iptcBIM.getData());
-									// Shallow copy the map
-									Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSet());
-									for(IPTCDataSet set : iptcs)
-										if(!set.allowMultiple())
-											dataSetMap.remove(set.getName());
-									for(List<IPTCDataSet> iptcList : dataSetMap.values())
-										iptcs.addAll(iptcList);
-								}
-						  	}					    	
+				    		if(eightBIMStream == null)
+				    			eightBIMStream = new ByteArrayOutputStream();
+				    		readAPP13(is, eightBIMStream);
 				    	} else {
 				    		length = IOUtils.readUnsignedShortMM(is);					
 						    IOUtils.skipFully(is, length - 2);
@@ -836,7 +843,9 @@ public class JPEGTweaker {
 		short marker;
 		Marker emarker;
 		int app0Index = -1;
-		int app1Index = -1;
+		int app1Index = -1;		
+		// Used to read multiple segment Adobe APP13
+		ByteArrayOutputStream eightBIMStream = null;
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)	{
@@ -854,6 +863,14 @@ public class JPEGTweaker {
 		
 		while (!finished) {	        
 			if (Marker.fromShort(marker) == Marker.SOS) {
+				if(eightBIMStream != null) {
+					IRB irb = new IRB(eightBIMStream.toByteArray());
+			    	// Shallow copy the map.
+		    		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
+					for(_8BIM bim : bims) // Replace the original data
+						bimMap.remove(bim.getID());
+					bims.addAll(bimMap.values());
+		    	}
 				int index = Math.max(app0Index, app1Index);
 				// Write the items in segments list excluding the APP13
 				for(int i = 0; i <= index; i++)
@@ -881,14 +898,9 @@ public class JPEGTweaker {
 						break;
 				    case APP13: // We will keep the other IRBs from the original APP13
 				    	if(update) {
-					    	IRB irb = (IRB)readAPP13(is);
-					    	if(irb != null) {
-					    		// Shallow copy the map.
-					    		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
-								for(_8BIM bim : bims) // Replace the original data
-									bimMap.remove(bim.getID());
-								bims.addAll(bimMap.values());
-					    	}					    	
+				    		if(eightBIMStream == null)
+				    			eightBIMStream = new ByteArrayOutputStream();
+					    	readAPP13(is, eightBIMStream);					    	
 				    	} else {
 				    		length = IOUtils.readUnsignedShortMM(is);					
 						    IOUtils.skipFully(is, length - 2);
@@ -1145,129 +1157,17 @@ public class JPEGTweaker {
 		System.out.println("End of SOF information");
 	}
 	
-	@SuppressWarnings("unused")
-	private static void readAPP0(InputStream is) throws IOException {
-		int length = IOUtils.readUnsignedShortMM(is);
-		byte[] buf = new byte[length - 2];
-	    IOUtils.readFully(is, buf);
-	    int i = JFIF_ID.length;
-	    // JFIF segment
-	    if(Arrays.equals(ArrayUtils.subArray(buf, 0, i), JFIF_ID) || Arrays.equals(ArrayUtils.subArray(buf, 0, i), JFXX_ID)) {
-	    	System.out.print(new String(buf, 0, i).trim());
-	    	System.out.println(" - version " + (buf[i++]&0xff) + "." + (buf[i++]&0xff));
-	    	System.out.print("Density unit: ");
-	    	
-	    	switch(buf[i++]&0xff) {
-	    		case 0:
-	    			System.out.println("No units, aspect ratio only specified");
-	    			break;
-	    		case 1:
-	    			System.out.println("Dots per inch");
-	    			break;
-	    		case 2:
-	    			System.out.println("Dots per centimeter");
-	    			break;
-	    		default:
-	    	}
-	    	
-	    	System.out.println("X density: " + IOUtils.readUnsignedShortMM(buf, i));
-	    	i += 2;
-	    	System.out.println("Y density: " + IOUtils.readUnsignedShortMM(buf, i));
-	    	i += 2;
-	    	int thumbnailWidth = buf[i++]&0xff;
-	    	int thumbnailHeight = buf[i++]&0xff;
-	    	System.out.println("Thumbnail dimension: " + thumbnailWidth + "X" + thumbnailHeight);	   
-	    }
-	}
-	
-	@SuppressWarnings("unused")
-	private static void readAPP12(InputStream is) throws IOException {
-		// APP12 is either used by some old cameras to set PictureInfo
-		// or Adobe PhotoShop to store Save for Web data - called Ducky segment.
-		String[] duckyInfo = {"Ducky", "Photoshop Save For Web Quality: ", "Comment: ", "Copyright: "};
-		int length = IOUtils.readUnsignedShortMM(is);
-		byte[] data = new byte[length - 2];
-		System.out.println("Length: " + length);
-		IOUtils.readFully(is, data);
-		int currPos = 0;
-		byte[] buf = ArrayUtils.subArray(data, 0, DUCKY_ID.length);
-		currPos += DUCKY_ID.length;
-		
-		if(Arrays.equals(DUCKY_ID, buf)) {
-			System.out.println("=>" + duckyInfo[0]);
-			short tag = IOUtils.readShortMM(data, currPos);
-			currPos += 2;
-			
-			while (tag != 0x0000) {
-				System.out.println("Tag value: " + StringUtils.shortToHexStringMM(tag));
-				
-				int len = IOUtils.readUnsignedShortMM(data, currPos);
-				currPos += 2;
-				System.out.println("Tag length: " + len);
-				
-				switch (tag) {
-					case 0x0001: // Image quality
-						System.out.print(duckyInfo[1]);
-						System.out.println(IOUtils.readUnsignedIntMM(data, currPos));
-						currPos += 4;
-						break;
-					case 0x0002: // Comment
-						System.out.print(duckyInfo[2]);
-						System.out.println(new String(data, currPos, currPos + len).trim());
-						currPos += len;
-						break;
-					case 0x0003: // Copyright
-						System.out.print(duckyInfo[3]);
-						System.out.println(new String(data, currPos, currPos + len).trim());
-						currPos += len;
-						break;
-					default: // Do nothing!					
-				}
-				
-				tag = IOUtils.readShortMM(data, currPos);
-				currPos += 2;
-			}			
-		} else {
-			buf = ArrayUtils.subArray(data, 0, 10);
-			if (Arrays.equals(PICTURE_INFO_ID, buf)) {
-				// TODO process PictureInfo.
-			}
-		}
-	}
-	
-	private static Metadata readAPP13(InputStream is) throws IOException {
+	private static void readAPP13(InputStream is, OutputStream os) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
 		byte[] temp = new byte[length - 2];
 		IOUtils.readFully(is, temp, 0, length - 2);
-		
+	
 		if (Arrays.equals(ArrayUtils.subArray(temp, 0, PHOTOSHOP_IRB_ID.length), PHOTOSHOP_IRB_ID)) {
-			return new IRB(ArrayUtils.subArray(temp, PHOTOSHOP_IRB_ID.length, temp.length - PHOTOSHOP_IRB_ID.length));	
-		}
-		
-		return null;
-	}
-	
-	@SuppressWarnings("unused")
-	private static void readAPP14(InputStream is) throws IOException {	
-		String[] app14Info = {"DCTEncodeVersion: ", "APP14Flags0: ", "APP14Flags1: ", "ColorTransform: "};		
-		int expectedLen = 14; // Expected length of this segment is 14.
-		int length = IOUtils.readUnsignedShortMM(is);
-		if (length >= expectedLen) { 
-			byte[] data = new byte[length - 2];
-			IOUtils.readFully(is, data, 0, length - 2);
-			byte[] buf = ArrayUtils.subArray(data, 0, 5);
-			
-			if(Arrays.equals(buf, ADOBE_ID)) {
-				for (int i = 0, j = 5; i < 3; i++, j += 2) {
-					System.out.println(app14Info[i] + StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
-				}
-				System.out.println(app14Info[3] + (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
-					((data[11]&0xff) == 1)? "YCbCr":"YCCK" ));
-			}
+			os.write(ArrayUtils.subArray(temp, PHOTOSHOP_IRB_ID.length, temp.length - PHOTOSHOP_IRB_ID.length));	
 		}
 	}
 	
-	private static void readAPP2(InputStream is, ByteArrayOutputStream bo) throws IOException {
+	private static void readAPP2(InputStream is, OutputStream bo) throws IOException {
 		byte[] icc_profile_buf = new byte[12];
 		int length = IOUtils.readUnsignedShortMM(is);
 		IOUtils.readFully(is, icc_profile_buf);
@@ -1331,7 +1231,7 @@ public class JPEGTweaker {
 		List<Segment> appnSegments = new ArrayList<Segment>();
 	
 		boolean finished = false;
-		int length = 0;	
+		int length = 0;
 		short marker;
 		Marker emarker;
 		
