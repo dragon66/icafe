@@ -12,7 +12,8 @@
  * IPTCReader.java
  *
  * Who   Date       Description
- * ====  =======    ============================================================
+ * ====  =======    ====================================================
+ * WY    18Mar2015  Added code to remove duplicates from the value lists
  * WY    12Jan2015  Initial creation to read IPTC information
  */
 
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +83,10 @@ public class IPTCReader implements MetadataReader {
 			// Sanity check
 			if(i >= data.length) break;	
 			tagMarker = data[i];							
+		}
+		// Remove possible duplicates
+		for (Map.Entry<String, List<IPTCDataSet>> entry : datasetMap.entrySet()){
+		    entry.setValue(new ArrayList<IPTCDataSet>(new HashSet<IPTCDataSet>(entry.getValue())));
 		}
 		
 		loaded = true;
