@@ -35,4 +35,9 @@ public class PNGNativeMetadata extends NativeMetadata<Chunk> {
 	public String getMimeType() {
 		return "image/png";
 	}
+
+	@Override
+	public void showMetadata() {
+		;
+	}
 }

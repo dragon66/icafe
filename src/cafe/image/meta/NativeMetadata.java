@@ -6,6 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * NativeMetadata.java
+ *
+ * Who   Date         Description
+ * ====  =========    ===============================================
+ * WY    18Mar2015    Added showMetadata()
  */
 
 package cafe.image.meta;
@@ -31,15 +39,16 @@ public abstract class NativeMetadata<T> {
 		metadataList = meta;
 	}
 	
-	public List<T> getMetadataList() {
-		return Collections.unmodifiableList(metadataList);
-	}
-	
-	public abstract String getMimeType();
-	
 	public void addMeta(T meta) {
 		if(metadataList == null)
 			metadataList = new ArrayList<T>();
 		metadataList.add(meta);
 	}
+	
+	public List<T> getMetadataList() {
+		return Collections.unmodifiableList(metadataList);
+	}
+	
+	public abstract String getMimeType();
+	public abstract void showMetadata();	
 }
