@@ -26,8 +26,11 @@ import cafe.image.jpeg.DQTReader;
 import cafe.image.jpeg.HTable;
 import cafe.image.jpeg.Marker;
 import cafe.image.jpeg.QTable;
+import cafe.image.jpeg.SOFReader;
+import cafe.image.jpeg.SOSReader;
 import cafe.image.jpeg.Segment;
 import cafe.io.IOUtils;
+import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
 
 public class JPEGReader extends ImageReader {
@@ -109,6 +112,8 @@ public class JPEGReader extends ImageReader {
 	public static final int JPG13= 0xfd; // Reserved
 	public static final int COM  = 0xfe; // Comment marker
 	// End of JPEG marker definitions
+	
+	public static final byte[] ADOBE_ID = {0x41, 0x64, 0x6f, 0x62, 0x65}; //"Adobe" no trailing NULL
 	// For JFIF there are normally two quantization tables, but for
 	// other format there can be up to 4 quantization tables!
 	private short quant_tbl[][] = new short[4][64];
@@ -129,6 +134,8 @@ public class JPEGReader extends ImageReader {
 	private HuffmanTbl ac_hufftbl[] = new HuffmanTbl[4];
 	
 	private int component[][] = new int[4][6];
+	
+	private SOFReader sofReader;
 	
 	@SuppressWarnings("unused")
 	private HUF_NODE[][] dc_node;
@@ -235,6 +242,25 @@ public class JPEGReader extends ImageReader {
 		
 		return null;
    	}
+	
+	private static void readAPP14(InputStream is) throws IOException {	
+		String[] app14Info = {"DCTEncodeVersion: ", "APP14Flags0: ", "APP14Flags1: ", "ColorTransform: "};		
+		int expectedLen = 14; // Expected length of this segment is 14.
+		int length = IOUtils.readUnsignedShortMM(is);
+		if (length >= expectedLen) { 
+			byte[] data = new byte[length - 2];
+			IOUtils.readFully(is, data, 0, length - 2);
+			byte[] buf = ArrayUtils.subArray(data, 0, 5);
+			
+			if(Arrays.equals(buf, ADOBE_ID)) {
+				for (int i = 0, j = 5; i < 3; i++, j += 2) {
+					System.out.println(app14Info[i] + StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
+				}
+				System.out.println(app14Info[3] + (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
+					((data[11]&0xff) == 1)? "YCbCr":"YCCK" ));
+			}
+		}
+	}
 	   
 	// Process JFIF APPn header segment
 	private boolean read_APP_Segment(int APPn, InputStream is) throws IOException {
@@ -508,6 +534,17 @@ public class JPEGReader extends ImageReader {
 			}
 		}	
 	}
+	
+	private SOFReader readSOF(InputStream is, Marker marker) throws IOException {		
+		int len = IOUtils.readUnsignedShortMM(is);
+		byte buf[] = new byte[len - 2];
+		IOUtils.readFully(is, buf);
+		
+		Segment segment = new Segment(marker, len, buf);		
+		SOFReader reader = new SOFReader(segment);
+		
+		return reader;
+	}	
 	   
 	// Process SOF segment
 	private void read_SOF_Segment(InputStream is, int SOFn) throws IOException {
@@ -566,6 +603,15 @@ public class JPEGReader extends ImageReader {
 			finished = true;
 			return;		
 		}
+	}
+	
+	private void readSOS(InputStream is, SOFReader sofReader) throws IOException {
+		int len = IOUtils.readUnsignedShortMM(is);
+		byte buf[] = new byte[len - 2];
+		IOUtils.readFully(is, buf);
+		
+		Segment segment = new Segment(Marker.SOS, len, buf);
+		new SOSReader(segment, sofReader);
 	}
 	   
 	// Process start of scan 
