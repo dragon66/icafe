@@ -22,24 +22,24 @@ import java.util.Map;
 public enum ChunkType {	
 	// Four critical chunks
 	IHDR("IHDR", 0x49484452, Attribute.CRITICAL, 1), // PNG header, must be the first one
-	IDAT("IDAT", 0x49444154, Attribute.CRITICAL, 50), // PNG data, could have multiple but must appear consecutively
+	IDAT("IDAT", 0x49444154, Attribute.CRITICAL, 60), // PNG data, could have multiple but must appear consecutively
 	IEND("IEND", 0x49454E44, Attribute.CRITICAL, 100), // End of image, must be the last one
 	PLTE("PLTE", 0x504C5445, Attribute.CRITICAL, 40), // ColorPalette, must precede the first IDAT
 	// Fourteen ancillary chunks	
-	TEXT("tEXt", 0x74455874, Attribute.ANCILLARY, 60), // Anywhere between IHDR and IEND
-	ZTXT("zTXt", 0x7A545874, Attribute.ANCILLARY, 60), // Anywhere between IHDR and IEND
-	ITXT("iTXt", 0x69545874, Attribute.ANCILLARY, 60), // Anywhere between IHDR and IEND
-	TRNS("tRNS", 0x74524E53, Attribute.ANCILLARY, 45), // Must precede the first IDAT chunk and must follow the PLTE chunk
+	TEXT("tEXt", 0x74455874, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
+	ZTXT("zTXt", 0x7A545874, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
+	ITXT("iTXt", 0x69545874, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
+	TRNS("tRNS", 0x74524E53, Attribute.ANCILLARY, 50), // Must precede the first IDAT chunk and must follow the PLTE chunk
 	GAMA("gAMA", 0x67414D41, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk and the PLTE chunk if present
 	CHRM("cHRM", 0x6348524D, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk and the PLTE chunk if present
 	SRGB("sRGB", 0x73524742, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk and the PLTE chunk if present
 	ICCP("iCCP", 0x69434350, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk and the PLTE chunk if present
-	BKGD("bKGD", 0x624B4744, Attribute.ANCILLARY, 45), // Must precede the first IDAT chunk and must follow the PLTE chunk
+	BKGD("bKGD", 0x624B4744, Attribute.ANCILLARY, 50), // Must precede the first IDAT chunk and must follow the PLTE chunk
 	PHYS("pHYs", 0x70485973, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk
 	SBIT("sBIT", 0x73424954, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk and the PLTE chunk if present
 	SPLT("sPLT", 0x73504C54, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk
-	HIST("hIST", 0x68495354, Attribute.ANCILLARY, 45), // Must precede the first IDAT chunk and must follow the PLTE chunk
-	TIME("tIME", 0x74494D45, Attribute.ANCILLARY, 60), // Anywhere between IHDR and IEND
+	HIST("hIST", 0x68495354, Attribute.ANCILLARY, 50), // Must precede the first IDAT chunk and must follow the PLTE chunk
+	TIME("tIME", 0x74494D45, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
     
 	UNKNOWN("UNKNOWN",  0x00000000, Attribute.ANCILLARY, 99); // We don't know this chunk, ranking it right before IEND
 	
