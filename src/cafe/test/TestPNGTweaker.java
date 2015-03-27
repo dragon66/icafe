@@ -29,7 +29,9 @@ public class TestPNGTweaker {
        		out.close();
        	}
        	
-        TextBuilder builder = new TextBuilder(ChunkType.ITXT).keyword("Author").text("Wen Yu");
+        TextBuilder builder = new TextBuilder(ChunkType.ITXT);
+        builder.setCompressed(true);
+        builder.keyword("Author").text("Wen Yu");
         Chunk authorChunk = builder.build();
         builder.keyword("Software").text("PNGTweaker 1.0");
         Chunk softwareChunk = builder.build();
