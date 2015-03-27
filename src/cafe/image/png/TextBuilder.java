@@ -24,7 +24,7 @@ import cafe.util.Builder;
  * @version 1.0 12/31/2012
  */
 public class TextBuilder extends ChunkBuilder implements Builder<Chunk> {
-
+	private boolean compressed; // Text are uncompressed by default
 	private String keyword = "Software";
 	private String text = "PNGTweaker 1.0 yuwen_66@yahoo.com";
 	
@@ -46,6 +46,10 @@ public class TextBuilder extends ChunkBuilder implements Builder<Chunk> {
 	public TextBuilder keyword(String keyword) {
 		this.keyword = keyword.trim().replaceAll("\\s+", " ");
 		return this;
+	}
+	
+	public void setCompressed(boolean compressed) {
+		this.compressed = compressed;
 	}
 	
 	/**
@@ -114,7 +118,7 @@ public class TextBuilder extends ChunkBuilder implements Builder<Chunk> {
 					sb.append('\0');
 					bo.write(sb.toString().getBytes("iso-8859-1"));
 					DeflaterOutputStream ds = new DeflaterOutputStream(bo);
-					OutputStreamWriter or = new OutputStreamWriter(ds,"iso-8859-1");
+					OutputStreamWriter or = new OutputStreamWriter(ds, "iso-8859-1");
 	                BufferedWriter br = new BufferedWriter(or);                       
 					br.write(this.text);
 					br.flush();
@@ -128,10 +132,15 @@ public class TextBuilder extends ChunkBuilder implements Builder<Chunk> {
 				try {
 					ByteArrayOutputStream bo = new ByteArrayOutputStream(1024);
 					bo.write(sb.toString().getBytes("iso-8859-1"));
-					bo.write(new byte[]{1,0,0,0});
-					DeflaterOutputStream ds = new DeflaterOutputStream(bo);
-					OutputStreamWriter or = new OutputStreamWriter(ds,"UTF-8");
-	                BufferedWriter br = new BufferedWriter(or);                       
+					OutputStreamWriter or = null;
+					if(compressed) {
+						bo.write(new byte[]{1, 0, 0, 0});
+						or = new OutputStreamWriter(new DeflaterOutputStream(bo), "UTF-8");
+					} else {
+						bo.write(new byte[]{0, 0, 0, 0});
+						or = new OutputStreamWriter(bo, "UTF-8");
+					}
+					BufferedWriter br = new BufferedWriter(or);
 					br.write(this.text);
 					br.flush();
 					br.close();
