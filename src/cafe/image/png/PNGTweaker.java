@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    27Mar2015  Revised insertXMP() to remove old XMP
  * WY    03Mar2015  Added insertXMP() to insert XMP to iTXT chunk
  * WY    11Feb2015  Added code to extract XMP from iTXT chunk
  * WY    20Jan2015  Revised to work with Metadata.showMetadata()
@@ -67,8 +68,7 @@ public class PNGTweaker {
 	
 	private static Set<ChunkType> REMOVABLE = EnumSet.range(ChunkType.TEXT, ChunkType.TIME);    
     
-   	public static void dump_text_chunks(Chunk[] chunks) throws IOException
-   	{
+   	public static void dump_text_chunks(Chunk[] chunks) throws IOException {
    		for (Chunk chunk : chunks) {
    			if ((chunk.getChunkType() == ChunkType.TEXT) || (chunk.getChunkType() == ChunkType.ITXT) || 
    					(chunk.getChunkType() == ChunkType.ZTXT)) {
@@ -84,13 +84,11 @@ public class PNGTweaker {
    		System.out.println(read_text_chunks(is));
     }
 
-  	public static void insertChunk(Chunk customChunk, InputStream is, OutputStream os) throws IOException
-  	{
+  	public static void insertChunk(Chunk customChunk, InputStream is, OutputStream os) throws IOException {
   		insertChunks(new Chunk[]{customChunk}, is, os);
   	}
   	
-  	public static void insertChunks(Chunk[] chunks, InputStream is, OutputStream os) throws IOException
-  	{
+  	public static void insertChunks(Chunk[] chunks, InputStream is, OutputStream os) throws IOException {
   		List<Chunk> list = readChunks(is);  		
         Collections.addAll(list, chunks);
     	
@@ -99,8 +97,7 @@ public class PNGTweaker {
         serializeChunks(list, os);
   	}
   	
-  	public static void insertChunks(List<Chunk> chunks, InputStream is, OutputStream os) throws IOException
-  	{
+  	public static void insertChunks(List<Chunk> chunks, InputStream is, OutputStream os) throws IOException	{
   		List<Chunk> list = readChunks(is);  		
         list.addAll(chunks);
     	
@@ -115,11 +112,30 @@ public class PNGTweaker {
 		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
 		String newXmp = XMLUtils.serializeToString(doc); // DONOT use XMLUtils.serializeToStringLS()
   		// Adds XMP chunk
-		TextBuilder xmpBuilder = new TextBuilder(ChunkType.ITXT).keyword("XML:com.adobe.xmp");
+		TextBuilder xmpBuilder = new TextBuilder(ChunkType.ITXT);
+		xmpBuilder.keyword("XML:com.adobe.xmp");		
 		xmpBuilder.text(newXmp);
+		
 	    Chunk xmpChunk = xmpBuilder.build();
 	    
-	    insertChunk(xmpChunk, is, os);
+	    List<Chunk> chunks = readChunks(is);
+	    ListIterator<Chunk> itr = chunks.listIterator();
+	    
+	    // Remove old XMP chunk
+	    while(itr.hasNext()) {
+	    	Chunk chunk = itr.next();
+	    	if(chunk.getChunkType() == ChunkType.ITXT) {
+	    		TextReader reader = new TextReader(chunk);
+				if(reader.getKeyword().equals("XML:com.adobe.xmp")); // We found XMP data
+					itr.remove();
+	    	}
+	    }
+	    
+	    chunks.add(xmpChunk);
+	    
+	    IOUtils.writeLongMM(os, SIGNATURE);
+	    
+        serializeChunks(chunks, os);
     }
   	
   	public static List<Chunk> mergeIDATChunks(List<Chunk> chunks) {
@@ -130,8 +146,7 @@ public class PNGTweaker {
    		while(iter.hasNext()) {
    			Chunk chunk = iter.next();
    		
-   			if (chunk.getChunkType() == ChunkType.IDAT)
-   			{
+   			if (chunk.getChunkType() == ChunkType.IDAT) {
    				data = ArrayUtils.concat(data, chunk.getData());
    				iter.remove();
    			}   			
@@ -164,23 +179,20 @@ public class PNGTweaker {
     
         long signature = IOUtils.readLongMM(is);
 
-        if (signature != SIGNATURE)
-        {
+        if (signature != SIGNATURE) {
         	return null;
         }
 
         /** Read header */
         /** We are expecting IHDR */
-        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue()))
-        {
+        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
         	return null;
         }
 
         buf = new byte[13+4];//13 plus 4 bytes CRC
         IOUtils.read(is, buf, 0, 17);
 
-        while (true)
-        {
+        while (true) {
             data_len = IOUtils.readIntMM(is);
             chunk_value = IOUtils.readIntMM(is);
       
@@ -191,8 +203,7 @@ public class PNGTweaker {
               
  			ChunkType chunk = ChunkType.fromInt(chunk_value);
  			   			 
-            switch (chunk)
-            {
+            switch (chunk) {
             	case ICCP:
             		buf = new byte[data_len];
             		IOUtils.read(is, buf);            		 
@@ -222,29 +233,25 @@ public class PNGTweaker {
 
         long signature = IOUtils.readLongMM(is);
 
-        if (signature != SIGNATURE)
-        {
+        if (signature != SIGNATURE) {
         	return "--- NOT A PNG IMAGE ---";
         }
 
         /** Read header */
         /** We are expecting IHDR */
-        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue()))
-        {
+        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
         	return "--- NOT A PNG IMAGE ---";
         }
 
         buf = new byte[13+4];//13 plus 4 bytes CRC
         IOUtils.read(is, buf, 0, 17);
 
-        while (true)
-        {
+        while (true) {
             data_len = IOUtils.readIntMM(is);
             chunk_value = IOUtils.readIntMM(is);
             //System.out.println("chunk type: 0x"+Integer.toHexString(chunk_type));
 
-            if (chunk_value == ChunkType.IEND.getValue())
-            {
+            if (chunk_value == ChunkType.IEND.getValue()) {
             	sb.append("End of Image\n");
                 IOUtils.readIntMM(is);//CRC
                 break;
@@ -252,8 +259,7 @@ public class PNGTweaker {
               
  			ChunkType chunk = ChunkType.fromInt(chunk_value);
  			   			 
-            switch (chunk)
-            {
+            switch (chunk) {
             	case ZTXT:
             	{  
             		sb.append("zTXt chunk:\n");
@@ -276,7 +282,6 @@ public class PNGTweaker {
             		IOUtils.skipFully(is, 4);
             		break;
             	}
-
             	case TEXT:
             	{
             		sb.append("tEXt chunk:\n");
@@ -291,7 +296,6 @@ public class PNGTweaker {
             		IOUtils.skipFully(is, 4);
             		break;
             	}
-
             	case ITXT:
             	{
             		// System.setOut(new PrintStream(new File("TextChunk.txt"),"UTF-8"));
@@ -329,8 +333,7 @@ public class PNGTweaker {
             		}
             		sb.append("): ");
             		/////////////////////// End of key.
-            		if(compr) //Compressed text
-            		{
+            		if(compr) { //Compressed text
             			InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf,keyword_len+1, data_len-keyword_len-1));
             			InputStreamReader ir = new InputStreamReader(ii,"UTF-8");
             			BufferedReader br = new BufferedReader(ir);                       
@@ -340,17 +343,14 @@ public class PNGTweaker {
             				sb.append("\n");
             			}	
             			br.close();
-            		}
-            		else //Uncompressed text
-            		{
+            		} else {//Uncompressed text
             			sb.append(new String(buf,keyword_len+1,data_len-keyword_len-1,"UTF-8"));
             			sb.append("\n");
             		}
             		sb.append("**********************\n");
             		IOUtils.skipFully(is, 4);
             		break;
-            	}			   
- 	
+            	} 	
             	default:
             	{
             		buf = new byte[data_len+4];
@@ -381,15 +381,13 @@ public class PNGTweaker {
      
         long signature = IOUtils.readLongMM(is);
 
-        if (signature != SIGNATURE)
-        {
+        if (signature != SIGNATURE) {
        	 	throw new RuntimeException("--- NOT A PNG IMAGE ---");
         }   
 
         /** Read header */
         /** We are expecting IHDR */
-        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue()))
-        {
+        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
             throw new RuntimeException("Not a valid IHDR chunk.");
         }     
         
@@ -398,8 +396,7 @@ public class PNGTweaker {
   
         list.add(new Chunk(ChunkType.IHDR, 13, buf, IOUtils.readUnsignedIntMM(is)));         
       
-        while (true)
-        {
+        while (true) {
         	data_len = IOUtils.readIntMM(is);
 	       	chunk_type = IOUtils.readIntMM(is);
 	   
@@ -453,18 +450,15 @@ public class PNGTweaker {
   	 * @see  cafe.image.png.ChunkType
   	 * @throws Exception  Any exception related to the IO operations.
   	 */
-  	public static void remove_ancillary_chunks(InputStream is, String...chunkNames) throws IOException
-    {
+  	public static void remove_ancillary_chunks(InputStream is, String...chunkNames) throws IOException {
   		File dir = new File(".");
 
-	    if(chunkNames.length>0)
-		{	
+	    if(chunkNames.length>0)	{	
    		    REMOVABLE = EnumSet.noneOf(ChunkType.class);
    		     
    		    String key = "";
 			
-   		    for (int i=0;i<chunkNames.length;i++)
-   		    {
+   		    for (int i=0;i<chunkNames.length;i++) {
    		    	key = chunkNames[i];   		    	
 				if(ChunkType.containsIgnoreCase(key) && ChunkType.fromString(key).getAttribute() == ChunkType.Attribute.ANCILLARY)
 			    	  REMOVABLE.add(ChunkType.fromString(key));
@@ -488,13 +482,11 @@ public class PNGTweaker {
    	 * @param args  An array of String specifying the names of the chunks to be removed.
    	 * @throws IOException
    	 */  	
-  	public static void remove_ancillary_chunks(String fileOrDirectoryName, String ... args) throws IOException
-    {
+  	public static void remove_ancillary_chunks(String fileOrDirectoryName, String ... args) throws IOException {
   		File dir = new File(".");
   		File[] files = null;
 
-  	    if(!StringUtils.isNullOrEmpty(fileOrDirectoryName))
-	    {
+  	    if(!StringUtils.isNullOrEmpty(fileOrDirectoryName)) {
   	    	files = new File[] {new File(fileOrDirectoryName)};
   	    
   	    	if(files[0].isDirectory()) {
@@ -516,14 +508,12 @@ public class PNGTweaker {
   	    	});
   	    }
 	   
-  	    if(args != null && args.length > 0)
-	    {	
+  	    if(args != null && args.length > 0) {	
 	       REMOVABLE = EnumSet.noneOf(ChunkType.class);
    		     
     	   String key = "";
 			
-	       for (int i = 0; i < args.length; i++)
-	       {
+	       for (int i = 0; i < args.length; i++) {
 			  key = args[i];				  
 			  if(ChunkType.containsIgnoreCase(key) && ChunkType.fromString(key).getAttribute() == ChunkType.Attribute.ANCILLARY)
 			    	  REMOVABLE.add(ChunkType.fromString(key));
@@ -532,8 +522,7 @@ public class PNGTweaker {
 	      
 	    FileInputStream fs = null;		
 		  
-	    for(int i = files.length - 1; i >= 0; i--)
-	    {
+	    for(int i = files.length - 1; i >= 0; i--) {
 		 	String outFileName = files[i].getName();
 		 	outFileName = outFileName.substring(0,outFileName.lastIndexOf('.'))
 					+"_slim.png";
@@ -561,8 +550,7 @@ public class PNGTweaker {
 
         /** Read header */
         /** We are expecting IHDR */
-        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue()))
-        {
+        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
             System.out.println("--- NOT A PNG IMAGE ---");
             return;
         }
@@ -577,14 +565,12 @@ public class PNGTweaker {
         IOUtils.read(is, buf, 0, 17);
         IOUtils.write(fs, buf);
 
-        while (true)
-        {
+        while (true) {
            data_len = IOUtils.readIntMM(is);
            chunk_value = IOUtils.readIntMM(is);
            //System.out.println("chunk type: 0x"+Integer.toHexString(chunk_type));
 
-           if (chunk_value == ChunkType.IEND.getValue())
-           {
+           if (chunk_value == ChunkType.IEND.getValue()) {
               System.out.println("End of Image");
               IOUtils.writeIntMM(fs, data_len);
               IOUtils.writeIntMM(fs, ChunkType.IEND.getValue());
@@ -592,13 +578,10 @@ public class PNGTweaker {
               IOUtils.writeIntMM(fs, crc);
               break;
            }
-           if(REMOVABLE.contains(ChunkType.fromInt(chunk_value)))
-           {
+           if(REMOVABLE.contains(ChunkType.fromInt(chunk_value))) {
               System.out.println(ChunkType.fromInt(chunk_value)+" Chunk removed!");
               IOUtils.skipFully(is, data_len+4);
-           }
-           else
-           {
+           } else {
               buf = new byte[data_len+4];
               IOUtils.read(is, buf,0, data_len+4);
               IOUtils.writeIntMM(fs, data_len);
