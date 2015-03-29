@@ -44,6 +44,16 @@ Image convertion and management:
    * Insert thumbnail to TIFF image.
    * Extract thumbnail from TIFF Photoshop IRB tag.
    * Extract Photoshop thumbnail from Photoshop APP13 (Photoshop IRB)
+- PNG chunk manipulation
+   * Remove chunks from or add chunks to existing PNG.
+   * Extract text chunk from PNG.
+   * Insert text chunk to PNG.
+   * Extract ICC profile from PNG.
+   * Insert ICC_Profile to PNG.
+   * Merge or split IDAT chunks.
+ 
+Image metadata manipulation:
+----------------------------------------
 - JPEG and TIFF EXIF data manipulation
    * Insert EXIF data into JPEG.
    * Extract EXIF data from JPEG.
@@ -61,13 +71,10 @@ Image convertion and management:
    * Insert IRB into JPEG via APP13 segment
    * Insert IRB into TIFF via tag PHOTOSHOP.
    * Extract IRB data from both JPEG and TIFF.
-- PNG chunk manipulation
-   * Remove chunks from or add chunks to existing PNG.
-   * Extract text chunk from PNG.
-   * Insert text chunk to PNG.
-   * Extract ICC profile from PNG.
-   * Insert ICC_Profile to PNG.
-   * Merge or split IDAT chunks.
+- JPEG, GIF, PNG, TIFF XMP metadata support
+   * Insert XMP metada into JPEG, GIF, PNG, and TIFF image
+   * Extract XMP metadata from JPEG, GIF, PNG, and TIFF image
+   * In case of JPEG, handle normal XMP and extendedXMP which cannot fit into one APP1 segment 
 
 Suggestions? custom requirements? email me: yuwen_66@yahoo.com
 
