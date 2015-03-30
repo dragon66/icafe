@@ -12,8 +12,7 @@
  * GIFTweaker.java
  *
  * Who   Date       Description
- * ====  =========  =====================================================================
- * WY    30Mar2015  Fixed bug with insertXMP() replacing '\0' with ' '
+ * ====  =========  ======================================================================
  * WY    12Mar2015  Cleaned up debugging console output
  * WY    03Mar2015  Added overloaded insertXMPApplicationBlock() with XMP string as input
  * WY    13Feb2015  Added insertXMPApplicationBlock() to insert XMP meta data
@@ -163,7 +162,7 @@ public class GIFTweaker {
  		buf[3] = 'X'; // Application Identifier (8 bytes)
  		buf[4] = 'M';
  		buf[5] = 'P';
- 		buf[6] = ' ';
+ 		buf[6] = '\0';
  		buf[7] = 'D';
  		buf[8] = 'a';
  		buf[9] = 't';
@@ -257,7 +256,7 @@ public class GIFTweaker {
 							// Frame disposal method: RESTORE_TO_PREVIOUS
 							break;
 						default:
-							//throw new RuntimeException("Invalid GIF frame disposal method: " + disposalMethod);
+							throw new RuntimeException("Invalid GIF frame disposal method: " + disposalMethod);
 					}
 					// Check for transparent color flag
 					if((packedFields&0x01) == 0x01) {
@@ -272,7 +271,7 @@ public class GIFTweaker {
 					// <<End of graphic control block>>
 				} else if(func == 0xff) { // Application block
 					// Application block
-					byte[] xmp_id = {'X', 'M', 'P', ' ', 'D', 'a', 't', 'a', 'X', 'M', 'P' };
+					byte[] xmp_id = {'X', 'M', 'P', '\0', 'D', 'a', 't', 'a', 'X', 'M', 'P' };
 					byte[] temp = new byte[0x0B];
 					IOUtils.readFully(is, temp);
 					// If we have XMP data
