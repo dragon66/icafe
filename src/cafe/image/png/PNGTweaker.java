@@ -170,21 +170,7 @@ public class PNGTweaker {
    		return chunks;
    	}
   	
-  	public static byte[] readICCProfile(byte[] buf) throws IOException {
-  		 int profileName_len = 0;
-		 while(buf[profileName_len] != 0) profileName_len++;
- 		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
- 		
- 		 InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, buf.length - profileName_len - 2));
- 		 System.out.println("ICCProfile name: " + profileName);
- 		 
- 		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
- 		 System.out.println("ICCProfile length: " + icc_profile.length);
- 	 		 
- 		 return icc_profile;
-  	}
-  	
-  	public static byte[] read_ICCP_chunk(InputStream is) throws IOException {
+   	public static byte[] read_ICCP_chunk(InputStream is) throws IOException {
   		//Local variables for reading chunks
         int data_len = 0;
         int chunk_value = 0;
@@ -430,9 +416,23 @@ public class PNGTweaker {
         return list;
   	}
   	
+	private static byte[] readICCProfile(byte[] buf) throws IOException {
+		int profileName_len = 0;
+		while(buf[profileName_len] != 0) profileName_len++;
+		String profileName = new String(buf, 0, profileName_len,"UTF-8");
+		
+		InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, buf.length - profileName_len - 2));
+		System.out.println("ICCProfile name: " + profileName);
+		 
+		byte[] icc_profile = IOUtils.readFully(ii, 4096);
+		System.out.println("ICCProfile length: " + icc_profile.length);
+	 		 
+		return icc_profile;
+ 	}
+  	
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
-		List<Chunk> chunks = PNGTweaker.readChunks(is);
+		List<Chunk> chunks = readChunks(is);
 		Iterator<Chunk> iter = chunks.iterator();
 		
 		while (iter.hasNext()) {
