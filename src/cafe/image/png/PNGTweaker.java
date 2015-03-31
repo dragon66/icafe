@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    30Mar2015  Added insertICCProfile()
  * WY    27Mar2015  Revised insertXMP() to remove old XMP
  * WY    03Mar2015  Added insertXMP() to insert XMP to iTXT chunk
  * WY    11Feb2015  Added code to extract XMP from iTXT chunk
@@ -24,6 +25,7 @@
 
 package cafe.image.png;
 
+import java.awt.color.ICC_Profile;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -104,6 +106,17 @@ public class PNGTweaker {
   		IOUtils.writeLongMM(os, SIGNATURE);
 	
         serializeChunks(list, os);
+  	}
+  	
+  	public static void insertICCProfile(String profile_name, byte[] icc_profile, InputStream is, OutputStream os) throws IOException {
+  		ICCPBuilder builder = new ICCPBuilder();
+  		builder.name(profile_name);
+  		builder.data(icc_profile);
+  		insertChunk(builder.build(), is, os);
+  	}
+  	
+  	public static void insertICCProfile(String profile_name, ICC_Profile icc_profile, InputStream is, OutputStream os) throws IOException {
+  		insertICCProfile(profile_name, icc_profile.getData(), is, os);
   	}
   	
   	public static void insertXMP(InputStream is, OutputStream os, String xmp) throws IOException {
