@@ -2485,11 +2485,19 @@ public class TIFFTweaker {
 		}
 		field = currIFD.getField(TiffTag.IPTC);
 		if(field != null) { // We have found IPTC data
+			// See if we already have IPTC data from IRB
+			IPTC iptc = (IPTC)(metadataMap.get(MetadataType.IPTC));
+			byte[] iptcData = null;
 			FieldType type = field.getType();
 			if(type == FieldType.LONG)
-				metadataMap.put(MetadataType.IPTC, new IPTC(ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN)));
+				iptcData = ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN);		
 			else
-				metadataMap.put(MetadataType.IPTC, new IPTC((byte[])field.getData()));
+				iptcData = (byte[])field.getData();
+			// If we have IPTC data from IRB, consolidate it with the current data
+			if(iptc != null) {
+				iptcData = ArrayUtils.concat(iptcData, iptc.getData());
+			}
+			metadataMap.put(MetadataType.IPTC, new IPTC(iptcData));
 		}
 		field = currIFD.getField(TiffTag.EXIF_SUB_IFD);
 		if(field != null) { // We have found EXIF SubIFD
