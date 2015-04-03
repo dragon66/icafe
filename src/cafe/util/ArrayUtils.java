@@ -181,6 +181,9 @@ public class ArrayUtils
     }
 	
 	public static byte[] concat(byte[] first, byte[] second) {
+		// Sanity check
+		if(first == null) return second;
+		if(second == null) return first;
 		
 		int firstLen = first.length;
 		int secondLen = second.length;
@@ -202,8 +205,14 @@ public class ArrayUtils
     }
 	
 	public static byte[] concat(byte[] first, byte[]... rest) {
-  	  
-		int totalLength = first.length;	  
+  	  	// Short cut
+		if(rest.length == 1) return concat(first, rest[0]);
+		// Sanity check
+		if(first == null) {
+			throw new IllegalArgumentException("Firt element is null");
+		}
+		// Now the real stuff
+  	  	int totalLength = first.length;
 	  
 		for (byte[] array : rest) {		
 			totalLength += array.length;
@@ -233,6 +242,9 @@ public class ArrayUtils
 	 * @return a concatenation of the first and the second arrays
 	 */
 	public static <T> T[] concat(T[] first, T[] second) {
+		// Sanity check
+		if(first == null) return second;
+		if(second == null) return first;
 		
 		int firstLen = first.length;
 		int secondLen = second.length;
@@ -259,7 +271,13 @@ public class ArrayUtils
     }
 	
 	public static <T> T[] concat(T[] first, T[]... rest) {
-	  
+		// Short cut
+		if(rest.length == 1) return concat(first, rest[0]);
+		// Sanity check
+		if(first == null) {
+			throw new IllegalArgumentException("Firt element is null");
+		}
+		// Now the real stuff	  
 		int totalLength = first.length;	  
 	  
 		for (T[] array : rest) {		
