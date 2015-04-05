@@ -40,13 +40,11 @@ public class G31DEncoder implements ImageEncoder {
 	
 	private int compressedDataLen = 0;
 	
-	private static final short mask[] = 
-	{
+	private static final short mask[] = {
 		0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff, 0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff
 	};
 	
-	public G31DEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable writer)
-	{	
+	public G31DEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable writer) {	
 		this.scanLineWidth = scanLineWidth;
 		bytes_buf = new byte[buf_length];		
 		this.buf_length = buf_length;
@@ -59,7 +57,7 @@ public class G31DEncoder implements ImageEncoder {
 	 * 
 	 * @param len the number of pixels to be encoded
 	 */
-	public void encode(byte[] pixels, int start, int len) throws Exception{
+	public void encode(byte[] pixels, int start, int len) throws Exception {
 		//
 		int numOfScanLines = len/scanLineWidth;
 				
@@ -189,8 +187,7 @@ public class G31DEncoder implements ImageEncoder {
 	}
 
 	// Flush the buffer as needed
-   	private void flush_buf(int len) throws Exception
-   	{	
+   	private void flush_buf(int len) throws Exception {	
    		os.write(bytes_buf,0,len);		
    		// Reset the bytes buffer index
    		bufIndex = 0;
@@ -213,8 +210,7 @@ public class G31DEncoder implements ImageEncoder {
 	}
     
     // Translate codes into bytes
-    protected void send_code_to_buffer(int code, int codeLen)throws Exception
-	{
+    protected void send_code_to_buffer(int code, int codeLen)throws Exception {
     	if(empty_bits == 0) {
     		if (++bufIndex >= buf_length)
 				flush_buf(buf_length);
@@ -230,8 +226,7 @@ public class G31DEncoder implements ImageEncoder {
 						
 			int temp = codeLen - empty_bits;
 			
-			if(temp > 8)
-			{	
+			if(temp > 8) {	
 				if (++bufIndex >= buf_length)
 					flush_buf(buf_length);
 			
