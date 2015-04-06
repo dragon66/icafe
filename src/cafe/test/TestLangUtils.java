@@ -10,6 +10,7 @@ public class TestLangUtils {
 		System.out.println(LangUtils.getClassName(Object.class));
 		LangUtils.log("showing information about the current executing line.", System.out);
 		System.out.println(LangUtils.getLoadedClassLocation(LangUtils.class));
+		System.out.println(LangUtils.getLoadedClassURL("cafe.util.LangUtils"));
 		System.out.println(LangUtils.doubleToRational(0.5)[0] + "/" + LangUtils.doubleToRational(0.5)[1]);
 	}
 }

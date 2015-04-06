@@ -13,6 +13,7 @@ package cafe.util;
 import java.security.ProtectionDomain;
 import java.security.CodeSource;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.io.PrintStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -27,8 +28,7 @@ import java.net.URL;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 09/19/2012
  */
-public class LangUtils
-{
+public class LangUtils {
 	private LangUtils(){} // Prevents instantiation
 	
 	// TODO: need to rewrite this method (may have to create and return a new class Rational)
@@ -122,19 +122,15 @@ public class LangUtils
 	 * @param i the i'th parameter of the method.
 	 * @return an array of parameterized Types for the i'th argument or an empty array. 
 	 */
-	public static Type[] getGenericTypeArguments(Method m, int i) 
-	{		 
-		 try
-		 {
+	public static Type[] getGenericTypeArguments(Method m, int i) {		 
+		 try {
 			 Type t = m.getGenericParameterTypes()[i];
 		 
 			 if(t instanceof ParameterizedType) {
 				 ParameterizedType pt = (ParameterizedType) t;
 				 return pt.getActualTypeArguments();
 			 }
-		 }
-		 catch(Exception e)
-		 {
+		 } catch(Exception e) {
 			 System.out.println("Error probing generic type arguments!");
 	     }
 		 
@@ -147,8 +143,7 @@ public class LangUtils
 	}
 	
 	/** Java language specific classes return null cSource */
-	public static URL getLoadedClassLocation(Class<?> cls)
-	{
+	public static URL getLoadedClassLocation(Class<?> cls) {
 		ProtectionDomain pDomain = cls.getProtectionDomain();
 		CodeSource cSource = pDomain.getCodeSource();
 		URL loc = (cSource==null)?null:cSource.getLocation(); 
@@ -161,20 +156,32 @@ public class LangUtils
 	 * @return The location where the class has been loaded by the Java Virtual
 	 * Machine or null.
 	 */
-	public static URL getLoadedClassLocation(String className)
-	{
+	public static URL getLoadedClassLocation(String className) {
 		Class<?> cls = null;
 		
-		try
-		{
+		try	{
 			cls = Class.forName(className);
-		}
-		catch (ClassNotFoundException ex)
-		{
+		} catch (ClassNotFoundException ex)	{
 			return null;			
 		}
 		
 		return getLoadedClassLocation(cls);
+	}
+	
+	public static URL getLoadedClassURL(String className) {
+		Class<?> cls = null;
+		
+		try	{
+			cls = Class.forName(className);
+		} catch (ClassNotFoundException ex) { 
+			return null;			
+		}
+		
+		ClassLoader classLoader = cls.getClassLoader();
+
+		URL url = classLoader.getResource(className.replaceAll(Pattern.quote("."), "/") + ".class");
+		
+		return url;
 	}
 	
 	// A convenience way to call main of other classes.
