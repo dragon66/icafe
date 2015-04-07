@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    07Apr2015  Merge Adobe IPTC and TIFF IPTC if both exist
  * WY    15Mar2015  Cleanup debugging output
  * WY    18Feb2015  Added removeMetadata() to remove meta data from TIFF
  * WY    14Feb2015  Added insertXMP() to insert XMP data to TIFF
@@ -2184,6 +2185,7 @@ public class TIFFTweaker {
 		rin.seek(offset);
 		short tiff_id = rin.readShort();
 		offset +=2;
+		
 		if(tiff_id!=0x2a) { //"*" 42 decimal
 			rin.close();
 			throw new RuntimeException("Invalid TIFF identifier");
@@ -2492,11 +2494,9 @@ public class TIFFTweaker {
 			if(type == FieldType.LONG)
 				iptcData = ArrayUtils.toByteArray(field.getDataAsLong(), rin.getEndian() == IOUtils.BIG_ENDIAN);		
 			else
-				iptcData = (byte[])field.getData();
-			// If we have IPTC data from IRB, consolidate it with the current data
-			if(iptc != null) {
+				iptcData = (byte[])field.getData();			
+			if(iptc != null) // If we have IPTC data from IRB, consolidate it with the current data
 				iptcData = ArrayUtils.concat(iptcData, iptc.getData());
-			}
 			metadataMap.put(MetadataType.IPTC, new IPTC(iptcData));
 		}
 		field = currIFD.getField(TiffTag.EXIF_SUB_IFD);
