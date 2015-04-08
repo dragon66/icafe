@@ -2179,8 +2179,7 @@ public class TIFFTweaker {
 		} else {		
 			rin.close();
 			throw new RuntimeException("Invalid TIFF byte order");
-	    }
-		
+	    }		
 		// Read TIFF identifier
 		rin.seek(offset);
 		short tiff_id = rin.readShort();
