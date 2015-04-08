@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    07Apr2015  Revised insertExif()
  * WY    01Apr2015  Extract IPTC as stand-alone meta data from IRB if any
  * WY    18Mar2015  Revised readAPP13(), insertIPTC() and insertIRB() to work
  *                  with multiple APP13 segments
@@ -525,12 +526,10 @@ public class JPEGTweaker {
 		    	ExifThumbnail newThumbnail = exif.getThumbnail();
 		    	// Got to do something to keep the old data
 		    	if(update && oldExif != null) {
-		    		ExifReader reader = oldExif.getReader();
-		    		if(reader != null) reader.read();
-		    		IFD imageIFD = reader.getImageIFD();
-			    	IFD exifSubIFD = reader.getExifIFD();
-			    	IFD gpsSubIFD = reader.getGPSIFD();
-			    	ExifThumbnail thumbnail = reader.getThumbnail();
+		    		IFD imageIFD = oldExif.getImageIFD();
+			    	IFD exifSubIFD = oldExif.getExifIFD();
+			    	IFD gpsSubIFD = oldExif.getGPSIFD();
+			    	ExifThumbnail thumbnail = oldExif.getThumbnail();
 			    	
 			    	if(imageIFD != null) {
 			    		if(newImageIFD != null)
@@ -561,13 +560,13 @@ public class JPEGTweaker {
 		    		exif.setImageIFD(newImageIFD);
 		    	} else { // Otherwise, set EXIF and GPS IFD separately
 		    		exif.setExifIFD(newExifSubIFD);
-		    		exif.setGPSSubIFD(newGpsSubIFD);
+		    		exif.setGPSIFD(newGpsSubIFD);
 		    	}
 		   		exif.setThumbnail(newThumbnail);
 		   		// Now insert the new EXIF to the JPEG
 		   		exif.write(os);		     	
 		     	// Copy the remaining segments
-				for(int i = (oldExifIndex < 0 ? 0 : oldExifIndex + 1); i < segments.size(); i++) {
+				for(int i = oldExifIndex + 1; i < segments.size(); i++) {
 					segments.get(i).write(os);
 				}	    	
 				// Copy the leftover stuff
@@ -589,22 +588,17 @@ public class JPEGTweaker {
 				    case APP1:
 				    	// Read and remove the old EXIF data
 				    	length = IOUtils.readUnsignedShortMM(is);
-						byte[] exifId = new byte[EXIF_ID.length];
-						IOUtils.readFully(is, exifId);
+				    	byte[] exifBytes = new byte[length - 2];
+						IOUtils.readFully(is, exifBytes);
+						// Add data to segment list
+						segments.add(new Segment(emarker, length, exifBytes));
 						// Read the EXIF data.
-						if(Arrays.equals(exifId, EXIF_ID)) { // We assume EXIF data exist only in one APP1
-							byte[] exifBytes = new byte[length - EXIF_ID.length - 2];
-							IOUtils.readFully(is, exifBytes);
-							segments.add(new Segment(emarker, length, exifBytes));
-							oldExif = new JpegExif(exifBytes);
+						if(Arrays.equals(ArrayUtils.subArray(exifBytes, 0, EXIF_ID.length), EXIF_ID)) { // We assume EXIF data exist only in one APP1
+							oldExif = new JpegExif(ArrayUtils.subArray(exifBytes, EXIF_ID.length, length - EXIF_ID.length - 2));
 							oldExifIndex = segments.size() - 1;
-						} else { // We are going to keep other types of data
-							byte[] temp = new byte[length - EXIF_ID.length - 2];
-							IOUtils.readFully(is, temp);
-							segments.add(new Segment(emarker, length, ArrayUtils.concat(exifId, temp)));
-						}
+						}											
 						marker = IOUtils.readShortMM(is);
-						break;				
+						break;
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
