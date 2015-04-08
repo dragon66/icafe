@@ -56,7 +56,7 @@ public class TestJPEGTweaker {
 		exif.addExifField(ExifTag.FOCAL_LENGTH, FieldType.RATIONAL, new int[] {240, 10});
 		// Insert ThumbNailIFD
 		// Since we don't provide thumbnail image, it will be created later from the input stream
-		exif.addThumbnail(null);
+		exif.setThumbnail(null);
 			
 		return exif;
 	}
