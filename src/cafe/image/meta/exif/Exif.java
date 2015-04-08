@@ -104,14 +104,6 @@ public abstract class Exif extends Metadata {
 			throw new IllegalArgumentException("Cannot create required Image TIFF field");
 	}
 	
-	public void addThumbnail(ExifThumbnail thumbnail) {
-		if(thumbnail == null)
-			this.thumbnail = new ExifThumbnail(); 
-		else
-			this.thumbnail = thumbnail;
-		this.isThumbnailRequired = true;
-	}
-	
 	public boolean containsImage() {
 		return thumbnail != null && thumbnail.containsImage();
 	}
@@ -201,7 +193,7 @@ public abstract class Exif extends Metadata {
 		this.exifSubIFD = exifSubIFD;
 	}
 	
-	public void setGPSSubIFD(IFD gpsSubIFD) {
+	public void setGPSIFD(IFD gpsSubIFD) {
 		this.gpsSubIFD = gpsSubIFD;
 	}
 	
