@@ -45,8 +45,7 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 		long flushPos = getFlushPos();
 		long length = getLength();
 		
-		if(flushPos < length)
-		{
+		if(flushPos < length) {
 			seek(flushPos);
 			writeToStream(length - flushPos);
 		}				
