@@ -38,7 +38,7 @@ import cafe.io.WriteStrategyMM;
 public class JpegExif extends Exif {
 
 	public JpegExif() {
-	
+		;
 	}
 	
 	public JpegExif(byte[] data) {

@@ -43,6 +43,6 @@ public class TiffExif extends Exif {
 	 */
 	@Override
 	public void write(OutputStream os) throws IOException {
-		;
+		; // We won't write anything here
 	}
 }
