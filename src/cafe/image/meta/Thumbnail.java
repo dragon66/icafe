@@ -6,7 +6,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
- */
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * ExifThumbnail.java
+ *
+ * Who   Date          Description
+ * ====  ==========    ===============================================
+ * WY    09Apr2015     Added setWriteQuality()
+ */ 
 
 package cafe.image.meta;
 
@@ -22,6 +30,8 @@ public class Thumbnail {
 	
 	private BufferedImage thumbnail;
 	private byte[] compressedThumbnail;
+	
+	protected int writeQuality = 100; // Default JPEG write quality
 	
 	private int width;
 	private int height;
@@ -91,5 +101,9 @@ public class Thumbnail {
 			this.compressedThumbnail = compressedThumbnail;
 			this.dataType = dataType;
 		}
+	}
+	
+	public void setWriteQuality(int quality) {
+		this.writeQuality = quality;
 	}
 }

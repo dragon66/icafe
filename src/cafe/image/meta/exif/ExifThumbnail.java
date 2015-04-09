@@ -13,6 +13,7 @@
  *
  * Who   Date          Description
  * ====  ==========    =================================================
+ * WY    09Apr2015     Moved setWriteQuality() to super class
  * WY    14Jan2015     initial creation
  */
 
@@ -52,7 +53,6 @@ public class ExifThumbnail extends Thumbnail {
 	// Comprised of an IFD and an associated image
 	// Create thumbnail IFD (IFD1 in the case of JPEG EXIF segment)
 	private IFD thumbnailIFD = new IFD(); 
-	private int writeQuality = 90; // Default JPEG write quality
 	
 	public ExifThumbnail() { }
 	
@@ -63,10 +63,6 @@ public class ExifThumbnail extends Thumbnail {
 	public ExifThumbnail(int width, int height, int dataType, byte[] compressedThumbnail, IFD thumbnailIFD) {
 		super(width, height, dataType, compressedThumbnail);
 		this.thumbnailIFD = thumbnailIFD;
-	}
-	
-	public void setWriteQuality(int quality) {
-		this.writeQuality = quality;
 	}
 	
 	public void write(RandomAccessOutputStream randOS, int offset) throws IOException {
