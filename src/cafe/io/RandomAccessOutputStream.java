@@ -6,6 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * RandomAccessOutputStream.java
+ *
+ * Who   Date       Description
+ * ====  =======    =================================================
+ * WY    07Apr2015  Removed flush(), move it's function to close()
  */
 
 package cafe.io;
@@ -31,7 +39,13 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 	private WriteStrategy strategy = WriteStrategyMM.getInstance();
 	
 	public void close() throws IOException {
-		flush();
+		long flushPos = getFlushPos();
+		long length = getLength();
+		
+		if(flushPos < length) {
+			seek(flushPos);
+			writeToStream(length - flushPos);
+		}
 	}
 	
 	public abstract void disposeBefore(long pos);
@@ -41,16 +55,6 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 		close();
 	}
 		
-	public void flush() throws IOException {
-		long flushPos = getFlushPos();
-		long length = getLength();
-		
-		if(flushPos < length) {
-			seek(flushPos);
-			writeToStream(length - flushPos);
-		}				
-	}
-	
 	public short getEndian()	{
 		return strategy instanceof WriteStrategyMM?IOUtils.BIG_ENDIAN:IOUtils.LITTLE_ENDIAN;
 	}

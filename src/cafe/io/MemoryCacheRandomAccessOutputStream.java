@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    07Apr2015  Removed flush() along with super flush()
  * WY    06Apr2015  Added empty flush() to control flush timing
  */
 
@@ -76,11 +77,6 @@ public class MemoryCacheRandomAccessOutputStream extends RandomAccessOutputStrea
         }
     }
 	
-	public void flush() {
-		// We want to hold the flush process so we could have more control over the
-		// timing of writing to the underlying stream		
-	}
-			
 	private byte[] getCacheBlock(long blockNum) throws IOException {
         long blockOffset = blockNum - cacheStart;
         if (blockOffset > Integer.MAX_VALUE) {
