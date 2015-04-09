@@ -12,7 +12,8 @@
  * StringUtils.java
  *
  * Who   Date       Description
- * ====  =========  ==============================================================
+ * ====  =========  =====================================================
+ * WY    09Apr2015  Added null check to findAttribute()
  * WY    03Mar2015  Added serializeToString() and serializeToByteArray()
  * WY    27Feb2015  Added findAttribute() and removeAttribute()
  * WY    23Jan2015  Initial creation - moved XML related methods to here
@@ -97,12 +98,10 @@ public class XMLUtils {
 		//document contains the complete XML as a Tree.
 		Document document = null;
 		try {
-			try {
-				document = builder.parse(new ByteArrayInputStream(xml), "UTF-8");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			document = builder.parse(new ByteArrayInputStream(xml));			
 		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
@@ -124,20 +123,17 @@ public class XMLUtils {
 		Document document = null;
 		InputSource source = new InputSource(new StringReader(xml));
 		try {
-			try {
-				document = builder.parse(source);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			document = builder.parse(source);
 		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		return document;		 
 	}
 	
-	public static String escapeXML(String input) 
-	{
+	public static String escapeXML(String input) {
 		Iterator<Character> itr = StringUtils.stringIterator(input);
 		StringBuilder result = new StringBuilder();		
 		
@@ -172,6 +168,9 @@ public class XMLUtils {
 	
 	// Retrieve the first non-empty, non-null attribute value for the attribute name
 	public static String findAttribute(Document doc, String tagName, String attribute) {
+		// Sanity check
+		if(doc == null || tagName == null || attribute == null)	return "";
+		
 		NodeList nodes = doc.getElementsByTagName(tagName);
 		
 		for(int i = 0; i < nodes.getLength(); i++) {
