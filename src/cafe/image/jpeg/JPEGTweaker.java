@@ -403,17 +403,16 @@ public class JPEGTweaker {
 						if (Arrays.equals(exif_buf, EXIF_ID)) {
 							exif_buf = new byte[length - 8];
 						    IOUtils.readFully(is, exif_buf);
-						    ExifReader reader = new ExifReader(exif_buf);
-						    reader.read();
-						    if(reader.containsThumbnail()) {
+						    Exif exif = new JpegExif(exif_buf);
+						    if(exif.containsThumbnail()) {
 						    	String outpath = "";
 								if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
 									outpath = pathToThumbnail + "exif_thumbnail";
 								else
 									outpath = pathToThumbnail.replaceFirst("[.][^.]+$", "") + "_exif_t";
-						    	ExifThumbnail thumbnail = reader.getThumbnail();
+						    	Thumbnail thumbnail = exif.getThumbnail();
 						    	OutputStream fout = null;
-						    	if(thumbnail.getDataType() == ExifThumbnail.DATA_TYPE_KJpegRGB) {// JPEG format, save as JPEG
+						    	if(thumbnail.getDataType() == Thumbnail.DATA_TYPE_KJpegRGB) {// JPEG format, save as JPEG
 						    		 fout = new FileOutputStream(outpath + ".jpg");						    	
 						    	} else { // Uncompressed, save as TIFF
 						    		fout = new FileOutputStream(outpath + ".tif");
@@ -435,10 +434,9 @@ public class JPEGTweaker {
 						while(data[i] != 0) i++;
 						
 						if(new String(data, 0, i++).equals("Photoshop 3.0")) {
-							IRBReader reader = new IRBReader(ArrayUtils.subArray(data, i, data.length - i));
-							reader.read();
-							if(reader.containsThumbnail()) {
-								IRBThumbnail thumbnail = reader.getThumbnail();
+							IRB irb = new IRB(ArrayUtils.subArray(data, i, data.length - i));
+							if(irb.containsThumbnail()) {
+								Thumbnail thumbnail = irb.getThumbnail();
 								// Create output path
 								String outpath = "";
 								if(pathToThumbnail.endsWith("\\") || pathToThumbnail.endsWith("/"))
@@ -488,7 +486,7 @@ public class JPEGTweaker {
 	 */
 	public static void insertExif(InputStream is, OutputStream os, Exif exif, boolean update) throws IOException {
 		// We need thumbnail image but don't have one, create one from the current image input stream
-		if(exif.isThumbnailRequired() && !exif.containsImage()) {
+		if(exif.isThumbnailRequired() && !exif.containsThumbnail()) {
 			is = new FileCacheRandomAccessInputStream(is);
 			// Insert thumbnail into EXIF wrapper
 			exif.setThumbnailImage(IMGUtils.createThumbnail(is));

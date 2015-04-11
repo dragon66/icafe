@@ -104,7 +104,6 @@ import cafe.image.jpeg.Marker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.IRB;
-import cafe.image.meta.adobe.IRBReader;
 import cafe.image.meta.adobe.IRBThumbnail;
 import cafe.image.meta.adobe.ImageResourceID;
 import cafe.image.meta.adobe.XMP;
@@ -575,10 +574,9 @@ public class TIFFTweaker {
 		TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP);
 		if(f_photoshop != null) {
 			byte[] data = (byte[])f_photoshop.getData();
-			IRBReader reader = new IRBReader(data);
-			reader.read();
-			if(reader.containsThumbnail()) {
-				IRBThumbnail thumbnail = reader.getThumbnail();
+			IRB irb = new IRB(data);
+			if(irb.containsThumbnail()) {
+				IRBThumbnail thumbnail = irb.getThumbnail();
 				return thumbnail;					
 			}		
 		}

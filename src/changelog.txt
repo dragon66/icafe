@@ -1,6 +1,7 @@
 ***************************
-Last modified on 04/07/2015
+Last modified on 04/10/2015
 ***************************
+10Apr2015  Meta data related changes
 07Apr2015  Merge Adobe IPTC and TIFF IPTC if both exist
 06Mar2015  Added native image MetaData support
 05Mar2015  Combined JPEGTweaker insertXMP() and insertExtendedXMP()

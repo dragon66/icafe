@@ -58,26 +58,68 @@ public class ExifReader implements MetadataReader {
 	}
 	
 	public IFD getExifIFD() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return ifds.get(0).getChild(TiffTag.EXIF_SUB_IFD);
 	}
 	
 	public IFD getGPSIFD() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return ifds.get(0).getChild(TiffTag.GPS_SUB_IFD);
 	}
 	
 	public IFD getImageIFD() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return ifds.get(0);
 	}
 	
 	public List<IFD> getIFDs() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return ifds;
 	}
 	
 	public boolean containsThumbnail() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return containsThumbnail;
 	}
 	
 	public ExifThumbnail getThumbnail() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return thumbnail;
 	}
 	

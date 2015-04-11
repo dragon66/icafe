@@ -37,6 +37,13 @@ public class IRBReader implements MetadataReader {
 	}
 	
 	public boolean containsThumbnail() {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return containsThumbnail;
 	}
 	
@@ -52,6 +59,13 @@ public class IRBReader implements MetadataReader {
 	}
 	
 	public IRBThumbnail getThumbnail()  {
+		if(!loaded) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return thumbnail;
 	}
 	

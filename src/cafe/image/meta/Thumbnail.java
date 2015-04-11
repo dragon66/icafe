@@ -13,14 +13,17 @@
  *
  * Who   Date          Description
  * ====  ==========    ===============================================
+ * WY    10Apr2015     Changed to abstract class, added write()
  * WY    09Apr2015     Added setWriteQuality()
  */ 
 
 package cafe.image.meta;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 
-public class Thumbnail {
+public abstract class Thumbnail {
 	// Internal data type for thumbnail
 	// Represented by a BufferedImage
 	public static final int DATA_TYPE_KRawRGB = 0; // This is from IRBThumbnail
@@ -106,4 +109,6 @@ public class Thumbnail {
 	public void setWriteQuality(int quality) {
 		this.writeQuality = quality;
 	}
+	
+	public abstract void write(OutputStream os) throws IOException;
 }

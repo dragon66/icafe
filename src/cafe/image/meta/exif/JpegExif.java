@@ -95,7 +95,8 @@ public class JpegExif extends Exif {
 		int offset = imageIFD.write(randOS, firstIFDOffset);
 		if(thumbnail != null && thumbnail.containsImage()) {
 			imageIFD.setNextIFDOffset(randOS, offset);
-			thumbnail.write(randOS, offset);
+			randOS.seek(offset); // Set the stream pointer to the correct position
+			thumbnail.write(randOS);
 		}
 		// Now it's time to update the segment length
 		int length = (int)randOS.getLength();

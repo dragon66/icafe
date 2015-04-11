@@ -12,7 +12,8 @@
  * IRB.java
  *
  * Who   Date       Description
- * ====  =========  =================================================================
+ * ====  =========  =================================================
+ * WY    10Apr2015  Added containsThumbnail() and getThumbnail()
  * WY    19Jan2015  Initial creation
  */
 
@@ -54,6 +55,10 @@ public class IRB extends Metadata {
 		reader = new IRBReader(data);
 	}
 	
+	public boolean containsThumbnail() {
+		return reader.containsThumbnail();
+	}
+	
 	public Map<Short, _8BIM> get8BIM() {
 		return reader.get8BIM();
 	}
@@ -64,5 +69,9 @@ public class IRB extends Metadata {
 	
 	public IRBReader getReader() {
 		return reader;
+	}
+	
+	public IRBThumbnail getThumbnail()  {
+		return reader.getThumbnail();
 	}
 }

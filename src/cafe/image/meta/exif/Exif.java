@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    10Apr2015  Changed thumbnail to type Thumbnail
  * WY    31Mar2015  Fixed bug with getImageIFD() etc
  * WY    17Feb2015  Added addImageField() to add TIFF image tag
  * WY    11Feb2015  Added showMetadata()
@@ -104,65 +105,39 @@ public abstract class Exif extends Metadata {
 			throw new IllegalArgumentException("Cannot create required Image TIFF field");
 	}
 	
-	public boolean containsImage() {
-		return thumbnail != null && thumbnail.containsImage();
+	public boolean containsThumbnail() {
+		if(thumbnail != null)
+			return true;
+		if(reader != null && reader.containsThumbnail())
+			return true;		
+		return false;
 	}
 	
 	public IFD getImageIFD() {
 		if(imageIFD != null) {
 			return imageIFD;
-		} else {
-			if (reader != null) {
-				if(!reader.isDataLoaded()) {
-					try {
-						reader.read();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				imageIFD = reader.getImageIFD();
-			}
-			
-			return imageIFD;
-		}
+		} else if (reader != null) {
+			return reader.getImageIFD();
+		}			
+		return null;		
 	}
 	
 	public IFD getExifIFD() {
 		if(exifSubIFD != null) {
 			return exifSubIFD;
-		} else {
-			if (reader != null) {
-				if(!reader.isDataLoaded()) {
-					try {
-						reader.read();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				exifSubIFD = reader.getExifIFD();
-			}
-			
-			return exifSubIFD;
-		}
+		} else if (reader != null) {
+			return reader.getExifIFD();
+		}			
+		return null;
 	}
 	
 	public IFD getGPSIFD() {
 		if(gpsSubIFD != null) {
 			return gpsSubIFD;
-		} else {
-			if (reader != null) {
-				if(!reader.isDataLoaded()) {
-					try {
-						reader.read();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				gpsSubIFD = reader.getGPSIFD();
-			}
-			
-			return gpsSubIFD;
-		}
+		} else if (reader != null) {
+			return reader.getGPSIFD();
+		}	
+		return null;
 	}
 	
 	public ExifReader getReader() {
@@ -173,13 +148,6 @@ public abstract class Exif extends Metadata {
 		if(thumbnail != null)
 			return thumbnail;
 		if(reader != null) {
-			if(!reader.isDataLoaded()) {
-				try {
-					reader.read();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 			return reader.getThumbnail();
 		}
 		return null;
@@ -208,21 +176,21 @@ public abstract class Exif extends Metadata {
 	}
 	
 	/**
-	 * @param thumbnail an ExifThumbnail instance. If null, a thumbnail will be
-	 *        generated from the input image.
+	 * @param thumbnail a Thumbnail instance. If null, a thumbnail
+	 *        will be generated from the input image.
 	 */	
 	public void setThumbnail(ExifThumbnail thumbnail) {
-		if(thumbnail == null)
-			this.thumbnail = new ExifThumbnail(); 
-		else
-			this.thumbnail = thumbnail;
-		this.isThumbnailRequired = true;
+		this.thumbnail = thumbnail;
 	}
 	
 	public void setThumbnailImage(BufferedImage thumbnail) {
 		if(this.thumbnail == null)
 			this.thumbnail = new ExifThumbnail(); 
 		this.thumbnail.setImage(thumbnail);
+	}
+	
+	public void setThumbnailRequired(boolean isThumbnailRequired) {
+		this.isThumbnailRequired = isThumbnailRequired;
 	}
 	
 	@Override
