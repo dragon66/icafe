@@ -13,7 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
- * WY    10Apr2015  Changed thumbnail to type Thumbnail
+ * WY    10Apr2015  Moved data loaded checking to ExifReader
  * WY    31Mar2015  Fixed bug with getImageIFD() etc
  * WY    17Feb2015  Added addImageField() to add TIFF image tag
  * WY    11Feb2015  Added showMetadata()
