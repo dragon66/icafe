@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ==================================================
+ * WY    13Apr2015  Changed write() to use ITPC.write()
+ * WY    12Apr2015  Removed unnecessary read()
  */
 
 package cafe.image.meta.adobe;
@@ -42,7 +44,6 @@ public class PhotoshopIPTC extends _8BIM {
 	public PhotoshopIPTC(String name, byte[] data) {
 		super(ImageResourceID.IPTC_NAA, name, data);
 		iptc = new IPTC(data);
-		read();
 	}
 	
 	public void addDataSet(IPTCDataSet dataSet) {
@@ -68,14 +69,6 @@ public class PhotoshopIPTC extends _8BIM {
 		return iptc.getDataSet(key);
 	}
 	
-	private void read() {
-		try {
-			iptc.getReader().read();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public void print() {
 		super.print();
 		// Print multiple entry IPTCDataSet
@@ -87,9 +80,7 @@ public class PhotoshopIPTC extends _8BIM {
 	public void write(OutputStream os) throws IOException {
 		if(data == null) {			
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			for(List<IPTCDataSet> datasets : iptc.getDataSet().values())
-				for(IPTCDataSet dataset : datasets)
-					dataset.write(bout);
+			iptc.write(bout);
 			data = bout.toByteArray();
 			size = data.length;
 		}
