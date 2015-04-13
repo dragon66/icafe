@@ -79,9 +79,9 @@ public class JpegExif extends Exif {
 		randOS.writeShort(tiffID);
 		// First IFD offset relative to TIFF structure
 		randOS.seek(0x04);
-		randOS.writeInt(firstIFDOffset);
+		randOS.writeInt(FIRST_IFD_OFFSET);
 		// Writes IFDs
-		randOS.seek(firstIFDOffset);
+		randOS.seek(FIRST_IFD_OFFSET);
 		if(imageIFD == null) createImageIFD();
 		// Attach EXIIF and/or GPS SubIFD to main image IFD
 		if(exifSubIFD != null) {
@@ -92,7 +92,7 @@ public class JpegExif extends Exif {
 			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD.getValue(), new int[]{0})); // Place holder
 			imageIFD.addChild(TiffTag.GPS_SUB_IFD, gpsSubIFD);
 		}
-		int offset = imageIFD.write(randOS, firstIFDOffset);
+		int offset = imageIFD.write(randOS, FIRST_IFD_OFFSET);
 		if(thumbnail != null && thumbnail.containsImage()) {
 			imageIFD.setNextIFDOffset(randOS, offset);
 			randOS.seek(offset); // Set the stream pointer to the correct position

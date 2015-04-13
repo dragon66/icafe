@@ -51,7 +51,7 @@ public abstract class Exif extends Metadata {
 	protected IFD gpsSubIFD;
 	protected ExifThumbnail thumbnail;
 	
-	public static final int firstIFDOffset = 0x08;
+	public static final int FIRST_IFD_OFFSET = 0x08;
 	
 	private ExifReader reader;
 	
