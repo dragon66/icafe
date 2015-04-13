@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================================
+ * WY    13Apr2015  Removed unused constructor, cleaned up read()
  * WY    27Feb2015  Fixed bug for missing TIFF JPEG_INTERCHANGE_FORMAT tag
  * WY    06Feb2015  Moved showIFDs() and showIFD() to TIFFTweaker and renamed them to
  *                  printIFDs() and printIFD()
@@ -51,10 +52,6 @@ public class ExifReader implements MetadataReader {
 	
 	public ExifReader(InputStream is) throws IOException {
 		this(IOUtils.inputStreamToByteArray(is));
-	}
-	
-	public ExifReader(IFD imageIFD) {
-		ifds.add(0, imageIFD);
 	}
 	
 	public IFD getExifIFD() {
@@ -128,48 +125,46 @@ public class ExifReader implements MetadataReader {
 	}
 	
 	@Override
-	public void read() throws IOException {
-		if(data != null) {
-			RandomAccessInputStream exifIn = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(data));
-	    	TIFFTweaker.readIFDs(ifds, exifIn);		
-		    // We have thumbnail IFD
-		    if(ifds.size() >= 2) {
-		    	IFD thumbnailIFD = ifds.get(1);
-		    	int width = -1;
-		    	int height = -1;
-		    	TiffField<?> field = thumbnailIFD.getField(TiffTag.IMAGE_WIDTH);
-		    	if(field != null) 
-		    		width = field.getDataAsLong()[0];
-		    	field = thumbnailIFD.getField(TiffTag.IMAGE_LENGTH);
-		    	if(field != null)
-		    		height = field.getDataAsLong()[0];
-		    	field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT);
-		    	if(field != null) { // JPEG format, save as JPEG
-		    		int thumbnailOffset = field.getDataAsLong()[0];
-		    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
-		    		int thumbnailLen = field.getDataAsLong()[0];
-		    		exifIn.seek(thumbnailOffset);
-		    		byte[] thumbnailData = new byte[thumbnailLen];
-		    		exifIn.readFully(thumbnailData);
-		    		thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
-		    		containsThumbnail = true;				    
-		    	} else { // Uncompressed, save as TIFF
-		    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS);
-		    		if(field == null) 
-		    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS);
-		    		if(field != null) {
-		    			 exifIn.seek(0);
-		    			 ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(bout);
-		    			 TIFFTweaker.retainPages(exifIn, tiffout, 1);
-		    			 tiffout.close(); // Auto flush when closed
-		    			 thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_TIFF, bout.toByteArray(), thumbnailIFD);
-		    			 containsThumbnail = true;		    			    
-		    		}
-		    	}
-		    }
-		    exifIn.close();
-		}
+	public void read() throws IOException {		
+		RandomAccessInputStream exifIn = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(data));
+    	TIFFTweaker.readIFDs(ifds, exifIn);		
+	    // We have thumbnail IFD
+	    if(ifds.size() >= 2) {
+	    	IFD thumbnailIFD = ifds.get(1);
+	    	int width = -1;
+	    	int height = -1;
+	    	TiffField<?> field = thumbnailIFD.getField(TiffTag.IMAGE_WIDTH);
+	    	if(field != null) 
+	    		width = field.getDataAsLong()[0];
+	    	field = thumbnailIFD.getField(TiffTag.IMAGE_LENGTH);
+	    	if(field != null)
+	    		height = field.getDataAsLong()[0];
+	    	field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT);
+	    	if(field != null) { // JPEG format, save as JPEG
+	    		int thumbnailOffset = field.getDataAsLong()[0];
+	    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
+	    		int thumbnailLen = field.getDataAsLong()[0];
+	    		exifIn.seek(thumbnailOffset);
+	    		byte[] thumbnailData = new byte[thumbnailLen];
+	    		exifIn.readFully(thumbnailData);
+	    		thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
+	    		containsThumbnail = true;				    
+	    	} else { // Uncompressed, save as TIFF
+	    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS);
+	    		if(field == null) 
+	    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS);
+	    		if(field != null) {
+	    			 exifIn.seek(0);
+	    			 ByteArrayOutputStream bout = new ByteArrayOutputStream();
+	    			 RandomAccessOutputStream tiffout = new FileCacheRandomAccessOutputStream(bout);
+	    			 TIFFTweaker.retainPages(exifIn, tiffout, 1);
+	    			 tiffout.close(); // Auto flush when closed
+	    			 thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_TIFF, bout.toByteArray(), thumbnailIFD);
+	    			 containsThumbnail = true;		    			    
+	    		}
+	    	}
+	    }
+	    exifIn.close();		
 	    loaded = true;
 	}
 	
