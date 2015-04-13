@@ -17,7 +17,7 @@ import org.w3c.dom.Document;
 import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
-import cafe.image.meta.adobe.PhotoshopIPTC;
+import cafe.image.meta.adobe.IPTC_NAA;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
@@ -147,7 +147,7 @@ public class TestMetadata {
 	}
 	
 	private static List<_8BIM> createPhotoshopIPTC() {
-		PhotoshopIPTC iptc = new PhotoshopIPTC();
+		IPTC_NAA iptc = new IPTC_NAA();
 		iptc.addDataSet(new IPTCDataSet(IPTCRecord.APPLICATION, IPTCApplicationTag.COPYRIGHT_NOTICE.getTag(), "Copyright 2014-2015, yuwen_66@yahoo.com"));
 		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
 		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.CATEGORY.getTag(), "ICAFE"));

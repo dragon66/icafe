@@ -9,7 +9,7 @@
  * 
  * Change History - most recent changes go on top of previous changes
  *
- * PhotoshopIPTC.java
+ * IPTC_NAA.java
  *
  * Who   Date       Description
  * ====  =========  ==================================================
@@ -28,20 +28,20 @@ import java.util.Map;
 import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCDataSet;
 
-public class PhotoshopIPTC extends _8BIM {
+public class IPTC_NAA extends _8BIM {
 	//
 	private IPTC iptc;
 		
-	public PhotoshopIPTC() {
+	public IPTC_NAA() {
 		this("IPTC_NAA");
 	}
 	
-	public PhotoshopIPTC(String name) {
+	public IPTC_NAA(String name) {
 		super(ImageResourceID.IPTC_NAA, name, null);
 		iptc = new IPTC();
 	}
 
-	public PhotoshopIPTC(String name, byte[] data) {
+	public IPTC_NAA(String name, byte[] data) {
 		super(ImageResourceID.IPTC_NAA, name, data);
 		iptc = new IPTC(data);
 	}
