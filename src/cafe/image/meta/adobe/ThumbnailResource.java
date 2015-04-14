@@ -14,7 +14,8 @@
  * Adobe thumbnail resource wrapper
  *
  * Who   Date       Description
- * ====  =========  ==================================================
+ * ====  =========  ===================================================
+ * WY    14Apr2015  Fixed a bug with super() call, changed data to null 
  * WY    14Apr2015  Added new constructor
  * WY    13Apr2015  Initial creation
  */
@@ -80,14 +81,15 @@ public class ThumbnailResource extends _8BIM {
 	}
 		
 	public ThumbnailResource(ImageResourceID id, int dataType, int width, int height, int paddedRowBytes, int totalSize, int compressedSize, int bitsPerPixel, int numOfPlanes, byte[] data) {
-		super(id, "HUMBNAIL_RESOURCE", data);
+		super(id, "THUMBNAIL_RESOURCE", null);
 		// Sanity check
 		if(id != ImageResourceID.THUMBNAIL_RESOURCE_PS4 && id != ImageResourceID.THUMBNAIL_RESOURCE_PS5)
 			throw new IllegalArgumentException("Unsupported thumbnail ImageResourceID: " + id);
 		// Initialize fields
 		this.id = id;
-		this.width = width;
-		this.height = height;
+		/** Sometimes, we don't have information about width and height */
+		this.width = (width > 0)? width : 0; 
+		this.height = (height > 0)? height : 0;
 		this.paddedRowBytes = paddedRowBytes;
 		this.totalSize = totalSize;
 		this.compressedSize = compressedSize;
