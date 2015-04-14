@@ -106,6 +106,7 @@ import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.IRB;
 import cafe.image.meta.adobe.IRBThumbnail;
 import cafe.image.meta.adobe.ImageResourceID;
+import cafe.image.meta.adobe.ThumbnailResource;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
@@ -1425,7 +1426,8 @@ public class TIFFTweaker {
 	public static void insertThumbnail(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		insertIRB(rin, rout, Arrays.asList(IMGUtils.createThumbnail8BIM(thumbnail)), true);
+		_8BIM[] bims = {new ThumbnailResource(thumbnail)};
+		insertIRB(rin, rout, Arrays.asList(bims), true);
 	}
 	
 	/**

@@ -86,6 +86,7 @@ import cafe.image.meta.adobe.IRB;
 import cafe.image.meta.adobe.IRBReader;
 import cafe.image.meta.adobe.IRBThumbnail;
 import cafe.image.meta.adobe.ImageResourceID;
+import cafe.image.meta.adobe.ThumbnailResource;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
@@ -918,7 +919,8 @@ public class JPEGTweaker {
 	public static void insertIRBThumbnail(InputStream is, OutputStream os, BufferedImage thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		insertIRB(is, os, Arrays.asList(IMGUtils.createThumbnail8BIM(thumbnail)), true); // Set true to keep other IRB blocks
+		_8BIM[] bims = {new ThumbnailResource(thumbnail)};
+		insertIRB(is, os, Arrays.asList(bims), true); // Set true to keep other IRB blocks
 	}
 	
 	/*
