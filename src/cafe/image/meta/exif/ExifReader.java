@@ -149,7 +149,7 @@ public class ExifReader implements MetadataReader {
 	    		exifIn.readFully(thumbnailData);
 	    		thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
 	    		containsThumbnail = true;				    
-	    	} else { // Uncompressed, save as TIFF
+	    	} else { // Uncompressed
 	    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS);
 	    		if(field == null) 
 	    			field = thumbnailIFD.getField(TiffTag.TILE_OFFSETS);
