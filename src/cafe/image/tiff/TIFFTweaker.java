@@ -1426,8 +1426,8 @@ public class TIFFTweaker {
 	public static void insertThumbnail(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		_8BIM[] bims = {new ThumbnailResource(thumbnail)};
-		insertIRB(rin, rout, Arrays.asList(bims), true);
+		_8BIM bim = new ThumbnailResource(thumbnail);
+		insertIRB(rin, rout, Arrays.asList(bim), true);
 	}
 	
 	/**

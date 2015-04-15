@@ -919,8 +919,8 @@ public class JPEGTweaker {
 	public static void insertIRBThumbnail(InputStream is, OutputStream os, BufferedImage thumbnail) throws IOException {
 		// Sanity check
 		if(thumbnail == null) throw new IllegalArgumentException("Input thumbnail is null");
-		_8BIM[] bims = {new ThumbnailResource(thumbnail)};
-		insertIRB(is, os, Arrays.asList(bims), true); // Set true to keep other IRB blocks
+		_8BIM bim = new ThumbnailResource(thumbnail);
+		insertIRB(is, os, Arrays.asList(bim), true); // Set true to keep other IRB blocks
 	}
 	
 	/*
