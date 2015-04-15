@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    15Apr2015  Changed the argument type for insertIPTC() and insertIRB()
  * WY    07Apr2015  Revised insertExif()
  * WY    01Apr2015  Extract IPTC as stand-alone meta data from IRB if any
  * WY    18Mar2015  Revised readAPP13(), insertIPTC() and insertIRB() to work
@@ -723,7 +724,7 @@ public class JPEGTweaker {
 	 * @param update if true, keep the original data, otherwise, replace the complete APP13 data 
 	 * @throws IOException
 	 */
-	public static void insertIPTC(InputStream is, OutputStream os, List<IPTCDataSet> iptcs, boolean update) throws IOException {
+	public static void insertIPTC(InputStream is, OutputStream os, Collection<IPTCDataSet> iptcs, boolean update) throws IOException {
 		// Copy the original image and insert Photoshop IRB data
 		boolean finished = false;
 		int length = 0;	
@@ -830,7 +831,7 @@ public class JPEGTweaker {
 	    }
 	}
 	
-	public static void insertIRB(InputStream is, OutputStream os, List<_8BIM> bims, boolean update) throws IOException {
+	public static void insertIRB(InputStream is, OutputStream os, Collection<_8BIM> bims, boolean update) throws IOException {
 		// Copy the original image and insert Photoshop IRB data
 		boolean finished = false;
 		int length = 0;	
@@ -862,8 +863,12 @@ public class JPEGTweaker {
 			    	// Shallow copy the map.
 		    		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
 					for(_8BIM bim : bims) // Replace the original data
-						bimMap.remove(bim.getID());
-					bims.addAll(bimMap.values());
+						bimMap.put(bim.getID(), bim);
+					// In case we have two ThumbnailResource IRB, remove the Photoshop4.0 one
+					if(bimMap.containsKey(ImageResourceID.THUMBNAIL_RESOURCE_PS4.getValue()) 
+							&& bimMap.containsKey(ImageResourceID.THUMBNAIL_RESOURCE_PS5.getValue()))
+						bimMap.remove(ImageResourceID.THUMBNAIL_RESOURCE_PS4.getValue());
+					bims = bimMap.values();					
 		    	}
 				int index = Math.max(app0Index, app1Index);
 				// Write the items in segments list excluding the APP13
