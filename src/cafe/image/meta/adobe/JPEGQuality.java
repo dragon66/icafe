@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==================================================
+ * WY    16Apr2015  Changed int constants to enums
  */
 
 package cafe.image.meta.adobe;
@@ -23,31 +24,64 @@ import java.io.OutputStream;
 import cafe.io.IOUtils;
 
 public class JPEGQuality extends _8BIM {
-	// Constants
-	public static final int QUALITY_1_LOW = 0xfffd;
-	public static final int QUALITY_2_LOW = 0xfffe;
-	public static final int QUALITY_3_LOW = 0xffff;
-	public static final int QUALITY_4_LOW = 0x0000;
-	public static final int QUALITY_5_MEDIUM = 0x0001;
-	public static final int QUALITY_6_MEDIUM = 0x0002;
-	public static final int QUALITY_7_MEDIUM = 0x0003;
-	public static final int QUALITY_8_HIGH = 0x0004;
-	public static final int QUALITY_9_HIGH = 0x0005;
-	public static final int QUALITY_10_MAXIMUM = 0x0006;
-	public static final int QUALITY_11_MAXIMUM = 0x0007;
-	public static final int QUALITY_12_MAXIMUM = 0x0008;
-	
-	public static final int FORMAT_STANDARD = 0x0000;
-	public static final int FORMAT_OPTIMISED = 0x0001;
-	public static final int FORMAT_PROGRESSIVE = 0x0101;
-	
-	public static final int PROGRESSIVE_3_SCANS = 0x0001;
-	public static final int PROGRESSIVE_4_SCANS = 0x0002;
-	public static final int PROGRESSIVE_5_SCANS = 0x0003;
-	
-	private int quality;
-	private int format;
-	private int progressiveScans;
+	public enum Format {
+		FORMAT_STANDARD(0x0000),
+		FORMAT_OPTIMISED(0x0001),
+		FORMAT_PROGRESSIVE(0x0101);
+		
+		private final int value;
+		
+		private Format(int value) {
+			this.value= value;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+	}
+	public enum ProgressiveScans {
+		PROGRESSIVE_3_SCANS(0x0001),
+		PROGRESSIVE_4_SCANS(0x0002),
+		PROGRESSIVE_5_SCANS(0x0003);
+		
+		private final int value;
+		
+		private ProgressiveScans(int value) {
+			this.value= value;
+		}
+			
+		public int getValue() {
+			return value;
+		}		
+	}
+	public enum Quality {
+		QUALITY_1_LOW(0xfffd),
+		QUALITY_2_LOW(0xfffe),
+		QUALITY_3_LOW(0xffff),
+		QUALITY_4_LOW(0x0000),
+		QUALITY_5_MEDIUM(0x0001),
+		QUALITY_6_MEDIUM(0x0002),
+		QUALITY_7_MEDIUM(0x0003),
+		QUALITY_8_HIGH(0x0004),
+		QUALITY_9_HIGH(0x0005),
+		QUALITY_10_MAXIMUM(0x0006),
+		QUALITY_11_MAXIMUM(0x0007),
+		QUALITY_12_MAXIMUM(0x0008);		
+		
+		private final int value;
+		
+		private Quality(int value) {
+			this.value= value;
+		}
+		
+		public int getValue() {
+			return value;
+		}	
+	}
+	// Default values
+	private int quality = Quality.QUALITY_5_MEDIUM.getValue();	
+	private int format = Format.FORMAT_STANDARD.getValue();;	
+	private int progressiveScans = ProgressiveScans.PROGRESSIVE_3_SCANS.getValue();
 	private byte trailer = 0x01;
 	
 	public JPEGQuality() {
@@ -57,10 +91,24 @@ public class JPEGQuality extends _8BIM {
 	public JPEGQuality(String name) {
 		super(ImageResourceID.JPEG_QUALITY, name, null);
 	}
-
+	
 	public JPEGQuality(String name, byte[] data) {
 		super(ImageResourceID.JPEG_QUALITY, name, data);
 		read();
+	}
+	
+	public JPEGQuality(Quality quality, Format format, ProgressiveScans progressiveScans) {
+		this("JPEGQuality", quality, format, progressiveScans);
+	}
+	
+	public JPEGQuality(String name, Quality quality, Format format, ProgressiveScans progressiveScans) {
+		super(ImageResourceID.JPEG_QUALITY, name, null);
+		// Null check
+		if(quality == null || format == null || progressiveScans == null)
+			throw new IllegalArgumentException("Input parameter(s) is null");
+		this.quality = quality.getValue();
+		this.format = format.getValue();
+		this.progressiveScans = progressiveScans.getValue();
 	}
 	
 	public int getFormat() {
@@ -69,6 +117,7 @@ public class JPEGQuality extends _8BIM {
 	
 	public String getFormatAsString() {
 		String retVal = "";
+		
 		switch (format) {
 			case 0x0000:
 				retVal = "Standard Format";
@@ -85,10 +134,33 @@ public class JPEGQuality extends _8BIM {
 		return retVal;
 	}
 	
+	public int getProgressiveScans() {
+		return progressiveScans;
+	}
+	
+	public String getProgressiveScansAsString() {
+		String retVal = "";
+		
+		switch (progressiveScans) {
+			case 0x0001:
+				retVal = "3 Scans";
+				break;
+			case 0x0002:
+				retVal = "4 Scans";
+				break;
+			case 0x0003:
+				retVal = "5 Scans";
+				break;
+			default:
+		}
+		
+		return retVal;
+	}
+	
 	public int getQuality() {
 		return quality;
 	}
-	
+
 	public String getQualityAsString() {
 		String retVal = "";
 		
@@ -135,27 +207,14 @@ public class JPEGQuality extends _8BIM {
 		return retVal;
 	}
 	
-	public int getProgressiveScans() {
-		return progressiveScans;
-	}
-	
-	public String getProgressiveScansAsString() {
-		String retVal = "";
-		
-		switch (progressiveScans) {
-			case 0x0001:
-				retVal = "3 Scans";
-				break;
-			case 0x0002:
-				retVal = "4 Scans";
-				break;
-			case 0x0003:
-				retVal = "5 Scans";
-				break;
-			default:
-		}
-		
-		return retVal;
+	public void print() {
+		super.print();
+		System.out.print(getQualityAsString());
+		System.out.print(" : ");
+		System.out.print(getFormatAsString());
+		System.out.print(" : ");
+		System.out.print(getProgressiveScansAsString());
+		System.out.println(" - Plus 1 byte unknown trailer value = " + trailer); // Always seems to be 0x01
 	}
 	
 	private void read() {
@@ -167,26 +226,19 @@ public class JPEGQuality extends _8BIM {
 		trailer = data[6];// Always seems to be 0x01
 	}
 	
-	public void print() {
-		super.print();
-		System.out.print(getQualityAsString());
-		System.out.print(" : ");
-		System.out.print(getFormatAsString());
-		System.out.print(" : ");
-		System.out.print(getProgressiveScansAsString());
-		System.out.println(" - Plus 1 byte unknown trailer value = " + trailer); // Always seems to be 0x01
-	}
-
-	public void setFormat(int format) {
-		this.format = format;
+	public void setFormat(Format format) {
+		if(format == null) throw new IllegalArgumentException("Input format is null");
+		this.format = format.getValue();
 	}
 	
-	public void setProgressiveScans(int progressiveScans) {
-		this.progressiveScans = progressiveScans;
+	public void setProgressiveScans(ProgressiveScans progressiveScans) {
+		if(progressiveScans == null) throw new IllegalArgumentException("Input progressive scans is null");
+		this.progressiveScans = progressiveScans.getValue();
 	}
 	
-	public void setQuality(int quality) {
-		this.quality = quality;
+	public void setQuality(Quality quality) {
+		if(quality == null) throw new IllegalArgumentException("Input quality is null");
+		this.quality = quality.getValue();
 	}
 	
 	public void write(OutputStream os) throws IOException {
