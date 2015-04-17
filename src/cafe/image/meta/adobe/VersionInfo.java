@@ -48,6 +48,10 @@ public class VersionInfo extends _8BIM {
 		read();
 	}
 	
+	public VersionInfo(int version, boolean hasRealMergedData, String writerName, String readerName, int fileVersion) {
+		this("VersionInfo", version, hasRealMergedData, writerName, readerName, fileVersion);
+	}
+	
 	public VersionInfo(String name, int version, boolean hasRealMergedData, String writerName, String readerName, int fileVersion) {
 		super(ImageResourceID.VERSION_INFO, name, null);
 		this.version = version;
