@@ -6,6 +6,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * VersionInfo.java
+ * <p>
+ * Adobe IRB version info resource wrapper
+ *
+ * Who   Date       Description
+ * ====  =========  =================================================
+ * WY    17Apr2015  Added new constructor
+ * WY    17Apr2015  Changed version and fileVersion data type to int  
  */
 
 package cafe.image.meta.adobe;
@@ -15,15 +26,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
-import cafe.util.ArrayUtils;
 
 public class VersionInfo extends _8BIM {
 	//
-	private byte[] version;
+	private int version;
 	private boolean hasRealMergedData;
 	private String writerName;
 	private String readerName;
-	private byte[] fileVersion;
+	private int fileVersion;
 	
 	public VersionInfo() {
 		this("VersionInfo");
@@ -38,12 +48,21 @@ public class VersionInfo extends _8BIM {
 		read();
 	}
 	
-	public String getFileVersion() {
-		return StringUtils.byteArrayToHexString(fileVersion);
+	public VersionInfo(String name, int version, boolean hasRealMergedData, String writerName, String readerName, int fileVersion) {
+		super(ImageResourceID.VERSION_INFO, name, null);
+		this.version = version;
+		this.hasRealMergedData = hasRealMergedData;
+		this.writerName = writerName;
+		this.readerName = readerName;
+		this.fileVersion = fileVersion;		
 	}
 	
-	public String getVersion() {
-		return StringUtils.byteArrayToHexString(version);
+	public int getFileVersion() {
+		return fileVersion;
+	}
+	
+	public int getVersion() {
+		return version;
 	}
 	
 	public boolean hasRealMergedData() {
@@ -60,7 +79,7 @@ public class VersionInfo extends _8BIM {
 	
 	private void read() {
 		int i = 0;
-		version = ArrayUtils.subArray(data, i, 4);
+		version = IOUtils.readIntMM(data, i);
 		i += 4;
 	    hasRealMergedData = ((data[i++]!=0)?true:false);
 	    int writer_size = IOUtils.readIntMM(data, i);
@@ -71,7 +90,7 @@ public class VersionInfo extends _8BIM {
     	i += 4;
     	readerName = StringUtils.toUTF16BE(data, i, reader_size*2);
     	i += reader_size*2;
-	    fileVersion = ArrayUtils.subArray(data, i, 4);  
+	    fileVersion = IOUtils.readIntMM(data, i);  
 	}
 	
 	public void print() {
@@ -87,15 +106,15 @@ public class VersionInfo extends _8BIM {
 		this.hasRealMergedData = hasRealMergedData;
 	}
 	
-	public void setFileVersion(byte[] fileVersion) {
-		if(fileVersion.length != 4)
-			throw new IllegalArgumentException("File version should be 4 bytes");
+	public void setFileVersion(int fileVersion) {
+		if(fileVersion < 0)
+			throw new IllegalArgumentException("File version number is negative");
 		this.fileVersion = fileVersion;
 	}
 	
-	public void setVersion(byte[] version) {
-		if(version.length != 4)
-			throw new IllegalArgumentException("Version should be 4 bytes");
+	public void setVersion(int version) {
+		if(version < 0)
+			throw new IllegalArgumentException("Version number is negative");
 		this.version = version;
 	}
 	
@@ -110,7 +129,7 @@ public class VersionInfo extends _8BIM {
 	public void write(OutputStream os) throws IOException {
 		if(data == null) {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			bout.write(version);
+			IOUtils.writeIntMM(bout, version);
 			bout.write(hasRealMergedData?1:0);
 			byte[] writerNameBytes = null;
 			writerNameBytes = writerName.getBytes("UTF-16BE");
@@ -120,7 +139,7 @@ public class VersionInfo extends _8BIM {
 			readerNameBytes = readerName.getBytes("UTF-16BE");
 			IOUtils.writeIntMM(bout, readerName.length());
 			bout.write(readerNameBytes);
-			bout.write(fileVersion);
+			IOUtils.writeIntMM(bout, fileVersion);
 			data = bout.toByteArray();
 			size = data.length;
 		}
