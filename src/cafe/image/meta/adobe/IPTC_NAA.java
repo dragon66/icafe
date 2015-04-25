@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ==================================================
+ * WY    25Apr2015  Added addDataSets()
+ * WY    25Apr2015  Renamed getDataSet(0 to getDataSets()
  * WY    13Apr2015  Changed write() to use ITPC.write()
  * WY    12Apr2015  Removed unnecessary read()
  */
@@ -22,6 +24,7 @@ package cafe.image.meta.adobe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -50,13 +53,17 @@ public class IPTC_NAA extends _8BIM {
 		iptc.addDataSet(dataSet);
 	}
 	
+	public void addDataSets(Collection<IPTCDataSet> dataSets) {
+		iptc.addDataSets(dataSets);
+	}
+	
 	/**
 	 * Get all the IPTCDataSet as a map for this IPTC data
 	 * 
 	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
 	 */
-	public Map<String, List<IPTCDataSet>> getDataSet() {
-		return iptc.getDataSet();			
+	public Map<String, List<IPTCDataSet>> getDataSets() {
+		return iptc.getDataSets();			
 	}
 	
 	/**
@@ -72,7 +79,7 @@ public class IPTC_NAA extends _8BIM {
 	public void print() {
 		super.print();
 		// Print multiple entry IPTCDataSet
-		for(List<IPTCDataSet> datasets : iptc.getDataSet().values())
+		for(List<IPTCDataSet> datasets : iptc.getDataSets().values())
 			for(IPTCDataSet dataset : datasets)
 				dataset.print();			
 	}

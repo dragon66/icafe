@@ -224,7 +224,7 @@ public class TIFFTweaker {
 	private static Collection<IPTCDataSet> copyIPTCDataSet(Collection<IPTCDataSet> iptcs, byte[] data) throws IOException {
 		IPTC iptc = new IPTC(data);
 		// Shallow copy the map
-		Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSet());
+		Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSets());
 		for(IPTCDataSet set : iptcs)
 			if(!set.allowMultiple())
 				dataSetMap.remove(set.getName());

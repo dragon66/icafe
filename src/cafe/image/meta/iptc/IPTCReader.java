@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ====================================================
+ * WY    25Apr2015  Renamed getDataSet() to getDataSets()
  * WY    18Mar2015  Added code to remove duplicates from the value lists
  * WY    12Jan2015  Initial creation to read IPTC information
  */
@@ -45,7 +46,7 @@ public class IPTCReader implements MetadataReader {
 		this.data = data;
 	}
 	
-	public Map<String, List<IPTCDataSet>> getDataSet() {
+	public Map<String, List<IPTCDataSet>> getDataSets() {
 		if(!loaded) {
 			try {
 				read();
