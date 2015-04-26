@@ -53,7 +53,7 @@ public class IPTC_NAA extends _8BIM {
 		iptc.addDataSet(dataSet);
 	}
 	
-	public void addDataSets(Collection<IPTCDataSet> dataSets) {
+	public void addDataSets(Collection<? extends IPTCDataSet> dataSets) {
 		iptc.addDataSets(dataSets);
 	}
 	
