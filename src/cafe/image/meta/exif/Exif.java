@@ -108,14 +108,13 @@ public abstract class Exif extends Metadata {
 	public boolean containsThumbnail() {
 		if(thumbnail != null)
 			return true;
-		if(reader != null && reader.containsThumbnail())
-			return true;		
-		return false;
+		else
+			return reader != null && reader.containsThumbnail();
 	}
 	
 	public IFD getImageIFD() {
 		if(imageIFD != null) {
-			return imageIFD;
+			return new IFD(imageIFD);
 		} else if (reader != null) {
 			return reader.getImageIFD();
 		}			
@@ -124,7 +123,7 @@ public abstract class Exif extends Metadata {
 	
 	public IFD getExifIFD() {
 		if(exifSubIFD != null) {
-			return exifSubIFD;
+			return new IFD(exifSubIFD);
 		} else if (reader != null) {
 			return reader.getExifIFD();
 		}			
@@ -133,7 +132,7 @@ public abstract class Exif extends Metadata {
 	
 	public IFD getGPSIFD() {
 		if(gpsSubIFD != null) {
-			return gpsSubIFD;
+			return new IFD(gpsSubIFD);
 		} else if (reader != null) {
 			return reader.getGPSIFD();
 		}	

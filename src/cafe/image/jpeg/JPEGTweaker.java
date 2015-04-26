@@ -523,44 +523,60 @@ public class JPEGTweaker {
 		    	IFD newExifSubIFD = exif.getExifIFD();
 		    	IFD newGpsSubIFD = exif.getGPSIFD();
 		    	IFD newImageIFD = exif.getImageIFD();
-		    	ExifThumbnail newThumbnail = exif.getThumbnail();
+		    	ExifThumbnail newThumbnail = exif.getThumbnail();	    
+		    	// Define new IFDs
+		    	IFD exifSubIFD = null;
+		    	IFD gpsSubIFD = null;
+		    	IFD imageIFD = null;
 		    	// Got to do something to keep the old data
 		    	if(update && oldExif != null) {
-		    		IFD imageIFD = oldExif.getImageIFD();
-			    	IFD exifSubIFD = oldExif.getExifIFD();
-			    	IFD gpsSubIFD = oldExif.getGPSIFD();
+		    		IFD oldImageIFD = oldExif.getImageIFD();
+			    	IFD oldExifSubIFD = oldExif.getExifIFD();
+			    	IFD oldGpsSubIFD = oldExif.getGPSIFD();
 			    	ExifThumbnail thumbnail = oldExif.getThumbnail();
 			    	
-			    	if(imageIFD != null) {
-			    		if(newImageIFD != null)
-			    			imageIFD.addFields(newImageIFD.getFields());
-			    		newImageIFD = imageIFD;
-	    			}
+			    	if(oldImageIFD != null) {
+			    		imageIFD = new IFD();
+			    		imageIFD.addFields(oldImageIFD.getFields());
+			    	}
 			    	if(thumbnail != null) {
 			    		if(newThumbnail == null)
 			    			newThumbnail = thumbnail;
 					}
-			    	if(exifSubIFD != null) {
-			    		if(newExifSubIFD != null)
-			    			exifSubIFD.addFields(newExifSubIFD.getFields());
-			    		newExifSubIFD = exifSubIFD;
-	    			}
-			    	if(gpsSubIFD != null) {
-			    		if(newGpsSubIFD != null)
-			    			gpsSubIFD.addFields(newGpsSubIFD.getFields());
-			    		newGpsSubIFD = gpsSubIFD;
-	    			}
-		    	} 
-		    	// If we have ImageIFD, set Image IFD attached with EXIF and GPS
-		     	if(newImageIFD != null) {
+			    	if(oldExifSubIFD != null) {
+			    		exifSubIFD = new IFD();
+			    		exifSubIFD.addFields(oldExifSubIFD.getFields());
+			    	}
+			    	if(oldGpsSubIFD != null) {
+			    		gpsSubIFD = new IFD();
+			    		gpsSubIFD.addFields(oldGpsSubIFD.getFields());
+					}
+		    	}
+		    	if(imageIFD != null) {
+		    		if(newImageIFD != null)
+		    			imageIFD.addFields(newImageIFD.getFields());
+		    	} else
+		    		imageIFD = newImageIFD;
+		    	if(exifSubIFD != null) {
 		    		if(newExifSubIFD != null)
-			    		newImageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);
+		    			exifSubIFD.addFields(newExifSubIFD.getFields());
+		    	} else
+		    		exifSubIFD = newExifSubIFD;
+		    	if(gpsSubIFD != null) {
 		    		if(newGpsSubIFD != null)
-			    		newImageIFD.addChild(TiffTag.GPS_SUB_IFD, newGpsSubIFD);
-		    		exif.setImageIFD(newImageIFD);
+		    			gpsSubIFD.addFields(newGpsSubIFD.getFields());
+		    	} else
+		    		gpsSubIFD = newGpsSubIFD;
+		    	// If we have ImageIFD, set Image IFD attached with EXIF and GPS
+		     	if(imageIFD != null) {
+		    		if(exifSubIFD != null)
+			    		imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exifSubIFD);
+		    		if(gpsSubIFD != null)
+			    		imageIFD.addChild(TiffTag.GPS_SUB_IFD, gpsSubIFD);
+		    		exif.setImageIFD(imageIFD);
 		    	} else { // Otherwise, set EXIF and GPS IFD separately
-		    		exif.setExifIFD(newExifSubIFD);
-		    		exif.setGPSIFD(newGpsSubIFD);
+		    		exif.setExifIFD(exifSubIFD);
+		    		exif.setGPSIFD(gpsSubIFD);
 		    	}
 		   		exif.setThumbnail(newThumbnail);
 		   		// Now insert the new EXIF to the JPEG
