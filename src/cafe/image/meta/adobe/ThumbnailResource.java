@@ -156,7 +156,7 @@ public class ThumbnailResource extends _8BIM {
 	}
 	
 	public IRBThumbnail getThumbnail() {
-		return thumbnail;
+		return new IRBThumbnail(thumbnail);
 	}
 	
 	public int getTotalSize() {

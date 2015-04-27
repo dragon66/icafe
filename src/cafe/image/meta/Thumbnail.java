@@ -11,10 +11,11 @@
  *
  * ExifThumbnail.java
  *
- * Who   Date          Description
- * ====  ==========    ===============================================
- * WY    10Apr2015     Changed to abstract class, added write()
- * WY    09Apr2015     Added setWriteQuality()
+ * Who   Date         Description
+ * ====  ==========   ==================================================
+ * WY    27Apr2015    Make fields protected for subclass copy constructor
+ * WY    10Apr2015    Changed to abstract class, added write()
+ * WY    09Apr2015    Added setWriteQuality()
  */ 
 
 package cafe.image.meta;
@@ -31,16 +32,16 @@ public abstract class Thumbnail {
 	// Represented by a byte array of uncompressed TIFF
 	public static final int DATA_TYPE_TIFF = 2; // For ExifThumbnail only
 	
-	private BufferedImage thumbnail;
-	private byte[] compressedThumbnail;
+	protected BufferedImage thumbnail;
+	protected byte[] compressedThumbnail;
 	
 	protected int writeQuality = 100; // Default JPEG write quality
 	
-	private int width;
-	private int height;
+	protected int width;
+	protected int height;
 	
 	// Default data type
-	private int dataType = Thumbnail.DATA_TYPE_KRawRGB;
+	protected int dataType = Thumbnail.DATA_TYPE_KRawRGB;
 	
 	public Thumbnail() {}
 	

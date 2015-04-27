@@ -125,7 +125,7 @@ public class ExifReader implements MetadataReader {
 				e.printStackTrace();
 			}
 		}
-		return thumbnail;
+		return new ExifThumbnail(thumbnail);
 	}
 	
 	public boolean isDataLoaded() {
