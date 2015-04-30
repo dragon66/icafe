@@ -289,9 +289,9 @@ public class JPEGTweaker {
 		XMP xmp = (XMP)meta.get(MetadataType.XMP);
 		if(xmp != null && xmp.hasExtendedXmp()) {
 			Document xmpDocument = xmp.getMergedDocument();
-			String depthMapMime = XMLUtils.findAttribute(xmpDocument, "rdf:Description", "GDepth:Mime");
+			String depthMapMime = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GDepth:Mime");
 			if(!StringUtils.isNullOrEmpty(depthMapMime)) {
-				String data = XMLUtils.findAttribute(xmpDocument, "rdf:Description", "GDepth:Data");
+				String data = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GDepth:Data");
 				if(!StringUtils.isNullOrEmpty(data)) {
 					String outpath = "";
 					if(pathToDepthMap.endsWith("\\") || pathToDepthMap.endsWith("/"))
@@ -1350,7 +1350,7 @@ public class JPEGTweaker {
 					XMP xmp = new XMP(ArrayUtils.subArray(data, XMP_ID.length, length - XMP_ID.length - 2));
 					metadataMap.put(MetadataType.XMP, xmp);
 					// Retrieve and remove XMP GUID if available
-					xmpGUID = XMLUtils.findAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
+					xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
 				} else if(Arrays.equals(ArrayUtils.subArray(data, 0, XMP_EXT_ID.length), XMP_EXT_ID)) {
 					// We found ExtendedXMP, add the data to ExtendedXMP memory buffer				
 					int i = XMP_EXT_ID.length;

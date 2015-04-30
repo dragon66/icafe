@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    29Apr2015  Renamed findAttribute() to getAttribute()
  * WY    09Apr2015  Added null check to findAttribute()
  * WY    03Mar2015  Added serializeToString() and serializeToByteArray()
  * WY    27Feb2015  Added findAttribute() and removeAttribute()
@@ -167,7 +168,7 @@ public class XMLUtils {
 	}
 	
 	// Retrieve the first non-empty, non-null attribute value for the attribute name
-	public static String findAttribute(Document doc, String tagName, String attribute) {
+	public static String getAttribute(Document doc, String tagName, String attribute) {
 		// Sanity check
 		if(doc == null || tagName == null || attribute == null)	return "";
 		

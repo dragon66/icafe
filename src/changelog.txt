@@ -1,6 +1,7 @@
 ***************************
-Last modified on 04/10/2015
+Last modified on 04/29/2015
 ***************************
+29Apr2015  Renamed XMLUtils findAttribute() to getAttribute()
 10Apr2015  Meta data related changes
 07Apr2015  Merge Adobe IPTC and TIFF IPTC if both exist
 06Mar2015  Added native image MetaData support
