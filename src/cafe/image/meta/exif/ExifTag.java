@@ -34,7 +34,7 @@ public enum ExifTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of EXIF FNumber data number: " + intValues.length);
 			//formatting numbers up to 2 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.#");
-	        return "F" + df.format(1.0*intValues[0]/intValues[1]);	
+	        return "F" + StringUtils.rationalToString(df, true, intValues);	
 		}
 	},
   	//EXIF_SUB_IFD("ExifSubIFD", (short)0x8769),	
@@ -62,7 +62,7 @@ public enum ExifTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of EXIF ShutterSpeedValue data number: " + intValues.length);
 			//formatting numbers up to 2 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.##");
-	        return df.format(1.0*intValues[0]/intValues[1]);	
+	        return StringUtils.rationalToString(df, false, intValues);	
 		}
 	},
 	APERTURE_VALUE("ApertureValue", (short)0x9202),
@@ -80,7 +80,7 @@ public enum ExifTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of EXIF FocalLength data number: " + intValues.length);
 			//formatting numbers up to 2 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.##");
-	        return df.format(1.0*intValues[0]/intValues[1]) + "mm";	
+	        return StringUtils.rationalToString(df, true, intValues) + "mm";	
 		}
 	},	
 	SUBJECT_AREA("SubjectArea", (short)0x9214),	

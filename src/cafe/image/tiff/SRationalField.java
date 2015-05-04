@@ -25,6 +25,6 @@ public final class SRationalField extends AbstractRationalField {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.rationalArrayToString(data, true);
+		return StringUtils.rationalArrayToString(data, false);
 	}
 }

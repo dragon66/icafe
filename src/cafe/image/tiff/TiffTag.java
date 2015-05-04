@@ -228,7 +228,7 @@ public enum TiffTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of XResolution data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.##");
-	        return df.format(1.0*intValues[0]/intValues[1]);	
+	        return StringUtils.rationalToString(df, true, intValues);	
 		}
 		
 		public FieldType getFieldType() {
@@ -243,7 +243,7 @@ public enum TiffTag implements Tag {
 				throw new IllegalArgumentException("Wrong number of YResolution data number: " + intValues.length);
 			//formatting numbers up to 3 decimal places in Java
 	        DecimalFormat df = new DecimalFormat("#,###,###.##");
-	        return df.format(1.0*intValues[0]/intValues[1]);	
+	        return StringUtils.rationalToString(df, true, intValues);	
 		}
 		public FieldType getFieldType() {
 			return FieldType.RATIONAL;

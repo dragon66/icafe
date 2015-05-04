@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    03May2015  Added rationalToString()
  * WY    04Mar2015  Added toHexString()
  * WY    04Mar2015  Added generateMD5()
  * WY    07Feb201   Added decimalToDMS() and DMSToDecimal()
@@ -31,6 +32,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.*;
@@ -713,6 +715,8 @@ public class StringUtils
 		{
 			long  numerator = data[i], denominator = data[i+1];
 			
+			if(denominator == 0) throw new ArithmeticException("Divided by zero");
+			
 			if (unsigned) {
 				// Converts it to unsigned integer
 				numerator = (data[i]&0xffffffffL);
@@ -730,6 +734,23 @@ public class StringUtils
 		rational.append("]");
 		
 		return rational.toString();
+	}
+	
+	public static String rationalToString(DecimalFormat df, boolean unsigned, int ... rational) 
+	{
+		if(rational.length < 2) throw new IllegalArgumentException("Input data length is too short");
+		if(rational[1] == 0) throw new ArithmeticException("Divided by zero");
+		
+		long numerator = rational[0];
+		long denominator= rational[1];
+		
+		if (unsigned) {
+			// Converts it to unsigned integer
+			numerator = (numerator&0xffffffffL);
+			denominator = (denominator&0xffffffffL);
+		}
+		
+		return df.format(1.0*numerator/denominator);
 	}
 	
 	/**
