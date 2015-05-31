@@ -16,6 +16,9 @@ import cafe.image.util.IMGUtils;
 
 import java.io.*; 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /** 
  * BMP image writer
  * 
@@ -23,6 +26,9 @@ import java.io.*;
  * @version 1.0 06/20/2007
  */
 public class BMPWriter extends ImageWriter {
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(BMPWriter.class);
+	
 	// Image header
 	private static class BitmapHeader
 	{
@@ -199,7 +205,7 @@ public class BMPWriter extends ImageWriter {
 
 		byte brgb[]=new byte[256*4];
       
-		System.out.println("Saving as 256 bits bitmap color image!");
+		log.info("Saving as 256 bits bitmap color image!");
 
 		bitmapHeader = new BitmapHeader();
 		// Set header parameters
@@ -263,7 +269,7 @@ public class BMPWriter extends ImageWriter {
 
 		byte brgb[]=new byte[bytePerScanLine];
       
-		System.out.println("Saving as 24 bits bitmap color image!");
+		log.info("Saving as 24 bits bitmap color image!");
 
 		bitmapHeader = new BitmapHeader();
 		// Set header parameters

@@ -2,7 +2,6 @@ package cafe.test;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,9 +15,13 @@ import cafe.io.FileCacheRandomAccessOutputStream;
 import cafe.io.RandomAccessInputStream;
 import cafe.io.RandomAccessOutputStream;
 
-public class TestTIFFImage {
+public class TestTIFFImage extends TestBase {
 	// Test manipulate TIFF image
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		new TestTIFFImage().test(args);
+	}
+	
+	public void test(String ... args) throws Exception {
 		FileInputStream fin = new FileInputStream(args[0]);
 		RandomAccessInputStream rin = new FileCacheRandomAccessInputStream(fin);
 		FileOutputStream fout = new FileOutputStream("NEW.tif");

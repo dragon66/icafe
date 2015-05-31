@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.jpeg.JPEGTweaker;
 import cafe.image.jpeg.Segment;
 import cafe.image.meta.NativeMetadata;
@@ -35,7 +38,9 @@ import cafe.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/06/2015
  */
-public class JPGNativeMetadata extends NativeMetadata<Segment> {
+public class JPGNativeMetadata extends NativeMetadata<Segment> {	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(JPGNativeMetadata.class);
 	
 	public JPGNativeMetadata() {
 		;
@@ -82,9 +87,9 @@ public class JPGNativeMetadata extends NativeMetadata<Segment> {
 			
 			if(Arrays.equals(buf, JPEGTweaker.ADOBE_ID)) {
 				for (int i = 0, j = 5; i < 3; i++, j += 2) {
-					System.out.println(app14Info[i] + StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
+					log.info("{}{}", app14Info[i], StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
 				}
-				System.out.println(app14Info[3] + (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
+				log.info("{}{}", app14Info[3], (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
 					((data[11]&0xff) == 1)? "YCbCr":"YCCK" ));
 			}
 		}
@@ -94,30 +99,28 @@ public class JPGNativeMetadata extends NativeMetadata<Segment> {
 		int i = JPEGTweaker.JFIF_ID.length;
 	    // JFIF segment
 	    if(Arrays.equals(ArrayUtils.subArray(data, 0, i), JPEGTweaker.JFIF_ID) || Arrays.equals(ArrayUtils.subArray(data, 0, i), JPEGTweaker.JFXX_ID)) {
-	    	System.out.print(new String(data, 0, i).trim());
-	    	System.out.println(" - version " + (data[i++]&0xff) + "." + (data[i++]&0xff));
-	    	System.out.print("Density unit: ");
+	    	log.info("{} - version {}.{}", new String(data, 0, i).trim(), (data[i++]&0xff), (data[i++]&0xff));
 	    	
 	    	switch(data[i++]&0xff) {
 	    		case 0:
-	    			System.out.println("No units, aspect ratio only specified");
+	    			log.info("Density unit: No units, aspect ratio only specified");
 	    			break;
 	    		case 1:
-	    			System.out.println("Dots per inch");
+	    			log.info("Density unit: Dots per inch");
 	    			break;
 	    		case 2:
-	    			System.out.println("Dots per centimeter");
+	    			log.info("Density unit: Dots per centimeter");
 	    			break;
 	    		default:
 	    	}
 	    	
-	    	System.out.println("X density: " + IOUtils.readUnsignedShortMM(data, i));
+	    	log.info("X density: {}", IOUtils.readUnsignedShortMM(data, i));
 	    	i += 2;
-	    	System.out.println("Y density: " + IOUtils.readUnsignedShortMM(data, i));
+	    	log.info("Y density: {}", IOUtils.readUnsignedShortMM(data, i));
 	    	i += 2;
 	    	int thumbnailWidth = data[i++]&0xff;
 	    	int thumbnailHeight = data[i++]&0xff;
-	    	System.out.println("Thumbnail dimension: " + thumbnailWidth + "X" + thumbnailHeight);	   
+	    	log.info("Thumbnail dimension: {}X{}", thumbnailWidth, thumbnailHeight);	   
 	    }
 	}
 	
@@ -130,31 +133,28 @@ public class JPGNativeMetadata extends NativeMetadata<Segment> {
 		currPos += JPEGTweaker.DUCKY_ID.length;
 		
 		if(Arrays.equals(JPEGTweaker.DUCKY_ID, buf)) {
-			System.out.println("=>" + duckyInfo[0]);
+			log.info("=>{}", duckyInfo[0]);
 			short tag = IOUtils.readShortMM(data, currPos);
 			currPos += 2;
 			
 			while (tag != 0x0000) {
-				System.out.println("Tag value: " + StringUtils.shortToHexStringMM(tag));
+				log.info("Tag value: {}", StringUtils.shortToHexStringMM(tag));
 				
 				int len = IOUtils.readUnsignedShortMM(data, currPos);
 				currPos += 2;
-				System.out.println("Tag length: " + len);
+				log.info("Tag length: {}", len);
 				
 				switch (tag) {
 					case 0x0001: // Image quality
-						System.out.print(duckyInfo[1]);
-						System.out.println(IOUtils.readUnsignedIntMM(data, currPos));
+						log.info("{}{}", duckyInfo[1], IOUtils.readUnsignedIntMM(data, currPos));
 						currPos += 4;
 						break;
 					case 0x0002: // Comment
-						System.out.print(duckyInfo[2]);
-						System.out.println(new String(data, currPos, currPos + len).trim());
+						log.info("{}{}", duckyInfo[2], new String(data, currPos, currPos + len).trim());
 						currPos += len;
 						break;
 					case 0x0003: // Copyright
-						System.out.print(duckyInfo[3]);
-						System.out.println(new String(data, currPos, currPos + len).trim());
+						log.info("{}{}", duckyInfo[3], new String(data, currPos, currPos + len).trim());
 						currPos += len;
 						break;
 					default: // Do nothing!					

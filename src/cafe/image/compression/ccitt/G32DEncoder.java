@@ -49,9 +49,7 @@ public class G32DEncoder extends G31DEncoder implements ImageEncoder {
 			start = encodeKLines(pixels, start);
 		}
 		
-		// Then deal with the leftover lines
-		System.out.println("Left over: " + leftOver);
-		
+		// Then deal with the leftover lines		
 		if(leftOver > 0) {
 			// Encode a one dimensional scan line first
 			send_code_to_buffer(T4Code.EOL_PLUS_ONE, 13);

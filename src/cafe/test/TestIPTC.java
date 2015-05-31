@@ -1,6 +1,5 @@
 package cafe.test;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -9,9 +8,13 @@ import cafe.image.meta.MetadataType;
 import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCDataSet;
 
-public class TestIPTC {
+public class TestIPTC extends TestBase {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		new TestIPTC().test(args);
+	}
+	
+	public void test(String ... args) throws Exception {
 		Map<MetadataType, Metadata> metadataMap = Metadata.readMetadata(args[0]);
 		// Show IPTC specific information
 		IPTC iptc = (IPTC)metadataMap.get(MetadataType.IPTC);

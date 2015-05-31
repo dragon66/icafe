@@ -116,7 +116,5 @@ public class NumberUtils {
 		}
 		
 		return i;
-	}
-    
-	
+	}	
 }

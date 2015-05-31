@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.io.IOUtils;
 
 /**
@@ -28,6 +31,9 @@ public class ProfileTagTable {
 	private int tagCount;
 	private Map<Integer, TagEntry> tagEntries = new HashMap<Integer, TagEntry>();
 	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(ProfileTagTable.class);
+		
 	public static class TagEntry implements Comparable<TagEntry> {
 		private int profileTag;
 		private int dataOffset;
@@ -103,17 +109,22 @@ public class ProfileTagTable {
 	}
 	
 	public void showTable() {
-		System.out.println("*** Start of ICC_Profile Tag Table ***");
-		System.out.println("Tag Count: " + tagCount);
+		StringBuilder profileTable = new StringBuilder();
+		profileTable.append("*** Start of ICC_Profile Tag Table ***\n");
+		profileTable.append("Tag Count: " + tagCount + "\n");
+		
 		List<TagEntry> list = getTagEntries();
 		Collections.sort(list);
 		int count = 0;
+	
 		for(TagEntry tagEntry:list) {
-			System.out.print("Tag# " + count++);
-			System.out.print(", Tag Name: " + ProfileTag.fromInt(tagEntry.getProfileTag()));
-			System.out.print(", Data Offset: " + tagEntry.getDataOffset());
-			System.out.println(", Data Length: " + tagEntry.getDataLength());
+			profileTable.append("Tag# " + count++);
+			profileTable.append(", Tag Name: " + ProfileTag.fromInt(tagEntry.getProfileTag()));
+			profileTable.append(", Data Offset: " + tagEntry.getDataOffset());
+			profileTable.append(", Data Length: " + tagEntry.getDataLength() + "\n");
 		}
-		System.out.println("*** End of ICC_Profile Tag Table ***");
+		profileTable.append("*** End of ICC_Profile Tag Table ***\n");
+		
+		log.info("\n{}", profileTable);
 	}
 }

@@ -28,13 +28,15 @@ import cafe.image.tiff.TiffFieldEnum.Compression;
 /**
  * Temporary class for testing image readers
  */
-public class TestImageReader {
+public class TestImageReader extends TestBase {
 
 	 public static void main(String args[]) throws Exception
 	 {
-		 if(args.length > 1)
-			System.setProperty("debug", args[1]);
-		 
+		 new TestImageReader().test(args);
+	 }
+	 
+	 public void test(String ... args) throws Exception
+	 {
 		 long t1 = System.currentTimeMillis();
 		 
 		 FileInputStream fin = new FileInputStream(new File(args[0]));
@@ -44,15 +46,20 @@ public class TestImageReader {
 		 
 		 pushBackStream.close();
 		 
-		 System.out.println("Total frames read: " + reader.getFrameCount());
+		 if(img == null) {
+			 log.error("Failed reading image!");
+			 return;
+		 }
+		 
+		 log.info("Total frames read: {}", reader.getFrameCount());
 		
-		 System.out.println(img.getColorModel());
-		 System.out.println(img.getRaster());
-		 System.out.println(img.getSampleModel());
+		 log.info("Color model: {}", img.getColorModel());
+		 log.info("Raster: {}", img.getRaster());
+		 log.info("Sample model: {}", img.getSampleModel());
 		
 		 long t2 = System.currentTimeMillis();
 		 
-		 System.out.println("decoding time "+(t2-t1)+"ms");
+		 log.info("decoding time {}ms", (t2-t1));
 			
 		 final JFrame jframe = new JFrame("Image Reader");
 
@@ -104,7 +111,7 @@ public class TestImageReader {
 		
 		 fo.close();
 		
-		 System.out.println(imageType + " writer "+ "(encoding time "+(t2-t1)+"ms)");
+		 log.info("{} writer (encoding time {}ms)", imageType, (t2-t1));
 		
 		 JLabel theLabel = new JLabel(new ImageIcon(img));
 		 jframe.getContentPane().add(new JScrollPane(theLabel));

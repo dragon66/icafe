@@ -61,6 +61,9 @@ import cafe.string.StringUtils;
 import cafe.string.XMLUtils;
 import cafe.util.ArrayUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * GIF image tweaking tool
  * 
@@ -76,6 +79,9 @@ public class GIFTweaker {
 	public static final byte APPLICATION_EXTENSION_LABEL = (byte)0xff;
 	public static final byte COMMENT_EXTENSION_LABEL = (byte)0xfe;
 	public static final byte TEXT_EXTENSION_LABEL = 0x01;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(GIFTweaker.class);		
 	
 	// Data transfer object for multiple thread support
 	private static class DataTransferObject {
@@ -100,7 +106,7 @@ public class GIFTweaker {
 		    if(image_separator == 0x3b) return false;
 		    
 			if(image_separator == -1) { // End of stream 
-				System.out.println("Unexpected end of stream!");
+				log.error("Unexpected end of stream!");
 				return false;
 			}
 		    

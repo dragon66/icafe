@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.tiff.FieldType;
@@ -56,6 +59,9 @@ public abstract class Exif extends Metadata {
 	private ExifReader reader;
 	
 	private boolean isThumbnailRequired;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(Exif.class);
 	
 	public Exif() {
 		super(MetadataType.EXIF, null);
@@ -195,9 +201,9 @@ public abstract class Exif extends Metadata {
 	@Override
 	public void showMetadata() {
 		if(imageIFD != null) {
-			System.out.println("<<Image IFD starts>>");
+			log.info("<<Image IFD starts>>");
 			TIFFTweaker.printIFD(imageIFD, TiffTag.class, "");
-			System.out.println("<<Image IFD ends>>");
+			log.info("<<Image IFD ends>>");
 		} else
 			super.showMetadata();
 	}

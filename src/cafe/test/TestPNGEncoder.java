@@ -36,7 +36,76 @@ import cafe.image.ImageType;
  * @author J. David Eisenberg
  * @version 1.3, 6 April 2000
  */
-public class TestPNGEncoder extends Frame
+
+public class TestPNGEncoder extends TestBase {
+	 public static void main(String[] args) {
+		 new TestPNGEncoder().test();
+	 }
+	 
+	 public void test(String ... args)
+	 {
+		 int i;
+
+		 PNGEncoder te = new PNGEncoder("Test PNG Alpha/Filter Encoder");
+		 i = 0;
+		 te.encodeAlpha = false;
+		 te.filter = 0;
+		 te.pixelDepth = 24;
+		 te.compressionLevel = 1;
+		 while (i < args.length)
+		 {
+			 if (args[i].equals("-alpha"))
+			 {
+				 te.encodeAlpha = true;
+				 i++;
+			 }
+			 else if (args[i].equals("-filter"))
+			 {
+				 if (i != args.length-1)
+				 {
+					 try
+					 {
+						 te.filter = Integer.parseInt(args[i+1]);
+					 }
+					 catch (Exception e)
+					 {
+						 PNGEncoder.usage();
+						 break;
+					 }
+				 }
+				 i += 2;
+			 }
+			 else if (args[i].equals("-compress"))
+			 {
+				 if (i != args.length-1)
+				 {
+					 try
+					 {
+						 te.compressionLevel = Integer.parseInt(args[i+1]);
+					 }	
+					 catch (Exception e)
+					 {
+						 PNGEncoder.usage();
+						 break;
+					 }
+				 }
+				 i += 2;
+			 }
+			 else
+			 {
+				 PNGEncoder.usage();
+				 break;
+			 }
+		 }
+		 if (te.pixelDepth == 8)
+		 {
+			 te.encodeAlpha = false;
+		 }
+		 te.doYourThing();
+	 }
+}
+
+class PNGEncoder extends Frame
 {
 	private static final long serialVersionUID = -8226940088303427275L;
 	String          message;
@@ -50,7 +119,7 @@ public class TestPNGEncoder extends Frame
     String          filename;
     boolean         fileSaved = false;
 
-    public TestPNGEncoder(String s)
+    public PNGEncoder(String s)
     {
         super(s);
         setSize(200,200);
@@ -179,68 +248,6 @@ public class TestPNGEncoder extends Frame
         System.out.println("n is filter number 0=none (default), 1=sub, 2=up");
         System.out.println("c is compression factor (0-9); 1 default");
         System.exit(0);
-    }
-
-    public static void main(String[] args)
-    {
-        int i;
-
-        TestPNGEncoder te = new TestPNGEncoder("Test PNG Alpha/Filter Encoder");
-        i = 0;
-        te.encodeAlpha = false;
-        te.filter = 0;
-        te.pixelDepth = 24;
-        te.compressionLevel = 1;
-        while (i < args.length)
-        {
-            if (args[i].equals("-alpha"))
-            {
-                te.encodeAlpha = true;
-                i++;
-            }
-            else if (args[i].equals("-filter"))
-            {
-                if (i != args.length-1)
-                {
-                    try
-                    {
-                        te.filter = Integer.parseInt(args[i+1]);
-                    }
-                    catch (Exception e)
-                    {
-                        usage();
-                        break;
-                    }
-                }
-                i += 2;
-            }
-            else if (args[i].equals("-compress"))
-            {
-                if (i != args.length-1)
-                {
-                    try
-                    {
-                        te.compressionLevel = Integer.parseInt(args[i+1]);
-                    }
-                    catch (Exception e)
-                    {
-                        usage();
-                        break;
-                    }
-                }
-                i += 2;
-            }
-            else
-            {
-                usage();
-                break;
-            }
-        }
-        if (te.pixelDepth == 8)
-        {
-            te.encodeAlpha = false;
-        }
-        te.doYourThing();
     }
     
     public void doYourThing()

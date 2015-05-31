@@ -26,7 +26,7 @@ public class UnknownChunk extends Chunk {
 	private final int chunkValue;
 	
 	public UnknownChunk(long length, int chunkValue, byte[] data, long crc) {
-		super(ChunkType.UNKNOWN,length, data, crc);
+		super(ChunkType.UNKNOWN, length, data, crc);
 		this.chunkValue = chunkValue;
 	}
 	
@@ -46,6 +46,6 @@ public class UnknownChunk extends Chunk {
 	}
 	
 	@Override public String toString() {
-		return super.toString() + "[Chunk type value: 0x"+ Integer.toHexString(chunkValue)+"]";
+		return super.toString() + "[Chunk type: " + getChunkType() + ", value: 0x"+ Integer.toHexString(chunkValue)+"]";
 	}	
 }

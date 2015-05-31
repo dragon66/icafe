@@ -24,6 +24,10 @@ package cafe.image.meta.adobe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 
@@ -34,6 +38,9 @@ public class VersionInfo extends _8BIM {
 	private String writerName;
 	private String readerName;
 	private int fileVersion;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(VersionInfo.class);
 	
 	public VersionInfo() {
 		this("VersionInfo");
@@ -99,11 +106,11 @@ public class VersionInfo extends _8BIM {
 	
 	public void print() {
 		super.print();
-		System.out.println("Version: " + getVersion());
-		System.out.println("Has Real Merged Data: " + hasRealMergedData);
-        System.out.println("Writer name: " + writerName);
-		System.out.println("Reader name: " + readerName);
-		System.out.println("File Version: " + getFileVersion()); 
+		log.info("Version: {}", getVersion());
+		log.info("Has Real Merged Data: {}", hasRealMergedData);
+        log.info("Writer name: {}", writerName);
+		log.info("Reader name: {}", readerName);
+		log.info("File Version: {}", getFileVersion()); 
 	}
 
 	public void setHasRealMergedData(boolean hasRealMergedData) {

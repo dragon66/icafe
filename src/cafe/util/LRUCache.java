@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.Collection;
 
 /**
- * LRUCache.java.  
+ * LRUCache.java.
  * 
  * A wrapper class implements Least-Recently-Used cache backed by a LinkedHashMap.
  * 

@@ -6,18 +6,18 @@ package cafe.util;// Temporarily put in this package
  */
 class ListNode<E>
 {
-     // Constructors
-     ListNode( E theElement )
-     {
-         this( theElement, null );
-     }
+	// Constructors
+	ListNode( E theElement )
+	{
+		this( theElement, null );
+	}
 
-     ListNode( E theElement, ListNode<E> n )
-     {
-         element = theElement;
-         next    = n;
-     }
-     // Friendly data; accessible by other package routines
-     E   element;
-     ListNode<E> next;
+	ListNode( E theElement, ListNode<E> n )
+	{
+		element = theElement;
+		next    = n;
+	}
+	// Friendly data; accessible by other package routines
+	E   element;
+	ListNode<E> next;
 }

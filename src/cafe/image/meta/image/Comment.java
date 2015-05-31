@@ -12,12 +12,18 @@ package cafe.image.meta.image;
 
 import java.io.UnsupportedEncodingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataReader;
 import cafe.image.meta.MetadataType;
 
 public class Comment extends Metadata {
 	private String comment;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(Comment.class);
 	
 	public Comment(byte[] data) {
 		super(MetadataType.COMMENT, data);
@@ -33,7 +39,7 @@ public class Comment extends Metadata {
 	}
 	
 	public void showMetadata() {
-		System.out.println("Comment: " + comment);
+		log.info("Comment: {}", comment);
 	}
 
 	@Override

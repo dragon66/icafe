@@ -62,4 +62,3 @@ public abstract class StringSearchTool
 	public abstract int find(final String target,int start)
 		;
 }
-

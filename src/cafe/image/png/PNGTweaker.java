@@ -47,6 +47,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.InflaterInputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import cafe.image.meta.Metadata;
@@ -70,20 +72,23 @@ public class PNGTweaker {
 	
 	private static Set<ChunkType> REMOVABLE = EnumSet.range(ChunkType.TEXT, ChunkType.TIME);    
     
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(PNGTweaker.class);
+
    	public static void dump_text_chunks(Chunk[] chunks) throws IOException {
    		for (Chunk chunk : chunks) {
    			if ((chunk.getChunkType() == ChunkType.TEXT) || (chunk.getChunkType() == ChunkType.ITXT) || 
    					(chunk.getChunkType() == ChunkType.ZTXT)) {
    				TextReader reader = new TextReader(chunk);
-	   			System.out.println("Keyword: " + reader.getKeyword());
-	   			System.out.println("Text: " + reader.getText());
+	   			log.info("Keyword: {}", reader.getKeyword());
+	   			log.info("Text: {}", reader.getText());
    			}
    		}   	
    	}
 	
 	// Dump text chunks
    	public static void dump_text_chunks(InputStream is) throws IOException {
-   		System.out.println(read_text_chunks(is));
+   		log.info("\n", read_text_chunks(is));
     }
 
   	public static void insertChunk(Chunk customChunk, InputStream is, OutputStream os) throws IOException {
@@ -248,7 +253,7 @@ public class PNGTweaker {
         while (true) {
             data_len = IOUtils.readIntMM(is);
             chunk_value = IOUtils.readIntMM(is);
-            //System.out.println("chunk type: 0x"+Integer.toHexString(chunk_type));
+            //log.info("chunk type: 0x{}", Integer.toHexString(chunk_type));
 
             if (chunk_value == ChunkType.IEND.getValue()) {
             	sb.append("End of Image\n");
@@ -422,10 +427,10 @@ public class PNGTweaker {
 		String profileName = new String(buf, 0, profileName_len,"UTF-8");
 		
 		InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, buf.length - profileName_len - 2));
-		System.out.println("ICCProfile name: " + profileName);
+		log.info("ICCProfile name: {}", profileName);
 		 
 		byte[] icc_profile = IOUtils.readFully(ii, 4096);
-		System.out.println("ICCProfile length: " + icc_profile.length);
+		log.info("ICCProfile length: {}", icc_profile.length);
 	 		 
 		return icc_profile;
  	}
@@ -446,9 +451,7 @@ public class PNGTweaker {
 				if(reader.getKeyword().equals("XML:com.adobe.xmp")); // We found XMP data
 	   				metadataMap.put(MetadataType.XMP, new XMP(reader.getText()));
 	   		}
-			System.out.print(type.getName() + " (" + type.getAttribute() + ")");
-			System.out.print(" | " + length + " bytes");
-			System.out.println(" | " + "0x" + Long.toHexString(chunk.getCRC()) + " (CRC)");
+			log.info("{} ({}) | {} bytes | 0x{} (CRC)", type.getName(), type.getAttribute(), length, Long.toHexString(chunk.getCRC()));
 		}
 		
 		is.close();
@@ -480,8 +483,8 @@ public class PNGTweaker {
 	      
 		 String outFileName = "slim.png";
          remove_chunks(is, dir, outFileName);
-		 System.out.println(">>"+outFileName);	
-		 System.out.println("************************");
+		 log.info(">>{}", outFileName);	
+		 log.info("************************");
     }
   	
   	public static List<Chunk> remove_ancillary_chunks(List<Chunk> chunks) throws Exception {
@@ -539,11 +542,11 @@ public class PNGTweaker {
 		 	String outFileName = files[i].getName();
 		 	outFileName = outFileName.substring(0,outFileName.lastIndexOf('.'))
 					+"_slim.png";
-		 	System.out.println("<<" + files[i].getName());
+		 	log.info("<<{}", files[i].getName());
 	 		fs = new FileInputStream(files[i]);
 	 		remove_chunks(fs, dir, outFileName);
- 			System.out.println(">>" + outFileName);	
- 			System.out.println("************************");
+ 			log.info(">>{}", outFileName);	
+ 			log.info("************************");
  			fs.close();
 	    }
     }
@@ -557,14 +560,14 @@ public class PNGTweaker {
         long signature = IOUtils.readLongMM(is);
 
         if (signature != SIGNATURE) {
-            System.out.println("--- NOT A PNG IMAGE ---");
+            log.error("--- NOT A PNG IMAGE ---");
             return;
         }   
 
         /** Read header */
         /** We are expecting IHDR */
         if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
-            System.out.println("--- NOT A PNG IMAGE ---");
+            log.error("--- NOT A PNG IMAGE ---");
             return;
         }
             
@@ -581,10 +584,10 @@ public class PNGTweaker {
         while (true) {
            data_len = IOUtils.readIntMM(is);
            chunk_value = IOUtils.readIntMM(is);
-           //System.out.println("chunk type: 0x"+Integer.toHexString(chunk_type));
+           //log.info("chunk type: 0x{}", Integer.toHexString(chunk_type));
 
            if (chunk_value == ChunkType.IEND.getValue()) {
-              System.out.println("End of Image");
+              log.info("End of Image");
               IOUtils.writeIntMM(fs, data_len);
               IOUtils.writeIntMM(fs, ChunkType.IEND.getValue());
               int crc = IOUtils.readIntMM(is);
@@ -592,7 +595,7 @@ public class PNGTweaker {
               break;
            }
            if(REMOVABLE.contains(ChunkType.fromInt(chunk_value))) {
-              System.out.println(ChunkType.fromInt(chunk_value)+" Chunk removed!");
+              log.info("{} Chunk removed!", ChunkType.fromInt(chunk_value));
               IOUtils.skipFully(is, data_len+4);
            } else {
               buf = new byte[data_len+4];

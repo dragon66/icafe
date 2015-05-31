@@ -4,15 +4,19 @@ import java.util.HashMap;
 import java.util.Map;
 import cafe.util.CollectionUtils;
 
-public class TestCollectionUtils {
+public class TestCollectionUtils extends TestBase {
 
 	public TestCollectionUtils() {}
 
 	public static void main(String[] args) {
+		new TestCollectionUtils().test();
+	}
+	
+	public void test(String ... args) {
 		Map<String, Integer> map = new HashMap<String, Integer>();
 		map.put("first", 1);
 		map.put("second", 1);
 		
-		System.out.println(CollectionUtils.getKeysByValue(map, 1));
+		log.info("{}", CollectionUtils.getKeysByValue(map, 1));
 	}
 }

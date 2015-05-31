@@ -13,13 +13,16 @@
  *
  * Who   Date       Description
  * ====  =========  ===============================================================
- * WY    02Jan2015  Added getFrames() and getFrameCount() for multiple frame images 
+ * WY    30May2015  Changed getFrames() to return an empty list instead of null
+ * WY    02Jan2015  Added getFrames() and getFrameCount() for multiple frame images
+ * WY    29May2015  Removed debug field, replace with logging
  */
 
 package cafe.image.reader;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Collections;
 import java.util.List;
 
 import cafe.image.ImageParam;
@@ -38,23 +41,16 @@ public abstract class ImageReader
 	protected int bitsPerPixel = 0;
 	protected int bytesPerScanLine = 0;
     protected int rgbColorPalette[] = null;
-    
-    protected boolean debug;
-    // Instance initializer block
-    {
-    	String debugString = System.getProperty("debug", "false");
-    	Boolean debugObject = Boolean.valueOf(debugString);
-    	debug = debugObject.booleanValue();
-    }
-    
+       
     protected ImageParam param = ImageParam.DEFAULT_IMAGE_PARAM;
     
     public int getFrameCount() {
     	return -1;
     }
     
+    // Return empty list instead of null
     public List<BufferedImage> getFrames() {
-    	return null;
+    	return Collections.emptyList();
     }
     
     public ImageParam getImageParam() {

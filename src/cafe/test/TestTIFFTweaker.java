@@ -31,9 +31,12 @@ import cafe.io.RandomAccessInputStream;
 import cafe.io.RandomAccessOutputStream;
 import cafe.util.FileUtils;
 
-public class TestTIFFTweaker {
-
+public class TestTIFFTweaker extends TestBase {
 	public static void main(String[] args) throws Exception {
+		new TestTIFFTweaker().test(args);
+	}
+	
+	public void test(String ... args) throws Exception {
 		RandomAccessInputStream rin = new FileCacheRandomAccessInputStream(new FileInputStream(args[0]));
 		RandomAccessOutputStream rout = null;
 		
@@ -132,7 +135,7 @@ public class TestTIFFTweaker {
 					TIFFTweaker.insertPage(im, 0, rout, list, offset, writer);
 					TIFFTweaker.finishInsert(rout, list);
 					long t2 = System.currentTimeMillis();
-					System.out.println("time used: " + (t2-t1) + "ms");
+					log.info("time used: {}ms", (t2-t1));
 				}
 				rout.close();
 			} else if(args[1].equalsIgnoreCase("splitpage")) {

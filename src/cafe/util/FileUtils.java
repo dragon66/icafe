@@ -16,8 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FileUtils {
-	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+		
 	public static void delete(String fileName) {
 		delete(fileName, "");
 	}
@@ -47,14 +52,14 @@ public class FileUtils {
             		boolean result = file.delete();
             		// test if delete of file is success or not
             		if (result) {
-            			System.out.println("File " + file.getAbsolutePath() + " deleted");
+            			log.info("File {} deleted", file.getAbsolutePath());
             		} else {
-            			System.out.println("File " + file.getAbsolutePath() + " was not deleted, unknown reason");
+            			log.info("File {} was not deleted, unknown reason", file.getAbsolutePath());
             		}
             	}
             }
         } else {
-        	System.out.println("File " + file.getAbsolutePath() + " doesn't exist");
+        	log.info("File {} doesn't exist", file.getAbsolutePath());
         }
     }
 	
@@ -86,7 +91,7 @@ public class FileUtils {
         	String path = dir.getAbsolutePath();        	
         	if(fileExt != null && path.endsWith(fileExt)) {
         		fileList.add(path);        	   
-        		System.out.println(path);
+        		log.info("File: {}", path);
         	}
         }
         

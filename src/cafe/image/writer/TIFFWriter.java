@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.ImageColorType;
 import cafe.image.ImageParam;
 import cafe.image.ImageType;
@@ -82,6 +85,9 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 	private List<Integer> stripOffsets = new ArrayList<Integer>();	
 	private List<Integer> stripByteCounts = new ArrayList<Integer>();	
 	private RandomAccessOutputStream randomOS;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(TIFFWriter.class);
 	
 	public TIFFWriter() {}
 		
@@ -612,7 +618,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 			// JPEG is a special case
 			if(compression == Compression.JPG) {
 				if(getImageParam().hasAlpha())
-					System.out.println("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
+					log.warn("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
 				jpegCompress(pixels, imageWidth, imageHeight, param.getColorType() == ImageColorType.GRAY_SCALE);			
 			} else {
 				if(param.getColorType() == ImageColorType.GRAY_SCALE) {

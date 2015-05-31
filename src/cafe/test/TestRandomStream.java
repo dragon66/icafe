@@ -2,8 +2,6 @@ package cafe.test;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.MemoryCacheRandomAccessOutputStream;
 import cafe.io.RandomAccessInputStream;
@@ -12,11 +10,15 @@ import cafe.io.ReadStrategyII;
 import cafe.io.ReadStrategyMM;
 import cafe.io.WriteStrategyII;
 
-public class TestRandomStream {
+public class TestRandomStream extends TestBase {
 
 	public TestRandomStream() {	}
 
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws Exception {
+		new TestRandomStream().test();
+	}
+	
+	public void test(String ... args) throws Exception{
 		FileOutputStream fo = new FileOutputStream("test.txt");
 		RandomAccessOutputStream randout = new MemoryCacheRandomAccessOutputStream(fo);
 		randout.setWriteStrategy(WriteStrategyII.getInstance());
@@ -37,21 +39,21 @@ public class TestRandomStream {
 		FileInputStream fin = new FileInputStream("test.txt");
 		RandomAccessInputStream randin = new FileCacheRandomAccessInputStream(fin);
 		randin.setReadStrategy(ReadStrategyMM.getInstance());
-		System.out.println(randin.readUTF());
+		log.info(randin.readUTF());
 		/**
 		 *  Due to the current implementation, writeUTF and readUTF are machine or byte sequence independent
 		 *  but writeChar and readChar are. So we switch back to the same byte sequence as the stream which
 		 *  writes out the char before reading it.
 		 */
 		randin.setReadStrategy(ReadStrategyII.getInstance());
-		System.out.println(randin.readChar());
-		System.out.println(randin.readInt());
-		System.out.println(randin.readShort());
-		System.out.println(randin.read());
-		System.out.println(randin.read());
-		System.out.println(randin.readS15Fixed16Number());
-		System.out.println(randin.readU16Fixed16Number());
-		System.out.println(randin.readU8Fixed8Number());
+		log.info("{}", randin.readChar());
+		log.info("{}", randin.readInt());
+		log.info("{}", randin.readShort());
+		log.info("{}", randin.read());
+		log.info("{}", randin.read());
+		log.info("{}", randin.readS15Fixed16Number());
+		log.info("{}", randin.readU16Fixed16Number());
+		log.info("{}", randin.readU8Fixed8Number());
 		randin.close();
 		fin.close();
 	}

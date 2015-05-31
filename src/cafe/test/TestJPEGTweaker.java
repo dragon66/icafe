@@ -15,8 +15,12 @@ import cafe.image.meta.exif.JpegExif;
 import cafe.image.tiff.FieldType;
 import cafe.image.util.IMGUtils;
 
-public class TestJPEGTweaker {
+public class TestJPEGTweaker extends TestBase {
 	public static void main(String[] args) throws Exception {
+		new TestJPEGTweaker().test(args);
+	}
+	
+	public void test(String ... args) throws Exception {
 		FileInputStream fin = new FileInputStream(args[0]);
 		JPEGTweaker.showICCProfile(fin);
 		fin.close();

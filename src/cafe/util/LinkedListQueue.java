@@ -10,7 +10,6 @@
 
 package cafe.util;
 
-
 /**
  * Queue implementation using singly linked list.
  *
@@ -66,4 +65,3 @@ public class LinkedListQueue<E>
 		list.clear();
     }
 }
-

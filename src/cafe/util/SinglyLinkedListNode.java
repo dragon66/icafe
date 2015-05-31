@@ -53,5 +53,3 @@ class SinglyLinkedListNode<E>
         this.next = next;
     }
 }
-
-

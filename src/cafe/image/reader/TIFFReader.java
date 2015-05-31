@@ -58,6 +58,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.color.CMYKColorSpace;
 import cafe.image.color.Int32ComponentColorModel;
 import cafe.image.compression.ImageDecoder;
@@ -104,6 +107,9 @@ public class TIFFReader extends ImageReader {
 	private static final int[] blueMask =  {0x00, 0x01, 0x03, 0x007, 0x00f};
 	
 	private static final int bufLen = 40960; // 40K read buffer
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(TIFFReader.class);		
 		 
 	public BufferedImage read(InputStream is) throws Exception
 	{
@@ -137,8 +143,9 @@ public class TIFFReader extends ImageReader {
 		}		
 		
 		randIS.close();
-
-		return frames.get(0);
+		if(frames.size() > 0)
+			return frames.get(0);
+		return null;
 	}
 	 
 	private BufferedImage decode(IFD ifd) throws Exception {
@@ -157,7 +164,7 @@ public class TIFFReader extends ImageReader {
 		if(field != null)
 			data = (short[])field.getData();
 		TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(data[0]&0xffff);
-		System.out.println("Compression type: " + compression.getDescription());
+		log.info("Compression type: {}", compression.getDescription());
 		// Forget about tiled TIFF for now
 		TiffField<?> f_stripOffsets = ifd.getField(TiffTag.STRIP_OFFSETS);
 		TiffField<?> f_stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS);
@@ -165,34 +172,34 @@ public class TIFFReader extends ImageReader {
 		int[] stripByteCounts = f_stripByteCounts.getDataAsLong();
 		int imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH).getDataAsLong()[0];
 		int imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH).getDataAsLong()[0];
-		System.out.println("Image width: " + imageWidth);
-		System.out.println("Image height: " + imageHeight);
+		log.info("Image width: {}", imageWidth);
+		log.info("Image height: {}", imageHeight);
 		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP);
 		int rowsPerStrip = imageHeight;
 		if(f_rowsPerStrip != null)
 			rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];
-		System.out.println("Rows per strip: " + rowsPerStrip);		
+		log.info("Rows per strip: {}", rowsPerStrip);		
 		TiffField<?> f_photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION);
 		int photoMetric = f_photoMetric.getDataAsLong()[0];
 		TiffFieldEnum.PhotoMetric e_photoMetric = TiffFieldEnum.PhotoMetric.fromValue(photoMetric);
-		System.out.println("PhotoMetric: " + e_photoMetric);
+		log.info("PhotoMetric: {}", e_photoMetric);
 		TiffField<?> f_bitsPerSample = ifd.getField(TiffTag.BITS_PER_SAMPLE);
 		int bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
-		System.out.println("Bits per sample: " + bitsPerSample);
+		log.info("Bits per sample: {}", bitsPerSample);
 		TiffField<?> f_samplesPerPixel = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
 		int samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
-		System.out.println("Samples per pixel: " + samplesPerPixel);
+		log.info("Samples per pixel: {}", samplesPerPixel);
 		TiffField<?> f_predictor = ifd.getField(TiffTag.PREDICTOR);
 		int predictor = 0;
 		if(f_predictor != null) {
 			predictor = f_predictor.getDataAsLong()[0];
-			System.out.println("Predictor: " + predictor);
+			log.info("Predictor: {}", predictor);
 		}
 		TiffField<?> f_planaryConfiguration = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);
 		int planaryConfiguration = 1;
 		if(f_planaryConfiguration != null) planaryConfiguration = f_planaryConfiguration.getDataAsLong()[0];
 		TiffFieldEnum.PlanarConfiguration e_planaryConfiguration = TiffFieldEnum.PlanarConfiguration.fromValue(planaryConfiguration);
-		System.out.println("Planary configuration: " + e_planaryConfiguration);
+		log.info("Planary configuration: {}", e_planaryConfiguration);
 		
 		TiffField<?> f_sampleFormat = ifd.getField(TiffTag.SAMPLE_FORMAT);
 		TiffField<?> f_sampleMaxValue = ifd.getField(TiffTag.S_MAX_SAMPLE_VALUE);
@@ -217,8 +224,8 @@ public class TIFFReader extends ImageReader {
 			} else if(bitsPerSample > 32 && f_sampleMinValue != null) {
 				minValue = ((double[])f_sampleMinValue.getData())[0];
 			}				
-			System.out.println("Sample MAX value: " + maxValue);
-			System.out.println("Sample MIN vlaue: " + minValue);
+			log.info("Sample MAX value: {}", maxValue);
+			log.info("Sample MIN vlaue: {}", minValue);
 		}
 		boolean transparent = false;
 		boolean isAssociatedAlpha = false;
@@ -312,6 +319,18 @@ public class TIFFReader extends ImageReader {
 							randIS.readFully(pixels, offset, bytes2Read);
 							offset += bytes2Read;
 						}	
+						break;
+					case PACKBITS:
+						for(int i = 0; i < stripByteCounts.length; i++) {
+							int bytes2Read = stripBytes[i];
+							byte[] temp = new byte[stripByteCounts[i]];
+							randIS.seek(stripOffsets[i]);
+							randIS.readFully(temp);
+							byte[] temp2 = new byte[bytes2Read];
+							Packbits.unpackbits(temp, temp2);
+							System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
+							offset += bytes2Read;
+						}
 						break;
 					case LZW:
 						decoder = new LZWTreeDecoder(8, true);
@@ -897,7 +916,7 @@ public class TIFFReader extends ImageReader {
 		TiffField<?> field = ifd.getField(TiffTag.COMPRESSION);
 		short[] data = (short[])field.getData();
 		TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(data[0]&0xffff);
-		System.out.println("Compression type: " + compression.getDescription());
+		log.info("Compression type: {}", compression.getDescription());
 		
 		TiffField<?> f_tileOffsets = ifd.getField(TiffTag.TILE_OFFSETS);
 		if(f_tileOffsets == null) f_tileOffsets = ifd.getField(TiffTag.STRIP_OFFSETS);
@@ -910,8 +929,8 @@ public class TIFFReader extends ImageReader {
 		
 		int imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH).getDataAsLong()[0];
 		int imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH).getDataAsLong()[0];
-		System.out.println("Image width: " + imageWidth);
-		System.out.println("Image height: " + imageHeight);
+		log.info("Image width: {}", imageWidth);
+		log.info("Image height: {}", imageHeight);
 		
 		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH);
 		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH);
@@ -925,28 +944,28 @@ public class TIFFReader extends ImageReader {
 		TiffField<?> f_photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION);
 		int photoMetric = f_photoMetric.getDataAsLong()[0];
 		TiffFieldEnum.PhotoMetric e_photoMetric = TiffFieldEnum.PhotoMetric.fromValue(photoMetric);
-		System.out.println("PhotoMetric: " + e_photoMetric);
+		log.info("PhotoMetric: {}", e_photoMetric);
 		
 		TiffField<?> f_bitsPerSample = ifd.getField(TiffTag.BITS_PER_SAMPLE);
 		int bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
-		System.out.println("Bits per sample: " + bitsPerSample);
+		log.info("Bits per sample: {}", bitsPerSample);
 		
 		TiffField<?> f_samplesPerPixel = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
 		int samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
-		System.out.println("Samples per pixel: " + samplesPerPixel);
+		log.info("Samples per pixel: {}", samplesPerPixel);
 		
 		TiffField<?> f_predictor = ifd.getField(TiffTag.PREDICTOR);
 		int predictor = 0;
 		if(f_predictor != null) {
 			predictor = f_predictor.getDataAsLong()[0];
-			System.out.println("Predictor: " + predictor);
+			log.info("Predictor: {}", predictor);
 		}
 		
 		TiffField<?> f_planaryConfiguration = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);
 		int planaryConfiguration = 1;
 		if(f_planaryConfiguration != null) planaryConfiguration = f_planaryConfiguration.getDataAsLong()[0];
 		TiffFieldEnum.PlanarConfiguration e_planaryConfiguration = TiffFieldEnum.PlanarConfiguration.fromValue(planaryConfiguration);
-		System.out.println("Planary configuration: " + e_planaryConfiguration);
+		log.info("Planary configuration: {}", e_planaryConfiguration);
 		
 		TiffField<?> f_sampleFormat = ifd.getField(TiffTag.SAMPLE_FORMAT);
 		TiffField<?> f_sampleMaxValue = ifd.getField(TiffTag.S_MAX_SAMPLE_VALUE);
@@ -969,8 +988,8 @@ public class TIFFReader extends ImageReader {
 			} else if(bitsPerSample > 32 && f_sampleMinValue != null) {
 				minValue = ((double[])f_sampleMinValue.getData())[0];
 			}				
-			System.out.println("Sample MAX value: " + maxValue);
-			System.out.println("Sample MIN vlaue: " + minValue);
+			log.info("Sample MAX value: {}", maxValue);
+			log.info("Sample MIN vlaue: {}", minValue);
 		}
 
 		int tilesAcross = (imageWidth + tileWidth - 1) / tileWidth;
@@ -1314,13 +1333,13 @@ public class TIFFReader extends ImageReader {
 		
 		if(endian == IOUtils.BIG_ENDIAN)
 		{
-			System.out.println("Byte order: Motorola BIG_ENDIAN");
+			log.info("Byte order: Motorola BIG_ENDIAN");
 			this.randIS.setReadStrategy(ReadStrategyMM.getInstance());
 		} else if(endian == IOUtils.LITTLE_ENDIAN) {
-			System.out.println("Byte order: Intel LITTLE_ENDIAN");
+			log.info("Byte order: Intel LITTLE_ENDIAN");
 			this.randIS.setReadStrategy(ReadStrategyII.getInstance());
 		} else {
-			System.out.println("Warning: invalid TIFF byte order!");
+			log.info("Warning: invalid TIFF byte order!");
 			return false;
 		} 
 		
@@ -1329,7 +1348,7 @@ public class TIFFReader extends ImageReader {
 		  
 		if(tiff_id!=0x2a)//"*" 42 decimal
 		{
-			System.out.println("Warning: invalid tiff identifier");
+			log.error("Error: invalid tiff identifier");
 			return false;
 		}
 		  
@@ -1339,31 +1358,31 @@ public class TIFFReader extends ImageReader {
 	private int readIFD(int id, int offset) throws IOException 
 	{
 		IFD tiffIFD = new IFD();
-		System.out.println("IFD " + id + " offset: byte " + offset);
+		log.info("IFD {} offset: byte {}", id, offset);
 		randIS.seek(offset);
 		int no_of_fields = randIS.readShort();
-		System.out.println("Total number of fields for IFD " + id +": " + no_of_fields);
+		log.info("Total number of fields for IFD {}: {}", id, no_of_fields);
 		offset += 2;
 		
 		for (int i = 0;i < no_of_fields; i++)
 		{
-			System.out.println("TiffField "+i+" =>");
+			log.info("TiffField {} =>", i);
 			randIS.seek(offset);
 			short tag = randIS.readShort();
 			Tag ftag = TiffTag.fromShort(tag);
 			if (ftag == TiffTag.UNKNOWN)
-				System.out.println("TiffTag: " + ftag + " [Value: 0x"+ Integer.toHexString(tag&0xffff) + "]" + " (Unknown)");
+				log.info("TiffTag: {} [Value: 0x{}] (Unknown)", ftag, Integer.toHexString(tag&0xffff));
 			else
-				System.out.println("TiffTag: " + ftag);
+				log.info("TiffTag: {}", ftag);
 			offset += 2;
 			randIS.seek(offset);
 			short type = randIS.readShort();
 			FieldType ftype = FieldType.fromShort(type);
-			System.out.println("Data type: " + ftype);
+			log.info("Data type: {}", ftype);
 			offset += 2;
 			randIS.seek(offset);
 			int field_length = randIS.readInt();
-			System.out.println("TiffField length: " + field_length);
+			log.info("TiffField length: {}", field_length);
 			offset += 4;
 			////// Try to read actual data.
 			switch (ftype)
@@ -1379,7 +1398,7 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(randIS.readInt());
 						randIS.readFully(data, 0, field_length);
 					}
-					System.out.println("TiffField value: " + StringUtils.byteArrayToHexString(data, 0, 10));
+					log.info("TiffField value: {}", StringUtils.byteArrayToHexString(data, 0, 10));
 					offset += 4;					
 					tiffIFD.addField((ftype == FieldType.BYTE)?new ByteField(tag, data):
 						new UndefinedField(tag, data));
@@ -1396,7 +1415,7 @@ public class TIFFReader extends ImageReader {
 						randIS.readFully(data, 0, field_length);
 					}
 					if(data.length>0)
-					  System.out.println("TiffField value: " + new String(data, 0, data.length-1).trim());
+					  log.info("TiffField value: {}", new String(data, 0, data.length-1).trim());
 					offset += 4;	
 					tiffIFD.addField(new ASCIIField(tag, new String(data, 0, data.length)));
 			        break;
@@ -1424,7 +1443,7 @@ public class TIFFReader extends ImageReader {
 						}
 					}	
 					tiffIFD.addField(new ShortField(tag, sdata));
-					System.out.println("TiffField value: " + StringUtils.shortArrayToString(sdata, 0, 10, true));
+					log.info("TiffField value: {}", StringUtils.shortArrayToString(sdata, 0, 10, true));
 					break;
 				case LONG:
 					int[] ldata = new int[field_length];
@@ -1442,7 +1461,7 @@ public class TIFFReader extends ImageReader {
 							toOffset += 4;
 						}
 					}	
-					System.out.println("TiffField value: " + StringUtils.longArrayToString(ldata, 0, 10, true));
+					log.info("TiffField value: {}", StringUtils.longArrayToString(ldata, 0, 10, true));
 					tiffIFD.addField(new LongField(tag, ldata));
 					break;
 				case RATIONAL:
@@ -1460,7 +1479,7 @@ public class TIFFReader extends ImageReader {
 						toOffset += 4;
 					}	
 					tiffIFD.addField(new RationalField(tag, ldata));
-					System.out.println("TiffField value: " + StringUtils.rationalArrayToString(ldata, true));
+					log.info("TiffField value: {}", StringUtils.rationalArrayToString(ldata, true));
 					break;
 				case FLOAT:
 					float[] fdata = new float[field_length];
@@ -1479,7 +1498,7 @@ public class TIFFReader extends ImageReader {
 						}
 					}
 					tiffIFD.addField(new FloatField(tag, fdata));
-					System.out.println("TiffField value: " + Arrays.toString(fdata));			
+					log.info("TiffField value: {}", Arrays.toString(fdata));			
 					break;
 				case DOUBLE:
 					double[] ddata = new double[field_length];
@@ -1492,7 +1511,7 @@ public class TIFFReader extends ImageReader {
 						toOffset += 8;
 					}
 					tiffIFD.addField(new DoubleField(tag, ddata));
-					System.out.println("Field value: " + Arrays.toString(ddata));						
+					log.info("Field value: {}", Arrays.toString(ddata));						
 					break;
 				default:
 					offset += 4;
@@ -1500,7 +1519,7 @@ public class TIFFReader extends ImageReader {
 			  }	
 		}
 		list.add(tiffIFD);
-		System.out.println("********************************");
+		log.info("********************************");
 		randIS.seek(offset);
 		return randIS.readInt();
 	}

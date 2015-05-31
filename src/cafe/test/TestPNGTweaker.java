@@ -12,14 +12,18 @@ import cafe.image.png.ChunkType;
 import cafe.image.png.TextBuilder;
 import cafe.io.IOUtils;
 
-public class TestPNGTweaker {
+public class TestPNGTweaker extends TestBase {
 	/** PNG signature constant */
     private static final long SIGNATURE = 0x89504E470D0A1A0AL;
     
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
+    	new TestPNGTweaker().test(args);
+    }
+    
+	public void test(String ... args) throws Exception {
 	    String text = PNGTweaker.read_text_chunks(args[0]);
-		System.out.print(text);
-        System.out.println("=================================");        
+		log.info(text);
+        log.info("=================================");        
        
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
         	    new FileOutputStream("textinfo.txt"), "UTF-8"));

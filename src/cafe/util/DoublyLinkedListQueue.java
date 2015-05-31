@@ -66,4 +66,3 @@ public class DoublyLinkedListQueue<E>
 		list.clear();
     }
 }
-

@@ -88,6 +88,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import cafe.image.ImageFrame;
@@ -142,6 +144,9 @@ import static cafe.image.writer.TIFFWriter.*;
  * @version 1.0 03/28/2014
  */
 public class TIFFTweaker {
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(TIFFTweaker.class);
+	
 	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage ... images) throws IOException {
 		append(rin, rout, null, images);
 	}
@@ -2090,15 +2095,22 @@ public class TIFFTweaker {
 	
 	public static void printIFDs(Collection<IFD> list, String indent) {
 		int id = 0;
-		System.out.print(indent);
+		log.info("Printing IFDs ... ");
+		
 		for(IFD currIFD : list) {
-			System.out.println("IFD #" + id);
+			log.info("IFD #{}", id);
 			printIFD(currIFD, TiffTag.class, indent);
 			id++;
 		}
 	}
 	
 	public static void printIFD(IFD currIFD, Class<? extends Tag> tagClass, String indent) {
+		StringBuilder ifd = new StringBuilder();
+		print(currIFD, tagClass, indent, ifd);
+		log.info("\n{}", ifd);
+	}
+	
+	private static void print(IFD currIFD, Class<? extends Tag> tagClass, String indent, StringBuilder ifds) {
 		// Use reflection to invoke fromShort(short) method
 		Method method = null;
 		try {
@@ -2110,33 +2122,34 @@ public class TIFFTweaker {
 		}
 		Collection<TiffField<?>> fields = currIFD.getFields();
 		int i = 0;
+		
 		for(TiffField<?> field : fields) {
-			System.out.print(indent);
-			System.out.println("Field #" + i);
-			System.out.print(indent);
+			ifds.append(indent);
+			ifds.append("Field #" + i + "\n");
+			ifds.append(indent);
 			short tag = field.getTag();
 			Tag ftag = TiffTag.UNKNOWN;
 			try {
 				ftag = (Tag)method.invoke(null, tag);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				log.error("IllegalAcessException", e);
 			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
+				log.error("IllegalArgumentException", e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				log.error("InvocationTargetException", e);
 			}
 			if (ftag == TiffTag.UNKNOWN) {
-				System.out.println("Tag: " + ftag + " [Value: 0x"+ Integer.toHexString(tag&0xffff) + "]" + " (Unknown)");
+				log.warn("Tag: {} {}{}{} {}", ftag, "[Value: 0x", Integer.toHexString(tag&0xffff), "]", "(Unknown)");
 			} else {
-				System.out.println("Tag: " + ftag);
+				ifds.append("Tag: " + ftag + "\n");
 			}
 			FieldType ftype = field.getType();				
-			System.out.print(indent);
-			System.out.println("Field type: " + ftype);
+			ifds.append(indent);
+			ifds.append("Field type: " + ftype + "\n");
 			int field_length = field.getLength();
-			System.out.print(indent);
-			System.out.println("Field length: " + field_length);
-			System.out.print(indent);			
+			ifds.append(indent);
+			ifds.append("Field length: " + field_length + "\n");
+			ifds.append(indent);			
 			
 			String suffix = null;
 			if(ftype == FieldType.SHORT || ftype == FieldType.SSHORT)
@@ -2144,7 +2157,7 @@ public class TIFFTweaker {
 			else
 				suffix = ftag.getFieldAsString(field.getData());			
 			
-			System.out.println("Field value: " + field.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix));
+			ifds.append("Field value: " + field.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix) + "\n");
 			
 			i++;
 		}
@@ -2152,19 +2165,19 @@ public class TIFFTweaker {
 		Map<Tag, IFD> children = currIFD.getChildren();
 		
 		if(children.get(TiffTag.EXIF_SUB_IFD) != null) {
-			System.out.print(indent + "--------- ");
-			System.out.println("<<Exif SubIFD starts>>");
-			printIFD(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, indent + "--------- ");
-			System.out.print(indent + "--------- ");
-			System.out.println("<<Exif SubIFD ends>>");
+			ifds.append(indent + "--------- ");
+			ifds.append("<<Exif SubIFD starts>>\n");
+			print(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, indent + "--------- ", ifds);
+			ifds.append(indent + "--------- ");
+			ifds.append("<<Exif SubIFD ends>>\n");
 		}
 		
 		if(children.get(TiffTag.GPS_SUB_IFD) != null) {
-			System.out.print(indent + "--------- ");
-			System.out.println("<<GPS SubIFD starts>>");
-			printIFD(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, indent + "--------- ");
-			System.out.print(indent + "--------- ");
-			System.out.println("<<GPS SubIFD ends>>");
+			ifds.append(indent + "--------- ");
+			ifds.append("<<GPS SubIFD starts>>\n");
+			print(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, indent + "--------- ", ifds);
+			ifds.append(indent + "--------- ");
+			ifds.append("<<GPS SubIFD ends>>\n");
 		}		
 	}
 	

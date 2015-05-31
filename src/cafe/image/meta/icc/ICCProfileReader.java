@@ -13,6 +13,9 @@ package cafe.image.meta.icc;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.meta.MetadataReader;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
@@ -22,6 +25,9 @@ public class ICCProfileReader implements MetadataReader {
 	private ProfileTagTable tagTable;
 	private boolean loaded;
 	private byte[] data;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(ICCProfileReader.class);
 	
 	public ICCProfileReader(byte[] profile) {
 		this.data = profile;
@@ -238,25 +244,25 @@ public class ICCProfileReader implements MetadataReader {
 	}
 	
 	private void showHeader() {
-		System.out.println("*** Start of ICC_Profile Header ***");
-		System.out.println("Profile Size: " + getProfileSize());
-		System.out.println("CMM Type: " + getPreferredCMMType());
-		System.out.println("Version: " + getProfileVersionNumber());
-		System.out.println("Profile/Device Class: " + getProfileClassDescription());
-		System.out.println("Color Space: " + getColorSpace());
-		System.out.println("PCS: " + getPCS());
-		System.out.println("Date Created: " + getDateTimeCreated());
-		System.out.println("Profile File Signature: " + getProfileFileSignature());
-		System.out.println("Primary Platform Signature: " + getPrimaryPlatformSignature());
-		System.out.println("Flags: " + getProfileFlags());
-		System.out.println("Device Manufacturer: " + getDeviceManufacturer());
-		System.out.println("Device Model: " + getDeviceModel());
-		System.out.println("Device Attributes: " + getDeviceAttributes());
-		System.out.println("Rendering Intent: " + getRenderingIntentDescription());		
-		System.out.println("PCS Illuminant: X = " + getPCSXYZ()[0] + ", Y = " + getPCSXYZ()[1] + ", Z = " + getPCSXYZ()[2]);
-		System.out.println("Profile Creator: " + getProfileCreator());
-		System.out.println("Profile ID: " + getProfileID());
-		System.out.println("*** End of ICC_Profile Header ***");
+		log.info("*** Start of ICC_Profile Header ***");
+		log.info("Profile Size: {}", getProfileSize());
+		log.info("CMM Type: {}", getPreferredCMMType());
+		log.info("Version: {}", getProfileVersionNumber());
+		log.info("Profile/Device Class: {}", getProfileClassDescription());
+		log.info("Color Space: {}", getColorSpace());
+		log.info("PCS: {}", getPCS());
+		log.info("Date Created: {}", getDateTimeCreated());
+		log.info("Profile File Signature: {}", getProfileFileSignature());
+		log.info("Primary Platform Signature: {}", getPrimaryPlatformSignature());
+		log.info("Flags: {}", getProfileFlags());
+		log.info("Device Manufacturer: {}", getDeviceManufacturer());
+		log.info("Device Model: {}", getDeviceModel());
+		log.info("Device Attributes: {}", getDeviceAttributes());
+		log.info("Rendering Intent: {}", getRenderingIntentDescription());		
+		log.info("PCS Illuminant: X = {}, Y = {}, Z = {}", getPCSXYZ()[0], getPCSXYZ()[1], getPCSXYZ()[2]);
+		log.info("Profile Creator: {}", getProfileCreator());
+		log.info("Profile ID: {}", getProfileID());
+		log.info("*** End of ICC_Profile Header ***");
 	}
 		
 	@Override

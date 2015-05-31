@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.meta.MetadataReader;
 import cafe.image.meta.Thumbnail;
 import cafe.io.IOUtils;
@@ -40,6 +43,9 @@ public class IRBReader implements MetadataReader {
 	private ThumbnailResource thumbnail;
 	private boolean loaded;
 	Map<Short, _8BIM> _8bims = new HashMap<Short, _8BIM>();
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(IRBReader.class);
 	
 	public IRBReader(byte[] data) {
 		this.data = data;
@@ -172,35 +178,35 @@ public class IRBReader implements MetadataReader {
 				e.printStackTrace();
 			}			
 		}
-		System.out.println("<<Adobe IRB information starts>>");
+		log.info("<<Adobe IRB information starts>>");
 		for(_8BIM _8bim : _8bims.values()) {
 			_8bim.print();
 		}
 		if(containsThumbnail) {
-			System.out.println(thumbnail.getResouceID());
+			log.info("{}", thumbnail.getResouceID());
 			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).
 			switch (thumbnailFormat) {
 				case IRBThumbnail.DATA_TYPE_KJpegRGB:
-					System.out.println("Thumbnail format: KJpegRGB");
+					log.info("Thumbnail format: KJpegRGB");
 					break;
 				case IRBThumbnail.DATA_TYPE_KRawRGB:
-					System.out.println("Thumbnail format: KRawRGB");
+					log.info("Thumbnail format: KRawRGB");
 					break;
 			}
-			System.out.println("Thumbnail width: " + thumbnail.getWidth());
-			System.out.println("Thumbnail height: " + thumbnail.getHeight());
+			log.info("Thumbnail width: {}", thumbnail.getWidth());
+			log.info("Thumbnail height: {}", thumbnail.getHeight());
 			// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-			System.out.println("Padded row bytes: " + thumbnail.getPaddedRowBytes());
+			log.info("Padded row bytes: {}", thumbnail.getPaddedRowBytes());
 			// Total size = widthbytes * height * planes
-			System.out.println("Total size: "  + thumbnail.getTotalSize());
+			log.info("Total size: {}", thumbnail.getTotalSize());
 			// Size after compression. Used for consistency check.
-			System.out.println("Size after compression: " + thumbnail.getCompressedSize());
+			log.info("Size after compression: {}", thumbnail.getCompressedSize());
 			// Bits per pixel. = 24
-			System.out.println("Bits per pixel: " + thumbnail.getBitsPerPixel());
+			log.info("Bits per pixel: {}", thumbnail.getBitsPerPixel());
 			// Number of planes. = 1
-			System.out.println("Number of planes: "  + thumbnail.getNumOfPlanes());
+			log.info("Number of planes: {}", thumbnail.getNumOfPlanes());
 		}
 		
-		System.out.println("<<Adobe IRB information ends>>");
+		log.info("<<Adobe IRB information ends>>");
 	}
 }

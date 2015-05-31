@@ -32,20 +32,24 @@ import cafe.image.tiff.TiffTag;
 import cafe.image.util.IMGUtils;
 import cafe.string.XMLUtils;
 
-public class TestMetadata {
+public class TestMetadata extends TestBase {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
+		new TestMetadata().test(args);
+	}
+	
+	public void test(String ... args) throws Exception {
 		Map<MetadataType, Metadata> metadataMap = Metadata.readMetadata(args[0]);
-		System.out.println("Start of metadata information:");
-		System.out.println("Total number of metadata entries: " + metadataMap.size());
+		log.info("Start of metadata information:");
+		log.info("Total number of metadata entries: {}", metadataMap.size());
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
-			System.out.println("Metadata entry " + i + " - " + entry.getKey());
+			log.info("Metadata entry {} - {}", i, entry.getKey());
 			entry.getValue().showMetadata();
 			i++;
-			System.out.println("-----------------------------------------");
+			log.info("-----------------------------------------");
 		}
-		System.out.println("End of metadata information.");
+		log.info("End of metadata information.");
 	
 		FileInputStream fin = null;
 		FileOutputStream fout = null;

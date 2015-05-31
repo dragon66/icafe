@@ -51,6 +51,9 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.ImageIO;
 import cafe.image.ImageType;
 import cafe.image.meta.adobe.ImageResourceID;
@@ -80,6 +83,9 @@ public class IMGUtils {
 	private static byte[] JPG = {(byte)0xff, (byte)0xd8, (byte)0xff};
 	private static byte[] PCX = {0x0a};
 	private static byte[] JPG2000 = {0x00, 0x00, 0x00, 0x0C};
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(IMGUtils.class);
 		
 	/**
 	 * Check the color depth of the image and if the color depth is within 8 bits, (i.e.,
@@ -567,7 +573,7 @@ public class IMGUtils {
 				} else if(type == BufferedImage.TYPE_INT_ARGB) {
 					;  // Do nothing
 				} else {
-					System.out.println("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
+					log.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
 					return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 				}
 				return rgbs;
@@ -608,7 +614,7 @@ public class IMGUtils {
 					for(int i = 0; i < imageSize; i++)
 						rgbs[i] = (0xff000000)|((bpixels[i]&0xff)<<16)|((bpixels[i]&0xff)<<8)|(bpixels[i]&0xff);						 
 				} else {
-					System.out.println("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
+					log.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
 					return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 				}
 				return rgbs;
@@ -634,7 +640,7 @@ public class IMGUtils {
 						rgbs[i] = (0xff000000)|(red<<19)|(green<<11)|(blue<<3);
 					}
 				} else {
-					System.out.println("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
+					log.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
 					return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 				}		
 				return rgbs;
@@ -754,7 +760,7 @@ public class IMGUtils {
 					 		}
 				 			break;
 						default: 
-							System.out.println(bitsPerPixel + " bit color depth is not valid for indexed image...");
+							log.error(bitsPerPixel + " bit color depth is not valid for indexed image...");
 					}
 				} else if(type == BufferedImage.TYPE_4BYTE_ABGR) {
 					if(numOfBanks == 1) {
@@ -854,7 +860,7 @@ public class IMGUtils {
 					imageType = ImageType.TGA;					
 			}
 		} else {
-			System.out.println("Unknown format!");		
+			log.error("Unknown image type format!");		
 		}
 		
 		return imageType;

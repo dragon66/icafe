@@ -74,7 +74,7 @@ public class JPEGWriter extends ImageWriter {
 	private boolean grayScale;
 	private int colorSpace = JPEGOptions.COLOR_SPACE_YCbCr;
 	
-	private static final String pathToCMYKProfile = "/lib/CMYK Profiles/USWebCoatedSWOP.icc";
+	private static final String pathToCMYKProfile = "/resources/CMYK Profiles/USWebCoatedSWOP.icc";
 	private ICC_ColorSpace cmykColorSpace;
 	private boolean writeICCProfile;
 	private boolean isTiffFlavor;

@@ -42,6 +42,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -59,6 +62,9 @@ import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 
 public class XMLUtils {
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(XMLUtils.class);
+		
 	public static void addChild(Node parent, Node child) {
 		parent.appendChild(child);
 	}
@@ -194,75 +200,83 @@ public class XMLUtils {
 	    ProcessingInstruction pi = doc.createProcessingInstruction(target, data);
 	    element.getParentNode().appendChild(pi);
 	}
-		
+	
 	public static void printNode(Node node, String indent) {
+		StringBuilder xmlTree = new StringBuilder();
+		// Construct the XML tree
+		print(node, indent, xmlTree);
+		// Log the XML tree
+		log.info("\n{}", xmlTree);
+	}
+	
+	private static void print(Node node, String indent, StringBuilder stringBuilder) {
 		if(node != null) {
-			if(indent == null) indent = "";
+			if(indent == null) indent = "";  
 			switch(node.getNodeType()) {
 		        case Node.DOCUMENT_NODE: {
 		            Node child = node.getFirstChild();
 		            while(child != null) {
-		            	printNode(child, indent);
+		            	print(child, indent, stringBuilder);
 		            	child = child.getNextSibling();
 		            }
 		            break;
 		        } 
 		        case Node.DOCUMENT_TYPE_NODE: {
 		            DocumentType doctype = (DocumentType) node;
-		            System.out.println("<!DOCTYPE " + doctype.getName() + ">");
+		            stringBuilder.append("<!DOCTYPE " + doctype.getName() + ">\n");
 		            break;
 		        }
 		        case Node.ELEMENT_NODE: { // Element node
 		            Element ele = (Element) node;
-		            System.out.print(indent + "<" + ele.getTagName());
+		            stringBuilder.append(indent + "<" + ele.getTagName());
 		            NamedNodeMap attrs = ele.getAttributes(); 
 		            for(int i = 0; i < attrs.getLength(); i++) {
 		                Node a = attrs.item(i);
-		                System.out.print(" " + a.getNodeName() + "='" + 
+		                stringBuilder.append(" " + a.getNodeName() + "='" + 
 		                          escapeXML(a.getNodeValue()) + "'");
 		            }
-		            System.out.println(">");
+		            stringBuilder.append(">\n");
 	
 		            String newindent = indent + "    ";
 		            Node child = ele.getFirstChild();
 		            while(child != null) {
-		            	printNode(child, newindent);
+		            	print(child, newindent, stringBuilder);
 		            	child = child.getNextSibling();
 		            }
 	
-		            System.out.println(indent + "</" + ele.getTagName() + ">");
+		            stringBuilder.append(indent + "</" + ele.getTagName() + ">\n");
 		            break;
 		        }
 		        case Node.TEXT_NODE: {
 		            Text textNode = (Text)node;
 		            String text = textNode.getData().trim();
 		            if ((text != null) && text.length() > 0)
-		                System.out.println(indent + escapeXML(text));
+		                stringBuilder.append(indent + escapeXML(text) + "\n");
 		            break;
 		        }
 		        case Node.PROCESSING_INSTRUCTION_NODE: {
 		            ProcessingInstruction pi = (ProcessingInstruction)node;
-		            System.out.println(indent + "<?" + pi.getTarget() +
-		                               " " + pi.getData() + "?>");
+		            stringBuilder.append(indent + "<?" + pi.getTarget() +
+		                               " " + pi.getData() + "?>\n");
 		            break;
 		        }
 		        case Node.ENTITY_REFERENCE_NODE: {
-		            System.out.println(indent + "&" + node.getNodeName() + ";");
+		            stringBuilder.append(indent + "&" + node.getNodeName() + ";\n");
 		            break;
 		        }
 		        case Node.CDATA_SECTION_NODE: {           // Output CDATA sections
 		            CDATASection cdata = (CDATASection)node;
-		            System.out.println(indent + "<" + "![CDATA[" + cdata.getData() +
-		                        "]]" + ">");
+		            stringBuilder.append(indent + "<" + "![CDATA[" + cdata.getData() +
+		                        "]]" + ">\n");
 		            break;
 		        }
 		        case Node.COMMENT_NODE: {
 		        	Comment c = (Comment)node;
-		            System.out.println(indent + "<!--" + c.getData() + "-->");
+		            stringBuilder.append(indent + "<!--" + c.getData() + "-->\n");
 		            break;
 		        }
 		        default:
-		            System.err.println("Unknown node: " + node.getClass().getName());
+		            log.error("Unknown node: " + node.getClass().getName());
 		            break;
 			}
 		}

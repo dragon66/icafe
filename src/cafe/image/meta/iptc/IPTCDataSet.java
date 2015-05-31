@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
@@ -46,6 +49,9 @@ public class IPTCDataSet {
 	
 	// A unique name used as HashMap key
 	private String name;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(IPTCDataSet.class);
 	
 	public IPTCDataSet(int tag, byte[] data) {
 		this(IPTCRecord.APPLICATION, tag, data);
@@ -172,36 +178,36 @@ public class IPTCDataSet {
 		
 		switch (recordNumber) {
 			case 1: //Envelope Record
-				System.out.println("Record number " + recordNumber + ": Envelope Record");
+				log.info("Record number {}: Envelope Record", recordNumber);
 				break;
 			case 2: //Application Record
-				System.out.println("Record number " + recordNumber + ": Application Record");
+				log.info("Record number {}: Application Record", recordNumber);
 				break;
 			case 3: //NewsPhoto Record
-				System.out.println("Record number " + recordNumber + ": NewsPhoto Record");
+				log.info("Record number {}: NewsPhoto Record", recordNumber);
 				break;
 			case 7: //PreObjectData Record
-				System.out.println("Record number " + recordNumber + ": PreObjectData Record");
+				log.info("Record number {}: PreObjectData Record", recordNumber);
 				break;
 			case 8: //ObjectData Record
-				System.out.println("Record number " + recordNumber + ": ObjectData Record");
+				log.info("Record number {}: ObjectData Record", recordNumber);
 				break;				
 			case 9: //PostObjectData Record
-				System.out.println("Record number " + recordNumber + ": PostObjectData Record");
+				log.info("Record number {}: PostObjectData Record", recordNumber);
 				break;	
 			case 240: //FotoStation Record
-				System.out.println("Record number " + recordNumber + ": FotoStation Record");
+				log.info("Record number {}: FotoStation Record", recordNumber);
 				break;	
 			default:
-				System.out.println("Record number " + recordNumber + ": Unknown Record");
+				log.info("Record number {}: Unknown Record", recordNumber);
 				break;
 		}		
 		
-		System.out.println("Dataset name: " + name);
-		System.out.println("Dataset tag: " + tag + "[" + StringUtils.shortToHexStringMM((short)tag) + "]");
-		System.out.println("Dataset size: " + size);
+		log.info("Dataset name: {}", name);
+		log.info("Dataset tag: {}[{}]", tag, StringUtils.shortToHexStringMM((short)tag));
+		log.info("Dataset size: {}", size);
 		
-		System.out.println("Dataset value: " + getDataAsString());
+		log.info("Dataset value: {}", getDataAsString());
 	}
 	
 	/**

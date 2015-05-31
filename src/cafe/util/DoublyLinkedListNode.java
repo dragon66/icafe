@@ -65,5 +65,3 @@ class DoublyLinkedListNode<E>
         this.next = next;
     }
 }
-
-

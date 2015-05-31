@@ -38,6 +38,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.image.compression.lzw.LZWTreeDecoder;
 import cafe.io.IOUtils;
 
@@ -68,6 +71,9 @@ public class GIFReader extends ImageReader {
 	
 	// BufferedImage with the width and height of the logical screen to draw frames upon
 	private BufferedImage baseImage;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(GIFReader.class);
 	
 	private byte[] decodeLZW(InputStream is) throws Exception
 	{
@@ -285,7 +291,7 @@ public class GIFReader extends ImageReader {
 			image_separator = is.read();
 			    
 			if(image_separator == -1 || image_separator == 0x3b) { // End of stream 
-				System.out.println("End of stream!");
+				log.info("End of stream!");
 				return null;
 			}
 			    
@@ -304,7 +310,7 @@ public class GIFReader extends ImageReader {
 					{
 						IOUtils.skipFully(is,2);
 						transparent = true;
-						System.out.println("transparent gif...");					 
+						log.info("transparent gif...");					 
 						transparent_color = is.read();
 						len = is.read();// len=0, block terminator!
 					} else {
@@ -331,12 +337,12 @@ public class GIFReader extends ImageReader {
 		{
 			hasLocalColorMap = true;
 			// A local color map is present
-			System.out.println("local color map is present");
+			log.info("local color map is present");
 	
 			bitsPerPixel = (flags2&0x07)+1;
 			colorsUsed = (1<<bitsPerPixel);
 	
-			System.out.println(colorsUsed + " color image");
+			log.info("{} color image", colorsUsed);
 	
 			readLocalPalette(is, colorsUsed);
 		}
@@ -348,7 +354,7 @@ public class GIFReader extends ImageReader {
 			
 		if((flags2&0x40) == 0x40) 
 		{
-			System.out.println("Interlaced gif image!"); 
+			log.info("Interlaced gif image!"); 
 			return decodeLZWInterLaced(is);
 		}
 		
@@ -376,11 +382,11 @@ public class GIFReader extends ImageReader {
 		logicalScreenHeight = gifHeader.screen_height;
 	
 		String signature = new String(gifHeader.signature) + new String(gifHeader.version);
-		System.out.println(signature);
+		log.info(signature);
 			
 		if ((!signature.equalsIgnoreCase("GIF87a")) && (!signature.equalsIgnoreCase("GIF89a")))
 		{
-			System.out.println("Only GIF87a and GIF89a is supported by this decoder!");
+			log.warn("Only GIF87a and GIF89a is supported by this decoder!");
 			return false;
 		}
 	      
@@ -388,11 +394,11 @@ public class GIFReader extends ImageReader {
 					
 		if((flags&0x80) == 0x80) // A global color map is present 
 		{
-			System.out.println("a global color map is present!");
+			log.info("a global color map is present!");
 			bitsPerPixel = (flags&0x07)+1;
 			colorsUsed = (1<<bitsPerPixel);
 	
-			System.out.println(colorsUsed + " color image");
+			log.info("{} color image", colorsUsed);
 	
 			// # bits of color resolution, insignificant 
 			@SuppressWarnings("unused")

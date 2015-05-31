@@ -208,7 +208,5 @@ public class DoublyLinkedList<E>
             if( list.removeFromHead( ) != i) 
                 System.out.println( "removdeFromHead() error!" );
 		}
-
     }
 }
-

@@ -5,32 +5,36 @@ import java.util.Arrays;
 import cafe.string.StringUtils;
 import cafe.util.ArrayUtils;
 
-public class TestArrayUtils {
+public class TestArrayUtils extends TestBase {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		new TestArrayUtils().test();
+	}
+	
+	public void test(String ... args) {
 	    String[]  s = {"1","2"};
         Object[]  o = {"3","4"};
         A[] a = {new A()};
         B[] b = {new B()};
         
-        System.out.println("--Concating arrays--");
+        log.info("--Concating arrays--");
         
         //This line will not compile because of the explicit type parameter String.
-        //System.out.println(Arrays.deepToString(ArrayUtils.<String>concat(s,o)));
+        //log.info("{}", Arrays.deepToString(ArrayUtils.<String>concat(s,o)));
         //This line compiles because the inferred type is Object
-        System.out.println(Arrays.deepToString(ArrayUtils.concat(s,s)));
-        System.out.println(Arrays.deepToString(ArrayUtils.concat(s,o)));
-        System.out.println(Arrays.deepToString(ArrayUtils.concat(s,o,Object[].class)));   
-        System.out.println(Arrays.deepToString(ArrayUtils.concat(a,b)));
+        log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,s)));
+        log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,o)));
+        log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,o,Object[].class)));   
+        log.info("{}", Arrays.deepToString(ArrayUtils.concat(a,b)));
         
         // Test array sorting
         final int NUMS = 200;
         final int GAP  =   37;
 
-        System.out.println( "--Sorting Integer array--" );
+        log.info( "--Sorting Integer array--" );
         
 		int j=0;
 		Integer[] array = new Integer[NUMS];
@@ -39,16 +43,15 @@ public class TestArrayUtils {
             array[++j] = new Integer( i );
         }
         
-        System.out.print(Arrays.deepToString(array));
-        System.out.println();
+        log.info("{}", Arrays.deepToString(array));
         
         ArrayUtils.shellsort(array,1, array.length-1);
 
-        System.out.println(Arrays.deepToString(array));
+        log.info("{}", Arrays.deepToString(array));
         
-        System.out.println("--Packing byte array--");
+        log.info("--Packing byte array--");
         byte[] input = new byte[] {3, 3, 3, 3, 3, 3, 3, 3, 3, 3};
-        System.out.println(StringUtils.byteArrayToHexString(ArrayUtils.packByteArray(input, 0, 5, 10)));
+        log.info("{}", StringUtils.byteArrayToHexString(ArrayUtils.packByteArray(input, 0, 5, 10)));
  	}
 }
 

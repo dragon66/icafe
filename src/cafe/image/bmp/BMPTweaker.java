@@ -32,6 +32,9 @@ import cafe.image.meta.Metadata;
 import cafe.image.meta.image.ImageMetadata;
 import static cafe.string.XMLUtils.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * BMP image tweaking tool
  * 
@@ -39,6 +42,9 @@ import static cafe.string.XMLUtils.*;
  * @version 1.0 12/29/2014
  */
 public class BMPTweaker {	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(BMPTweaker.class);
+
 	// Data transfer object for multiple thread support
 	private static class DataTransferObject {
 		private byte[] fileHeader; // 14
@@ -61,12 +67,13 @@ public class BMPTweaker {
 		DataTransferObject DTO = new DataTransferObject();
 		readHeader(is, DTO);
 		
-		System.out.println("... BMP snoop starts...");
-		System.out.println("Image signature: " + new String(DTO.fileHeader, 0, 2));
-		System.out.println("File size: " + IOUtils.readInt(DTO.fileHeader, 2) + " bytes");
-		System.out.println("Reserved1 (2 bytes): " + IOUtils.readShort(DTO.fileHeader, 6));
-		System.out.println("Reserved2 (2 bytes): " + IOUtils.readShort(DTO.fileHeader, 8));
-		System.out.println("Data offset: " + IOUtils.readInt(DTO.fileHeader, 10));
+		log.info("... BMP snoop starts...");
+		log.info("Image signature: {}", new String(DTO.fileHeader, 0, 2));
+		log.info("File size: {} bytes", IOUtils.readInt(DTO.fileHeader, 2));
+		log.info("Reserved1 (2 bytes): {}", IOUtils.readShort(DTO.fileHeader, 6));
+		log.info("Reserved2 (2 bytes): {}", IOUtils.readShort(DTO.fileHeader, 8));
+		log.info("Data offset: {}", IOUtils.readInt(DTO.fileHeader, 10));
+		
 		Node root = createElement(doc, "bitmap");
 		Node header = createElement(doc, "header");
 		Node fileHeader = createElement(doc, "file-header");
@@ -88,9 +95,9 @@ public class BMPTweaker {
 		addChild(fileHeader, dataOffset);
 		
 		// TODO add more ImageMetadata elements to doc
-		System.out.println("Info header length: " + IOUtils.readInt(DTO.infoHeader, 0));
-		System.out.println("Image width: " + IOUtils.readInt(DTO.infoHeader, 4));
-		System.out.println("Image heigth: " + IOUtils.readInt(DTO.infoHeader, 8));	
+		log.info("Info header length: {}", IOUtils.readInt(DTO.infoHeader, 0));
+		log.info("Image width: {}", IOUtils.readInt(DTO.infoHeader, 4));
+		log.info("Image heigth: {}", IOUtils.readInt(DTO.infoHeader, 8));	
 		
 		String alignment = "";
 		if(IOUtils.readInt(DTO.infoHeader, 8) > 0)
@@ -98,15 +105,15 @@ public class BMPTweaker {
 		else
 			alignment = "TOP_DOWN";
 		
-		System.out.println("Image alignment: " + alignment);
-		System.out.println("Number of planes: " + IOUtils.readShort(DTO.infoHeader, 12));
-		System.out.println("BitCount (bits per pixel): " + IOUtils.readShort(DTO.infoHeader, 14));
-		System.out.println("Compression: " + BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)));
-		System.out.println("Image size (compressed size of image): " + IOUtils.readInt(DTO.infoHeader, 20) + " bytes");
-		System.out.println("Horizontal resolution (Pixels/meter): " + IOUtils.readInt(DTO.infoHeader, 24));
-		System.out.println("Vertical resolution (Pixels/meter): " + IOUtils.readInt(DTO.infoHeader, 28));
-		System.out.println("Colors used (number of actually used colors): " + IOUtils.readInt(DTO.infoHeader, 32));
-		System.out.println("Important colors (number of important colors): " + IOUtils.readInt(DTO.infoHeader, 36));
+		log.info("Image alignment: {}", alignment);
+		log.info("Number of planes: {}", IOUtils.readShort(DTO.infoHeader, 12));
+		log.info("BitCount (bits per pixel): {}", IOUtils.readShort(DTO.infoHeader, 14));
+		log.info("Compression: {}", BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)));
+		log.info("Image size (compressed size of image): {} bytes", IOUtils.readInt(DTO.infoHeader, 20));
+		log.info("Horizontal resolution (Pixels/meter): {}", IOUtils.readInt(DTO.infoHeader, 24));
+		log.info("Vertical resolution (Pixels/meter): {}", IOUtils.readInt(DTO.infoHeader, 28));
+		log.info("Colors used (number of actually used colors): {}", IOUtils.readInt(DTO.infoHeader, 32));
+		log.info("Important colors (number of important colors): {}", IOUtils.readInt(DTO.infoHeader, 36));
 		
 		Node infoHeader = createElement(doc, "info-header");
 		Node infoHeaderLen = createElement(doc, "info-header-length");
@@ -151,7 +158,7 @@ public class BMPTweaker {
 		
 		if(bitsPerPixel <= 8) {
 			readPalette(is, DTO);
-			System.out.println("Color map follows");
+			log.info("Color map follows");
 		}
 		
 		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(doc));

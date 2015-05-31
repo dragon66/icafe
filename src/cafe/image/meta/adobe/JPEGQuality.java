@@ -21,6 +21,9 @@ package cafe.image.meta.adobe;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cafe.io.IOUtils;
 
 public class JPEGQuality extends _8BIM {
@@ -83,6 +86,9 @@ public class JPEGQuality extends _8BIM {
 	private int format = Format.FORMAT_STANDARD.getValue();;	
 	private int progressiveScans = ProgressiveScans.PROGRESSIVE_3_SCANS.getValue();
 	private byte trailer = 0x01;
+	
+	// Obtain a logger instance
+	private static final Logger log = LoggerFactory.getLogger(JPEGQuality.class);
 	
 	public JPEGQuality() {
 		this("JPEGQuality");
@@ -209,12 +215,7 @@ public class JPEGQuality extends _8BIM {
 	
 	public void print() {
 		super.print();
-		System.out.print(getQualityAsString());
-		System.out.print(" : ");
-		System.out.print(getFormatAsString());
-		System.out.print(" : ");
-		System.out.print(getProgressiveScansAsString());
-		System.out.println(" - Plus 1 byte unknown trailer value = " + trailer); // Always seems to be 0x01
+		log.info("{} : {} : {} - Plus 1 byte unknown trailer value = {}", getQualityAsString(), getFormatAsString(), getProgressiveScansAsString(), trailer);
 	}
 	
 	private void read() {

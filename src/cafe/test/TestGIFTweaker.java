@@ -18,11 +18,15 @@ import cafe.image.tiff.TiffFieldEnum.Compression;
 import cafe.image.writer.ImageWriter;
 import cafe.util.FileUtils;
 
-public class TestGIFTweaker {
+public class TestGIFTweaker extends TestBase {
 
 	public TestGIFTweaker() {}
 
 	public static void main(String[] args) throws Exception {
+		new TestGIFTweaker().test(args);
+	}
+	
+	public void test(String ... args) throws Exception {
 		FileOutputStream fout = new FileOutputStream("NEW.gif");
 		
 		File[] files = FileUtils.listFilesMatching(new File(args[1]), args[2]);
@@ -39,7 +43,7 @@ public class TestGIFTweaker {
 		long t1 = System.currentTimeMillis();
 		GIFTweaker.writeAnimatedGIF(images, 0, fout);
 		long t2 = System.currentTimeMillis();
-		System.out.println("time used: " + (t2-t1) + "ms");
+		log.info("time used: {}ms", (t2-t1));
 		
 		ImageWriter writer = ImageIO.getWriter(ImageType.GIF);
 		ImageType imageType = writer.getImageType();

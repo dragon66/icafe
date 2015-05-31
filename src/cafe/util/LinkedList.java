@@ -127,7 +127,7 @@ public class LinkedList<E>
     }
 
     // Simple print method
-    public static <T> void printList( LinkedList<T> theList )
+    private static <T> void printList( LinkedList<T> theList )
     {
         if( theList.isEmpty( ) )
             System.out.print( "Empty list" );
@@ -170,5 +170,4 @@ public class LinkedList<E>
         System.out.println( "Finished deletions" );
         printList( theList );
     }
-
 }
