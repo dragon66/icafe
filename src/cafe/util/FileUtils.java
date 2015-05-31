@@ -12,6 +12,7 @@ package cafe.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -88,7 +89,12 @@ public class FileUtils {
 	        }        	
         }  else {
         	//If not directory, print the file path and add it to return list
-        	String path = dir.getAbsolutePath();        	
+        	String path = "";
+			try {
+				path = dir.getCanonicalPath();
+			} catch (IOException e) {
+				log.error("IOException", e);
+			}        	
         	if(fileExt != null && path.endsWith(fileExt)) {
         		fileList.add(path);        	   
         		log.info("File: {}", path);
