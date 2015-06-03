@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    02Jun2015  Bug fix for generic concatenation methods
  * WY    06Apr2015  Added reverse(byte[]) to reverse byte array elements
  * WY    06Jan2015  Added reverse() to reverse array elements
  * WY    10Dec2014  Moved reverseBits() from IMGUtils to here along with BIT_REVERSE_TABLE
@@ -258,12 +259,23 @@ public class ArrayUtils
 			return first;
 		}	
 		
-	    // For JDK1.6+, use the following two lines instead.
+		// Determine the common super type
+		Class<?> returnType = first.getClass().getComponentType();
+		Class<?> secondType = second.getClass().getComponentType();
+		while (! returnType.isAssignableFrom(secondType)) {
+            if (secondType.isAssignableFrom(returnType)) {
+                returnType = secondType;
+                break;
+            }
+            returnType = returnType.getSuperclass();
+            secondType = secondType.getSuperclass();
+        }
+	
+		// For JDK1.6+, use the following two lines instead.
 	    //T[] result = java.util.Arrays.copyOf(first, first.length + second.length);
-        //System.arraycopy(second, 0, result, first.length, second.length);		
-		
-		@SuppressWarnings("unchecked")	
-		T[] result = (T[]) Array.newInstance(first.getClass().getComponentType(), firstLen + secondLen);
+        //System.arraycopy(second, 0, result, first.length, second.length);	
+		@SuppressWarnings("unchecked")
+		T[] result = (T[]) Array.newInstance(returnType, firstLen + secondLen);
    
 		System.arraycopy(first, 0, result, 0, firstLen);
 		System.arraycopy(second, 0, result, firstLen, secondLen);
@@ -271,6 +283,9 @@ public class ArrayUtils
 		return result;
     }
 	
+	// Although this one is simpler to use than the one with a Class
+	// parameter, it is not so efficient as it has to determine the
+	// common super class at runtime.
 	public static <T> T[] concat(T[] first, T[]... rest) {
 		// Short cut
 		if(rest.length == 1) return concat(first, rest[0]);
@@ -280,12 +295,24 @@ public class ArrayUtils
 		}
 		// Now the real stuff	  
 		int totalLength = first.length;	  
-	  
+		Class<?> returnType = first.getClass().getComponentType();
+		
+		// Determine the common super type
 		for (T[] array : rest) {		
 			totalLength += array.length;
+			Class<?> thisType = array.getClass().getComponentType();
+			while (! returnType.isAssignableFrom(thisType)) {
+	            if (thisType.isAssignableFrom(returnType)) {
+	                returnType = thisType;
+	                break;
+	            }
+	            returnType = returnType.getSuperclass();
+	            thisType = thisType.getSuperclass();
+	        }
 	 	}
+		
 		@SuppressWarnings("unchecked")
-		T[] result = (T[]) Array.newInstance(first.getClass().getComponentType(), totalLength);
+		T[] result = (T[]) Array.newInstance(returnType, totalLength);
 	  
 		int offset = first.length;
 		
@@ -859,7 +886,7 @@ public class ArrayUtils
 	   array[b] = temp;
     }
     
-    private static final <T extends Comparable<? super T>> void swap(T[] array, int a, int b) {
+    private static final <T> void swap(T[] array, int a, int b) {
 	   T temp = array[a];
 	   array[a] = array[b];
 	   array[b] = temp;

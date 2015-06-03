@@ -22,11 +22,13 @@ public class TestArrayUtils extends TestBase {
         
         log.info("--Concating arrays--");
         
+        log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,s)));
+    
         //This line will not compile because of the explicit type parameter String.
         //log.info("{}", Arrays.deepToString(ArrayUtils.<String>concat(s,o)));
         //This line compiles because the inferred type is Object
-        log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,s)));
         log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,o)));
+        
         log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,o,Object[].class)));   
         log.info("{}", Arrays.deepToString(ArrayUtils.concat(a,b)));
         
