@@ -29,7 +29,7 @@ public class TestArrayUtils extends TestBase {
         //This line compiles because the inferred type is Object
         log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,o)));
         
-        log.info("{}", Arrays.deepToString(ArrayUtils.concat(s,o,Object[].class)));   
+        log.info("{}", Arrays.deepToString(ArrayUtils.concat(Object.class,s,o)));   
         log.info("{}", Arrays.deepToString(ArrayUtils.concat(a,b)));
         
         // Test array sorting

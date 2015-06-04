@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    04Jun2015  Rewrote all concatenation related methods
  * WY    02Jun2015  Bug fix for generic concatenation methods
  * WY    06Apr2015  Added reverse(byte[]) to reverse byte array elements
  * WY    06Jan2015  Added reverse() to reverse array elements
@@ -182,37 +183,11 @@ public class ArrayUtils
         return false;
     }
 	
-	public static byte[] concat(byte[] first, byte[] second) {
-		// Sanity check
-		if(first == null) return second;
-		if(second == null) return first;
-		
-		int firstLen = first.length;
-		int secondLen = second.length;
-		
-		if (firstLen == 0) {
-			return second;
-		}
-		
-		if (secondLen == 0) {
-			return first;
-		}	
-		
-	    byte[] result = new byte[firstLen + secondLen];
-   
-		System.arraycopy(first, 0, result, 0, firstLen);
-		System.arraycopy(second, 0, result, firstLen, secondLen);
-    
-		return result;
-    }
-	
 	public static byte[] concat(byte[] first, byte[]... rest) {
-  	  	// Short cut
-		if(rest.length == 1) return concat(first, rest[0]);
-		// Sanity check
-		if(first == null) {
+  	 	if(first == null) {
 			throw new IllegalArgumentException("Firt element is null");
 		}
+  	 	if(rest.length == 0) return first;
 		// Now the real stuff
   	  	int totalLength = first.length;
 	  
@@ -224,8 +199,7 @@ public class ArrayUtils
 	  
 		int offset = first.length;
 		
-		if (offset != 0)
-	  		System.arraycopy(first, 0, result, 0, offset);
+		System.arraycopy(first, 0, result, 0, offset);
 	
 		for (byte[] array : rest) {
 			System.arraycopy(array, 0, result, offset, array.length);
@@ -236,90 +210,34 @@ public class ArrayUtils
 	}
 	
 	/**
-	 * If type parameter is not explicitly supplied, it will be inferred as the 
+	 * Type safe concatenation of arrays with upper type bound T
+	 * <p>
+	 * Note: if type parameter is not explicitly supplied, it will be inferred as the 
 	 * upper bound for the two parameters.
 	 * 
-	 * @param first the first array to be concatenated
-	 * @param second the second array to be concatenated
-	 * @return a concatenation of the first and the second arrays
+	 * @param arrays the arrays to be concatenated
+	 * @return a concatenation of the input arrays
+	 * @throws NullPointerException if any of the input array is null
 	 */
-	public static <T> T[] concat(T[] first, T[] second) {
-		// Sanity check
-		if(first == null) return second;
-		if(second == null) return first;
+	public static <T> T[] concat(T[]... arrays) {
+		if(arrays.length == 0)
+			throw new IllegalArgumentException("Varargs length is zero");
 		
-		int firstLen = first.length;
-		int secondLen = second.length;
+		if(arrays.length == 1) return arrays[0];
 		
-		if (firstLen == 0) {
-			return second;
-		}
+		// Now the real stuff
+		int totalLength = 0;
+		// Taking advantage of the compiler type inference
+		Class<?> returnType = arrays.getClass().getComponentType().getComponentType();
 		
-		if (secondLen == 0) {
-			return first;
-		}	
-		
-		// Determine the common super type
-		Class<?> returnType = first.getClass().getComponentType();
-		Class<?> secondType = second.getClass().getComponentType();
-		while (! returnType.isAssignableFrom(secondType)) {
-            if (secondType.isAssignableFrom(returnType)) {
-                returnType = secondType;
-                break;
-            }
-            returnType = returnType.getSuperclass();
-            secondType = secondType.getSuperclass();
-        }
-	
-		// For JDK1.6+, use the following two lines instead.
-	    //T[] result = java.util.Arrays.copyOf(first, first.length + second.length);
-        //System.arraycopy(second, 0, result, first.length, second.length);	
-		@SuppressWarnings("unchecked")
-		T[] result = (T[]) Array.newInstance(returnType, firstLen + secondLen);
-   
-		System.arraycopy(first, 0, result, 0, firstLen);
-		System.arraycopy(second, 0, result, firstLen, secondLen);
-    
-		return result;
-    }
-	
-	// Although this one is simpler to use than the one with a Class
-	// parameter, it is not so efficient as it has to determine the
-	// common super class at runtime.
-	public static <T> T[] concat(T[] first, T[]... rest) {
-		// Short cut
-		if(rest.length == 1) return concat(first, rest[0]);
-		// Sanity check
-		if(first == null) {
-			throw new IllegalArgumentException("Firt element is null");
-		}
-		// Now the real stuff	  
-		int totalLength = first.length;	  
-		Class<?> returnType = first.getClass().getComponentType();
-		
-		// Determine the common super type
-		for (T[] array : rest) {		
+		for (T[] array : arrays)	
 			totalLength += array.length;
-			Class<?> thisType = array.getClass().getComponentType();
-			while (! returnType.isAssignableFrom(thisType)) {
-	            if (thisType.isAssignableFrom(returnType)) {
-	                returnType = thisType;
-	                break;
-	            }
-	            returnType = returnType.getSuperclass();
-	            thisType = thisType.getSuperclass();
-	        }
-	 	}
 		
 		@SuppressWarnings("unchecked")
 		T[] result = (T[]) Array.newInstance(returnType, totalLength);
-	  
-		int offset = first.length;
-		
-		if(offset != 0)
-			System.arraycopy(first, 0, result, 0, offset);
-	
-		for (T[] array : rest) {
+	 
+		int offset = 0;
+		for (T[] array : arrays) {
 			System.arraycopy(array, 0, result, offset, array.length);
 			offset += array.length;
 		}
@@ -328,46 +246,43 @@ public class ArrayUtils
 	}
 	
 	/** 
-	 * Concatenates two arrays to a new one with type newType
-	 * 
-     * @param first the first array to be concatenated
-     * @param second the second array to be concatenated
-     * @param newType type bound for the concatenated array
-     * @return a concatenation of the first and the second arrays.
-     * @throws NullPointerException if <tt>first</tt> or <tt>second</tt> is null
-     * @throws ArrayStoreException if an element copied from
-     *     <tt>first</tt> or <tt>second</tt> is not of a runtime type that can be stored in
-     *     an array of class <tt>newType</tt>
-  	 */
-    public static <T,U,V> T[] concat(U[] first, V[] second, Class<? extends T[]> newType) {
+	 * Type safe concatenation of arrays with upper type bound T
+	 *  
+     * @param type type bound for the concatenated array
+     * @param arrays arrays to be concatenated
+     * @return a concatenation of the arrays.
+     * @throws NullPointerException if any of the arrays to be
+     *         concatenated is null.
+   	 */
+  	public static <T> T[] concat(Class<T> type, T[]... arrays) {
+		if(type == null) 
+			throw new IllegalArgumentException("Input type class is null");
 		
-		int firstLen = first.length;
-		int secondLen = second.length;
-		
-		if (firstLen == 0) {
-			@SuppressWarnings("unchecked")	
-			T[] returnValue = (T[])second;
-			return returnValue;
+		if(arrays.length == 0) { // Return a zero length array instead of null
+			@SuppressWarnings("unchecked")
+			T[] result = (T[]) Array.newInstance(type, 0);
+			
+			return result;
 		}
 		
-		if (secondLen == 0) {
-			@SuppressWarnings("unchecked")	
-			T[] returnValue = (T[])first;
-			return returnValue;
-		}	
+		// Make sure we have at least two arrays to concatenate
+		if(arrays.length == 1) return arrays[0];
 		
-	    @SuppressWarnings("unchecked")
-	    // Need to cast to Object before using == operator, so that they have the
-	    // same common super class.
-	    T[] result = ((Object)newType == (Object)Object[].class)
-                     ? (T[]) new Object[firstLen + secondLen]
-                     : (T[]) Array.newInstance(newType.getComponentType(), firstLen + secondLen);
-		   
-		System.arraycopy(first, 0, result, 0, firstLen);
-		System.arraycopy(second, 0, result, firstLen, secondLen);
-    
+		int totalLength = 0;	  
+		for (T[] array : arrays)	
+			totalLength += array.length;
+		
+		@SuppressWarnings("unchecked")
+		T[] result = (T[]) Array.newInstance(type, totalLength);
+	  
+		int offset = 0;
+		for (T[] array : arrays) {
+			System.arraycopy(array, 0, result, offset, array.length);
+			offset += array.length;
+		}
+		
 		return result;
-    }
+	}
 
 	public static int findEqualOrLess(int[] a, int key) {
     	return findEqualOrLess(a, 0, a.length, key);
