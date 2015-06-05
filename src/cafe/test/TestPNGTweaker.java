@@ -22,8 +22,8 @@ public class TestPNGTweaker extends TestBase {
     
 	public void test(String ... args) throws Exception {
 	    String text = PNGTweaker.read_text_chunks(args[0]);
-		log.info(text);
-        log.info("=================================");        
+		logger.info(text);
+        logger.info("=================================");        
        
         BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
         	    new FileOutputStream("textinfo.txt"), "UTF-8"));

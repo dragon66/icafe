@@ -145,7 +145,7 @@ import static cafe.image.writer.TIFFWriter.*;
  */
 public class TIFFTweaker {
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(TIFFTweaker.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TIFFTweaker.class);
 	
 	public static void append(RandomAccessInputStream rin, RandomAccessOutputStream rout, BufferedImage ... images) throws IOException {
 		append(rin, rout, null, images);
@@ -2095,10 +2095,10 @@ public class TIFFTweaker {
 	
 	public static void printIFDs(Collection<IFD> list, String indent) {
 		int id = 0;
-		log.info("Printing IFDs ... ");
+		LOGGER.info("Printing IFDs ... ");
 		
 		for(IFD currIFD : list) {
-			log.info("IFD #{}", id);
+			LOGGER.info("IFD #{}", id);
 			printIFD(currIFD, TiffTag.class, indent);
 			id++;
 		}
@@ -2107,7 +2107,7 @@ public class TIFFTweaker {
 	public static void printIFD(IFD currIFD, Class<? extends Tag> tagClass, String indent) {
 		StringBuilder ifd = new StringBuilder();
 		print(currIFD, tagClass, indent, ifd);
-		log.info("\n{}", ifd);
+		LOGGER.info("\n{}", ifd);
 	}
 	
 	private static void print(IFD currIFD, Class<? extends Tag> tagClass, String indent, StringBuilder ifds) {
@@ -2132,14 +2132,14 @@ public class TIFFTweaker {
 			try {
 				ftag = (Tag)method.invoke(null, tag);
 			} catch (IllegalAccessException e) {
-				log.error("IllegalAcessException", e);
+				LOGGER.error("IllegalAcessException", e);
 			} catch (IllegalArgumentException e) {
-				log.error("IllegalArgumentException", e);
+				LOGGER.error("IllegalArgumentException", e);
 			} catch (InvocationTargetException e) {
-				log.error("InvocationTargetException", e);
+				LOGGER.error("InvocationTargetException", e);
 			}
 			if (ftag == TiffTag.UNKNOWN) {
-				log.warn("Tag: {} {}{}{} {}", ftag, "[Value: 0x", Integer.toHexString(tag&0xffff), "]", "(Unknown)");
+				LOGGER.warn("Tag: {} {}{}{} {}", ftag, "[Value: 0x", Integer.toHexString(tag&0xffff), "]", "(Unknown)");
 			} else {
 				ifds.append("Tag: " + ftag + "\n");
 			}

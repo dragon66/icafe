@@ -43,7 +43,7 @@ public class TestGIFTweaker extends TestBase {
 		long t1 = System.currentTimeMillis();
 		GIFTweaker.writeAnimatedGIF(images, 0, fout);
 		long t2 = System.currentTimeMillis();
-		log.info("time used: {}ms", (t2-t1));
+		logger.info("time used: {}ms", (t2-t1));
 		
 		ImageWriter writer = ImageIO.getWriter(ImageType.GIF);
 		ImageType imageType = writer.getImageType();

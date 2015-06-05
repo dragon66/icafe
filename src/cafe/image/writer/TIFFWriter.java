@@ -87,7 +87,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 	private RandomAccessOutputStream randomOS;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(TIFFWriter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TIFFWriter.class);
 	
 	public TIFFWriter() {}
 		
@@ -618,7 +618,7 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 			// JPEG is a special case
 			if(compression == Compression.JPG) {
 				if(getImageParam().hasAlpha())
-					log.warn("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
+					LOGGER.warn("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
 				jpegCompress(pixels, imageWidth, imageHeight, param.getColorType() == ImageColorType.GRAY_SCALE);			
 			} else {
 				if(param.getColorType() == ImageColorType.GRAY_SCALE) {

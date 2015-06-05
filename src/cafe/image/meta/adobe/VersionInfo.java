@@ -40,7 +40,7 @@ public class VersionInfo extends _8BIM {
 	private int fileVersion;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(VersionInfo.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(VersionInfo.class);
 	
 	public VersionInfo() {
 		this("VersionInfo");
@@ -106,11 +106,11 @@ public class VersionInfo extends _8BIM {
 	
 	public void print() {
 		super.print();
-		log.info("Version: {}", getVersion());
-		log.info("Has Real Merged Data: {}", hasRealMergedData);
-        log.info("Writer name: {}", writerName);
-		log.info("Reader name: {}", readerName);
-		log.info("File Version: {}", getFileVersion()); 
+		LOGGER.info("Version: {}", getVersion());
+		LOGGER.info("Has Real Merged Data: {}", hasRealMergedData);
+        LOGGER.info("Writer name: {}", writerName);
+		LOGGER.info("Reader name: {}", readerName);
+		LOGGER.info("File Version: {}", getFileVersion()); 
 	}
 
 	public void setHasRealMergedData(boolean hasRealMergedData) {

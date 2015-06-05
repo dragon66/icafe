@@ -81,7 +81,7 @@ public enum ProfileTag {
 	UNKNOWN(TagType.UNKNOWN, 0xFFFFFFFF, "UnknownTag");
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(ProfileTag.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileTag.class);
 
 	public enum TagType { //
 		PUBLIC,
@@ -115,7 +115,7 @@ public enum ProfileTag {
     public static ProfileTag fromInt(int value) {
        	ProfileTag tag = typeMap.get(value);
     	if (tag == null) {
-    	 log.warn("tag value 0x{} unknown", Integer.toHexString(value));
+    	 LOGGER.warn("tag value 0x{} unknown", Integer.toHexString(value));
     		return UNKNOWN;
     	}
    		return tag;

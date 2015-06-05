@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DHTReader implements Reader {
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(DHTReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DHTReader.class);
 		
 	private Segment segment;
 	private List<HTable> dcTables = new ArrayList<HTable>(3);
@@ -79,7 +79,7 @@ public class DHTReader implements Reader {
 						
             if (count > 256)
 			{
-				log.error("invalid huffman code count!");			
+				LOGGER.error("invalid huffman code count!");			
 				return;
 			}
             
@@ -104,7 +104,7 @@ public class DHTReader implements Reader {
 				acTables.add(table);
 			}
 			else {
-				log.error("Invalid component class value: " + HT_class);
+				LOGGER.error("Invalid component class value: " + HT_class);
 				return;
 			}			
 		}

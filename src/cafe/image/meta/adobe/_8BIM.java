@@ -34,7 +34,7 @@ public class _8BIM {
 	protected byte[] data;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(_8BIM.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(_8BIM.class);
 	
 	public _8BIM(short id, String name, byte[] data) {
 		this(id, name, (data == null)?0:data.length, data);
@@ -71,21 +71,21 @@ public class _8BIM {
 		ImageResourceID eId  = ImageResourceID.fromShort(id);
 		
 		if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {
-			log.info("PATH_INFO [Value: {}] - Path Information (saved paths).", StringUtils.shortToHexStringMM(id));
+			LOGGER.info("PATH_INFO [Value: {}] - Path Information (saved paths).", StringUtils.shortToHexStringMM(id));
 		}
 		else if((id >= ImageResourceID.PLUGIN_RESOURCE0.getValue()) && (id <= ImageResourceID.PLUGIN_RESOURCE999.getValue())) {
-			log.info("PLUGIN_RESOURCE [Value: {}] - Plug-In resource.", StringUtils.shortToHexStringMM(id));
+			LOGGER.info("PLUGIN_RESOURCE [Value: {}] - Plug-In resource.", StringUtils.shortToHexStringMM(id));
 		}
 		else if (eId == ImageResourceID.UNKNOWN) {
-			log.info("{} [Value: {}]", eId, StringUtils.shortToHexStringMM(id));
+			LOGGER.info("{} [Value: {}]", eId, StringUtils.shortToHexStringMM(id));
 		}
 		else {
-			log.info("{}", eId);
+			LOGGER.info("{}", eId);
 		}
 		
-		log.info("Type: 8BIM");
-		log.info("Name: {}", name);
-		log.info("Size: {}", size);	
+		LOGGER.info("Type: 8BIM");
+		LOGGER.info("Name: {}", name);
+		LOGGER.info("Size: {}", size);	
 	}
 	
 	public void write(OutputStream os) throws IOException {

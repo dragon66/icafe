@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BMPTweaker {	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(BMPTweaker.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BMPTweaker.class);
 
 	// Data transfer object for multiple thread support
 	private static class DataTransferObject {
@@ -67,12 +67,12 @@ public class BMPTweaker {
 		DataTransferObject DTO = new DataTransferObject();
 		readHeader(is, DTO);
 		
-		log.info("... BMP snoop starts...");
-		log.info("Image signature: {}", new String(DTO.fileHeader, 0, 2));
-		log.info("File size: {} bytes", IOUtils.readInt(DTO.fileHeader, 2));
-		log.info("Reserved1 (2 bytes): {}", IOUtils.readShort(DTO.fileHeader, 6));
-		log.info("Reserved2 (2 bytes): {}", IOUtils.readShort(DTO.fileHeader, 8));
-		log.info("Data offset: {}", IOUtils.readInt(DTO.fileHeader, 10));
+		LOGGER.info("... BMP snoop starts...");
+		LOGGER.info("Image signature: {}", new String(DTO.fileHeader, 0, 2));
+		LOGGER.info("File size: {} bytes", IOUtils.readInt(DTO.fileHeader, 2));
+		LOGGER.info("Reserved1 (2 bytes): {}", IOUtils.readShort(DTO.fileHeader, 6));
+		LOGGER.info("Reserved2 (2 bytes): {}", IOUtils.readShort(DTO.fileHeader, 8));
+		LOGGER.info("Data offset: {}", IOUtils.readInt(DTO.fileHeader, 10));
 		
 		Node root = createElement(doc, "bitmap");
 		Node header = createElement(doc, "header");
@@ -95,9 +95,9 @@ public class BMPTweaker {
 		addChild(fileHeader, dataOffset);
 		
 		// TODO add more ImageMetadata elements to doc
-		log.info("Info header length: {}", IOUtils.readInt(DTO.infoHeader, 0));
-		log.info("Image width: {}", IOUtils.readInt(DTO.infoHeader, 4));
-		log.info("Image heigth: {}", IOUtils.readInt(DTO.infoHeader, 8));	
+		LOGGER.info("Info header length: {}", IOUtils.readInt(DTO.infoHeader, 0));
+		LOGGER.info("Image width: {}", IOUtils.readInt(DTO.infoHeader, 4));
+		LOGGER.info("Image heigth: {}", IOUtils.readInt(DTO.infoHeader, 8));	
 		
 		String alignment = "";
 		if(IOUtils.readInt(DTO.infoHeader, 8) > 0)
@@ -105,15 +105,15 @@ public class BMPTweaker {
 		else
 			alignment = "TOP_DOWN";
 		
-		log.info("Image alignment: {}", alignment);
-		log.info("Number of planes: {}", IOUtils.readShort(DTO.infoHeader, 12));
-		log.info("BitCount (bits per pixel): {}", IOUtils.readShort(DTO.infoHeader, 14));
-		log.info("Compression: {}", BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)));
-		log.info("Image size (compressed size of image): {} bytes", IOUtils.readInt(DTO.infoHeader, 20));
-		log.info("Horizontal resolution (Pixels/meter): {}", IOUtils.readInt(DTO.infoHeader, 24));
-		log.info("Vertical resolution (Pixels/meter): {}", IOUtils.readInt(DTO.infoHeader, 28));
-		log.info("Colors used (number of actually used colors): {}", IOUtils.readInt(DTO.infoHeader, 32));
-		log.info("Important colors (number of important colors): {}", IOUtils.readInt(DTO.infoHeader, 36));
+		LOGGER.info("Image alignment: {}", alignment);
+		LOGGER.info("Number of planes: {}", IOUtils.readShort(DTO.infoHeader, 12));
+		LOGGER.info("BitCount (bits per pixel): {}", IOUtils.readShort(DTO.infoHeader, 14));
+		LOGGER.info("Compression: {}", BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)));
+		LOGGER.info("Image size (compressed size of image): {} bytes", IOUtils.readInt(DTO.infoHeader, 20));
+		LOGGER.info("Horizontal resolution (Pixels/meter): {}", IOUtils.readInt(DTO.infoHeader, 24));
+		LOGGER.info("Vertical resolution (Pixels/meter): {}", IOUtils.readInt(DTO.infoHeader, 28));
+		LOGGER.info("Colors used (number of actually used colors): {}", IOUtils.readInt(DTO.infoHeader, 32));
+		LOGGER.info("Important colors (number of important colors): {}", IOUtils.readInt(DTO.infoHeader, 36));
 		
 		Node infoHeader = createElement(doc, "info-header");
 		Node infoHeaderLen = createElement(doc, "info-header-length");
@@ -158,7 +158,7 @@ public class BMPTweaker {
 		
 		if(bitsPerPixel <= 8) {
 			readPalette(is, DTO);
-			log.info("Color map follows");
+			LOGGER.info("Color map follows");
 		}
 		
 		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(doc));

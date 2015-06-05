@@ -19,15 +19,15 @@ public class TestTIFFSnoop extends TestBase {
 		FileInputStream fin = new FileInputStream(args[0]);
 		RandomAccessInputStream randomIS = new FileCacheRandomAccessInputStream(fin);
 		Map<MetadataType, Metadata> metadataMap = TIFFTweaker.readMetadata(randomIS);
-		log.info("Start of metadata information:");
-		log.info("Total number of metadata entries: {}", metadataMap.size());
+		logger.info("Start of metadata information:");
+		logger.info("Total number of metadata entries: {}", metadataMap.size());
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
-			log.info("Metadata entry {} - {}", i, entry.getKey());
+			logger.info("Metadata entry {} - {}", i, entry.getKey());
 			entry.getValue().showMetadata();
 			i++;
-			log.info("-----------------------------------------");
+			logger.info("-----------------------------------------");
 		}
-		log.info("End of metadata information.");
+		logger.info("End of metadata information.");
 	}
 }

@@ -135,7 +135,7 @@ public class TestTIFFTweaker extends TestBase {
 					TIFFTweaker.insertPage(im, 0, rout, list, offset, writer);
 					TIFFTweaker.finishInsert(rout, list);
 					long t2 = System.currentTimeMillis();
-					log.info("time used: {}ms", (t2-t1));
+					logger.info("time used: {}ms", (t2-t1));
 				}
 				rout.close();
 			} else if(args[1].equalsIgnoreCase("splitpage")) {

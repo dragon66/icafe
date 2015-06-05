@@ -109,7 +109,7 @@ public class TIFFReader extends ImageReader {
 	private static final int bufLen = 40960; // 40K read buffer
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(TIFFReader.class);		
+	private static final Logger LOGGER = LoggerFactory.getLogger(TIFFReader.class);		
 		 
 	public BufferedImage read(InputStream is) throws Exception
 	{
@@ -164,7 +164,7 @@ public class TIFFReader extends ImageReader {
 		if(field != null)
 			data = (short[])field.getData();
 		TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(data[0]&0xffff);
-		log.info("Compression type: {}", compression.getDescription());
+		LOGGER.info("Compression type: {}", compression.getDescription());
 		// Forget about tiled TIFF for now
 		TiffField<?> f_stripOffsets = ifd.getField(TiffTag.STRIP_OFFSETS);
 		TiffField<?> f_stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS);
@@ -172,34 +172,34 @@ public class TIFFReader extends ImageReader {
 		int[] stripByteCounts = f_stripByteCounts.getDataAsLong();
 		int imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH).getDataAsLong()[0];
 		int imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH).getDataAsLong()[0];
-		log.info("Image width: {}", imageWidth);
-		log.info("Image height: {}", imageHeight);
+		LOGGER.info("Image width: {}", imageWidth);
+		LOGGER.info("Image height: {}", imageHeight);
 		TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP);
 		int rowsPerStrip = imageHeight;
 		if(f_rowsPerStrip != null)
 			rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];
-		log.info("Rows per strip: {}", rowsPerStrip);		
+		LOGGER.info("Rows per strip: {}", rowsPerStrip);		
 		TiffField<?> f_photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION);
 		int photoMetric = f_photoMetric.getDataAsLong()[0];
 		TiffFieldEnum.PhotoMetric e_photoMetric = TiffFieldEnum.PhotoMetric.fromValue(photoMetric);
-		log.info("PhotoMetric: {}", e_photoMetric);
+		LOGGER.info("PhotoMetric: {}", e_photoMetric);
 		TiffField<?> f_bitsPerSample = ifd.getField(TiffTag.BITS_PER_SAMPLE);
 		int bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
-		log.info("Bits per sample: {}", bitsPerSample);
+		LOGGER.info("Bits per sample: {}", bitsPerSample);
 		TiffField<?> f_samplesPerPixel = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
 		int samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
-		log.info("Samples per pixel: {}", samplesPerPixel);
+		LOGGER.info("Samples per pixel: {}", samplesPerPixel);
 		TiffField<?> f_predictor = ifd.getField(TiffTag.PREDICTOR);
 		int predictor = 0;
 		if(f_predictor != null) {
 			predictor = f_predictor.getDataAsLong()[0];
-			log.info("Predictor: {}", predictor);
+			LOGGER.info("Predictor: {}", predictor);
 		}
 		TiffField<?> f_planaryConfiguration = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);
 		int planaryConfiguration = 1;
 		if(f_planaryConfiguration != null) planaryConfiguration = f_planaryConfiguration.getDataAsLong()[0];
 		TiffFieldEnum.PlanarConfiguration e_planaryConfiguration = TiffFieldEnum.PlanarConfiguration.fromValue(planaryConfiguration);
-		log.info("Planary configuration: {}", e_planaryConfiguration);
+		LOGGER.info("Planary configuration: {}", e_planaryConfiguration);
 		
 		TiffField<?> f_sampleFormat = ifd.getField(TiffTag.SAMPLE_FORMAT);
 		TiffField<?> f_sampleMaxValue = ifd.getField(TiffTag.S_MAX_SAMPLE_VALUE);
@@ -224,8 +224,8 @@ public class TIFFReader extends ImageReader {
 			} else if(bitsPerSample > 32 && f_sampleMinValue != null) {
 				minValue = ((double[])f_sampleMinValue.getData())[0];
 			}				
-			log.info("Sample MAX value: {}", maxValue);
-			log.info("Sample MIN vlaue: {}", minValue);
+			LOGGER.info("Sample MAX value: {}", maxValue);
+			LOGGER.info("Sample MIN vlaue: {}", minValue);
 		}
 		boolean transparent = false;
 		boolean isAssociatedAlpha = false;
@@ -916,7 +916,7 @@ public class TIFFReader extends ImageReader {
 		TiffField<?> field = ifd.getField(TiffTag.COMPRESSION);
 		short[] data = (short[])field.getData();
 		TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(data[0]&0xffff);
-		log.info("Compression type: {}", compression.getDescription());
+		LOGGER.info("Compression type: {}", compression.getDescription());
 		
 		TiffField<?> f_tileOffsets = ifd.getField(TiffTag.TILE_OFFSETS);
 		if(f_tileOffsets == null) f_tileOffsets = ifd.getField(TiffTag.STRIP_OFFSETS);
@@ -929,8 +929,8 @@ public class TIFFReader extends ImageReader {
 		
 		int imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH).getDataAsLong()[0];
 		int imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH).getDataAsLong()[0];
-		log.info("Image width: {}", imageWidth);
-		log.info("Image height: {}", imageHeight);
+		LOGGER.info("Image width: {}", imageWidth);
+		LOGGER.info("Image height: {}", imageHeight);
 		
 		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH);
 		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH);
@@ -944,28 +944,28 @@ public class TIFFReader extends ImageReader {
 		TiffField<?> f_photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION);
 		int photoMetric = f_photoMetric.getDataAsLong()[0];
 		TiffFieldEnum.PhotoMetric e_photoMetric = TiffFieldEnum.PhotoMetric.fromValue(photoMetric);
-		log.info("PhotoMetric: {}", e_photoMetric);
+		LOGGER.info("PhotoMetric: {}", e_photoMetric);
 		
 		TiffField<?> f_bitsPerSample = ifd.getField(TiffTag.BITS_PER_SAMPLE);
 		int bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
-		log.info("Bits per sample: {}", bitsPerSample);
+		LOGGER.info("Bits per sample: {}", bitsPerSample);
 		
 		TiffField<?> f_samplesPerPixel = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
 		int samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
-		log.info("Samples per pixel: {}", samplesPerPixel);
+		LOGGER.info("Samples per pixel: {}", samplesPerPixel);
 		
 		TiffField<?> f_predictor = ifd.getField(TiffTag.PREDICTOR);
 		int predictor = 0;
 		if(f_predictor != null) {
 			predictor = f_predictor.getDataAsLong()[0];
-			log.info("Predictor: {}", predictor);
+			LOGGER.info("Predictor: {}", predictor);
 		}
 		
 		TiffField<?> f_planaryConfiguration = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);
 		int planaryConfiguration = 1;
 		if(f_planaryConfiguration != null) planaryConfiguration = f_planaryConfiguration.getDataAsLong()[0];
 		TiffFieldEnum.PlanarConfiguration e_planaryConfiguration = TiffFieldEnum.PlanarConfiguration.fromValue(planaryConfiguration);
-		log.info("Planary configuration: {}", e_planaryConfiguration);
+		LOGGER.info("Planary configuration: {}", e_planaryConfiguration);
 		
 		TiffField<?> f_sampleFormat = ifd.getField(TiffTag.SAMPLE_FORMAT);
 		TiffField<?> f_sampleMaxValue = ifd.getField(TiffTag.S_MAX_SAMPLE_VALUE);
@@ -988,8 +988,8 @@ public class TIFFReader extends ImageReader {
 			} else if(bitsPerSample > 32 && f_sampleMinValue != null) {
 				minValue = ((double[])f_sampleMinValue.getData())[0];
 			}				
-			log.info("Sample MAX value: {}", maxValue);
-			log.info("Sample MIN vlaue: {}", minValue);
+			LOGGER.info("Sample MAX value: {}", maxValue);
+			LOGGER.info("Sample MIN vlaue: {}", minValue);
 		}
 
 		int tilesAcross = (imageWidth + tileWidth - 1) / tileWidth;
@@ -1333,13 +1333,13 @@ public class TIFFReader extends ImageReader {
 		
 		if(endian == IOUtils.BIG_ENDIAN)
 		{
-			log.info("Byte order: Motorola BIG_ENDIAN");
+			LOGGER.info("Byte order: Motorola BIG_ENDIAN");
 			this.randIS.setReadStrategy(ReadStrategyMM.getInstance());
 		} else if(endian == IOUtils.LITTLE_ENDIAN) {
-			log.info("Byte order: Intel LITTLE_ENDIAN");
+			LOGGER.info("Byte order: Intel LITTLE_ENDIAN");
 			this.randIS.setReadStrategy(ReadStrategyII.getInstance());
 		} else {
-			log.info("Warning: invalid TIFF byte order!");
+			LOGGER.info("Warning: invalid TIFF byte order!");
 			return false;
 		} 
 		
@@ -1348,7 +1348,7 @@ public class TIFFReader extends ImageReader {
 		  
 		if(tiff_id!=0x2a)//"*" 42 decimal
 		{
-			log.error("Error: invalid tiff identifier");
+			LOGGER.error("Error: invalid tiff identifier");
 			return false;
 		}
 		  
@@ -1358,31 +1358,31 @@ public class TIFFReader extends ImageReader {
 	private int readIFD(int id, int offset) throws IOException 
 	{
 		IFD tiffIFD = new IFD();
-		log.info("IFD {} offset: byte {}", id, offset);
+		LOGGER.info("IFD {} offset: byte {}", id, offset);
 		randIS.seek(offset);
 		int no_of_fields = randIS.readShort();
-		log.info("Total number of fields for IFD {}: {}", id, no_of_fields);
+		LOGGER.info("Total number of fields for IFD {}: {}", id, no_of_fields);
 		offset += 2;
 		
 		for (int i = 0;i < no_of_fields; i++)
 		{
-			log.info("TiffField {} =>", i);
+			LOGGER.info("TiffField {} =>", i);
 			randIS.seek(offset);
 			short tag = randIS.readShort();
 			Tag ftag = TiffTag.fromShort(tag);
 			if (ftag == TiffTag.UNKNOWN)
-				log.info("TiffTag: {} [Value: 0x{}] (Unknown)", ftag, Integer.toHexString(tag&0xffff));
+				LOGGER.info("TiffTag: {} [Value: 0x{}] (Unknown)", ftag, Integer.toHexString(tag&0xffff));
 			else
-				log.info("TiffTag: {}", ftag);
+				LOGGER.info("TiffTag: {}", ftag);
 			offset += 2;
 			randIS.seek(offset);
 			short type = randIS.readShort();
 			FieldType ftype = FieldType.fromShort(type);
-			log.info("Data type: {}", ftype);
+			LOGGER.info("Data type: {}", ftype);
 			offset += 2;
 			randIS.seek(offset);
 			int field_length = randIS.readInt();
-			log.info("TiffField length: {}", field_length);
+			LOGGER.info("TiffField length: {}", field_length);
 			offset += 4;
 			////// Try to read actual data.
 			switch (ftype)
@@ -1398,7 +1398,7 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(randIS.readInt());
 						randIS.readFully(data, 0, field_length);
 					}
-					log.info("TiffField value: {}", StringUtils.byteArrayToHexString(data, 0, 10));
+					LOGGER.info("TiffField value: {}", StringUtils.byteArrayToHexString(data, 0, 10));
 					offset += 4;					
 					tiffIFD.addField((ftype == FieldType.BYTE)?new ByteField(tag, data):
 						new UndefinedField(tag, data));
@@ -1415,7 +1415,7 @@ public class TIFFReader extends ImageReader {
 						randIS.readFully(data, 0, field_length);
 					}
 					if(data.length>0)
-					  log.info("TiffField value: {}", new String(data, 0, data.length-1).trim());
+					  LOGGER.info("TiffField value: {}", new String(data, 0, data.length-1).trim());
 					offset += 4;	
 					tiffIFD.addField(new ASCIIField(tag, new String(data, 0, data.length)));
 			        break;
@@ -1443,7 +1443,7 @@ public class TIFFReader extends ImageReader {
 						}
 					}	
 					tiffIFD.addField(new ShortField(tag, sdata));
-					log.info("TiffField value: {}", StringUtils.shortArrayToString(sdata, 0, 10, true));
+					LOGGER.info("TiffField value: {}", StringUtils.shortArrayToString(sdata, 0, 10, true));
 					break;
 				case LONG:
 					int[] ldata = new int[field_length];
@@ -1461,7 +1461,7 @@ public class TIFFReader extends ImageReader {
 							toOffset += 4;
 						}
 					}	
-					log.info("TiffField value: {}", StringUtils.longArrayToString(ldata, 0, 10, true));
+					LOGGER.info("TiffField value: {}", StringUtils.longArrayToString(ldata, 0, 10, true));
 					tiffIFD.addField(new LongField(tag, ldata));
 					break;
 				case RATIONAL:
@@ -1479,7 +1479,7 @@ public class TIFFReader extends ImageReader {
 						toOffset += 4;
 					}	
 					tiffIFD.addField(new RationalField(tag, ldata));
-					log.info("TiffField value: {}", StringUtils.rationalArrayToString(ldata, true));
+					LOGGER.info("TiffField value: {}", StringUtils.rationalArrayToString(ldata, true));
 					break;
 				case FLOAT:
 					float[] fdata = new float[field_length];
@@ -1498,7 +1498,7 @@ public class TIFFReader extends ImageReader {
 						}
 					}
 					tiffIFD.addField(new FloatField(tag, fdata));
-					log.info("TiffField value: {}", Arrays.toString(fdata));			
+					LOGGER.info("TiffField value: {}", Arrays.toString(fdata));			
 					break;
 				case DOUBLE:
 					double[] ddata = new double[field_length];
@@ -1511,7 +1511,7 @@ public class TIFFReader extends ImageReader {
 						toOffset += 8;
 					}
 					tiffIFD.addField(new DoubleField(tag, ddata));
-					log.info("Field value: {}", Arrays.toString(ddata));						
+					LOGGER.info("Field value: {}", Arrays.toString(ddata));						
 					break;
 				default:
 					offset += 4;
@@ -1519,7 +1519,7 @@ public class TIFFReader extends ImageReader {
 			  }	
 		}
 		list.add(tiffIFD);
-		log.info("********************************");
+		LOGGER.info("********************************");
 		randIS.seek(offset);
 		return randIS.readInt();
 	}

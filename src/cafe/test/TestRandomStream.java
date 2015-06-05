@@ -39,21 +39,21 @@ public class TestRandomStream extends TestBase {
 		FileInputStream fin = new FileInputStream("test.txt");
 		RandomAccessInputStream randin = new FileCacheRandomAccessInputStream(fin);
 		randin.setReadStrategy(ReadStrategyMM.getInstance());
-		log.info(randin.readUTF());
+		logger.info(randin.readUTF());
 		/**
 		 *  Due to the current implementation, writeUTF and readUTF are machine or byte sequence independent
 		 *  but writeChar and readChar are. So we switch back to the same byte sequence as the stream which
 		 *  writes out the char before reading it.
 		 */
 		randin.setReadStrategy(ReadStrategyII.getInstance());
-		log.info("{}", randin.readChar());
-		log.info("{}", randin.readInt());
-		log.info("{}", randin.readShort());
-		log.info("{}", randin.read());
-		log.info("{}", randin.read());
-		log.info("{}", randin.readS15Fixed16Number());
-		log.info("{}", randin.readU16Fixed16Number());
-		log.info("{}", randin.readU8Fixed8Number());
+		logger.info("{}", randin.readChar());
+		logger.info("{}", randin.readInt());
+		logger.info("{}", randin.readShort());
+		logger.info("{}", randin.read());
+		logger.info("{}", randin.read());
+		logger.info("{}", randin.readS15Fixed16Number());
+		logger.info("{}", randin.readU16Fixed16Number());
+		logger.info("{}", randin.readU8Fixed8Number());
 		randin.close();
 		fin.close();
 	}

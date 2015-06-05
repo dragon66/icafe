@@ -46,7 +46,7 @@ public class PCXReader extends ImageReader
 	PcxHeader pcxHeader;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(PCXReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PCXReader.class);
 
    	public BufferedImage read(InputStream is) throws Exception
     {
@@ -75,15 +75,15 @@ public class PCXReader extends ImageReader
 				switch (bitsPerPixel)
 				{
 				  case 4: 
-					  log.info("16 color pcx image, 4 bits per pixel, 1 color plane!");
+					  LOGGER.info("16 color pcx image, 4 bits per pixel, 1 color plane!");
 				      break;
 				  case 3:
                       throw new UnsupportedOperationException("Invalid bitsPerPixel: " + bitsPerPixel + " for one plane PCX image");
 				  case 2:
-                      log.info("4 color pcx image, 2 bits per pixel, 1 color plane!");
+                      LOGGER.info("4 color pcx image, 2 bits per pixel, 1 color plane!");
 				      break;
 				  case 1:
-					  log.info("2 color pcx image, 1 bits per pixel, 1 color plane!");
+					  LOGGER.info("2 color pcx image, 1 bits per pixel, 1 color plane!");
 				      break;
                   default: 
 				}
@@ -92,20 +92,20 @@ public class PCXReader extends ImageReader
 				switch (NPlanes)
 				{
 				  case 4: 
-					  log.info("16 color image, 1 bit per plane, 4 planes!");
+					  LOGGER.info("16 color image, 1 bit per plane, 4 planes!");
 				      break;
 				  case 3:
-                      log.info("8 color image, 1 bit per plane, 3 planes!");
+                      LOGGER.info("8 color image, 1 bit per plane, 3 planes!");
 				      break;
 				  case 2:
-                      log.info("4 color image, 1 bit per plane, 2 planes!");
+                      LOGGER.info("4 color image, 1 bit per plane, 2 planes!");
 				      break;
 				  default: 
 				}
 				return readOneBitEgaPcx(is);
 			} else
 			{   // Hope this will never happen
-                log.error("unimplemented for this format!");
+                LOGGER.error("unimplemented for this format!");
 			}
 		}
 		
@@ -145,7 +145,7 @@ public class PCXReader extends ImageReader
     	 * but for maximum decoding speed, one time reading of the image data 
     	 * into memory is ideal though this is memory consuming.
     	 */
-       	log.info("true color pcx image!");
+       	LOGGER.info("true color pcx image!");
 		
     	readScanLines(brgb, brgb.length, pixels);
     	is.close();
@@ -237,7 +237,7 @@ public class PCXReader extends ImageReader
 	 	 * @see java.io.BufferedInputStream
 		 */
 
-		log.info("256 color pcx image!");
+		LOGGER.info("256 color pcx image!");
 
 		readScanLines(brgb, buf_len, pixels);   	
     	is.close();    	

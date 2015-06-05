@@ -68,7 +68,7 @@ public abstract class Metadata {
 	private byte[] data;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(Metadata.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);
 	
 	public static void  extractThumbnails(File image, String pathToThumbnail) throws IOException {
 		FileInputStream fin = new FileInputStream(image);
@@ -91,13 +91,13 @@ public abstract class Metadata {
 				randIS.close();
 				break;
 			case PNG:
-				log.info("PNG image format does not contain any thumbnail");
+				LOGGER.info("PNG image format does not contain any thumbnail");
 				break;
 			case GIF:
 			case PCX:
 			case TGA:
 			case BMP:
-				log.info("{} image format does not contain any thumbnails", imageType);
+				LOGGER.info("{} image format does not contain any thumbnails", imageType);
 				break;
 			default:
 				pushbackStream.close();
@@ -141,7 +141,7 @@ public abstract class Metadata {
 			case TGA:
 			case BMP:
 			case PNG:
-				log.info("{} image format does not support EXIF data", imageType);
+				LOGGER.info("{} image format does not support EXIF data", imageType);
 				break;
 			default:
 				pushbackStream.close();
@@ -173,7 +173,7 @@ public abstract class Metadata {
 			case PCX:
 			case TGA:
 			case BMP:
-				log.info("{} image format does not support ICCProfile data", imageType);
+				LOGGER.info("{} image format does not support ICCProfile data", imageType);
 				break;
 			default:
 				pushbackStream.close();
@@ -206,7 +206,7 @@ public abstract class Metadata {
 			case PCX:
 			case TGA:
 			case BMP:
-				log.info("{} image format does not support IPTC data", imageType);
+				LOGGER.info("{} image format does not support IPTC data", imageType);
 				break;
 			default:
 				pushbackStream.close();
@@ -239,7 +239,7 @@ public abstract class Metadata {
 			case PCX:
 			case TGA:
 			case BMP:
-				log.info("{} image format does not support IRB data", imageType);
+				LOGGER.info("{} image format does not support IRB data", imageType);
 				break;
 			default:
 				pushbackStream.close();
@@ -268,7 +268,7 @@ public abstract class Metadata {
 			case PCX:
 			case TGA:
 			case BMP:
-				log.info("{} image format does not support IRB thumbnail", imageType);
+				LOGGER.info("{} image format does not support IRB thumbnail", imageType);
 				break;
 			default:
 				pushbackStream.close();
@@ -301,7 +301,7 @@ public abstract class Metadata {
 			case PCX:
 			case TGA:
 			case BMP:
-				log.info("{} image format does not support XMP data", imageType);
+				LOGGER.info("{} image format does not support XMP data", imageType);
 				break;
 			default:
 				pushbackStream.close();
@@ -389,7 +389,7 @@ public abstract class Metadata {
 			case PCX:
 			case TGA:
 			case BMP:
-				log.info("{} image format does not support meta data", imageType);
+				LOGGER.info("{} image format does not support meta data", imageType);
 				break;
 			default:
 				pushbackStream.close();

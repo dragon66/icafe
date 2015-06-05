@@ -23,7 +23,7 @@ public class Comment extends Metadata {
 	private String comment;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(Comment.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Comment.class);
 	
 	public Comment(byte[] data) {
 		super(MetadataType.COMMENT, data);
@@ -39,7 +39,7 @@ public class Comment extends Metadata {
 	}
 	
 	public void showMetadata() {
-		log.info("Comment: {}", comment);
+		LOGGER.info("Comment: {}", comment);
 	}
 
 	@Override

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class LangUtils {
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(LangUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(LangUtils.class);
 		
 	private LangUtils(){} // Prevents instantiation
 	
@@ -137,7 +137,7 @@ public class LangUtils {
 				 return pt.getActualTypeArguments();
 			 }
 		 } catch(Exception e) {
-			 log.error("Error probing generic type arguments!", e);
+			 LOGGER.error("Error probing generic type arguments!", e);
 	     }
 		 
 		 return new Type[]{};

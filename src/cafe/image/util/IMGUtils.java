@@ -85,7 +85,7 @@ public class IMGUtils {
 	private static byte[] JPG2000 = {0x00, 0x00, 0x00, 0x0C};
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(IMGUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IMGUtils.class);
 		
 	/**
 	 * Check the color depth of the image and if the color depth is within 8 bits, (i.e.,
@@ -573,7 +573,7 @@ public class IMGUtils {
 				} else if(type == BufferedImage.TYPE_INT_ARGB) {
 					;  // Do nothing
 				} else {
-					log.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
+					LOGGER.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
 					return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 				}
 				return rgbs;
@@ -614,7 +614,7 @@ public class IMGUtils {
 					for(int i = 0; i < imageSize; i++)
 						rgbs[i] = (0xff000000)|((bpixels[i]&0xff)<<16)|((bpixels[i]&0xff)<<8)|(bpixels[i]&0xff);						 
 				} else {
-					log.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
+					LOGGER.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
 					return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 				}
 				return rgbs;
@@ -640,7 +640,7 @@ public class IMGUtils {
 						rgbs[i] = (0xff000000)|(red<<19)|(green<<11)|(blue<<3);
 					}
 				} else {
-					log.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
+					LOGGER.warn("### Warning: IMGUtils.getRGB() found custom type BufferedImage, fall back to BufferedImage.getRGB() ###");
 					return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 				}		
 				return rgbs;
@@ -760,7 +760,7 @@ public class IMGUtils {
 					 		}
 				 			break;
 						default: 
-							log.error(bitsPerPixel + " bit color depth is not valid for indexed image...");
+							LOGGER.error(bitsPerPixel + " bit color depth is not valid for indexed image...");
 					}
 				} else if(type == BufferedImage.TYPE_4BYTE_ABGR) {
 					if(numOfBanks == 1) {
@@ -860,7 +860,7 @@ public class IMGUtils {
 					imageType = ImageType.TGA;					
 			}
 		} else {
-			log.error("Unknown image type format!");		
+			LOGGER.error("Unknown image type format!");		
 		}
 		
 		return imageType;

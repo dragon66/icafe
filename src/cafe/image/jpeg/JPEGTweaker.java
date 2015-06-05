@@ -164,7 +164,7 @@ public class JPEGTweaker {
 	public static final EnumSet<Marker> APPnMarkers = EnumSet.range(Marker.APP0, Marker.APP15);
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(JPEGTweaker.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGTweaker.class);
 	
 	/** Copy a single SOS segment */	
 	@SuppressWarnings("unused")
@@ -1101,7 +1101,7 @@ public class JPEGTweaker {
 			
             if (count > 256)
 			{
-				log.warn("invalid huffman code count! - {}", count);			
+				LOGGER.warn("invalid huffman code count! - {}", count);			
 				return;
 			}
 	        
@@ -1121,7 +1121,7 @@ public class JPEGTweaker {
 			hufTable.append("<<End of Huffman table information>>\n");
 		}
 		
-		log.info("\n{}", hufTable);
+		LOGGER.info("\n{}", hufTable);
 	}
 	
 	public static void printQTables(List<QTable> qTables) {
@@ -1164,28 +1164,28 @@ public class JPEGTweaker {
 		qtTable.append("Total number of Quantation tables: " + count + "\n");
 		qtTable.append("End of quantization table information\n");
 		
-		log.info("\n{}", qtTable);
+		LOGGER.info("\n{}", qtTable);
 	}
 	
 	public static void printSOF(SOFReader reader) {
-		log.info("SOF informtion =>");
-		log.info("Precision: {}", reader.getPrecision());
-		log.info("Image height: {}", reader.getFrameHeight());
-		log.info("Image width: {}", reader.getFrameWidth());
-		log.info("# of Components: {}", reader.getNumOfComponents());
-		log.info("(1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)");		
+		LOGGER.info("SOF informtion =>");
+		LOGGER.info("Precision: {}", reader.getPrecision());
+		LOGGER.info("Image height: {}", reader.getFrameHeight());
+		LOGGER.info("Image width: {}", reader.getFrameWidth());
+		LOGGER.info("# of Components: {}", reader.getNumOfComponents());
+		LOGGER.info("(1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)");		
 		    
 		for(Component component : reader.getComponents()) {
-			log.info("\n");
-			log.info("Component ID: {}", component.getId());
-			log.info("Herizontal sampling factor: {}", component.getHSampleFactor());
-			log.info("Vertical sampling factor: {}", component.getVSampleFactor());
-			log.info("Quantization table #: {}", component.getQTableNumber());
-			log.info("DC table number: {}", component.getDCTableNumber());
-			log.info("AC table number: {}", component.getACTableNumber());
+			LOGGER.info("\n");
+			LOGGER.info("Component ID: {}", component.getId());
+			LOGGER.info("Herizontal sampling factor: {}", component.getHSampleFactor());
+			LOGGER.info("Vertical sampling factor: {}", component.getVSampleFactor());
+			LOGGER.info("Quantization table #: {}", component.getQTableNumber());
+			LOGGER.info("DC table number: {}", component.getDCTableNumber());
+			LOGGER.info("AC table number: {}", component.getACTableNumber());
 		}
 		
-		log.info("End of SOF information");
+		LOGGER.info("End of SOF information");
 	}
 	
 	private static void readAPP13(InputStream is, OutputStream os) throws IOException {

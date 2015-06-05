@@ -51,7 +51,7 @@ public class IPTCDataSet {
 	private String name;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(IPTCDataSet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCDataSet.class);
 	
 	public IPTCDataSet(int tag, byte[] data) {
 		this(IPTCRecord.APPLICATION, tag, data);
@@ -178,36 +178,36 @@ public class IPTCDataSet {
 		
 		switch (recordNumber) {
 			case 1: //Envelope Record
-				log.info("Record number {}: Envelope Record", recordNumber);
+				LOGGER.info("Record number {}: Envelope Record", recordNumber);
 				break;
 			case 2: //Application Record
-				log.info("Record number {}: Application Record", recordNumber);
+				LOGGER.info("Record number {}: Application Record", recordNumber);
 				break;
 			case 3: //NewsPhoto Record
-				log.info("Record number {}: NewsPhoto Record", recordNumber);
+				LOGGER.info("Record number {}: NewsPhoto Record", recordNumber);
 				break;
 			case 7: //PreObjectData Record
-				log.info("Record number {}: PreObjectData Record", recordNumber);
+				LOGGER.info("Record number {}: PreObjectData Record", recordNumber);
 				break;
 			case 8: //ObjectData Record
-				log.info("Record number {}: ObjectData Record", recordNumber);
+				LOGGER.info("Record number {}: ObjectData Record", recordNumber);
 				break;				
 			case 9: //PostObjectData Record
-				log.info("Record number {}: PostObjectData Record", recordNumber);
+				LOGGER.info("Record number {}: PostObjectData Record", recordNumber);
 				break;	
 			case 240: //FotoStation Record
-				log.info("Record number {}: FotoStation Record", recordNumber);
+				LOGGER.info("Record number {}: FotoStation Record", recordNumber);
 				break;	
 			default:
-				log.info("Record number {}: Unknown Record", recordNumber);
+				LOGGER.info("Record number {}: Unknown Record", recordNumber);
 				break;
 		}		
 		
-		log.info("Dataset name: {}", name);
-		log.info("Dataset tag: {}[{}]", tag, StringUtils.shortToHexStringMM((short)tag));
-		log.info("Dataset size: {}", size);
+		LOGGER.info("Dataset name: {}", name);
+		LOGGER.info("Dataset tag: {}[{}]", tag, StringUtils.shortToHexStringMM((short)tag));
+		LOGGER.info("Dataset size: {}", size);
 		
-		log.info("Dataset value: {}", getDataAsString());
+		LOGGER.info("Dataset value: {}", getDataAsString());
 	}
 	
 	/**

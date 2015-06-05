@@ -40,7 +40,7 @@ import cafe.util.ArrayUtils;
  */
 public class JPGNativeMetadata extends NativeMetadata<Segment> {	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(JPGNativeMetadata.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JPGNativeMetadata.class);
 	
 	public JPGNativeMetadata() {
 		;
@@ -87,9 +87,9 @@ public class JPGNativeMetadata extends NativeMetadata<Segment> {
 			
 			if(Arrays.equals(buf, JPEGTweaker.ADOBE_ID)) {
 				for (int i = 0, j = 5; i < 3; i++, j += 2) {
-					log.info("{}{}", app14Info[i], StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
+					LOGGER.info("{}{}", app14Info[i], StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
 				}
-				log.info("{}{}", app14Info[3], (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
+				LOGGER.info("{}{}", app14Info[3], (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
 					((data[11]&0xff) == 1)? "YCbCr":"YCCK" ));
 			}
 		}
@@ -99,28 +99,28 @@ public class JPGNativeMetadata extends NativeMetadata<Segment> {
 		int i = JPEGTweaker.JFIF_ID.length;
 	    // JFIF segment
 	    if(Arrays.equals(ArrayUtils.subArray(data, 0, i), JPEGTweaker.JFIF_ID) || Arrays.equals(ArrayUtils.subArray(data, 0, i), JPEGTweaker.JFXX_ID)) {
-	    	log.info("{} - version {}.{}", new String(data, 0, i).trim(), (data[i++]&0xff), (data[i++]&0xff));
+	    	LOGGER.info("{} - version {}.{}", new String(data, 0, i).trim(), (data[i++]&0xff), (data[i++]&0xff));
 	    	
 	    	switch(data[i++]&0xff) {
 	    		case 0:
-	    			log.info("Density unit: No units, aspect ratio only specified");
+	    			LOGGER.info("Density unit: No units, aspect ratio only specified");
 	    			break;
 	    		case 1:
-	    			log.info("Density unit: Dots per inch");
+	    			LOGGER.info("Density unit: Dots per inch");
 	    			break;
 	    		case 2:
-	    			log.info("Density unit: Dots per centimeter");
+	    			LOGGER.info("Density unit: Dots per centimeter");
 	    			break;
 	    		default:
 	    	}
 	    	
-	    	log.info("X density: {}", IOUtils.readUnsignedShortMM(data, i));
+	    	LOGGER.info("X density: {}", IOUtils.readUnsignedShortMM(data, i));
 	    	i += 2;
-	    	log.info("Y density: {}", IOUtils.readUnsignedShortMM(data, i));
+	    	LOGGER.info("Y density: {}", IOUtils.readUnsignedShortMM(data, i));
 	    	i += 2;
 	    	int thumbnailWidth = data[i++]&0xff;
 	    	int thumbnailHeight = data[i++]&0xff;
-	    	log.info("Thumbnail dimension: {}X{}", thumbnailWidth, thumbnailHeight);	   
+	    	LOGGER.info("Thumbnail dimension: {}X{}", thumbnailWidth, thumbnailHeight);	   
 	    }
 	}
 	
@@ -133,28 +133,28 @@ public class JPGNativeMetadata extends NativeMetadata<Segment> {
 		currPos += JPEGTweaker.DUCKY_ID.length;
 		
 		if(Arrays.equals(JPEGTweaker.DUCKY_ID, buf)) {
-			log.info("=>{}", duckyInfo[0]);
+			LOGGER.info("=>{}", duckyInfo[0]);
 			short tag = IOUtils.readShortMM(data, currPos);
 			currPos += 2;
 			
 			while (tag != 0x0000) {
-				log.info("Tag value: {}", StringUtils.shortToHexStringMM(tag));
+				LOGGER.info("Tag value: {}", StringUtils.shortToHexStringMM(tag));
 				
 				int len = IOUtils.readUnsignedShortMM(data, currPos);
 				currPos += 2;
-				log.info("Tag length: {}", len);
+				LOGGER.info("Tag length: {}", len);
 				
 				switch (tag) {
 					case 0x0001: // Image quality
-						log.info("{}{}", duckyInfo[1], IOUtils.readUnsignedIntMM(data, currPos));
+						LOGGER.info("{}{}", duckyInfo[1], IOUtils.readUnsignedIntMM(data, currPos));
 						currPos += 4;
 						break;
 					case 0x0002: // Comment
-						log.info("{}{}", duckyInfo[2], new String(data, currPos, currPos + len).trim());
+						LOGGER.info("{}{}", duckyInfo[2], new String(data, currPos, currPos + len).trim());
 						currPos += len;
 						break;
 					case 0x0003: // Copyright
-						log.info("{}{}", duckyInfo[3], new String(data, currPos, currPos + len).trim());
+						LOGGER.info("{}{}", duckyInfo[3], new String(data, currPos, currPos + len).trim());
 						currPos += len;
 						break;
 					default: // Do nothing!					

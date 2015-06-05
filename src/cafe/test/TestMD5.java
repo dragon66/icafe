@@ -11,6 +11,6 @@ public class TestMD5 extends TestBase {
 	public void test(String ... args) {
 		byte[] message = "Hello World".getBytes();
 		String MD5 = StringUtils.generateMD5(message);
-		log.info(MD5);
+		logger.info(MD5);
 	}
 }

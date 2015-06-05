@@ -11,10 +11,10 @@ public class TestLangUtils extends TestBase {
 	}
 	
 	public void test(String ... args) {
-		log.info(LangUtils.getClassName(Object.class));
+		logger.info(LangUtils.getClassName(Object.class));
 		LangUtils.log("showing information about the current executing line.", System.out);
-		log.info("{}", LangUtils.getLoadedClassLocation(LangUtils.class));
-		log.info("{}", LangUtils.getLoadedClassURL("cafe.util.LangUtils"));
-		log.info("{}/{}", LangUtils.doubleToRational(0.5)[0], LangUtils.doubleToRational(0.5)[1]);
+		logger.info("{}", LangUtils.getLoadedClassLocation(LangUtils.class));
+		logger.info("{}", LangUtils.getLoadedClassURL("cafe.util.LangUtils"));
+		logger.info("{}/{}", LangUtils.doubleToRational(0.5)[0], LangUtils.doubleToRational(0.5)[1]);
 	}
 }

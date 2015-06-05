@@ -79,7 +79,7 @@ public class PNGReader extends ImageReader
 	 }
 
 	// Obtain a logger instance
-	 private static final Logger log = LoggerFactory.getLogger(PNGReader.class);
+	 private static final Logger LOGGER = LoggerFactory.getLogger(PNGReader.class);
 			
 	 private static void apply_defilter(InputStream bis, byte[] pixBytes, int height, int bytesPerPixel, int bytesPerScanLine) throws Exception
 	 {		 
@@ -144,13 +144,13 @@ public class PNGReader extends ImageReader
 	 private byte[] icc_profile;
 	
 	 private void adjust_grayscale_PLTE(int[] palette) {
-		 log.info("Transparent grayscale image!");
+		 LOGGER.info("Transparent grayscale image!");
 		 palette[alpha[1]&0xff] = (palette[alpha[1]&0xff]&0x00FFFFFF);	
 	 }
 
 	 private void adjust_PLTE()
 	 {
-		 log.info("Transparent indexed color image!");
+		 LOGGER.info("Transparent indexed color image!");
 		 int len = Math.min(alpha.length, rgbColorPalette.length);
 		 for(int i = 0; i < len; i++)
            rgbColorPalette[i] = ((alpha[i]&0xff)<<24|(rgbColorPalette[i]&0x00FFFFFF));
@@ -331,7 +331,7 @@ public class PNGReader extends ImageReader
 					bytesPerPixel = 6;
 		    	break;
 			default: 
-				log.error("... " + bitsPerPixel + " bit color depth is not valid for RGB image...");
+				LOGGER.error("... " + bitsPerPixel + " bit color depth is not valid for RGB image...");
 		 }
 		 
 		 bytesPerScanLine = width*bytesPerPixel;		 
@@ -825,7 +825,7 @@ public class PNGReader extends ImageReader
 				bytesPerScanLine = (block_width>>>3);
 				break;
 			default:
-				log.error("... " + bitsPerPixel + " bit color depth is not valid for PNG image...");					
+				LOGGER.error("... " + bitsPerPixel + " bit color depth is not valid for PNG image...");					
 		 }
 		 
 		 if(padding != 0) bytesPerScanLine += 1;
@@ -877,7 +877,7 @@ public class PNGReader extends ImageReader
 		    	bytesPerPixel = 4;		  
 		    	break;
 			default:
-				log.error("... " + bitsPerPixel + " bit color depth is invalid for full alpha grayscale image...");
+				LOGGER.error("... " + bitsPerPixel + " bit color depth is invalid for full alpha grayscale image...");
 		 }
 		 
 		 bytesPerScanLine = width*bytesPerPixel;
@@ -908,7 +908,7 @@ public class PNGReader extends ImageReader
 		    	bytesPerPixel = 4;
 		    	break;
 			default: 
-				log.error("... " + bitsPerPixel + " bit color depth is not valid for grayscale full alpha image...");
+				LOGGER.error("... " + bitsPerPixel + " bit color depth is not valid for grayscale full alpha image...");
 		 }
 		 
 		 pixels = new byte[width*height*bytesPerPixel];
@@ -983,7 +983,7 @@ public class PNGReader extends ImageReader
 				bytesPerScanLine = (width>>>3) + ((padding == 0)?0:1);
 				break;
 			default:
-				log.error("... " + bitsPerPixel + " bit color depth is not valid for grayscale image...");
+				LOGGER.error("... " + bitsPerPixel + " bit color depth is not valid for grayscale image...");
 		 }
 		 // Now inflate the data.        
 		 pixBytes = new byte[height * bytesPerScanLine];
@@ -1022,7 +1022,7 @@ public class PNGReader extends ImageReader
 				rgbColorPalette = SIXTEEN_COLOR_PALETTE;
 			    break;			
 			default: 
-				log.error("... " + bitsPerPixel + " bit color depth is not valid for grayscale image...");
+				LOGGER.error("... " + bitsPerPixel + " bit color depth is not valid for grayscale image...");
 		 }
 		 
 		 pixels = new byte[width*height*bytesPerPixel];
@@ -1248,7 +1248,7 @@ public class PNGReader extends ImageReader
 			   
 			   return new BufferedImage(cm, raster, false, null);			
 		   default:
-			   log.error("..Invalid color type...");
+			   LOGGER.error("..Invalid color type...");
 		 }
 
 		 return null;
@@ -1281,7 +1281,7 @@ public class PNGReader extends ImageReader
 		    case 8:		    	
 				break;
 			default: 
-				log.error("... " + bitsPerPixel + " bit color depth is not valid for indexed image...");
+				LOGGER.error("... " + bitsPerPixel + " bit color depth is not valid for indexed image...");
 		 }
 		 // Wrap an InflaterInputStream with a bufferedInputStream to speed up reading
 		 BufferedInputStream bis = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compr_data)));
@@ -1332,7 +1332,7 @@ public class PNGReader extends ImageReader
 		 
           if (signature != SIGNATURE)
           {
-		      log.error("--- NOT A PNG IMAGE ---");
+		      LOGGER.error("--- NOT A PNG IMAGE ---");
 		      return null;
 		  }
   		  
@@ -1342,10 +1342,10 @@ public class PNGReader extends ImageReader
 
 		  if (!(new String(signature, 1, 3, "US-ASCII").equals("PNG")))//Is this a PNG?
 		  {
-			log.error("--- NOT A PNG IMAGE ---");
+			LOGGER.error("--- NOT A PNG IMAGE ---");
 			return;
 		  }
-		  else log.info("--- PNG IS NOT GIF ---");
+		  else LOGGER.info("--- PNG IS NOT GIF ---");
           */
 		  
 		  //*******************************
@@ -1383,22 +1383,22 @@ public class PNGReader extends ImageReader
 			    throw new IOException("NOT A VALID PNG IMAGE");
 
 		  // Dumping
-		  log.info("--- PNG IMAGE INFO ---");
-		  log.info("image width: {}", width);
-		  log.info("image height: {}", height);
-		  log.info("image bit depth: {}", bitsPerPixel);
-		  log.info("Image color type: {}", ColorType.fromInt(color_format));
-	  	  log.info("image compression: {} - {}", compression, PNGDescriptor.getCompressionTypeDescrition(compression));
-		  log.info("image filter method: {} - {}", filter_method, PNGDescriptor.getFilterTypeDescription(filter_method));
-		  log.info("image interlace method: {} - {}", interlace_method, PNGDescriptor.getInterlaceTypeDescription(interlace_method));
-		  log.info("--- END PNG IMAGE INFO ---");
+		  LOGGER.info("--- PNG IMAGE INFO ---");
+		  LOGGER.info("image width: {}", width);
+		  LOGGER.info("image height: {}", height);
+		  LOGGER.info("image bit depth: {}", bitsPerPixel);
+		  LOGGER.info("Image color type: {}", ColorType.fromInt(color_format));
+	  	  LOGGER.info("image compression: {} - {}", compression, PNGDescriptor.getCompressionTypeDescrition(compression));
+		  LOGGER.info("image filter method: {} - {}", filter_method, PNGDescriptor.getFilterTypeDescription(filter_method));
+		  LOGGER.info("image interlace method: {} - {}", interlace_method, PNGDescriptor.getInterlaceTypeDescription(interlace_method));
+		  LOGGER.info("--- END PNG IMAGE INFO ---");
 		  // End of dumping
 
 		  while (true)
 		  {
 			  data_len = IOUtils.readIntMM(is);
 			  chunk_type = IOUtils.readIntMM(is);
-			  //log.info("chunk type: 0x{}", Integer.toHexString(chunk_type));
+			  //LOGGER.info("chunk type: 0x{}", Integer.toHexString(chunk_type));
 
 			  if (chunk_type == ChunkType.IEND.getValue())
 				  break;
@@ -1430,7 +1430,7 @@ public class PNGReader extends ImageReader
 			  				adjust_grayscale_PLTE(EIGHT_BIT_COLOR_PALETTE);
 			  		}						 
 			  		else if(color_format == 2)
-			  			log.info("full color transparent image!");
+			  			LOGGER.info("full color transparent image!");
 			  		break;
 			  	}
 			  	case GAMA:
@@ -1471,7 +1471,7 @@ public class PNGReader extends ImageReader
 	 private void read_GAMMA(InputStream is, int data_len) throws Exception
 	 {
 		 if(data_len != 4){
-			 log.error("Invalid Gamma data length: {}", data_len);
+			 LOGGER.error("Invalid Gamma data length: {}", data_len);
 		     return;
 		 }
 		 hasGamma = true;
@@ -1554,7 +1554,7 @@ public class PNGReader extends ImageReader
 	 private void read_SRGB(InputStream is, int data_len) throws Exception
 	 {
 		 if(data_len!=1){
-			 log.error("Invalid SRGB data length:{}", data_len);
+			 LOGGER.error("Invalid SRGB data length:{}", data_len);
 		     return;
 		 }		 
 		 renderingIntent = (byte)IOUtils.read(is);
@@ -1569,7 +1569,7 @@ public class PNGReader extends ImageReader
  		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
  		
  		 InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, data_len - profileName_len - 2));
- 		 log.info("ICCProfile name: {}", profileName);
+ 		 LOGGER.info("ICCProfile name: {}", profileName);
  		 
  		 byte[] icc_profile = IOUtils.readFully(ii, 4096);
  		 

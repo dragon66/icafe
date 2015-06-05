@@ -165,7 +165,7 @@ public class JPEGReaderEx extends ImageReader
    private List<HTable> dcTables = new ArrayList<HTable>(4);
    
    // Obtain a logger instance
-   private static final Logger log = LoggerFactory.getLogger(JPEGReaderEx.class);
+   private static final Logger LOGGER = LoggerFactory.getLogger(JPEGReaderEx.class);
 
    public BufferedImage read(InputStream is) throws Exception
    {
@@ -177,16 +177,16 @@ public class JPEGReaderEx extends ImageReader
             
 		if (identifier == -1)
 		{
-			log.error("END OF FILE!");
+			LOGGER.error("END OF FILE!");
 			return null;
 		}
 		// The very first marker should be the start_of_image marker!	
 		if((identifier != SEGMENT_IDENTIFIER)||((marker = is.read()) != SOI))
 		{
-			log.error("Invalid JPEG image!");
+			LOGGER.error("Invalid JPEG image!");
 			return null;
 		}
-		log.info("SOI(0x{})", Integer.toHexString(SOI));
+		LOGGER.info("SOI(0x{})", Integer.toHexString(SOI));
 	
 		while (!finished)
         {
@@ -194,13 +194,13 @@ public class JPEGReaderEx extends ImageReader
             
 			if (identifier == -1)
 			{
-				log.info("END OF FILE!");
+				LOGGER.info("END OF FILE!");
 				finished = true;
 			}
 			
 			else if(identifier != SEGMENT_IDENTIFIER)
 			{
-				log.error("Invalid SEGMENT_IDENTIFIER!");
+				LOGGER.error("Invalid SEGMENT_IDENTIFIER!");
 				finished  = true;
 				//continue;
 			}
@@ -290,7 +290,7 @@ public class JPEGReaderEx extends ImageReader
 					String JFIF_IDENTIFIER=new String(identifier); // JFIF identifier
 					if (!JFIF_IDENTIFIER.trim().equals("JFIF"))
 					{
-						log.error("NOT a valid JFIF file");
+						LOGGER.error("NOT a valid JFIF file");
 						finished = true;
 						return false;
 					}
@@ -298,13 +298,13 @@ public class JPEGReaderEx extends ImageReader
 					int minor_revision = is.read();
 					// Printout JFIF and revision information, the major_revision should be 1
 					// and the minor_revision should be 0..2, otherwise try to decode anyway            
-					log.info("APP0(0x{}): {}{}.{}", Integer.toHexString(APP0), JFIF_IDENTIFIER, major_revision, minor_revision); 
+					LOGGER.info("APP0(0x{}): {}{}.{}", Integer.toHexString(APP0), JFIF_IDENTIFIER, major_revision, minor_revision); 
 					IOUtils.skipFully(is,5); //x/y densities ignored
 					// Thumbnail follows
 					int thumb_width = is.read();
-					log.info("thumbnail width is: {}", thumb_width);
+					LOGGER.info("thumbnail width is: {}", thumb_width);
 					int thumb_height = is.read();
-					log.info("thumbnail height is: {}", thumb_height);
+					LOGGER.info("thumbnail height is: {}", thumb_height);
 					if((thumb_width!=0)&&(thumb_height!=0))
 					{
 					  thumbnail = true;
@@ -339,7 +339,7 @@ public class JPEGReaderEx extends ImageReader
 		        //byte[] identifier=new byte[6];
 				//is.read(identifier,0,6);
 				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8"); // Could be Exif or Adobe XMP
-				log.info("APP1(0x{}): [{}]", Integer.toHexString(APP1), IDENTIFIER);
+				LOGGER.info("APP1(0x{}): [{}]", Integer.toHexString(APP1), IDENTIFIER);
 				break;
 			}
 			case APP2:
@@ -353,7 +353,7 @@ public class JPEGReaderEx extends ImageReader
 					identifier_len++;
 				}
 				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				log.info("APP2(0x{}): [{}]", Integer.toHexString(APP2), IDENTIFIER);
+				LOGGER.info("APP2(0x{}): [{}]", Integer.toHexString(APP2), IDENTIFIER);
 				break;
 			}
 			case APP12: // [Ducky]
@@ -367,7 +367,7 @@ public class JPEGReaderEx extends ImageReader
 					identifier_len++;
 				}
 				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				log.info("APP12(0x{}): [{}]", Integer.toHexString(APP12), IDENTIFIER);
+				LOGGER.info("APP12(0x{}): [{}]", Integer.toHexString(APP12), IDENTIFIER);
 				break;
 			}
 			case APP13:// [Photoshop 3.0]
@@ -381,7 +381,7 @@ public class JPEGReaderEx extends ImageReader
 					identifier_len++;
 				}
 				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				log.info("APP13(0x{}): [{}]", Integer.toHexString(APP13), IDENTIFIER);
+				LOGGER.info("APP13(0x{}): [{}]", Integer.toHexString(APP13), IDENTIFIER);
 				break;				
 			}
 			case APP14:// [Adobe]
@@ -394,7 +394,7 @@ public class JPEGReaderEx extends ImageReader
 					identifier_len++;
 				}
 				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				log.info("APP14(0x{}): [{}]", Integer.toHexString(APP14), IDENTIFIER);
+				LOGGER.info("APP14(0x{}): [{}]", Integer.toHexString(APP14), IDENTIFIER);
 				break;
 			}
 			case APP15:
@@ -407,7 +407,7 @@ public class JPEGReaderEx extends ImageReader
 					identifier_len++;
 				}
 				String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");
-				log.info("APP15(0x{}): [{}]", Integer.toHexString(APP15), IDENTIFIER);
+				LOGGER.info("APP15(0x{}): [{}]", Integer.toHexString(APP15), IDENTIFIER);
 				break;
 			}
 			default:
@@ -438,14 +438,14 @@ public class JPEGReaderEx extends ImageReader
 			  }
 	    }
 	    img_thumb = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(thumb_width, thumb_height, pix_thumb, 0, thumb_width));
-		log.info("Thumbnail view created!");
+		LOGGER.info("Thumbnail view created!");
    }
    
    // Process define Quantization table
    public void read_DQT_Segment(InputStream is) throws IOException
    {
 		// Define quantization table segment, only for 8 bits precision
-        log.info("DQT(0x{})", Integer.toHexString(DQT));
+        LOGGER.info("DQT(0x{})", Integer.toHexString(DQT));
 		int QT_info = 0;
 		int QT_precision = 0;
         int QT_index = 0;
@@ -459,15 +459,15 @@ public class JPEGReaderEx extends ImageReader
 		{
 			QT_info = is.read();
 		    QT_precision = (QT_info>>4)&0x0f;
-		    //log.info("precision of QT is {}", QT_precision);
+		    //LOGGER.info("precision of QT is {}", QT_precision);
 			if (QT_precision != 0)
 			{
-				log.error("only 8 bit precision is surported!");
+				LOGGER.error("only 8 bit precision is surported!");
 			    finished = true;
 			    return;
 			}
 			QT_index = (QT_info&0x0f);
-		    //log.info("for QT_no {}", QT_index);
+		    //LOGGER.info("for QT_no {}", QT_index);
 		    // Read QT tables
     	    // We assume a precision value of zero
 			IOUtils.readFully(is, buf,0,64);
@@ -478,7 +478,7 @@ public class JPEGReaderEx extends ImageReader
 			len -= 65;
 			count ++;
 		}
-		log.info("number of Quantation tables: {}", count);
+		LOGGER.info("number of Quantation tables: {}", count);
    }
    
    // Process define Huffman table
@@ -492,7 +492,7 @@ public class JPEGReaderEx extends ImageReader
 		byte bits[];
 		byte values[];
 	
-		log.info("DHT(0x{})", Integer.toHexString(DHT));
+		LOGGER.info("DHT(0x{})", Integer.toHexString(DHT));
         int len=read_word(is);
 		len -= 2;
 		while (len > 0)
@@ -500,8 +500,8 @@ public class JPEGReaderEx extends ImageReader
 			HT_info=is.read();
 			HT_type=(HT_info>>4)&0x0f;// 0=DC table, 1=AC table
 			HT_index=(HT_info&0x0f);// Huffman tables number
-            //log.info("HT type is {}", HT_type);
-			//log.info("HT_num is {}", HT_index);
+            //LOGGER.info("HT type is {}", HT_type);
+			//LOGGER.info("HT_num is {}", HT_index);
 			count = 0;			
 			bits = new byte[16];
             // Number of Huffman code of length i. (i=1..16)
@@ -511,10 +511,10 @@ public class JPEGReaderEx extends ImageReader
 			{
 				count += bits[i]&0xff;
 			}
-            //log.info("number of Huffman code: {}", count);
+            //LOGGER.info("number of Huffman code: {}", count);
 			if (count>256)
 			{
-				log.error("invalid huffman code count!");
+				LOGGER.error("invalid huffman code count!");
 				finished = true;
 				return;
 			}
@@ -538,26 +538,26 @@ public class JPEGReaderEx extends ImageReader
    // Process SOF segment
    public void read_SOF_Segment(InputStream is,int SOFn) throws IOException
    {
-	    log.info("SOF(0x{})", Integer.toHexString(SOFn));
+	    LOGGER.info("SOF(0x{})", Integer.toHexString(SOFn));
 		int samp_factor = 0;
 	    int len = read_word(is);
 		// This is in bits/sample, usually 8, (12 and 16 not supported by most software). 
 		int precision = is.read();// Usually 8, for baseline JPEG
 		if (precision != 8)
 		{
-			log.error("only 8 bit precision is surported!");
+			LOGGER.error("only 8 bit precision is surported!");
 			finished = true;
 			return;
 		}
 		// Image width and height
 		image_height = read_word(is);
 		image_width = read_word(is);
-		log.info("image size: {}X{}", image_width, image_height);
+		LOGGER.info("image size: {}X{}", image_width, image_height);
         // Number of components
 		// Usually 1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK 
         // JFIF uses either 1 component (Y, greyscaled) or 3 components (YCbCr, sometimes called YUV, color).
 		int num_of_components = is.read();
-		//log.info("number of components: {}", num_components);
+		//LOGGER.info("number of components: {}", num_components);
 		for (int i=0; i<num_of_components; i++)
 		{
 			// Component ID(1 byte)(1 = Y, 2 = Cb, 3 = Cr, 4 = I, 5 = Q)    
@@ -576,13 +576,13 @@ public class JPEGReaderEx extends ImageReader
 				   max_v_samp_factor = component[i][2];
 			}
 			component[i][3] = is.read();// Quantization table number
-			//log.info("component {} quantization table number: {}", component[i][0], component[i][3]);
+			//LOGGER.info("component {} quantization table number: {}", component[i][0], component[i][3]);
 		}
 		IOUtils.skipFully(is,len-8-3*num_of_components);
 		
 	    if(SOFn == SOF2)
 	    {
-	    	log.error("progressive DCT, Huffman coding not supported!");
+	    	LOGGER.error("progressive DCT, Huffman coding not supported!");
 		    finished = true;
 		    return;		
 		}	    
@@ -592,17 +592,17 @@ public class JPEGReaderEx extends ImageReader
    public void read_SOS_Segment(InputStream is) throws IOException
    {
 		// Start of scan segment
-		log.info("SOS(0x{})", Integer.toHexString(SOS));
+		LOGGER.info("SOS(0x{})", Integer.toHexString(SOS));
 		
 		int tbl_no = 0;
         int Ss, Se, Ah_Al, Ah, Al;
 
 		int len = read_word(is);
-		log.info("length is: {}", len);
+		LOGGER.info("length is: {}", len);
 
 		// The number of components in this scan
 		int num_of_components = is.read();
-		log.info("number of components in this scan: {}", num_of_components);
+		LOGGER.info("number of components in this scan: {}", num_of_components);
 		len -= 3;
 
 		for (int i=0; i<num_of_components; i++)
@@ -615,16 +615,16 @@ public class JPEGReaderEx extends ImageReader
 		}
 		Ss = is.read();// Start of spectral or predictor selection
 		Se = is.read();// End of spectral selection		
-		log.info("Ss: {}", Ss);
-		log.info("Se: {}", Se);
-		//log.info("Ss and Se are: {}{}{}", Ss, "&", Se);
+		LOGGER.info("Ss: {}", Ss);
+		LOGGER.info("Se: {}", Se);
+		//LOGGER.info("Ss and Se are: {}{}{}", Ss, "&", Se);
 		Ah_Al = is.read();
         Ah = (Ah_Al>>4)&0x0f;// Successive approximation bit position high
 		Al = Ah_Al&0x0f;// Successive approximation bit position low or point transform
-		log.info("Ah: {}", Ah);
-		log.info("Al: {}", Al);
+		LOGGER.info("Ah: {}", Ah);
+		LOGGER.info("Al: {}", Al);
 		IOUtils.skipFully(is,len-3);
-		log.info("length remains: {}", (len-3));
+		LOGGER.info("length remains: {}", (len-3));
  		// Begin of the image data
 		decode_image_data(is);
    }
@@ -632,7 +632,7 @@ public class JPEGReaderEx extends ImageReader
    // Process define restart interval
    public void read_DRI_Segment(InputStream is) throws IOException
    {
-	   log.info("DRI(0x{})", Integer.toHexString(DRI));
+	   LOGGER.info("DRI(0x{})", Integer.toHexString(DRI));
 	   IOUtils.skipFully(is,read_word(is)-2);
    }
    
@@ -649,13 +649,13 @@ public class JPEGReaderEx extends ImageReader
 	   String IDENTIFIER=new String(buf,0,identifier_len,"UTF-8");	  	   
 	   if ((marker>=0xe0)&&(marker<=0xef))
 	   {
-		  log.info("Application type marker: 0x{}", Integer.toHexString(marker));
+		  LOGGER.info("Application type marker: 0x{}", Integer.toHexString(marker));
 	   }
 	   else
 	   {
-		  log.warn("Unrecognized marker: 0x{}", Integer.toHexString(marker));
+		  LOGGER.warn("Unrecognized marker: 0x{}", Integer.toHexString(marker));
 	   }
-	   log.info("with identifier: [{}] ignored!", IDENTIFIER);
+	   LOGGER.info("with identifier: [{}] ignored!", IDENTIFIER);
    }
    
    // Process comment marker
@@ -664,13 +664,13 @@ public class JPEGReaderEx extends ImageReader
 	   int len=read_word(is);
 	   byte buf[]=new byte[len-2];
 	   IOUtils.readFully(is,buf,0,len-2);
-	   log.info("Comment: {}", new String(buf,"UTF-8"));
+	   LOGGER.info("Comment: {}", new String(buf,"UTF-8"));
    }
    
    // Process end of image marker
    public void read_EOI_Segment()
    {
-	   log.info("END OF IMAGE!");
+	   LOGGER.info("END OF IMAGE!");
 	   finished = true;
    }
 
@@ -679,7 +679,7 @@ public class JPEGReaderEx extends ImageReader
     */
    public void decode_image_data(InputStream is)
    {
-	   log.info("Start Processing Image Data...");
+	   LOGGER.info("Start Processing Image Data...");
    }
 
    @SuppressWarnings("unused")

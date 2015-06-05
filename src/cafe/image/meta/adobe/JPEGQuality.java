@@ -88,7 +88,7 @@ public class JPEGQuality extends _8BIM {
 	private byte trailer = 0x01;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(JPEGQuality.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGQuality.class);
 	
 	public JPEGQuality() {
 		this("JPEGQuality");
@@ -215,7 +215,7 @@ public class JPEGQuality extends _8BIM {
 	
 	public void print() {
 		super.print();
-		log.info("{} : {} : {} - Plus 1 byte unknown trailer value = {}", getQualityAsString(), getFormatAsString(), getProgressiveScansAsString(), trailer);
+		LOGGER.info("{} : {} : {} - Plus 1 byte unknown trailer value = {}", getQualityAsString(), getFormatAsString(), getProgressiveScansAsString(), trailer);
 	}
 	
 	private void read() {

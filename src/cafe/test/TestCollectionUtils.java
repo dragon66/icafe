@@ -17,6 +17,6 @@ public class TestCollectionUtils extends TestBase {
 		map.put("first", 1);
 		map.put("second", 1);
 		
-		log.info("{}", CollectionUtils.getKeysByValue(map, 1));
+		logger.info("{}", CollectionUtils.getKeysByValue(map, 1));
 	}
 }

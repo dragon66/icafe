@@ -28,7 +28,7 @@ public class GrowableArray<E>{
 	private int initsize;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(GrowableArray.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GrowableArray.class);
 
 	/** Construct an array with initial size inisize
 	 *  and increment inc
@@ -80,9 +80,9 @@ public class GrowableArray<E>{
  	 *	If objarray size > 0, displays each element.
 	 */
 	public void printArray(){
-		log.info("Size is {}.", String.valueOf(elements));
+		LOGGER.info("Size is {}.", String.valueOf(elements));
 		for (int i = 0;i < elements;i++){
-			log.info("Position [{}] = {}", String.valueOf(i), String.valueOf(objarray[i]));
+			LOGGER.info("Position [{}] = {}", String.valueOf(i), String.valueOf(objarray[i]));
 		}
 	}
 

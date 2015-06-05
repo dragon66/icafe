@@ -11,10 +11,10 @@ public class TestBase64 extends TestBase {
 	@Override
 	public void test(String ... args) throws Exception {
 		String input = "Merry Christmas!";
-		log.info("Input string: {}", input);
+		logger.info("Input string: {}", input);
 		String base64Encoded = Base64.encode(input);
-		log.info("Base64 encoded as: {}", base64Encoded);
+		logger.info("Base64 encoded as: {}", base64Encoded);
 		String base64Decoded = Base64.decode(base64Encoded);
-		log.info("Base64 decoded as: {}", base64Decoded);		
+		logger.info("Base64 decoded as: {}", base64Decoded);		
 	}
 }

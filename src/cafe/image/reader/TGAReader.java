@@ -35,7 +35,7 @@ import cafe.io.IOUtils;
  */
 public class TGAReader extends ImageReader {
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(TGAReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TGAReader.class);
 	// Wrapper for the TGA header
 	private static class TgaHeader
 	{
@@ -99,7 +99,7 @@ public class TGAReader extends ImageReader {
  	   	pix = new int[width*height];
 	
  	   	if (tgaHeader.colourmap_type != 0 && tgaHeader.colourmap_type != 1) {
- 	   		log.error("Can only handle colour map types of 0 and 1");    
+ 	   		LOGGER.error("Can only handle colour map types of 0 and 1");    
  	   		return null;    
  	   	}
 
@@ -122,13 +122,13 @@ public class TGAReader extends ImageReader {
 			default:
  	   	}
        
- 	   	log.info("Image x_origin: {}", tgaHeader.x_origin);
- 	   	log.info("Image y_origin: {}", tgaHeader.y_origin);
+ 	   	LOGGER.info("Image x_origin: {}", tgaHeader.x_origin);
+ 	   	LOGGER.info("Image y_origin: {}", tgaHeader.y_origin);
 
  	   	switch (tgaHeader.image_type)
  	   	{
 	   		case 0:
-	   			log.info("There are no data in the image file");
+	   			LOGGER.info("There are no data in the image file");
 	   			System.exit(1);
 	   		case 1:
 	   			readCMPTga(is);
@@ -150,10 +150,10 @@ public class TGAReader extends ImageReader {
 	   			break;
 	   		case 32: 
 	   		case 33:
-	   			log.error("Not implemented for compressed color mapped images");
+	   			LOGGER.error("Not implemented for compressed color mapped images");
 	   			return null;
 	   		default:
-	   			log.error("I can't find a type matches this");
+	   			LOGGER.error("I can't find a type matches this");
 	   			return null;			
  	   	}
 	   
@@ -168,7 +168,7 @@ public class TGAReader extends ImageReader {
 	private void read_BW_Tga(InputStream is) throws Exception
 	{
 		bitsPerPixel = 1;
-		log.info("Uncompressed Black and White Tga image!");
+		LOGGER.info("Uncompressed Black and White Tga image!");
 
 		int index = 0;
 		  
@@ -189,7 +189,7 @@ public class TGAReader extends ImageReader {
 	private void read_RLE_BW_Tga(InputStream is) throws Exception
 	{
 		bitsPerPixel = 1;
-		log.info("Black and White Tga RLE image!");
+		LOGGER.info("Black and White Tga RLE image!");
 
 		int nindex = 0;
 		int p = 0, k = 0, i = 0, j = 0;
@@ -242,14 +242,14 @@ public class TGAReader extends ImageReader {
 
 	private void  read_RLE_CMP_Tga(InputStream is) throws Exception
 	{
-		log.info("color mapped Tga RLE image!");
+		LOGGER.info("color mapped Tga RLE image!");
 	   
 		int nindex = 0;
 		int p = 0, k = 0, i = 0, j = 0;
 
 		if (tgaHeader.bits_per_pixel != 8)
 		{
-			log.error("Can only handle 8 bit color mapped tga file");
+			LOGGER.error("Can only handle 8 bit color mapped tga file");
 			return;
 		}
 
@@ -312,7 +312,7 @@ public class TGAReader extends ImageReader {
 		 
 		if(tgaHeader.bits_per_pixel  == 24) // 24 bit image
 		{
-			log.info("24 bits Tga RLE image!");
+			LOGGER.info("24 bits Tga RLE image!");
 			 
 			while(p < width*height) { 
 				k = (brgb[nindex++] & 0x7f)+1; 
@@ -352,7 +352,7 @@ public class TGAReader extends ImageReader {
 				}
 			} 
 		} else if (tgaHeader.bits_per_pixel  == 32) { // 32 bit image 
-			log.info("32 bits Tga RLE image!");            
+			LOGGER.info("32 bits Tga RLE image!");            
 			
 			while(p < width*height) { 
 				k = (brgb[nindex++] & 0x7f)+1; 
@@ -394,7 +394,7 @@ public class TGAReader extends ImageReader {
 		} else if (tgaHeader.bits_per_pixel == 15
 					|| tgaHeader.bits_per_pixel == 16) {			
 		
-			log.info("16 bits Tga RLE image!");
+			LOGGER.info("16 bits Tga RLE image!");
 			 
 			int r = 0, g = 0, b = 0, a = 0;  
   
@@ -459,7 +459,7 @@ public class TGAReader extends ImageReader {
 
 	private void  readCMPTga(InputStream is) throws Exception
 	{
-		log.info("color mapped Tga uncompressed image!");
+		LOGGER.info("color mapped Tga uncompressed image!");
 
 		int index = 0;
 
@@ -467,7 +467,7 @@ public class TGAReader extends ImageReader {
          
 		if (tgaHeader.bits_per_pixel != 8)
 		{	
-			log.error("Can only handle 8 bit color mapped tga file");
+			LOGGER.error("Can only handle 8 bit color mapped tga file");
 			return;
 		}
 		
@@ -539,7 +539,7 @@ public class TGAReader extends ImageReader {
 		 
 		if (tgaHeader.bits_per_pixel == 24) // 24 bit image
 		{
-			log.info("24 bits Tga uncompressed image!");
+			LOGGER.info("24 bits Tga uncompressed image!");
             
 			for(int i = 0; i < height; i++) {
 				for(int j = 0; j < width; j++) {
@@ -547,7 +547,7 @@ public class TGAReader extends ImageReader {
 				}
 			}
 		} else if (tgaHeader.bits_per_pixel == 32) {// 32 bit image 
-			log.info("32 bits Tga uncompressed image!");
+			LOGGER.info("32 bits Tga uncompressed image!");
             
 			for(int i = 0; i < height; i++) {
 				for(int j = 0; j < width; j++) {
@@ -556,7 +556,7 @@ public class TGAReader extends ImageReader {
 			}
 		} else if (tgaHeader.bits_per_pixel == 15 
 					|| tgaHeader.bits_per_pixel == 16) { // 16 bit image
-			log.info("16 bits Tga uncompressed image!");
+			LOGGER.info("16 bits Tga uncompressed image!");
 			int r = 0, g = 0, b = 0, a = 0;
 			/** 
 			 * The two byte entry is broken down as follows:

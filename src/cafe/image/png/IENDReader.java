@@ -28,7 +28,7 @@ public class IENDReader implements Reader {
 	private Chunk chunk;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(IENDReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IENDReader.class);
 	
 	public IENDReader(Chunk chunk) {
 		//
@@ -42,7 +42,7 @@ public class IENDReader implements Reader {
 	@Override
 	public void read() throws IOException {
 		if(chunk.getData().length != 0) {
-			log.warn("Warning: IEND data field is not empty!");
+			LOGGER.warn("Warning: IEND data field is not empty!");
 		}
 	}
 }

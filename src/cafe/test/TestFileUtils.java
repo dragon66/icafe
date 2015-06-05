@@ -10,7 +10,7 @@ public class TestFileUtils extends TestBase {
 
 	@Override
 	public void test(String ... args) {
-		log.info(System.getProperty("user.dir"));
+		logger.info(System.getProperty("user.dir"));
 		FileUtils.list(System.getProperty("user.dir"), "java");
 		FileUtils.delete(System.getProperty("user.dir"), "tmp");
 	}

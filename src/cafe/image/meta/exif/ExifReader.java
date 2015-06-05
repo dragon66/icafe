@@ -52,7 +52,7 @@ public class ExifReader implements MetadataReader {
 	private List<IFD> ifds = new ArrayList<IFD>(3);
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(ExifReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExifReader.class);
 	
 	public ExifReader(byte[] exif) {
 		this.data = exif;
@@ -191,12 +191,12 @@ public class ExifReader implements MetadataReader {
 				e.printStackTrace();
 			}
 		}
-		log.info("Exif reader output starts =>");
+		LOGGER.info("Exif reader output starts =>");
 		TIFFTweaker.printIFDs(ifds, "");
 		if(containsThumbnail) {
-			log.info("Exif thumbnail format: {}", (thumbnail.getDataType() == 1? "DATA_TYPE_JPG":"DATA_TYPE_TIFF"));
-			log.info("Exif thumbnail data length: {}", thumbnail.getCompressedImage().length);
+			LOGGER.info("Exif thumbnail format: {}", (thumbnail.getDataType() == 1? "DATA_TYPE_JPG":"DATA_TYPE_TIFF"));
+			LOGGER.info("Exif thumbnail data length: {}", thumbnail.getCompressedImage().length);
 		}
-		log.info("<= Exif reader output ends");
+		LOGGER.info("<= Exif reader output ends");
 	}
 }

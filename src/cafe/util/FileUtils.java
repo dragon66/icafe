@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class FileUtils {
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(FileUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileUtils.class);
 		
 	public static void delete(String fileName) {
 		delete(fileName, "");
@@ -53,14 +53,14 @@ public class FileUtils {
             		boolean result = file.delete();
             		// test if delete of file is success or not
             		if (result) {
-            			log.info("File {} deleted", file.getAbsolutePath());
+            			LOGGER.info("File {} deleted", file.getAbsolutePath());
             		} else {
-            			log.info("File {} was not deleted, unknown reason", file.getAbsolutePath());
+            			LOGGER.info("File {} was not deleted, unknown reason", file.getAbsolutePath());
             		}
             	}
             }
         } else {
-        	log.info("File {} doesn't exist", file.getAbsolutePath());
+        	LOGGER.info("File {} doesn't exist", file.getAbsolutePath());
         }
     }
 	
@@ -93,11 +93,11 @@ public class FileUtils {
 			try {
 				path = dir.getCanonicalPath();
 			} catch (IOException e) {
-				log.error("IOException", e);
+				LOGGER.error("IOException", e);
 			}        	
         	if(fileExt != null && path.endsWith(fileExt)) {
         		fileList.add(path);        	   
-        		log.info("File: {}", path);
+        		LOGGER.info("File: {}", path);
         	}
         }
         

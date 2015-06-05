@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BMPWriter extends ImageWriter {
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(BMPWriter.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BMPWriter.class);
 	
 	// Image header
 	private static class BitmapHeader
@@ -205,7 +205,7 @@ public class BMPWriter extends ImageWriter {
 
 		byte brgb[]=new byte[256*4];
       
-		log.info("Saving as 256 bits bitmap color image!");
+		LOGGER.info("Saving as 256 bits bitmap color image!");
 
 		bitmapHeader = new BitmapHeader();
 		// Set header parameters
@@ -269,7 +269,7 @@ public class BMPWriter extends ImageWriter {
 
 		byte brgb[]=new byte[bytePerScanLine];
       
-		log.info("Saving as 24 bits bitmap color image!");
+		LOGGER.info("Saving as 24 bits bitmap color image!");
 
 		bitmapHeader = new BitmapHeader();
 		// Set header parameters

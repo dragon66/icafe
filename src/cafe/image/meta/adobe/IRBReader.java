@@ -45,7 +45,7 @@ public class IRBReader implements MetadataReader {
 	Map<Short, _8BIM> _8bims = new HashMap<Short, _8BIM>();
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(IRBReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(IRBReader.class);
 	
 	public IRBReader(byte[] data) {
 		this.data = data;
@@ -178,35 +178,35 @@ public class IRBReader implements MetadataReader {
 				e.printStackTrace();
 			}			
 		}
-		log.info("<<Adobe IRB information starts>>");
+		LOGGER.info("<<Adobe IRB information starts>>");
 		for(_8BIM _8bim : _8bims.values()) {
 			_8bim.print();
 		}
 		if(containsThumbnail) {
-			log.info("{}", thumbnail.getResouceID());
+			LOGGER.info("{}", thumbnail.getResouceID());
 			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).
 			switch (thumbnailFormat) {
 				case IRBThumbnail.DATA_TYPE_KJpegRGB:
-					log.info("Thumbnail format: KJpegRGB");
+					LOGGER.info("Thumbnail format: KJpegRGB");
 					break;
 				case IRBThumbnail.DATA_TYPE_KRawRGB:
-					log.info("Thumbnail format: KRawRGB");
+					LOGGER.info("Thumbnail format: KRawRGB");
 					break;
 			}
-			log.info("Thumbnail width: {}", thumbnail.getWidth());
-			log.info("Thumbnail height: {}", thumbnail.getHeight());
+			LOGGER.info("Thumbnail width: {}", thumbnail.getWidth());
+			LOGGER.info("Thumbnail height: {}", thumbnail.getHeight());
 			// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-			log.info("Padded row bytes: {}", thumbnail.getPaddedRowBytes());
+			LOGGER.info("Padded row bytes: {}", thumbnail.getPaddedRowBytes());
 			// Total size = widthbytes * height * planes
-			log.info("Total size: {}", thumbnail.getTotalSize());
+			LOGGER.info("Total size: {}", thumbnail.getTotalSize());
 			// Size after compression. Used for consistency check.
-			log.info("Size after compression: {}", thumbnail.getCompressedSize());
+			LOGGER.info("Size after compression: {}", thumbnail.getCompressedSize());
 			// Bits per pixel. = 24
-			log.info("Bits per pixel: {}", thumbnail.getBitsPerPixel());
+			LOGGER.info("Bits per pixel: {}", thumbnail.getBitsPerPixel());
 			// Number of planes. = 1
-			log.info("Number of planes: {}", thumbnail.getNumOfPlanes());
+			LOGGER.info("Number of planes: {}", thumbnail.getNumOfPlanes());
 		}
 		
-		log.info("<<Adobe IRB information ends>>");
+		LOGGER.info("<<Adobe IRB information ends>>");
 	}
 }

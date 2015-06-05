@@ -19,10 +19,10 @@ public class TestCRC32 extends TestBase {
 		crc32j.update(buff);
 		crc32j.update(buff2);
 		
-		log.info("Home made CRC32: {}", crc32.getValue());
-		log.info("Java util CRC32: {}", crc32j.getValue());		
+		logger.info("Home made CRC32: {}", crc32.getValue());
+		logger.info("Java util CRC32: {}", crc32j.getValue());		
 		
-		log.info("Are they giving equal value? {}", (crc32.getValue()==crc32j.getValue()));
+		logger.info("Are they giving equal value? {}", (crc32.getValue()==crc32j.getValue()));
 		
 		crc32.reset();
 		crc32j.reset();
@@ -33,9 +33,9 @@ public class TestCRC32 extends TestBase {
 		crc32j.update(buff);
 		crc32j.update(buff2);
 		
-		log.info("Home made CRC32: {}", crc32.getValue());
-		log.info("Java util CRC32: {}", crc32j.getValue());	
+		logger.info("Home made CRC32: {}", crc32.getValue());
+		logger.info("Java util CRC32: {}", crc32j.getValue());	
 		
-		log.info("Are they giving equal value? {}", (crc32.getValue()==crc32j.getValue()));		
+		logger.info("Are they giving equal value? {}", (crc32.getValue()==crc32j.getValue()));		
 	}
 }

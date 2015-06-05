@@ -168,7 +168,7 @@ public class JPEGReader extends ImageReader {
 	private List<HTable> dcTables = new ArrayList<HTable>(4);
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(JPEGReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGReader.class);
 	
 	public BufferedImage read1(InputStream is) throws Exception	{
 		finished = false;
@@ -179,27 +179,27 @@ public class JPEGReader extends ImageReader {
 		identifier = is.read();
 	            
 		if (identifier == -1) {
-			log.error("END OF FILE!");
+			LOGGER.error("END OF FILE!");
 			return null;
 		}
 		
 		// The very first marker should be the start_of_image marker!	
 		if((identifier != SEGMENT_IDENTIFIER)||((marker = is.read()) != SOI)) {
-			log.error("Invalid JPEG image!");
+			LOGGER.error("Invalid JPEG image!");
 			return null;
 		}
 		
-		log.info("SOI(0xd8) - Start of image");
+		LOGGER.info("SOI(0xd8) - Start of image");
 		
 		while (!finished)
 		{
 			identifier = is.read(); // Keep reading segment identifiers
 	            
 			if (identifier == -1) {
-				log.info("END OF FILE!");
+				LOGGER.info("END OF FILE!");
 				finished = true;
 			} else if(identifier != SEGMENT_IDENTIFIER)	{
-				log.warn("Invalid SEGMENT_IDENTIFIER!");
+				LOGGER.warn("Invalid SEGMENT_IDENTIFIER!");
 				finished  = true;
 			} else {
 				marker = is.read(); // Read marker	
@@ -260,9 +260,9 @@ public class JPEGReader extends ImageReader {
 			
 			if(Arrays.equals(buf, ADOBE_ID)) {
 				for (int i = 0, j = 5; i < 3; i++, j += 2) {
-					log.info("{}{}", app14Info[i], StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
+					LOGGER.info("{}{}", app14Info[i], StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
 				}
-				log.info("{}{}", app14Info[3], (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
+				LOGGER.info("{}{}", app14Info[3], (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
 					((data[11]&0xff) == 1)? "YCbCr":"YCCK" ));
 			}
 		}
@@ -277,31 +277,31 @@ public class JPEGReader extends ImageReader {
 		switch(APPn) { 
 			case APP0:
 				byte[] jfif = {0x4A, 0x46, 0x49, 0x46, 0x00}; // JFIF
-				log.info("APP0(0xe0) - Application segment 0");
+				LOGGER.info("APP0(0xe0) - Application segment 0");
 				byte[] buf = new byte[len - 2];
 			    IOUtils.readFully(is, buf);
 			    // JFIF segment
 			    if(Arrays.equals(ArrayUtils.subArray(buf, 0, 5), jfif)) {
-			    	log.info("{} - version {}.{}", new String(buf, 0, 4), (buf[5]&0xff), (buf[6]&0xff));
+			    	LOGGER.info("{} - version {}.{}", new String(buf, 0, 4), (buf[5]&0xff), (buf[6]&0xff));
 			    	
 			    	switch(buf[7]&0xff) {
 			    		case 0:
-			    			log.info("Density unit: No units, aspect ratio only specified");
+			    			LOGGER.info("Density unit: No units, aspect ratio only specified");
 			    			break;
 			    		case 1:
-			    			log.info("Density unit: Dots per inch");
+			    			LOGGER.info("Density unit: Dots per inch");
 			    			break;
 			    		case 2:
-			    			log.info("Density unit: Dots per centimeter");
+			    			LOGGER.info("Density unit: Dots per centimeter");
 			    			break;
 			    		default:
 			    	}
 			    	
-			    	log.info("X density: {}", IOUtils.readUnsignedShortMM(buf, 8));
-			    	log.info("Y density: {}", IOUtils.readUnsignedShortMM(buf, 10));
+			    	LOGGER.info("X density: {}", IOUtils.readUnsignedShortMM(buf, 8));
+			    	LOGGER.info("Y density: {}", IOUtils.readUnsignedShortMM(buf, 10));
 			    	int thumbnailWidth = buf[12]&0xff;
 			    	int thumbnailHeight = buf[13]&0xff;
-			    	log.info("Thumbnail dimension: {}X{}", thumbnailWidth, thumbnailHeight);
+			    	LOGGER.info("Thumbnail dimension: {}X{}", thumbnailWidth, thumbnailHeight);
 			    	
 			    	if(thumbnailWidth != 0 && thumbnailHeight != 0)	{
 			    		containsThumbnail = true;
@@ -309,8 +309,8 @@ public class JPEGReader extends ImageReader {
 			    	}	   
 			    }
 				break;
-			case APP1:
-				System.out.print("APP1(0xe1"); // Could be Exif or Adobe XMP
+			case APP1: // Could be Exif or Adobe XMP
+				LOGGER.info("APP1(0xe1) - Application segment 1"); 
 				/** 
 				 * This format is specific to digital cameras
 				 * to insert information about camera setups to 
@@ -326,7 +326,7 @@ public class JPEGReader extends ImageReader {
 					identifier_len++;
 				}
 				identifier = new String(buf, 0, identifier_len, "UTF-8"); 
-				log.info("[{}]", identifier);
+				LOGGER.info("[{}]", identifier);
 				break;
 			case APP2:
 				// FPXR or ICC Profile data
@@ -337,7 +337,7 @@ public class JPEGReader extends ImageReader {
 					identifier_len++;
 				}
 				identifier = new String(buf, 0, identifier_len, "UTF-8");
-				log.info("APP2(0xe2[{}]", identifier);
+				LOGGER.info("APP2(0xe2[{}]", identifier);
 				break;
 			case APP12: // [Ducky]
 				// Some digital cameras store useful text information in APP12 markers.
@@ -348,7 +348,7 @@ public class JPEGReader extends ImageReader {
 					identifier_len++;
 				}
 				identifier = new String(buf, 0, identifier_len, "UTF-8");
-				log.info("APP12(0xec[{}]", identifier);
+				LOGGER.info("APP12(0xec[{}]", identifier);
 				break;
 			case APP13:// [Photoshop 3.0]
 			// IPTC and Photoshop data
@@ -359,7 +359,7 @@ public class JPEGReader extends ImageReader {
 					identifier_len++;
 				}
 				identifier = new String(buf,0,identifier_len,"UTF-8");
-				log.info("APP13(0xed[{}]", identifier);
+				LOGGER.info("APP13(0xed[{}]", identifier);
 				break;				
 			case APP14:// [Adobe]
 				buf = new byte[len-2];
@@ -369,7 +369,7 @@ public class JPEGReader extends ImageReader {
 					identifier_len++;
 				}
 				identifier = new String(buf, 0, identifier_len, "UTF-8");
-				log.info("APP14(0xee[{}]", identifier);
+				LOGGER.info("APP14(0xee[{}]", identifier);
 				break;
 			case APP15:
 				buf = new byte[len-2];
@@ -379,7 +379,7 @@ public class JPEGReader extends ImageReader {
 					identifier_len++;
 				}
 				identifier = new String(buf, 0, identifier_len, "UTF-8");
-				log.info("APP15(0x{}): [{}]", Integer.toHexString(APP15), identifier);
+				LOGGER.info("APP15(0x{}): [{}]", Integer.toHexString(APP15), identifier);
 				break;
 			default:
 				read_Unknown_Segment(is, APPn, len);
@@ -409,7 +409,7 @@ public class JPEGReader extends ImageReader {
 			}
 		}
 		img_thumb = Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(thumb_width, thumb_height, pix_thumb, 0, thumb_width));
-		log.info("Thumbnail view created!");
+		LOGGER.info("Thumbnail view created!");
    	}
 	   
 	// Process define Quantization table
@@ -456,7 +456,7 @@ public class JPEGReader extends ImageReader {
 		}
 		qtTable.append("Total number of Quantation tables: " + count + "\n");
 		qtTable.append("------------------------------------\n");
-		log.info("\n", qtTable);		
+		LOGGER.info("\n", qtTable);		
 	}
 	   
 	// Process define Huffman table
@@ -508,7 +508,7 @@ public class JPEGReader extends ImageReader {
 				
 			if (count > 256)
 			{
-				log.error("invalid huffman code count!");			
+				LOGGER.error("invalid huffman code count!");			
 				return;
 			}
 		        
@@ -528,7 +528,7 @@ public class JPEGReader extends ImageReader {
 			hufTable.append("**********************************\n");
 		}
 		
-		log.info("\n{}", hufTable);
+		LOGGER.info("\n{}", hufTable);
 	}
 	
 	private SOFReader readSOF(InputStream is, Marker marker) throws IOException {		
@@ -544,25 +544,25 @@ public class JPEGReader extends ImageReader {
 	   
 	// Process SOF segment
 	private void read_SOF_Segment(InputStream is, int SOFn) throws IOException {
-		log.info("SOF(0x{}{}) - Start of frame", Integer.toHexString(SOFn));
+		LOGGER.info("SOF(0x{}{}) - Start of frame", Integer.toHexString(SOFn));
 		int samp_factor = 0;
 		int len = IOUtils.readUnsignedShortMM(is);
 		// This is in bits/sample, usually 8, (12 and 16 not supported by most software). 
 		int precision = is.read();// Usually 8, for baseline JPEG
-		log.info("Data precision (bits/sample): {}", precision);
+		LOGGER.info("Data precision (bits/sample): {}", precision);
 		if (precision != 8) {
-			log.error("only 8 bit precision is surported!");
+			LOGGER.error("only 8 bit precision is surported!");
 			finished = true;
 			return;
 		}
 		// Image width and height
 		image_height = IOUtils.readUnsignedShortMM(is);
 		image_width = IOUtils.readUnsignedShortMM(is);
-		log.info("Image size: {}X{}", image_width, image_height);
+		LOGGER.info("Image size: {}X{}", image_width, image_height);
 		// Number of components
 		// Usually 1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK 
 		int num_of_components = is.read();
-		log.info("number of components: {}", num_of_components);
+		LOGGER.info("number of components: {}", num_of_components);
 
 		// JFIF uses either 1 component (Y, greyscaled) or 3 components (YCbCr, sometimes called YUV, color).
 		for (int i = 0; i < num_of_components; i++)	{
@@ -581,19 +581,19 @@ public class JPEGReader extends ImageReader {
 				max_v_samp_factor = component[i][2];
 			}
 			component[index][3] = is.read();// Quantization table number
-			log.info("Component {}:", i);
-			log.info("Component id: {}", component[index][0]);
-			log.info("Component horizontal sampling factor: {}", component[index][1]);
-			log.info("Component vertical sampling factor: {}", component[index][2]);		
-			log.info("Component quantization table number: {}", component[index][3]);
+			LOGGER.info("Component {}:", i);
+			LOGGER.info("Component id: {}", component[index][0]);
+			LOGGER.info("Component horizontal sampling factor: {}", component[index][1]);
+			LOGGER.info("Component vertical sampling factor: {}", component[index][2]);		
+			LOGGER.info("Component quantization table number: {}", component[index][3]);
 		}
 		
 		IOUtils.skipFully(is, len-8-3*num_of_components);
 		
-		log.info("------------------------------------");
+		LOGGER.info("------------------------------------");
 
 		if(SOFn == SOF2) {
-			log.error("progressive DCT, Huffman coding not supported!");
+			LOGGER.error("progressive DCT, Huffman coding not supported!");
 			finished = true;
 			return;		
 		}
@@ -611,17 +611,17 @@ public class JPEGReader extends ImageReader {
 	// Process start of scan 
 	private void read_SOS_Segment(InputStream is) throws IOException {
 		// Start of scan segment
-		log.info("SOS(0xda");
+		LOGGER.info("SOS(0xda");
 			
 		int tbl_no = 0;
 		int Ss, Se, Ah_Al, Ah, Al;
 		
 		int len = IOUtils.readUnsignedShortMM(is);
-		log.info("length is: {}", len);
+		LOGGER.info("length is: {}", len);
 		
 		// The number of components in this scan
 		int num_of_components = is.read();
-		log.info("number of components in this scan: {}", num_of_components);
+		LOGGER.info("number of components in this scan: {}", num_of_components);
 		len -= 3;
 		
 		for (int i = 0; i < num_of_components; i++)	{
@@ -629,25 +629,25 @@ public class JPEGReader extends ImageReader {
 			tbl_no = is.read();
 			component[component_id - 1][4] = (tbl_no>>4)&0x0f;// DC table number
 			component[component_id - 1][5] = tbl_no&0x0f;// AC table number
-			log.info("Component {}:", i);
-			log.info("Component ID: {}", component_id);
-			log.info("DC table number: {}", component[component_id - 1][4] );
-			log.info("AC table number: {}", component[component_id - 1][5] );
+			LOGGER.info("Component {}:", i);
+			LOGGER.info("Component ID: {}", component_id);
+			LOGGER.info("DC table number: {}", component[component_id - 1][4] );
+			LOGGER.info("AC table number: {}", component[component_id - 1][5] );
 		
 			len -= 2;
 		}
 		Ss = is.read();// Start of spectral or predictor selection
 		Se = is.read();// End of spectral selection		
-		//log.info("Ss and Se are: {}&{}", Ss, Se);
+		//LOGGER.info("Ss and Se are: {}&{}", Ss, Se);
 		Ah_Al = is.read();
 		Ah = (Ah_Al>>4)&0x0f;// Successive approximation bit position high
 		Al = Ah_Al&0x0f;// Successive approximation bit position low or point transform
 		IOUtils.skipFully(is, len-3);
-		log.info("Ss: {}", Ss);
-		log.info("Se: {}", Se);
-		log.info("Ah: {}", Ah);
-		log.info("Al: {}", Al);
-		log.info("length remains: {}", (len-3));
+		LOGGER.info("Ss: {}", Ss);
+		LOGGER.info("Se: {}", Se);
+		LOGGER.info("Ah: {}", Ah);
+		LOGGER.info("Al: {}", Al);
+		LOGGER.info("length remains: {}", (len-3));
 		
 		// Begin of the image data
 		decode_image_data(is);
@@ -655,7 +655,7 @@ public class JPEGReader extends ImageReader {
 	   
 	// Process define restart interval
 	private void read_DRI_Segment(InputStream is) throws IOException {
-		log.info("DRI(0xdd");
+		LOGGER.info("DRI(0xdd");
 		IOUtils.skipFully(is, IOUtils.readUnsignedShortMM(is)-2);
 	}	
 	
@@ -669,11 +669,11 @@ public class JPEGReader extends ImageReader {
 		}	
 		String identifier = new String(buf,0,identifier_len,"UTF-8");	  	   
 		if ((marker >= 0xe0) && (marker <= 0xef)) {
-			log.info("Application type marker: 0x{}", Integer.toHexString(marker));
+			LOGGER.info("Application type marker: 0x{}", Integer.toHexString(marker));
 		} else {
-			log.warn("Unrecognized marker: 0x{}", Integer.toHexString(marker));
+			LOGGER.warn("Unrecognized marker: 0x{}", Integer.toHexString(marker));
 		}
-		log.info("with identifier: [{}]", identifier);
+		LOGGER.info("with identifier: [{}]", identifier);
 	}
 	   
 	// Process comment marker
@@ -681,12 +681,12 @@ public class JPEGReader extends ImageReader {
 		int len = IOUtils.readUnsignedShortMM(is);
 		byte buf[] = new byte[len-2];
 		IOUtils.readFully(is, buf, 0, len-2);
-		log.info("Comment: {}", new String(buf,"UTF-8"));
+		LOGGER.info("Comment: {}", new String(buf,"UTF-8"));
 	}	
 	   
 	// Process end of image marker
 	private void read_EOI_Segment()	{
-		log.info("END OF IMAGE!");
+		LOGGER.info("END OF IMAGE!");
 		finished = true;
 	}
 	
@@ -694,7 +694,7 @@ public class JPEGReader extends ImageReader {
 	 * @param is InputStream of the image
 	 */
 	private void decode_image_data(InputStream is) {
-		log.info("Start Processing Image Data...");
+		LOGGER.info("Start Processing Image Data...");
 		
 	}
 	

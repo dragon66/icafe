@@ -11,12 +11,12 @@ public class TestStringUtils extends TestBase {
 	}
 	
 	public void test(String ... args) {
-		log.info("{}", StringUtils.isNullOrEmpty((String)null));
-		log.info("{}", StringUtils.isNullOrEmpty(""));
-		log.info("{}", StringUtils.isNullOrEmpty("   "));
-		log.info(StringUtils.capitalizeFully("Here comes ME!"));		
-		log.info(StringUtils.concat(new String[] {null, "a", "b", "c", null}, " and ") + "!");
-		log.info(StringUtils.concat(null,"hello"," world", null));
-		log.info(StringUtils.reverse("www.google.com", "."));
+		logger.info("{}", StringUtils.isNullOrEmpty((String)null));
+		logger.info("{}", StringUtils.isNullOrEmpty(""));
+		logger.info("{}", StringUtils.isNullOrEmpty("   "));
+		logger.info(StringUtils.capitalizeFully("Here comes ME!"));		
+		logger.info(StringUtils.concat(new String[] {null, "a", "b", "c", null}, " and ") + "!");
+		logger.info(StringUtils.concat(null,"hello"," world", null));
+		logger.info(StringUtils.reverse("www.google.com", "."));
 	}
 }

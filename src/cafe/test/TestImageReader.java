@@ -47,19 +47,19 @@ public class TestImageReader extends TestBase {
 		 pushBackStream.close();
 		 
 		 if(img == null) {
-			 log.error("Failed reading image!");
+			 logger.error("Failed reading image!");
 			 return;
 		 }
 		 
-		 log.info("Total frames read: {}", reader.getFrameCount());
+		 logger.info("Total frames read: {}", reader.getFrameCount());
 		
-		 log.info("Color model: {}", img.getColorModel());
-		 log.info("Raster: {}", img.getRaster());
-		 log.info("Sample model: {}", img.getSampleModel());
+		 logger.info("Color model: {}", img.getColorModel());
+		 logger.info("Raster: {}", img.getRaster());
+		 logger.info("Sample model: {}", img.getSampleModel());
 		
 		 long t2 = System.currentTimeMillis();
 		 
-		 log.info("decoding time {}ms", (t2-t1));
+		 logger.info("decoding time {}ms", (t2-t1));
 			
 		 final JFrame jframe = new JFrame("Image Reader");
 
@@ -111,7 +111,7 @@ public class TestImageReader extends TestBase {
 		
 		 fo.close();
 		
-		 log.info("{} writer (encoding time {}ms)", imageType, (t2-t1));
+		 logger.info("{} writer (encoding time {}ms)", imageType, (t2-t1));
 		
 		 JLabel theLabel = new JLabel(new ImageIcon(img));
 		 jframe.getContentPane().add(new JScrollPane(theLabel));

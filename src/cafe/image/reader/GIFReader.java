@@ -73,7 +73,7 @@ public class GIFReader extends ImageReader {
 	private BufferedImage baseImage;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(GIFReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GIFReader.class);
 	
 	private byte[] decodeLZW(InputStream is) throws Exception
 	{
@@ -291,7 +291,7 @@ public class GIFReader extends ImageReader {
 			image_separator = is.read();
 			    
 			if(image_separator == -1 || image_separator == 0x3b) { // End of stream 
-				log.info("End of stream!");
+				LOGGER.info("End of stream!");
 				return null;
 			}
 			    
@@ -310,7 +310,7 @@ public class GIFReader extends ImageReader {
 					{
 						IOUtils.skipFully(is,2);
 						transparent = true;
-						log.info("transparent gif...");					 
+						LOGGER.info("transparent gif...");					 
 						transparent_color = is.read();
 						len = is.read();// len=0, block terminator!
 					} else {
@@ -337,12 +337,12 @@ public class GIFReader extends ImageReader {
 		{
 			hasLocalColorMap = true;
 			// A local color map is present
-			log.info("local color map is present");
+			LOGGER.info("local color map is present");
 	
 			bitsPerPixel = (flags2&0x07)+1;
 			colorsUsed = (1<<bitsPerPixel);
 	
-			log.info("{} color image", colorsUsed);
+			LOGGER.info("{} color image", colorsUsed);
 	
 			readLocalPalette(is, colorsUsed);
 		}
@@ -354,7 +354,7 @@ public class GIFReader extends ImageReader {
 			
 		if((flags2&0x40) == 0x40) 
 		{
-			log.info("Interlaced gif image!"); 
+			LOGGER.info("Interlaced gif image!"); 
 			return decodeLZWInterLaced(is);
 		}
 		
@@ -382,11 +382,11 @@ public class GIFReader extends ImageReader {
 		logicalScreenHeight = gifHeader.screen_height;
 	
 		String signature = new String(gifHeader.signature) + new String(gifHeader.version);
-		log.info(signature);
+		LOGGER.info(signature);
 			
 		if ((!signature.equalsIgnoreCase("GIF87a")) && (!signature.equalsIgnoreCase("GIF89a")))
 		{
-			log.warn("Only GIF87a and GIF89a is supported by this decoder!");
+			LOGGER.warn("Only GIF87a and GIF89a is supported by this decoder!");
 			return false;
 		}
 	      
@@ -394,11 +394,11 @@ public class GIFReader extends ImageReader {
 					
 		if((flags&0x80) == 0x80) // A global color map is present 
 		{
-			log.info("a global color map is present!");
+			LOGGER.info("a global color map is present!");
 			bitsPerPixel = (flags&0x07)+1;
 			colorsUsed = (1<<bitsPerPixel);
 	
-			log.info("{} color image", colorsUsed);
+			LOGGER.info("{} color image", colorsUsed);
 	
 			// # bits of color resolution, insignificant 
 			@SuppressWarnings("unused")

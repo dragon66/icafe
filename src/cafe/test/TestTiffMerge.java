@@ -24,6 +24,6 @@ public class TestTiffMerge extends TestBase {
 		dest.close();
 		out.close();
 		long t2 = System.currentTimeMillis();
-		log.info("Merging time: {}ms", (t2-t1));
+		logger.info("Merging time: {}ms", (t2-t1));
 	}
 }

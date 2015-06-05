@@ -25,6 +25,6 @@ public class TestTIFFField extends TestBase {
 		tiffFields.add(new ASCIIField(TiffTag.SOFTWARE.getValue(), "ImageMagick\0"));
 		tiffFields.add(new LongField((short)0x002e, new int[]{19}));
 		Collections.sort(tiffFields);
-		log.info("{}", tiffFields);
+		logger.info("{}", tiffFields);
 	}
 }

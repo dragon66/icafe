@@ -59,7 +59,7 @@ public class BMPReader extends ImageReader
 	BitmapHeader bitmapHeader;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(BMPReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BMPReader.class);
    
     public BufferedImage read(InputStream is) throws Exception
     {
@@ -74,7 +74,7 @@ public class BMPReader extends ImageReader
 			height = -height;
 		}
 		
-		log.info("Scanline alignment: {}", ((alignment == BMPOptions.ALIGN_BOTTOM_UP)?"BOTTOM_UP":"TOP_DOWN"));
+		LOGGER.info("Scanline alignment: {}", ((alignment == BMPOptions.ALIGN_BOTTOM_UP)?"BOTTOM_UP":"TOP_DOWN"));
 		
 		bitsPerPixel = bitmapHeader.bitCount;
 
@@ -101,7 +101,7 @@ public class BMPReader extends ImageReader
 		        return readIndexColorBitmap(is);				
 			case 16:
 			{
-				log.error("16 bit BMP, decoding not implemented!");
+				LOGGER.error("16 bit BMP, decoding not implemented!");
 		   		//read16bitTrueColorBitmap(is);
                 return null;
 			}
@@ -110,7 +110,7 @@ public class BMPReader extends ImageReader
    			case 32:
 				return read32bitTrueColorBitmap(is);
 			default:
-				log.error("Unsupported bitmap format!");
+				LOGGER.error("Unsupported bitmap format!");
 				return null;
 		}
     }
@@ -135,7 +135,7 @@ public class BMPReader extends ImageReader
 
     private BufferedImage read24bitTrueColorBitmap(InputStream is) throws Exception
     {
-    	log.info("24 bits bitmap color image!");
+    	LOGGER.info("24 bits bitmap color image!");
         int npad = bytePerScanLine - 3*width;
 		if(npad == 4) npad = 0;
 	
@@ -146,7 +146,7 @@ public class BMPReader extends ImageReader
 		
 		byte[] pixels = new byte[bytePerWidth * height];  
 		        
-		log.info("Scanline padding: {}", npad);		
+		LOGGER.info("Scanline padding: {}", npad);		
 		
 		if(alignment == BMPOptions.ALIGN_BOTTOM_UP) {
 			for(int i = 0, startIndex =  (height-1)*bytePerWidth; i < height; i++, startIndex -= bytePerWidth) {
@@ -177,7 +177,7 @@ public class BMPReader extends ImageReader
   
     // This actually deals with the case of RGB888 mask case for the 32 bits image but it seems to work for other mask too
     private BufferedImage read32bitTrueColorBitmap(InputStream is) throws Exception { 
-    	log.info("32 bits bitmap color image!");
+    	LOGGER.info("32 bits bitmap color image!");
  		
  		byte brgb[] = new byte[bytePerScanLine];
  		int pix[] = new int[width*height];
@@ -219,7 +219,7 @@ public class BMPReader extends ImageReader
     @SuppressWarnings("unused")
 	private BufferedImage read32bitTrueColorBitmap2(InputStream is) throws Exception
     {
-    	log.info("32 bits bitmap color image!");
+    	LOGGER.info("32 bits bitmap color image!");
        
         IOUtils.skipFully(is, bitmapHeader.dataOffSet - 54);
 		
@@ -291,7 +291,7 @@ public class BMPReader extends ImageReader
     }
     
     private BufferedImage readIndexColorBitmap(InputStream is) throws Exception {
-    	log.info("{} color bitmap color image!", (1<<bitsPerPixel));
+    	LOGGER.info("{} color bitmap color image!", (1<<bitsPerPixel));
   		readPalette(is);
   		int npad = 0;
   		
@@ -316,7 +316,7 @@ public class BMPReader extends ImageReader
 		
 		byte[] pixels = new byte[bytePerWidth * height];  
 		        
-		log.info("Scanline padding: {}", npad);		
+		LOGGER.info("Scanline padding: {}", npad);		
 		
 		if(alignment == BMPOptions.ALIGN_BOTTOM_UP) {
 			for(int i = 0, startIndex =  (height-1)*bytePerWidth; i < height; i++, startIndex -= bytePerWidth) {
@@ -348,8 +348,8 @@ public class BMPReader extends ImageReader
 
     private byte[] read256ColorCompressedBitmap(InputStream is) throws Exception
     {
-    	log.info("256 color bitmap color image!");
- 		log.info("compressed format!");
+    	LOGGER.info("256 color bitmap color image!");
+ 		LOGGER.info("compressed format!");
     	
  		readPalette(is);
 
@@ -412,7 +412,7 @@ public class BMPReader extends ImageReader
  				}
  				if (esc == DELTA)
  				{
- 					log.info("found delta");
+ 					LOGGER.info("found delta");
  					horz_offset = brgb[nindex++]&0xff;
  					if (nindex >= readSize)
  					{
@@ -466,8 +466,8 @@ public class BMPReader extends ImageReader
     
     private byte[] read16ColorCompressedBitmap(InputStream is) throws Exception
     {
-    	log.info("16 color bitmap color image!");
-    	log.info("compressed format!");
+    	LOGGER.info("16 color bitmap color image!");
+    	LOGGER.info("compressed format!");
     	
     	readPalette(is);
 
@@ -512,7 +512,7 @@ public class BMPReader extends ImageReader
 				
 				if (esc == DELTA)
 				{
-					log.info("found delta");
+					LOGGER.info("found delta");
 					horz_offset = brgb[nindex++]&0xff;
 					if (nindex >= readSize)
 					{

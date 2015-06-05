@@ -63,7 +63,7 @@ import org.w3c.dom.ls.LSSerializer;
 
 public class XMLUtils {
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(XMLUtils.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(XMLUtils.class);
 		
 	public static void addChild(Node parent, Node child) {
 		parent.appendChild(child);
@@ -206,7 +206,7 @@ public class XMLUtils {
 		// Construct the XML tree
 		print(node, indent, xmlTree);
 		// Log the XML tree
-		log.info("\n{}", xmlTree);
+		LOGGER.info("\n{}", xmlTree);
 	}
 	
 	private static void print(Node node, String indent, StringBuilder stringBuilder) {
@@ -276,7 +276,7 @@ public class XMLUtils {
 		            break;
 		        }
 		        default:
-		            log.error("Unknown node: " + node.getClass().getName());
+		            LOGGER.error("Unknown node: " + node.getClass().getName());
 		            break;
 			}
 		}

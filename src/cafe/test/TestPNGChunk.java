@@ -25,6 +25,6 @@ public class TestPNGChunk extends TestBase {
         list.add(new Chunk(ChunkType.GAMA, 0, null, 0));
         list.add(new Chunk(ChunkType.TRNS, 0, null, 0));
         Collections.sort(list);
-        log.info("{}", list);  
+        logger.info("{}", list);  
 	}
 }

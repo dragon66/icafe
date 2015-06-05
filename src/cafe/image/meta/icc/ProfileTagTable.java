@@ -32,7 +32,7 @@ public class ProfileTagTable {
 	private Map<Integer, TagEntry> tagEntries = new HashMap<Integer, TagEntry>();
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(ProfileTagTable.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProfileTagTable.class);
 		
 	public static class TagEntry implements Comparable<TagEntry> {
 		private int profileTag;
@@ -125,6 +125,6 @@ public class ProfileTagTable {
 		}
 		profileTable.append("*** End of ICC_Profile Tag Table ***\n");
 		
-		log.info("\n{}", profileTable);
+		LOGGER.info("\n{}", profileTable);
 	}
 }

@@ -19,6 +19,6 @@ public class TestIDATReader extends TestBase {
 		IDATBuilder builder = new IDATBuilder().data(new byte[] {1,2,3}).data(new byte[] {4,5,6});
 		builder.setFinish(true);
 		reader.addChunk(builder.build());
-		log.info(StringUtils.byteArrayToHexString(reader.getData()));
+		logger.info(StringUtils.byteArrayToHexString(reader.getData()));
 	}
 }

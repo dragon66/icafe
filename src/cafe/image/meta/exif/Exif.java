@@ -61,7 +61,7 @@ public abstract class Exif extends Metadata {
 	private boolean isThumbnailRequired;
 	
 	// Obtain a logger instance
-	private static final Logger log = LoggerFactory.getLogger(Exif.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Exif.class);
 	
 	public Exif() {
 		super(MetadataType.EXIF, null);
@@ -201,9 +201,9 @@ public abstract class Exif extends Metadata {
 	@Override
 	public void showMetadata() {
 		if(imageIFD != null) {
-			log.info("<<Image IFD starts>>");
+			LOGGER.info("<<Image IFD starts>>");
 			TIFFTweaker.printIFD(imageIFD, TiffTag.class, "");
-			log.info("<<Image IFD ends>>");
+			LOGGER.info("<<Image IFD ends>>");
 		} else
 			super.showMetadata();
 	}
