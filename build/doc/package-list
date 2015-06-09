@@ -1,12 +1,4 @@
 cafe.date
-cafe.document.afp
-cafe.document.pdf
-cafe.game.life
-cafe.game.maze
-cafe.game.queens
-cafe.game.tetris
-cafe.game.towers
-cafe.graphics.util
 cafe.image
 cafe.image.bmp
 cafe.image.color
@@ -26,13 +18,11 @@ cafe.image.meta.image
 cafe.image.meta.iptc
 cafe.image.options
 cafe.image.png
-cafe.image.processing
 cafe.image.reader
 cafe.image.tiff
 cafe.image.util
 cafe.image.writer
 cafe.io
-cafe.scripting.lexer
 cafe.string
 cafe.test
 cafe.util

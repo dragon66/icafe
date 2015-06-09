@@ -3,15 +3,21 @@
 	<description>
 		Ant build.xml file for building the icafe library.
 	</description>
-	<property name="target" value="1.5"/>
-    <property name="source" value="1.5"/>
 	<path id="icafe.classpath">
-        <pathelement location="lib/jai_imageio.jar"/>
-        <pathelement location="lib/slf4j-api-1.7.12.jar"/>
-        <pathelement location="lib/slf4j-log4j12-1.7.12.jar"/>
-        <pathelement location="lib/log4j-1.2.17.jar"/>
+	    <fileset dir="lib">
+	    	<include name="*.jar"/>
+	    	<exclude name="icafe.jar"/>
+	    </fileset>
     </path>
-	<target name="init">
+    <fileset id="icafe.source.path" dir="src" defaultexcludes="yes">
+        <include name="**/*.java"/>
+		<exclude name="**/document/**/*.java"/>
+	    <exclude name="**/game/**/*.java"/>
+	    <exclude name="**/graphics/**/*.java"/>
+	    <exclude name="**/processing/*.java"/>
+	    <exclude name="**/scripting/**/*.java"/>
+	</fileset>
+	<target name="init" depends="clean">
 		<mkdir dir="build/classes"/>
 		<mkdir dir="dist"/>
 		<mkdir dir="build/doc"/>
@@ -25,16 +31,23 @@
 	</target>
 	<target name="clean">
 		<delete dir="build"/>
-		<delete dir="dist"/>		
+		<delete dir="dist"/>
 	</target>
 	<target name="doc" depends="init" >
-		<javadoc destdir="build/doc" sourcepath="src" 
-		    classpathref="icafe.classpath" packagenames="cafe.*"/>
+		<javadoc destdir="build/doc" classpathref="icafe.classpath" packagenames="cafe.*">
+		    <fileset refid="icafe.source.path"/>		 	    
+		</javadoc>
 	</target>
 	<target name="compile" depends="init">
 		<echo message="${ant.project.name}: ${ant.file}"/>
         <javac includeantruntime="false" srcdir="src" destdir="build/classes" 
-            encoding="UTF-8" classpathref="icafe.classpath"/>
+            encoding="UTF-8" classpathref="icafe.classpath">
+            <exclude name="**/document/**/*.java"/>
+            <exclude name="**/game/**/*.java"/>
+            <exclude name="**/graphics/**/*.java"/>
+            <exclude name="**/processing/*.java"/>
+            <exclude name="**/scripting/**/*.java"/>
+        </javac>
 	</target>
 	<target name="package" depends="compile,doc">
 		<jar destfile="dist/icafe.jar">
