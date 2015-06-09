@@ -17,7 +17,7 @@ package cafe.image.compression.ccitt;
  * @version 1.0 01/02/2014
  */
 public enum T42DCode implements T4Code {
-	// Table 4/T.4 – Two-dimensional code table
+	// Table 4/T.4 - Two-dimensional code table
 	P((short)0x1000, 4),
 	H((short)0x2000, 3),
 	V0((short)0x8000, 1),

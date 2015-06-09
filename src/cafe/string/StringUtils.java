@@ -256,8 +256,8 @@ public class StringUtils
 	    //e.g. intPart = 41
 	    coord = mod * 60;
 	    seconds = (int)coord;
-	    //Standard output of D°M'S"
-	    output = degrees + "°" + minutes + "'" + seconds + "\"";
+	    //Standard output of DÂ°M'S"
+	    output = degrees + '\u00B0' + minutes + "'" + seconds + "\"";
 
 	    return output;
 	}
@@ -265,7 +265,7 @@ public class StringUtils
 	/**
 	 * Converts DMS to decimal 
 	 *
-	 * Input: latitude or longitude in the DMS format ( example: N 43° 36' 15.894")
+	 * Input: latitude or longitude in the DMS format ( example: N 43Â° 36' 15.894")
 	 * @param hemisphereOUmeridien => {W,E,S,N}
 	 * @return: latitude or longitude in decimal format
 	 */

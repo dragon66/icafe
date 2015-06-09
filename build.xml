@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<project name= "icafe" default="compile" basedir=".">
+	<description>
+		Ant build.xml file for building the icafe library.
+	</description>
+	<property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+	<path id="icafe.classpath">
+        <pathelement location="lib/jai_imageio.jar"/>
+        <pathelement location="lib/slf4j-api-1.7.12.jar"/>
+        <pathelement location="lib/slf4j-log4j12-1.7.12.jar"/>
+        <pathelement location="lib/log4j-1.2.17.jar"/>
+    </path>
+	<target name="init">
+		<mkdir dir="build/classes"/>
+		<mkdir dir="dist"/>
+		<mkdir dir="build/doc"/>
+		<copy includeemptydirs="false" todir="build/classes">
+            <fileset dir="src">
+                <include name="*.properties"/>
+                <include name="*.txt"/>
+                <include name="resources/CMYK Profiles/USWebUncoated.icc"/>
+            </fileset>
+        </copy>
+	</target>
+	<target name="clean">
+		<delete dir="build"/>
+		<delete dir="dist"/>		
+	</target>
+	<target name="doc" depends="init" >
+		<javadoc destdir="build/doc" sourcepath="src" 
+		    classpathref="icafe.classpath" packagenames="cafe.*"/>
+	</target>
+	<target name="compile" depends="init">
+		<echo message="${ant.project.name}: ${ant.file}"/>
+        <javac includeantruntime="false" srcdir="src" destdir="build/classes" 
+            encoding="UTF-8" classpathref="icafe.classpath"/>
+	</target>
+	<target name="package" depends="compile,doc">
+		<jar destfile="dist/icafe.jar">
+		    <fileset dir="build/classes"/>
+		    <fileset dir="build">	
+		    	<include name="doc/**/*"/>
+		    </fileset>
+	    </jar>
+		<delete file="lib/icafe.jar"/>
+		<copy file="dist/icafe.jar" todir="lib"/>
+	</target>
+</project>
