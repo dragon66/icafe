@@ -23,8 +23,7 @@
 		<mkdir dir="build/doc"/>
 		<copy includeemptydirs="false" todir="build/classes">
             <fileset dir="src">
-                <include name="*.properties"/>
-                <include name="*.txt"/>
+                <include name="*"/>
                 <include name="resources/CMYK Profiles/USWebUncoated.icc"/>
             </fileset>
         </copy>
