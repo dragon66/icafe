@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    11Jun2015  Fixed the regression bug with CMYK profile path
+ * WY    11Jun2015  Updated to use generic Updatable<T> interface
  * WY    22Dec2014  Fixed regression bug when migrating to ImageColorType 
  * WY    05Jun2014  Added support for CMYK image and ICC_Profile
  * WY    24Mar2014  Added JPEG compression for GrayScale image
@@ -72,8 +74,8 @@ import cafe.util.Updatable;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 11/16/2013
  */
-public class TIFFWriter extends ImageWriter implements Updatable {
-	private static final String pathToCMYKProfile = "/lib/CMYK Profiles/USWebCoatedSWOP.icc";
+public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
+	private static final String pathToCMYKProfile = "/resources/CMYK Profiles/USWebCoatedSWOP.icc";
 	// Offset to write image data
 	private int stripOffset;
 	private IFD ifd;
@@ -396,11 +398,10 @@ public class TIFFWriter extends ImageWriter implements Updatable {
 	 * A call back method used by encoders to update the strip
 	 * length for multiple strip TIFF images.
 	 * 
-	 * @param o compressed strip length for the current strip
+	 * @param stripLen compressed strip length for the current strip
 	 * @throws IOException
 	 */
-	public void update(Object o) {
-		Integer stripLen = (Integer)o;
+	public void update(Integer stripLen) {
 		stripByteCounts.add(stripLen);
 		stripOffsets.add(stripOffset);
 		stripOffset += stripLen;

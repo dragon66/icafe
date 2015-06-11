@@ -10,6 +10,6 @@
 
 package cafe.util;
 
-public interface Updatable {
-	public void update(Object o);
+public interface Updatable<T> {
+	public void update(T type);
 }

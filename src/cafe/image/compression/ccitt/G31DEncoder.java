@@ -33,7 +33,7 @@ public class G31DEncoder implements ImageEncoder {
 	private byte[] bytes_buf;
 	private int buf_length;
 	private OutputStream os;
-	private Updatable writer;
+	private Updatable<Integer> writer;
 	private boolean extraFlush;
 	private int bufIndex;
 	private int scanLineWidth;
@@ -44,7 +44,7 @@ public class G31DEncoder implements ImageEncoder {
 		0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff, 0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff
 	};
 	
-	public G31DEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable writer) {	
+	public G31DEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable<Integer> writer) {	
 		this.scanLineWidth = scanLineWidth;
 		bytes_buf = new byte[buf_length];		
 		this.buf_length = buf_length;

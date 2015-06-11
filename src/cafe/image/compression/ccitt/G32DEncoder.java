@@ -27,7 +27,7 @@ public class G32DEncoder extends G31DEncoder implements ImageEncoder {
 	private int scanLineWidth;
 	
 	// K should be greater than 1
-	public G32DEncoder(OutputStream os, int scanLineWidth, int buf_length, int k, Updatable writer) {
+	public G32DEncoder(OutputStream os, int scanLineWidth, int buf_length, int k, Updatable<Integer> writer) {
 		super(os, scanLineWidth, buf_length, writer);
 		if(k < 2) throw new IllegalArgumentException("Invalid k value: " + k);
 		this.k = k;

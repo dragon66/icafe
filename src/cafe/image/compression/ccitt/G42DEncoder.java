@@ -27,7 +27,7 @@ public class G42DEncoder extends G32DEncoder implements ImageEncoder {
 	// might use this value, so we keep it here for now.
 	private int scanLineWidth;
 	
-	public G42DEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable writer) {
+	public G42DEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable<Integer> writer) {
 		// The K value is not used by G4 encoding, we pass in Integer.MAX_VALUE as a place holder
 		super(os, scanLineWidth, buf_length, Integer.MAX_VALUE, writer);		
 	}

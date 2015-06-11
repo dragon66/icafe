@@ -26,7 +26,7 @@ public class DeflateEncoder implements ImageEncoder {
 	private byte[] buffer;
 	private Deflater deflater;
 	private OutputStream os;
-	private Updatable writer;
+	private Updatable<Integer> writer;
 	private boolean isTIFF;
 	
 	public DeflateEncoder(OutputStream os, int bufferSize, int compressLevel) {
@@ -35,7 +35,7 @@ public class DeflateEncoder implements ImageEncoder {
 		this.deflater = new Deflater(compressLevel);
 	}
 	
-	public DeflateEncoder(OutputStream os, int bufferSize, int compressLevel, Updatable writer) {
+	public DeflateEncoder(OutputStream os, int bufferSize, int compressLevel, Updatable<Integer> writer) {
 		this(os, bufferSize, compressLevel);
 		this.writer = writer;
 		this.isTIFF = true;

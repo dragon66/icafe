@@ -39,7 +39,7 @@ public class LZWHashEncoder implements ImageEncoder {
 		
 	private OutputStream os;
 	private boolean isTIFF=false;
-	private Updatable writer;
+	private Updatable<Integer> writer;
 	private LZWCompressionTable stringTable = new LZWCompressionTable();
 	
 	private static final short mask[] = {0x00,0x01,0x03,0x07,0x0f,0x1f,0x3f,0x7f,0xff};
@@ -54,7 +54,7 @@ public class LZWHashEncoder implements ImageEncoder {
  	}
  	
  	// Constructor for TIFF    
-    public LZWHashEncoder(OutputStream os, int codesize, int buf_length, Updatable writer) {
+    public LZWHashEncoder(OutputStream os, int codesize, int buf_length, Updatable<Integer> writer) {
      	this(os, codesize, buf_length);
  		this.isTIFF = true;
  		this.writer = writer;

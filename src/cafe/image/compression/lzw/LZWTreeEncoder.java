@@ -50,7 +50,7 @@ public class LZWTreeEncoder implements ImageEncoder {
 	
 	private OutputStream os;
 	private boolean isTIFF = false;
-	private Updatable writer;
+	private Updatable<Integer> writer;
 	
 	private static final short MASK[] = {0x00,0x01,0x03,0x07,0x0f,0x1f,0x3f,0x7f,0xff};
 	
@@ -91,7 +91,7 @@ public class LZWTreeEncoder implements ImageEncoder {
 	 * table is initialized to have a length equal to the End of Information Code + 1.	
 	 */
 	// Constructor for TIFF    
-    public LZWTreeEncoder(OutputStream os, int codesize, int buf_length, Updatable writer) {
+    public LZWTreeEncoder(OutputStream os, int codesize, int buf_length, Updatable<Integer> writer) {
     	this(os, codesize, buf_length);
 		this.isTIFF = true;
 		this.writer = writer;
