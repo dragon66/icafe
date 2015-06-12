@@ -33,7 +33,7 @@
 		<delete dir="dist"/>
 	</target>
 	<target name="doc" depends="init" >
-		<javadoc destdir="build/doc" classpathref="icafe.classpath" packagenames="cafe.*">
+		<javadoc destdir="build/doc" classpathref="icafe.classpath" additionalparam="-notimestamp" packagenames="cafe.*">
 		    <fileset refid="icafe.source.path"/>		 	    
 		</javadoc>
 	</target>
