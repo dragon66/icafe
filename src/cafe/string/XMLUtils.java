@@ -20,7 +20,6 @@
  * WY    23Jan2015  Initial creation - moved XML related methods to here
  */
 
-
 package cafe.string;
 
 import java.io.ByteArrayInputStream;
