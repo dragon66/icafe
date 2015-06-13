@@ -199,7 +199,7 @@ public class LangUtils {
 			Class<String[]> argTypes = String[].class;
 			Method main = c.getDeclaredMethod("main", argTypes);
 	  	    Object mainArgs = Arrays.copyOfRange(args, 1, args.length);
-		    System.out.format("invoking %s.main()%n", c.getName());
+		    LOGGER.info("invoking {}.main()\n", c.getName());
 		    main.invoke(null, mainArgs);
 		} catch (Exception ex) {
 			ex.printStackTrace();
