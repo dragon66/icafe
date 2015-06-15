@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    14Jun2015  Bug fix for toNBits() to use long data type internally 
  * WY    04Jun2015  Rewrote all concatenation related methods
  * WY    02Jun2015  Bug fix for generic concatenation methods
  * WY    06Apr2015  Added reverse(byte[]) to reverse byte array elements
@@ -1085,7 +1086,7 @@ public class ArrayUtils
    		int[] intOutput = null;
    		Object output = null;
    		
-   		int outLen = (input.length*8 + nBits - 1)/nBits;
+   		int outLen = (int)((input.length*8L + nBits - 1)/nBits);
    		
    		if(nBits <= 8) {
    			byteOutput = new byte[outLen];
