@@ -1075,8 +1075,9 @@ public class TIFFTweaker {
 	 * @param rin RandomAccessInputStream for the original TIFF
 	 * @param rout RandomAccessOutputStream for the output TIFF with IPTC inserted
 	 * @param pageNumber page offset where to insert IPTC
-	 * @param iptcs A list of IPTCDataSet to insert into the TIFF image
-	 * @param update whether we want to keep the original image or create a completely new IPTC data set
+	 * @param iptcs a list of IPTCDataSet to insert into the TIFF image
+	 * @param update whether we want to keep the original IPTC data or override it
+	 *        completely new IPTC data set
 	 * @throws IOException
 	 */
 	public static void insertIPTC(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, Collection<IPTCDataSet> iptcs, boolean update) throws IOException {

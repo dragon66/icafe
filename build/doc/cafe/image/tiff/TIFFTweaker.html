@@ -831,7 +831,8 @@ extends java.lang.Object</pre>
  synchronize the two sets of IPTC data, delete the original IPTC from both places and insert the
  synchronized IPTC data along with the new IPTC data into the Photoshop tag. In both cases, we
  will keep the other IRBs from the original Photoshop tag unchanged.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rin</code> - RandomAccessInputStream for the original TIFF</dd><dd><code>rout</code> - RandomAccessOutputStream for the output TIFF with IPTC inserted</dd><dd><code>pageNumber</code> - page offset where to insert IPTC</dd><dd><code>iptcs</code> - A list of IPTCDataSet to insert into the TIFF image</dd><dd><code>update</code> - whether we want to keep the original image or create a completely new IPTC data set</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rin</code> - RandomAccessInputStream for the original TIFF</dd><dd><code>rout</code> - RandomAccessOutputStream for the output TIFF with IPTC inserted</dd><dd><code>pageNumber</code> - page offset where to insert IPTC</dd><dd><code>iptcs</code> - a list of IPTCDataSet to insert into the TIFF image</dd><dd><code>update</code> - whether we want to keep the original IPTC data or override it
+        completely new IPTC data set</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
