@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    21Jun2015  Removed copyright notice from generated PNG images
  * WY    01Mar2014  Added apply_adamptive_filter method
  */
 
@@ -174,18 +175,11 @@ public class PNGWriter extends ImageWriter {
 	}
 	
 	private void addTextChunks(List<Chunk> chunks) {
-		// Adds text chunks
-		TextBuilder txtBuilder = new TextBuilder(ChunkType.TEXT).keyword("Author").text("Wen Yu");
-        Chunk authorChunk = txtBuilder.build();
-        txtBuilder.keyword("Software").text("PNGWriter 1.0");
-        Chunk softwareChunk = txtBuilder.build();
-        txtBuilder.keyword("Copyright").text("Copyright (c) Wen Yu, 2013 (yuwen_66@yahoo.com)");
-        Chunk copyrightChunk = txtBuilder.build();
-       
-        chunks.add(authorChunk);
-        chunks.add(softwareChunk);
-        chunks.add(copyrightChunk);
-	}
+		// Add text chunks
+		TextBuilder txtBuilder = new TextBuilder(ChunkType.TEXT);
+		txtBuilder.keyword("Software").text("PNGWriter 1.0, Wen Yu (yuwen_66@yahoo.com)");
+        chunks.add(txtBuilder.build());
+  	}
 	
 	private void addTimeChunk(List<Chunk> chunks) {
 		// PNG sTIME chunk format is always UTC

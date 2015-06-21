@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    21Jun2015  Removed copyright notice from generated JPEG images
  * WY    13Aug2014  Added support for YCCK JPEG image
  * WY    06Aug2014  Added writeAdobeApp14 to support CMYK image
  * WY    04Jun2014  Added ICC_Profile support
@@ -79,7 +80,7 @@ public class JPEGWriter extends ImageWriter {
 	private boolean writeICCProfile;
 	private boolean isTiffFlavor;
 		
-    private static final String comment = "Created by JPEGWriter 1.0 - Copyright (c) Wen Yu, 2014 (yuwen_66@yahoo.com)";
+    private static final String comment = "Created by JPEGWriter 1.0 - Wen Yu (yuwen_66@yahoo.com)";
 		   
 	public JPEGWriter() {}
    	

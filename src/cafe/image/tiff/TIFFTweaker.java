@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    21Jun2015  Removed copyright notice from generated TIFF images
  * WY    15Apr2015  Changed the argument type for insertIPTC() and insertIRB()
  * WY    07Apr2015  Merge Adobe IPTC and TIFF IPTC if both exist
  * WY    15Mar2015  Cleanup debugging output
@@ -461,14 +462,10 @@ public class TIFFTweaker {
 			ifd.addField(stripOffSets);		
 		}
 		
-		// add copyright and software fields.
-		String copyRight = "Copyright (c) Wen Yu, 2014 (yuwen_66@yahoo.com)\0";
-		ifd.addField(new ASCIIField(TiffTag.COPYRIGHT.getValue(), copyRight));
-		
-		String softWare = "TIFFTweaker 1.0\0";
+		// Add software field.
+		String softWare = "Created by ICAFE - https://github.com/dragon66/icafe\0";
 		ifd.addField(new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare));
-		// End of copyright and software field.
-	
+		
 		/* The following are added to work with old-style JPEG compression (type 6) */		
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
 		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT);
