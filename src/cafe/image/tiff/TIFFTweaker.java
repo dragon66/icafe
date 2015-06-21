@@ -1063,7 +1063,7 @@ public class TIFFTweaker {
 	 * tag, or buried inside a Photoshop IPTC-NAA Image Resource Block (IRB), or even in a XMP block.
 	 * Currently this method does the following thing: if no IPTC data was found from both Photoshop or 
 	 * normal IPTC tag, we insert the IPTC data with a normal IPTC tag. If IPTC data is found both as
-	 * a Photosho tag and a normal IPTC tag, depending on the "update" parameter, we will either delete
+	 * a Photoshop tag and a normal IPTC tag, depending on the "update" parameter, we will either delete
 	 * the IPTC data from both places and insert the new IPTC data into the Photoshop tag or we will
 	 * synchronize the two sets of IPTC data, delete the original IPTC from both places and insert the
 	 * synchronized IPTC data along with the new IPTC data into the Photoshop tag. In both cases, we
@@ -1136,7 +1136,7 @@ public class TIFFTweaker {
 			}
 			for(IPTCDataSet dataset : iptcs) {
 				dataset.write(bout);
-			}		
+			}
 			workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
 		}		
 		
