@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================================
+ * WY    24Jun2015  Renamed splitFramesEx2() to splitAnimatedGIF()
  * WY    30Mar2015  Fixed bug with insertXMP() replacing '\0' with ' '
  * WY    12Mar2015  Cleaned up debugging console output
  * WY    03Mar2015  Added overloaded insertXMPApplicationBlock() with XMP string as input
@@ -52,6 +53,7 @@ import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.image.Comment;
 import cafe.image.ImageType;
+import cafe.image.ImageIO;
 import cafe.image.options.GIFOptions;
 import cafe.image.reader.GIFReader;
 import cafe.image.writer.GIFWriter;
@@ -392,9 +394,10 @@ public class GIFTweaker {
 	}
 	
 	/**
-	 * Split a multiple frame GIF into individual frames and save them as GIF images.
-	 * The split is "literally" since no frame decoding and other operations involved.
-	 * This sometimes leads to funny looking GIFs.
+	 * Split an animated GIF into individual frames and save them as GIF images.
+	 * The split is "as is" as no frame decoding and other operations involved.
+	 * As individual frames are often related to each other with regard to the
+	 * animated GIF image, this sometimes leads to funny looking GIFs.
 	 * 
 	 * @param is input GIF image stream
 	 * @param outputFilePrefix optional output file name prefix  
@@ -420,6 +423,7 @@ public class GIFTweaker {
 		do {
 			outFileName = StringUtils.isNullOrEmpty(outputFilePrefix)?"frame_" + frameCount++:outputFilePrefix + "_frame_" + frameCount++;
 			os = new FileOutputStream(outFileName + ".gif");
+			os.close();
 		} while(copyFrame(is, os, DTO));
 		
 		os.close(); // Close the last file stream in order to delete it
@@ -428,23 +432,23 @@ public class GIFTweaker {
 	}
 	
 	/**
-	 * Split animated GIF to individual images
+	 * Split animated GIF to individual GIF images.
 	 * 
-	 * @param is input animated GIF stream
+	 * @param animatedGIF input animated GIF stream
 	 * @param writer ImageWriter for the output frame
 	 * @param outputFilePrefix optional prefix for the output image
 	 * @throws Exception
 	 * 
-	 * @deprecated Use {@link #splitFramesEx2(InputStream, ImageWriter, String) splitFramesEx2} instead.
+	 * @deprecated Use {@link #splitAnimateGIF(InputStream, ImageWriter, String) splitAnimagedGIF} instead.
 	 */
 	@Deprecated
-	public static void splitFramesEx(InputStream is, ImageWriter writer, String outputFilePrefix) throws Exception {
+	public static void splitFrames2(InputStream animatedGIF, ImageWriter writer, String outputFilePrefix) throws Exception {
 		// Create a GIFReader to read GIF frames	
 		GIFReader reader = new GIFReader();
 		// Create a GIFWriter or other writers to write the frames
 		ImageType imageType = writer.getImageType();
 		// This single call will trigger the reading of the global scope data		
-		BufferedImage bi = reader.getFrameAsBufferedImage(is);
+		BufferedImage bi = reader.getFrameAsBufferedImage(animatedGIF);
 		// After reading the global scope data, we can retrieve values such logical screen width and height etc.
 		int logicalScreenWidth = reader.getLogicalScreenWidth();
 		int logicalScreenHeight = reader.getLogicalScreenHeight();
@@ -504,24 +508,37 @@ public class GIFTweaker {
 				//builder.transparent(true);
 			}
 			// Read another frame if we have more
-			bi = reader.getFrameAsBufferedImage(is);
+			bi = reader.getFrameAsBufferedImage(animatedGIF);
 		}
+	}
+	
+	/** 
+	 * Split animated GIF to individual GIF images.
+	 * 
+	 * @param animatedGIF input animated GIF stream
+	 * @param writer ImageWriter for the output frame
+	 * @param outputFilePrefix optional path prefix for the output image
+	 * @throws Exception
+	 */
+	public static void splitAnimatedGIF(InputStream animatedGIF, String outputFilePrefix) throws Exception {
+		splitAnimatedGIF(animatedGIF, ImageIO.getWriter(ImageType.GIF), outputFilePrefix);
 	}
 
 	/** 
-	 * Split animated GIF to individual images
+	 * Split animated GIF to individual frames. The output image
+	 * format is determined by the ImageWriter parameter.
 	 * 
-	 * @param is input animated GIF stream
+	 * @param animatedGIF input animated GIF stream
 	 * @param writer ImageWriter for the output frame
-	 * @param outputFilePrefix optional prefix for the output image
+	 * @param outputFilePrefix optional path prefix for the output image
 	 * @throws Exception
 	 */
-	public static void splitFramesEx2(InputStream is, ImageWriter writer, String outputFilePrefix) throws Exception {
+	public static void splitAnimatedGIF(InputStream animatedGIF, ImageWriter writer, String outputFilePrefix) throws Exception {
 		// Create a GIFReader to read GIF frames	
 		GIFReader reader = new GIFReader();
 		// Create a GIFWriter or other writers to write the frames
 		ImageType imageType = writer.getImageType();
-		BufferedImage bi = reader.getFrameAsBufferedImageEx(is);
+		BufferedImage bi = reader.getFrameAsBufferedImageEx(animatedGIF);
 	
 		int frameCount = 0;		
 		String baseFileName = StringUtils.isNullOrEmpty(outputFilePrefix)?"frame_":outputFilePrefix + "_frame_";
@@ -531,7 +548,7 @@ public class GIFTweaker {
 			String outFileName = baseFileName + frameCount++;
 			FileOutputStream os = new FileOutputStream(outFileName + "." + imageType.getExtension());			
 			writer.write(bi, os);
-			bi = reader.getFrameAsBufferedImageEx(is);
+			bi = reader.getFrameAsBufferedImageEx(animatedGIF);
 		}
 	}
 	

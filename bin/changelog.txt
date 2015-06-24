@@ -1,6 +1,7 @@
 ***************************
-Last modified on 06/11/2015
+Last modified on 06/24/2015
 ***************************
+24Jun2014  Renamed GIFTweaker splitFramesEx2() to splitAnimatedGIF()
 11Jun2015  Made Updatable interface generic
 29Apr2015  Renamed XMLUtils findAttribute() to getAttribute()
 10Apr2015  Meta data related changes

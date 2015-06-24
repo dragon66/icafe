@@ -77,7 +77,7 @@ public class TestGIFTweaker extends TestBase {
 		
 		FileInputStream is = new FileInputStream(args[0]);
 		
-		GIFTweaker.splitFramesEx2(is, writer, "split");
+		GIFTweaker.splitAnimatedGIF(is, writer, "split");
 		
 		is.close();
 	}

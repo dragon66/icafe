@@ -179,30 +179,37 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#splitFrames(java.io.InputStream,%20java.lang.String)">splitFrames</a></strong>(java.io.InputStream&nbsp;is,
-           java.lang.String&nbsp;outputFilePrefix)</code>
-<div class="block">Split a multiple frame GIF into individual frames and save them as GIF images.</div>
+<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#splitAnimatedGIF(java.io.InputStream,%20cafe.image.writer.ImageWriter,%20java.lang.String)">splitAnimatedGIF</a></strong>(java.io.InputStream&nbsp;animatedGIF,
+                <a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a>&nbsp;writer,
+                java.lang.String&nbsp;outputFilePrefix)</code>
+<div class="block">Split animated GIF to individual frames.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#splitFramesEx(java.io.InputStream,%20cafe.image.writer.ImageWriter,%20java.lang.String)">splitFramesEx</a></strong>(java.io.InputStream&nbsp;is,
-             <a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a>&nbsp;writer,
-             java.lang.String&nbsp;outputFilePrefix)</code>
-<div class="block"><strong>Deprecated.</strong>&nbsp;
-<div class="block"><i>Use <a href="../../../cafe/image/gif/GIFTweaker.html#splitFramesEx2(java.io.InputStream,%20cafe.image.writer.ImageWriter,%20java.lang.String)"><code>splitFramesEx2</code></a> instead.</i></div>
-</div>
+<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#splitAnimatedGIF(java.io.InputStream,%20java.lang.String)">splitAnimatedGIF</a></strong>(java.io.InputStream&nbsp;animatedGIF,
+                java.lang.String&nbsp;outputFilePrefix)</code>
+<div class="block">Split animated GIF to individual GIF images.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#splitFramesEx2(java.io.InputStream,%20cafe.image.writer.ImageWriter,%20java.lang.String)">splitFramesEx2</a></strong>(java.io.InputStream&nbsp;is,
-              <a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a>&nbsp;writer,
-              java.lang.String&nbsp;outputFilePrefix)</code>
-<div class="block">Split animated GIF to individual images</div>
+<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#splitFrames(java.io.InputStream,%20java.lang.String)">splitFrames</a></strong>(java.io.InputStream&nbsp;is,
+           java.lang.String&nbsp;outputFilePrefix)</code>
+<div class="block">Split an animated GIF into individual frames and save them as GIF images.</div>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#splitFrames2(java.io.InputStream,%20cafe.image.writer.ImageWriter,%20java.lang.String)">splitFrames2</a></strong>(java.io.InputStream&nbsp;animatedGIF,
+            <a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a>&nbsp;writer,
+            java.lang.String&nbsp;outputFilePrefix)</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>Use <code>splitAnimagedGIF</code> instead.</i></div>
+</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(java.awt.image.BufferedImage[],%20int[],%20int,%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(java.awt.image.BufferedImage[]&nbsp;images,
                 int[]&nbsp;delays,
@@ -211,13 +218,13 @@ extends java.lang.Object</pre>
 <div class="block">Create animated GIFs from a series of BufferedImage</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(java.awt.image.BufferedImage[],%20int[],%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(java.awt.image.BufferedImage[]&nbsp;images,
                 int[]&nbsp;delays,
                 java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(cafe.image.gif.GIFFrame[],%20int,%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(<a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>[]&nbsp;frames,
                 int&nbsp;loopCount,
@@ -225,18 +232,18 @@ extends java.lang.Object</pre>
 <div class="block">Write an array of GIFFrame as an animated GIF.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(cafe.image.gif.GIFFrame[],%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(<a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>[]&nbsp;frames,
                 java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(java.util.List,%20int,%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(java.util.List&lt;<a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>&gt;&nbsp;frames,
                 int&nbsp;loopCount,
                 java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(java.util.List,%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(java.util.List&lt;<a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>&gt;&nbsp;frames,
                 java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
@@ -390,44 +397,61 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;void&nbsp;splitFrames(java.io.InputStream&nbsp;is,
                java.lang.String&nbsp;outputFilePrefix)
                         throws java.lang.Exception</pre>
-<div class="block">Split a multiple frame GIF into individual frames and save them as GIF images.
- The split is "literally" since no frame decoding and other operations involved.
- This sometimes leads to funny looking GIFs.</div>
+<div class="block">Split an animated GIF into individual frames and save them as GIF images.
+ The split is "as is" as no frame decoding and other operations involved.
+ As individual frames are often related to each other with regard to the
+ animated GIF image, this sometimes leads to funny looking GIFs.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - input GIF image stream</dd><dd><code>outputFilePrefix</code> - optional output file name prefix</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
 </ul>
-<a name="splitFramesEx(java.io.InputStream, cafe.image.writer.ImageWriter, java.lang.String)">
+<a name="splitFrames2(java.io.InputStream, cafe.image.writer.ImageWriter, java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>splitFramesEx</h4>
+<h4>splitFrames2</h4>
 <pre>@Deprecated
-public static&nbsp;void&nbsp;splitFramesEx(java.io.InputStream&nbsp;is,
-                            <a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a>&nbsp;writer,
-                            java.lang.String&nbsp;outputFilePrefix)
-                          throws java.lang.Exception</pre>
-<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use <a href="../../../cafe/image/gif/GIFTweaker.html#splitFramesEx2(java.io.InputStream,%20cafe.image.writer.ImageWriter,%20java.lang.String)"><code>splitFramesEx2</code></a> instead.</i></div>
-<div class="block">Split animated GIF to individual images</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - input animated GIF stream</dd><dd><code>writer</code> - ImageWriter for the output frame</dd><dd><code>outputFilePrefix</code> - optional prefix for the output image</dd>
+public static&nbsp;void&nbsp;splitFrames2(java.io.InputStream&nbsp;animatedGIF,
+                           <a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a>&nbsp;writer,
+                           java.lang.String&nbsp;outputFilePrefix)
+                         throws java.lang.Exception</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use <code>splitAnimagedGIF</code> instead.</i></div>
+<div class="block">Split animated GIF to individual GIF images.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>animatedGIF</code> - input animated GIF stream</dd><dd><code>writer</code> - ImageWriter for the output frame</dd><dd><code>outputFilePrefix</code> - optional prefix for the output image</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
 </ul>
-<a name="splitFramesEx2(java.io.InputStream, cafe.image.writer.ImageWriter, java.lang.String)">
+<a name="splitAnimatedGIF(java.io.InputStream, java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>splitFramesEx2</h4>
-<pre>public static&nbsp;void&nbsp;splitFramesEx2(java.io.InputStream&nbsp;is,
-                  <a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a>&nbsp;writer,
-                  java.lang.String&nbsp;outputFilePrefix)
-                           throws java.lang.Exception</pre>
-<div class="block">Split animated GIF to individual images</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - input animated GIF stream</dd><dd><code>writer</code> - ImageWriter for the output frame</dd><dd><code>outputFilePrefix</code> - optional prefix for the output image</dd>
+<h4>splitAnimatedGIF</h4>
+<pre>public static&nbsp;void&nbsp;splitAnimatedGIF(java.io.InputStream&nbsp;animatedGIF,
+                    java.lang.String&nbsp;outputFilePrefix)
+                             throws java.lang.Exception</pre>
+<div class="block">Split animated GIF to individual GIF images.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>animatedGIF</code> - input animated GIF stream</dd><dd><code>writer</code> - ImageWriter for the output frame</dd><dd><code>outputFilePrefix</code> - optional path prefix for the output image</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
+</li>
+</ul>
+<a name="splitAnimatedGIF(java.io.InputStream, cafe.image.writer.ImageWriter, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>splitAnimatedGIF</h4>
+<pre>public static&nbsp;void&nbsp;splitAnimatedGIF(java.io.InputStream&nbsp;animatedGIF,
+                    <a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a>&nbsp;writer,
+                    java.lang.String&nbsp;outputFilePrefix)
+                             throws java.lang.Exception</pre>
+<div class="block">Split animated GIF to individual frames. The output image
+ format is determined by the ImageWriter parameter.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>animatedGIF</code> - input animated GIF stream</dd><dd><code>writer</code> - ImageWriter for the output frame</dd><dd><code>outputFilePrefix</code> - optional path prefix for the output image</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
