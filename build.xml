@@ -1,8 +1,18 @@
 <?xml version="1.0"?>
-<project name= "icafe" default="compile" basedir=".">
+<project name= "icafe" default="package" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 	<description>
 		Ant build.xml file for building the icafe library.
 	</description>
+	<!-- define Maven coordinates -->
+	<property name="groupId" value="com.github.dragon66" />
+	<property name="artifactId" value="icafe" />
+	<property name="version" value="1.0-SNAPSHOT" />
+	<!-- there server id in the Maven settings.xml -->
+  	<property name="ossrh-server-id" value="ossrh" />
+	<property name="ossrh-snapshots-repository-url" 
+    	value="https://oss.sonatype.org/content/repositories/snapshots" />
+	<!-- define artifacts' name, which follows the convention of Maven -->
+	<property name="jar" value="lib/${artifactId}-${version}.jar" />
 	<path id="icafe.classpath">
 	    <fileset dir="lib">
 	    	<include name="*.jar"/>
@@ -48,7 +58,7 @@
             <exclude name="**/scripting/**/*.java"/>
         </javac>
 	</target>
-	<target name="package" depends="compile,doc">
+	<target name="package" depends="compile, doc">
 		<jar destfile="dist/icafe.jar">
 		    <fileset dir="build/classes"/>
 		    <fileset dir="build">	
@@ -58,4 +68,20 @@
 		<delete file="lib/icafe.jar"/>
 		<copy file="dist/icafe.jar" todir="lib"/>
 	</target>
+	<target name="package-snapshot">
+	    <jar destfile="dist/${artifactId}-${version}.jar">
+		    <fileset dir="build/classes"/>
+		</jar>
+		<delete file="{jar}"/>
+		<copy file="dist/${artifactId}-${version}.jar" todir="lib"/>
+	</target>
+	<target name="deploy" depends="compile, package-snapshot" description="deploy snapshot version to Maven snapshot repository">
+   	    <artifact:mvn>
+   	        <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
+     	    <arg value="-Durl=${ossrh-snapshots-repository-url}" />
+      		<arg value="-DrepositoryId=${ossrh-server-id}" />
+      		<arg value="-DpomFile=pom.xml" />
+      		<arg value="-Dfile=${jar}" />
+    	</artifact:mvn>
+  </target>
 </project>
