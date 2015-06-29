@@ -85,7 +85,7 @@ There is currently no stable release of ICAFE. However you can pull the latest S
   <groupId>com.github.dragon66</groupId>
   <artifactId>icafe</artifactId>
   <version>1.0-SNAPSHOT</version>
-<dependency>
+</dependency>
 ``` 
 
 Suggestions? custom requirements? email me: yuwen_66@yahoo.com
