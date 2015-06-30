@@ -78,7 +78,23 @@ Image metadata manipulation:
 
 Where can I get the latest release?
 -----------------------------------
-There is currently no stable release of ICAFE. However you can pull the latest SNAPSHOT from the Maven snapshot repository by adding the following dependency to your pom.xml:
+There is currently no stable release of ICAFE. However you can pull the latest SNAPSHOT from Sonatype snapshot repository by adding the snapshot repository to your pom.xml:
+ 
+```xml
+<repository>
+  <id>oss.sonatype.org</id>
+  <name>Sonatype Snapshot Repository</name>
+  <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  <releases>
+    <enabled>false</enabled>
+  </releases>
+  <snapshots>
+    <enabled>true</enabled>
+  </snapshots>
+</repository> 
+```
+
+Then you can use the SNAPSHOT version of ICAFR in your pom.xml:
 
 ```xml
 <dependency>
