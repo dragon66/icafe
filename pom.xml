@@ -7,4 +7,26 @@
   <packaging>jar</packaging> 
   <name>ICAFE Java image library</name>
   <url>https://github.com/dragon66/icafe</url>
+  <repositories>
+      <repository>
+	  	<id>jai-imageio</id>
+	  	<name>Java Advanced Imaging for ImageIO</name>
+	  	<url>http://maven.geotoolkit.org</url>
+	  	<releases>
+	  	    <enabled>true</enabled>
+	  	</releases> 
+	  </repository> 
+  </repositories>
+  <dependencies>
+      <dependency>
+		<groupId>javax.media</groupId>
+		<artifactId>jai_imageio</artifactId>
+		<version>1.1</version>
+	  </dependency>
+      <dependency>
+	    <groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+		<version>1.7.12</version>
+      </dependency>		
+  </dependencies>
 </project>
