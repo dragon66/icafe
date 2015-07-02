@@ -2127,17 +2127,21 @@ public class TIFFTweaker {
 			ifds.append(indent);
 			short tag = field.getTag();
 			Tag ftag = TiffTag.UNKNOWN;
-			try {
-				ftag = (Tag)method.invoke(null, tag);
-			} catch (IllegalAccessException e) {
-				LOGGER.error("IllegalAcessException", e);
-			} catch (IllegalArgumentException e) {
-				LOGGER.error("IllegalArgumentException", e);
-			} catch (InvocationTargetException e) {
-				LOGGER.error("InvocationTargetException", e);
-			}
+			if(tag == ExifTag.PADDING.getValue()) {
+				ftag = ExifTag.PADDING;
+			} else {
+				try {
+					ftag = (Tag)method.invoke(null, tag);
+				} catch (IllegalAccessException e) {
+					LOGGER.error("IllegalAcessException", e);
+				} catch (IllegalArgumentException e) {
+					LOGGER.error("IllegalArgumentException", e);
+				} catch (InvocationTargetException e) {
+					LOGGER.error("InvocationTargetException", e);
+				}
+			}	
 			if (ftag == TiffTag.UNKNOWN) {
-				LOGGER.warn("Tag: {} {}{}{} {}", ftag, "[Value: 0x", Integer.toHexString(tag&0xffff), "]", "(Unknown)");
+				LOGGER.warn("Tag: {} [Value: 0x{}] (Unknown)", ftag, Integer.toHexString(tag&0xffff));
 			} else {
 				ifds.append("Tag: " + ftag + "\n");
 			}

@@ -816,7 +816,7 @@ public enum TiffTag implements Tag {
 				e.printStackTrace();
 			}
 
-			return description;
+			return description.trim();
 		}
 	},
 	
@@ -831,7 +831,7 @@ public enum TiffTag implements Tag {
 				e.printStackTrace();
 			}
 			
-			return description;
+			return description.trim();
 		}
 	},
 	
@@ -846,7 +846,7 @@ public enum TiffTag implements Tag {
 				e.printStackTrace();
 			}
 			
-			return description;
+			return description.trim();
 		}
 	},
 	
@@ -861,7 +861,7 @@ public enum TiffTag implements Tag {
 				e.printStackTrace();
 			}
 			
-			return description;
+			return description.trim();
 		}
 	},
 	
@@ -876,7 +876,7 @@ public enum TiffTag implements Tag {
 				e.printStackTrace();
 			}
 
-			return description;
+			return description.trim();
 		}
 	},
 	

@@ -34,7 +34,7 @@ public enum FieldType {
 	FLOAT("Float", (short)0x000b),
 	DOUBLE("Double", (short)0x000c),
 	IFD("IFD", (short)0x000d),
-	// This is a actually not a TIFF field type, internally it is a BYTE field
+	// This is actually not a TIFF field type, internally it is a BYTE field
 	WINDOWSXP("WindowsXP", (short)0x000e),
 	
 	UNKNOWN("Unknown", (short)0x0000);
