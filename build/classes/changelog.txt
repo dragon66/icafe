@@ -1,6 +1,7 @@
 ***************************
-Last modified on 06/29/2015
+Last modified on 07/01/2015
 ***************************
+01Jul2015  Added support for non-standard XMP identifier
 29Jun2015  Removed a few sub-packages from base package cafe.game
 24Jun2015  Renamed GIFTweaker splitFramesEx2() to splitAnimatedGIF()
 11Jun2015  Made Updatable interface generic

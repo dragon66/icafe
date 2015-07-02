@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    01Jul2015  Added support for non-standard XMP identifier
  * WY    15Apr2015  Changed the argument type for insertIPTC() and insertIRB()
  * WY    07Apr2015  Revised insertExif()
  * WY    01Apr2015  Extract IPTC as stand-alone meta data from IRB if any
@@ -134,6 +135,12 @@ public class JPEGTweaker {
 	// Constants
 	public static final byte[] XMP_ID = { // "http://ns.adobe.com/xap/1.0/\0"
 		0x68, 0x74, 0x74, 0x70, 0x3A, 0x2F, 0x2F, 0x6E, 0x73, 0x2E, 0x61, 0x64,
+		0x6F, 0x62, 0x65, 0x2E, 0x63, 0x6F, 0x6D, 0x2F, 0x78, 0x61, 0x70, 0x2F,
+		0x31, 0x2E, 0x30, 0x2F, 0x00
+	};	
+	// This is a non_standard XMP identifier which sometimes found in images from GettyImages
+	public static final byte[] NON_STANDARD_XMP_ID = { // "XMP\0://ns.adobe.com/xap/1.0/\0"
+		0x58, 0x4D, 0x50, 0x00, 0x3A, 0x2F, 0x2F, 0x6E, 0x73, 0x2E, 0x61, 0x64,
 		0x6F, 0x62, 0x65, 0x2E, 0x63, 0x6F, 0x6D, 0x2F, 0x78, 0x61, 0x70, 0x2F,
 		0x31, 0x2E, 0x30, 0x2F, 0x00
 	};
@@ -1360,7 +1367,8 @@ public class JPEGTweaker {
 					// We found EXIF
 					JpegExif exif = new JpegExif(ArrayUtils.subArray(data, EXIF_ID.length, length - EXIF_ID.length - 2));
 					metadataMap.put(MetadataType.EXIF, exif);
-				} else if(Arrays.equals(ArrayUtils.subArray(data, 0, XMP_ID.length), XMP_ID)) {
+				} else if(Arrays.equals(ArrayUtils.subArray(data, 0, XMP_ID.length), XMP_ID) ||
+						Arrays.equals(ArrayUtils.subArray(data, 0, NON_STANDARD_XMP_ID.length), NON_STANDARD_XMP_ID)) {
 					// We found XMP, add it to metadata list (We may later revise it if we have ExtendedXMP)
 					XMP xmp = new XMP(ArrayUtils.subArray(data, XMP_ID.length, length - XMP_ID.length - 2));
 					metadataMap.put(MetadataType.XMP, xmp);
@@ -1649,6 +1657,8 @@ public class JPEGTweaker {
 							if(Arrays.equals(temp, XMP_EXT_ID) && metadataTypes.contains(MetadataType.XMP)) {
 								IOUtils.skipFully(is, length - XMP_EXT_ID.length  - 2);
 							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, XMP_ID.length), XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
+								IOUtils.skipFully(is,  length - XMP_EXT_ID.length - 2);
+							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, NON_STANDARD_XMP_ID.length), NON_STANDARD_XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
 								IOUtils.skipFully(is,  length - XMP_EXT_ID.length - 2);
 							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, EXIF_ID.length), EXIF_ID)
 									&& metadataTypes.contains(MetadataType.EXIF)) { // EXIF
