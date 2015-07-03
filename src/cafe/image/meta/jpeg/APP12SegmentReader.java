@@ -60,6 +60,7 @@ public class APP12SegmentReader implements MetadataReader {
 	@Override
 	public void read() throws IOException {
 		int i = 0;
+		
 		for(;;) {
 			if(i + 4 > data.length) break;
 			int tag = IOUtils.readUnsignedShortMM(data, i);

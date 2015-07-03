@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    02Jul2015  Added support for APP14 segment reading
  * WY    02Jul2015  Added support for APP12 segment reading
  * WY    01Jul2015  Added support for non-standard XMP identifier
  * WY    15Apr2015  Changed the argument type for insertIPTC() and insertIRB()
@@ -102,6 +103,7 @@ import cafe.image.meta.image.ImageMetadata;
 import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCDataSet;
 import cafe.image.meta.jpeg.APP12Segment;
+import cafe.image.meta.jpeg.APP14Segment;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -1410,6 +1412,10 @@ public class JPEGTweaker {
 						eightBIMStream = new ByteArrayOutputStream();
 					eightBIMStream.write(ArrayUtils.subArray(data, PHOTOSHOP_IRB_ID.length, length - PHOTOSHOP_IRB_ID.length - 2));
 				}
+			} else if(segment.getMarker() == Marker.APP14) {
+				if (Arrays.equals(ArrayUtils.subArray(data, 0, ADOBE_ID.length), ADOBE_ID)) {
+					metadataMap.put(MetadataType.JPG_APP14, new APP14Segment(ArrayUtils.subArray(data, ADOBE_ID.length, length - ADOBE_ID.length - 2)));
+				}
 			}
 		}
 		
@@ -1660,7 +1666,7 @@ public class JPEGTweaker {
 							IOUtils.readFully(is, temp);
 							// XMP segment.
 							if(Arrays.equals(temp, XMP_EXT_ID) && metadataTypes.contains(MetadataType.XMP)) {
-								IOUtils.skipFully(is, length - XMP_EXT_ID.length  - 2);
+								IOUtils.skipFully(is, length - XMP_EXT_ID.length - 2);
 							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, XMP_ID.length), XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
 								IOUtils.skipFully(is,  length - XMP_EXT_ID.length - 2);
 							} else if(Arrays.equals(ArrayUtils.subArray(temp, 0, NON_STANDARD_XMP_ID.length), NON_STANDARD_XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
@@ -1686,7 +1692,7 @@ public class JPEGTweaker {
 							IOUtils.readFully(is, temp);	
 							// ICC_Profile segment
 							if (Arrays.equals(temp, ICC_PROFILE_ID)) {
-								IOUtils.skipFully(is, length - ICC_PROFILE_ID.length  - 2);
+								IOUtils.skipFully(is, length - ICC_PROFILE_ID.length - 2);
 							} else {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
@@ -1705,7 +1711,7 @@ public class JPEGTweaker {
 							IOUtils.readFully(is, temp);	
 							// Ducky segment
 							if (Arrays.equals(temp, DUCKY_ID)) {
-								IOUtils.skipFully(is, length - DUCKY_ID.length  - 2);
+								IOUtils.skipFully(is, length - DUCKY_ID.length - 2);
 							} else {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
@@ -1751,6 +1757,25 @@ public class JPEGTweaker {
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp); // Write the already read bytes
 								temp = new byte[length - PHOTOSHOP_IRB_ID.length - 2];
+								IOUtils.readFully(is, temp);
+								IOUtils.write(os, temp);
+							}
+							marker = IOUtils.readShortMM(is);
+							break;
+						} // Otherwise go to default
+					case APP14:
+						if(metadataTypes.contains(MetadataType.JPG_APP14)) {
+							length = IOUtils.readUnsignedShortMM(is);
+							byte[] temp = new byte[ADOBE_ID.length];
+							IOUtils.readFully(is, temp);	
+							// Adobe segment
+							if (Arrays.equals(temp, ADOBE_ID)) {
+								IOUtils.skipFully(is, length - ADOBE_ID.length - 2);
+							} else {
+								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, (short) length);
+								IOUtils.write(os, temp); // Write the already read bytes
+								temp = new byte[length - ADOBE_ID.length - 2];
 								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}

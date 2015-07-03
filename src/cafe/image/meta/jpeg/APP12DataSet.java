@@ -37,6 +37,10 @@ public class APP12DataSet {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(APP12DataSet.class);
 	
+	public APP12DataSet(int tag, byte[] data) {
+		this(tag, data.length, data, 0);
+	}
+	
 	public APP12DataSet(int tag, int size, byte[] data, int offset) {
 		this.tag = tag;
 		this.size = size;
