@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    03Jul2015  Added override method getData()
  * WY    05Mar2015  Revised getMergedDocument()
  * WY    27Feb2015  Added support for ExtendedXMP data
  * WY    19Feb2015  Removed showMetadata() and added getXmpMeta()
@@ -22,6 +23,8 @@
  */
 
 package cafe.image.meta.adobe;
+
+import java.io.IOException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,6 +52,14 @@ public class XMP extends Metadata {
 	public XMP(String xmp) {
 		super(MetadataType.XMP, null);
 		reader = new XMPReader(xmp);
+	}
+	
+	public byte[] getData() {
+		try {
+			return XMLUtils.serializeToByteArray(getMergedDocument());
+		} catch (IOException e) {
+			return super.getData();
+		}
 	}
 	
 	public byte[] getExtendedXmpData() {

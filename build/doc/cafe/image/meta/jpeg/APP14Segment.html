@@ -120,6 +120,12 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#APP14Segment(byte[])">APP14Segment</a></strong>(byte[]&nbsp;data)</code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#APP14Segment(int,%20int,%20int,%20int)">APP14Segment</a></strong>(int&nbsp;dctEncodeVersion,
+            int&nbsp;app14Flags0,
+            int&nbsp;app14Flags1,
+            int&nbsp;colorTransform)</code>&nbsp;</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -136,8 +142,30 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getAPP14Flags0()">getAPP14Flags0</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getAPP14Flags1()">getAPP14Flags1</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getColorTransform()">getColorTransform</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getDCTEncodeVersion()">getDCTEncodeVersion</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../cafe/image/meta/jpeg/APP14SegmentReader.html" title="class in cafe.image.meta.jpeg">APP14SegmentReader</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getReader()">getReader</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#write(java.io.OutputStream)">write</a></strong>(java.io.OutputStream&nbsp;os)</code>
+<div class="block">Writes the metadata out to the output stream</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -145,7 +173,7 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;cafe.image.meta.<a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a></h3>
-<code><a href="../../../../cafe/image/meta/Metadata.html#extractThumbnails(java.io.File,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../cafe/image/meta/Metadata.html#extractThumbnails(java.io.InputStream,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../cafe/image/meta/Metadata.html#extractThumbnails(java.lang.String,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../cafe/image/meta/Metadata.html#getData()">getData</a>, <a href="../../../../cafe/image/meta/Metadata.html#getType()">getType</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.exif.Exif)">insertExif</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.exif.Exif,%20boolean)">insertExif</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertICCProfile(java.io.InputStream,%20java.io.OutputStream,%20byte[])">insertICCProfile</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertICCProfile(java.io.InputStream,%20java.io.OutputStream,%20java.awt.color.ICC_Profile)">insertICCProfile</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIPTC(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection)">insertIPTC</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIPTC(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIPTC</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection)">insertIRB</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIRB</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIRBThumbnail(java.io.InputStream,%20java.io.OutputStream,%20java.awt.image.BufferedImage)">insertIRBThumbnail</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertXMP</a>, <a href="../../../../cafe/image/meta/Metadata.html#readMetadata(java.io.File)">readMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#readMetadata(java.io.InputStream)">readMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#readMetadata(java.lang.String)">readMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#removeMetadata(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.MetadataType...)">removeMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#showMetadata()">showMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#write(java.io.OutputStream)">write</a></code></li>
+<code><a href="../../../../cafe/image/meta/Metadata.html#extractThumbnails(java.io.File,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../cafe/image/meta/Metadata.html#extractThumbnails(java.io.InputStream,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../cafe/image/meta/Metadata.html#extractThumbnails(java.lang.String,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../cafe/image/meta/Metadata.html#getData()">getData</a>, <a href="../../../../cafe/image/meta/Metadata.html#getType()">getType</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.exif.Exif)">insertExif</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.exif.Exif,%20boolean)">insertExif</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertICCProfile(java.io.InputStream,%20java.io.OutputStream,%20byte[])">insertICCProfile</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertICCProfile(java.io.InputStream,%20java.io.OutputStream,%20java.awt.color.ICC_Profile)">insertICCProfile</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIPTC(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection)">insertIPTC</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIPTC(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIPTC</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection)">insertIRB</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIRB</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertIRBThumbnail(java.io.InputStream,%20java.io.OutputStream,%20java.awt.image.BufferedImage)">insertIRBThumbnail</a>, <a href="../../../../cafe/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertXMP</a>, <a href="../../../../cafe/image/meta/Metadata.html#readMetadata(java.io.File)">readMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#readMetadata(java.io.InputStream)">readMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#readMetadata(java.lang.String)">readMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#removeMetadata(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.MetadataType...)">removeMetadata</a>, <a href="../../../../cafe/image/meta/Metadata.html#showMetadata()">showMetadata</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -171,10 +199,22 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <a name="APP14Segment(byte[])">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>APP14Segment</h4>
 <pre>public&nbsp;APP14Segment(byte[]&nbsp;data)</pre>
+</li>
+</ul>
+<a name="APP14Segment(int, int, int, int)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>APP14Segment</h4>
+<pre>public&nbsp;APP14Segment(int&nbsp;dctEncodeVersion,
+            int&nbsp;app14Flags0,
+            int&nbsp;app14Flags1,
+            int&nbsp;colorTransform)</pre>
 </li>
 </ul>
 </li>
@@ -185,10 +225,46 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getDCTEncodeVersion()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDCTEncodeVersion</h4>
+<pre>public&nbsp;int&nbsp;getDCTEncodeVersion()</pre>
+</li>
+</ul>
+<a name="getAPP14Flags0()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAPP14Flags0</h4>
+<pre>public&nbsp;int&nbsp;getAPP14Flags0()</pre>
+</li>
+</ul>
+<a name="getAPP14Flags1()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAPP14Flags1</h4>
+<pre>public&nbsp;int&nbsp;getAPP14Flags1()</pre>
+</li>
+</ul>
+<a name="getColorTransform()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getColorTransform</h4>
+<pre>public&nbsp;int&nbsp;getColorTransform()</pre>
+</li>
+</ul>
 <a name="getReader()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getReader</h4>
 <pre>public&nbsp;<a href="../../../../cafe/image/meta/jpeg/APP14SegmentReader.html" title="class in cafe.image.meta.jpeg">APP14SegmentReader</a>&nbsp;getReader()</pre>
@@ -196,6 +272,24 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../cafe/image/meta/Metadata.html#getReader()">getReader</a></code>&nbsp;in class&nbsp;<code><a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="write(java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write(java.io.OutputStream&nbsp;os)
+           throws java.io.IOException</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../cafe/image/meta/Metadata.html#write(java.io.OutputStream)">Metadata</a></code></strong></div>
+<div class="block">Writes the metadata out to the output stream</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../cafe/image/meta/Metadata.html#write(java.io.OutputStream)">write</a></code>&nbsp;in class&nbsp;<code><a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a></code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>os</code> - OutputStream to write the metadata to</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 </li>

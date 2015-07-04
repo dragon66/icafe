@@ -11,10 +11,9 @@
 package cafe.image.options;
 
 import cafe.image.ImageType;
-import cafe.image.tiff.TiffField;
 import cafe.image.tiff.TiffFieldEnum.*;
 
-public class TIFFOptions extends ImageOptions<TiffField<?>> {
+public class TIFFOptions extends ImageOptions {
 	private boolean isApplyPredictor;
 	private Compression tiffCompression = Compression.PACKBITS;
 	private PhotoMetric photoMetric = PhotoMetric.UNKNOWN;

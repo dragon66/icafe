@@ -11,10 +11,9 @@
 package cafe.image.options;
 
 import cafe.image.ImageType;
-import cafe.image.jpeg.Segment;
 import cafe.image.tiff.TiffFieldEnum.PhotoMetric;
 
-public class JPEGOptions extends ImageOptions<Segment> {
+public class JPEGOptions extends ImageOptions {
 	// Color space constants
 	public static final int COLOR_SPACE_RGB   = PhotoMetric.RGB.getValue(); // RGB
 	public static final int COLOR_SPACE_YCbCr = PhotoMetric.YCbCr.getValue(); // YCbCr

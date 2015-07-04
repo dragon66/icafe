@@ -18,6 +18,8 @@
 
 package cafe.image.meta.jpeg;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
@@ -73,5 +75,10 @@ public class APP12Segment extends Metadata {
 			}
 		} else
 			super.showMetadata();
+	}
+	
+	public void write(OutputStream os) throws IOException {
+		for(APP12DataSet dataset : getDataSets().values())
+			dataset.write(os);
 	}
 }

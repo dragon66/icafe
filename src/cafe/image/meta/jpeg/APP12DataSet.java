@@ -81,7 +81,7 @@ public class APP12DataSet {
 				LOGGER.error("UnsupportedEncoding \"UTF-16BE\"");
 			}
 			LOGGER.info(etag + ": {}", value);
-		}			
+		}
 	}
 	
 	public void write(OutputStream out) throws IOException {

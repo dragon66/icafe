@@ -20,18 +20,8 @@
 package cafe.image.options;
 
 import cafe.image.ImageType;
-import cafe.image.meta.NativeMetadata;
 
-public abstract class ImageOptions<T> {
-	NativeMetadata<T> metadata;
-	
-	public abstract ImageType getImageType();
-	
-	public NativeMetadata<T> getNativeMetadata() {
-		return metadata;
-	}
-	
-	public void setNativeMetadata(NativeMetadata<T> metadata) {
-		this.metadata = metadata;
-	}	
+public abstract class ImageOptions {
+	// The sole interface
+	public abstract ImageType getImageType();	
 }

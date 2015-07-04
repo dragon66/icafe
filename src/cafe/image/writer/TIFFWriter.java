@@ -597,7 +597,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 	private void writePageData(int[] pixels, int imageWidth, int imageHeight) throws Exception {
 		//
 		ImageParam param = getImageParam();
-		ImageOptions<?> options = param.getImageOptions();
+		ImageOptions options = param.getImageOptions();
 		
 		Compression compression = Compression.PACKBITS;
 		
