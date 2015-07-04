@@ -76,7 +76,7 @@ Image metadata manipulation:
    * Extract XMP metadata from JPEG, GIF, PNG, and TIFF image
    * In case of JPEG, handle normal XMP and extendedXMP which cannot fit into one APP1 segment
  
-**NOTE**: the metadata related part of has become another repository "pixymeta" which has no dependency on reading and writing function of "icafe". There is also an Android version called "pixymeta-android".
+**NOTE**: The metadata related part of has become another repository "pixymeta" which has no dependency on reading and writing function of "icafe". There is also an Android version called "pixymeta-android".
 
 Where can I get the latest release?
 -----------------------------------
