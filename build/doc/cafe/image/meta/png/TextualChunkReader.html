@@ -2,13 +2,13 @@
 <!-- NewPage -->
 <html lang="en">
 <head>
-<title>TextReader</title>
-<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+<title>TextualChunkReader</title>
+<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
 </head>
 <body>
 <script type="text/javascript"><!--
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="TextReader";
+        parent.document.title="TextualChunkReader";
     }
 //-->
 </script>
@@ -22,26 +22,26 @@
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="../../../../overview-summary.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../index-all.html">Index</a></li>
-<li><a href="../../../help-doc.html">Help</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
 </ul>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../cafe/image/png/TextBuilder.html" title="class in cafe.image.png"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../cafe/image/png/TIMEBuilder.html" title="class in cafe.image.png"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png"><span class="strong">Prev Class</span></a></li>
+<li>Next Class</li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?cafe/image/png/TextReader.html" target="_top">Frames</a></li>
-<li><a href="TextReader.html" target="_top">No Frames</a></li>
+<li><a href="../../../../index.html?cafe/image/meta/png/TextualChunkReader.html" target="_top">Frames</a></li>
+<li><a href="TextualChunkReader.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--
@@ -76,15 +76,20 @@
 <!-- ========= END OF TOP NAVBAR ========= -->
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="subTitle">cafe.image.png</div>
-<h2 title="Class TextReader" class="title">Class TextReader</h2>
+<div class="subTitle">cafe.image.meta.png</div>
+<h2 title="Class TextualChunkReader" class="title">Class TextualChunkReader</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>cafe.image.png.TextReader</li>
+<li><a href="../../../../cafe/image/png/TextReader.html" title="class in cafe.image.png">cafe.image.png.TextReader</a></li>
+<li>
+<ul class="inheritance">
+<li>cafe.image.meta.png.TextualChunkReader</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -93,22 +98,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></dd>
-</dl>
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../cafe/image/meta/png/TextualChunkReader.html" title="class in cafe.image.meta.png">TextualChunkReader</a></dd>
+<dd><a href="../../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a>, <a href="../../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public class <span class="strong">TextReader</span>
-extends java.lang.Object
-implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></pre>
-<div class="block">Reader for PNG textual chunks: iTXT, zTXT, and tEXT.</div>
-<dl><dt><span class="strong">Version:</span></dt>
-  <dd>1.0 01/01/2013</dd>
-<dt><span class="strong">Author:</span></dt>
-  <dd>Wen Yu, yuwen_66@yahoo.com</dd></dl>
+<pre>public class <span class="strong">TextualChunkReader</span>
+extends <a href="../../../../cafe/image/png/TextReader.html" title="class in cafe.image.png">TextReader</a>
+implements <a href="../../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a></pre>
 </li>
 </ul>
 </div>
@@ -127,7 +123,7 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../cafe/image/png/TextReader.html#TextReader(cafe.image.png.Chunk)">TextReader</a></strong>(<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&nbsp;chunk)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/png/TextualChunkReader.html#TextualChunkReader(cafe.image.png.Chunk)">TextualChunkReader</a></strong>(<a href="../../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&nbsp;chunk)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -145,24 +141,34 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/png/TextReader.html#getKeyword()">getKeyword</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/png/TextualChunkReader.html#isDataLoaded()">isDataLoaded</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/png/TextReader.html#getText()">getText</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/png/TextReader.html#read()">read</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/png/TextualChunkReader.html#showMetadata()">showMetadata</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_cafe.image.png.TextReader">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;cafe.image.png.<a href="../../../../cafe/image/png/TextReader.html" title="class in cafe.image.png">TextReader</a></h3>
+<code><a href="../../../../cafe/image/png/TextReader.html#getKeyword()">getKeyword</a>, <a href="../../../../cafe/image/png/TextReader.html#getText()">getText</a>, <a href="../../../../cafe/image/png/TextReader.html#read()">read</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
 <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_cafe.util.Reader">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;cafe.util.<a href="../../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></h3>
+<code><a href="../../../../cafe/util/Reader.html#read()">read</a></code></li>
 </ul>
 </li>
 </ul>
@@ -178,14 +184,14 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="TextReader(cafe.image.png.Chunk)">
+<a name="TextualChunkReader(cafe.image.png.Chunk)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>TextReader</h4>
-<pre>public&nbsp;TextReader(<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&nbsp;chunk)
-           throws java.io.IOException</pre>
+<h4>TextualChunkReader</h4>
+<pre>public&nbsp;TextualChunkReader(<a href="../../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&nbsp;chunk)
+                   throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
@@ -198,37 +204,30 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getKeyword()">
+<a name="showMetadata()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getKeyword</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getKeyword()</pre>
+<h4>showMetadata</h4>
+<pre>public&nbsp;void&nbsp;showMetadata()</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../cafe/image/meta/MetadataReader.html#showMetadata()">showMetadata</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a></code></dd>
+</dl>
 </li>
 </ul>
-<a name="getText()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getText</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getText()</pre>
-</li>
-</ul>
-<a name="read()">
+<a name="isDataLoaded()">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>read</h4>
-<pre>public&nbsp;void&nbsp;read()
-          throws java.io.IOException</pre>
+<h4>isDataLoaded</h4>
+<pre>public&nbsp;boolean&nbsp;isDataLoaded()</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../cafe/util/Reader.html#read()">read</a></code>&nbsp;in interface&nbsp;<code><a href="../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></code></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<dd><code><a href="../../../../cafe/image/meta/MetadataReader.html#isDataLoaded()">isDataLoaded</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -245,26 +244,26 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="../../../../overview-summary.html">Overview</a></li>
 <li><a href="package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../index-all.html">Index</a></li>
-<li><a href="../../../help-doc.html">Help</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../index-all.html">Index</a></li>
+<li><a href="../../../../help-doc.html">Help</a></li>
 </ul>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../cafe/image/png/TextBuilder.html" title="class in cafe.image.png"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../cafe/image/png/TIMEBuilder.html" title="class in cafe.image.png"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png"><span class="strong">Prev Class</span></a></li>
+<li>Next Class</li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?cafe/image/png/TextReader.html" target="_top">Frames</a></li>
-<li><a href="TextReader.html" target="_top">No Frames</a></li>
+<li><a href="../../../../index.html?cafe/image/meta/png/TextualChunkReader.html" target="_top">Frames</a></li>
+<li><a href="TextualChunkReader.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--

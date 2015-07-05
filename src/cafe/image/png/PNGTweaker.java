@@ -55,6 +55,7 @@ import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.icc.ICCProfile;
+import cafe.image.meta.png.TextualChunk;
 import cafe.io.IOUtils;
 import cafe.string.StringUtils;
 import cafe.string.XMLUtils;
@@ -446,11 +447,15 @@ public class PNGTweaker {
 			long length = chunk.getLength();
 			if(type == ChunkType.ICCP)
 				metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile(readICCProfile(chunk.getData())));
-			if(type == ChunkType.ITXT) {// We may find XMP data inside here
-				TextReader reader = new TextReader(chunk);
-				if(reader.getKeyword().equals("XML:com.adobe.xmp")); // We found XMP data
-	   				metadataMap.put(MetadataType.XMP, new XMP(reader.getText()));
-	   		}
+			else if(type == ChunkType.TEXT || type == ChunkType.ITXT || type == ChunkType.ZTXT) {
+				TextualChunk textualChunk = new TextualChunk(chunk);
+				metadataMap.put(MetadataType.PNG_TEXTUAL, textualChunk);
+				if(type == ChunkType.ITXT) {// We may find XMP data inside here
+					if(textualChunk.getKeyword().equals("XML:com.adobe.xmp")); // We found XMP data
+		   				metadataMap.put(MetadataType.XMP, new XMP(textualChunk.getText()));
+		   		}
+			}
+			
 			LOGGER.info("{} ({}) | {} bytes | 0x{} (CRC)", type.getName(), type.getAttribute(), length, Long.toHexString(chunk.getCRC()));
 		}
 		

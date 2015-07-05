@@ -1,6 +1,7 @@
 ***************************
-Last modified on 07/03/2015
+Last modified on 07/05/2015
 ***************************
+05Jul2015  Added support or PNG Textual chunk
 03Jul2015  Removed NativeMetadata and related code
 03Jul2015  Removed generic type from ImageOptions
 02Jul2015  Added support for JPEG APP12 and APP14 support

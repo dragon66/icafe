@@ -17,6 +17,7 @@ cafe.image.meta.icc
 cafe.image.meta.image
 cafe.image.meta.iptc
 cafe.image.meta.jpeg
+cafe.image.meta.png
 cafe.image.options
 cafe.image.png
 cafe.image.reader
