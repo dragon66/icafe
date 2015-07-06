@@ -58,7 +58,7 @@ public class Chunk implements Comparable<Chunk> {
 	}
 	
 	public byte[] getData() {
-		return this.data;
+		return this.data.clone();
 	}	
 	
 	public long getCRC() {

@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    30Mar2015  Added insertICCProfile()
  * WY    27Mar2015  Revised insertXMP() to remove old XMP
  * WY    03Mar2015  Added insertXMP() to insert XMP to iTXT chunk
@@ -93,10 +94,10 @@ public class PNGTweaker {
     }
 
   	public static void insertChunk(Chunk customChunk, InputStream is, OutputStream os) throws IOException {
-  		insertChunks(new Chunk[]{customChunk}, is, os);
+  		insertChunks(is, os, customChunk);
   	}
   	
-  	public static void insertChunks(Chunk[] chunks, InputStream is, OutputStream os) throws IOException {
+  	public static void insertChunks(InputStream is, OutputStream os, Chunk... chunks) throws IOException {
   		List<Chunk> list = readChunks(is);  		
         Collections.addAll(list, chunks);
     	
@@ -125,17 +126,14 @@ public class PNGTweaker {
   		insertICCProfile(profile_name, icc_profile.getData(), is, os);
   	}
   	
-  	public static void insertXMP(InputStream is, OutputStream os, String xmp) throws IOException {
-  		Document doc = XMLUtils.createXML(xmp);
-		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
-		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
-		String newXmp = XMLUtils.serializeToString(doc); // DONOT use XMLUtils.serializeToStringLS()
-  		// Adds XMP chunk
-		TextBuilder xmpBuilder = new TextBuilder(ChunkType.ITXT);
-		xmpBuilder.keyword("XML:com.adobe.xmp");		
-		xmpBuilder.text(newXmp);
-		
-	    Chunk xmpChunk = xmpBuilder.build();
+  	public static void insertXMP(InputStream is, OutputStream os, XMP xmp) throws IOException {
+  		TextualChunk xmpChunk = new TextualChunk(ChunkType.ITXT, "XML:com.adobe.xmp", XMLUtils.serializeToString(xmp.getMergedDocument()));
+  		insertXMP(is, os, xmpChunk);
+  	}
+  	
+  	public static void insertXMP(InputStream is, OutputStream os, TextualChunk xmp) throws IOException {
+  		if(!xmp.getKeyword().equals("XML:com.adobe.xmp")) throw new IllegalArgumentException("Input TextualChunk contains no XMP data!");
+  		Chunk xmpChunk = xmp.getChunk();
 	    
 	    List<Chunk> chunks = readChunks(is);
 	    ListIterator<Chunk> itr = chunks.listIterator();
@@ -155,6 +153,17 @@ public class PNGTweaker {
 	    IOUtils.writeLongMM(os, SIGNATURE);
 	    
         serializeChunks(chunks, os);
+    }
+  	
+  	public static void insertXMP(InputStream is, OutputStream os, String xmp) throws IOException {
+  		Document doc = XMLUtils.createXML(xmp);
+		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
+		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
+		String newXmp = XMLUtils.serializeToString(doc); // DONOT use XMLUtils.serializeToStringLS()
+  		// Create XMP textual chunk
+		TextualChunk xmpChunk = new TextualChunk(ChunkType.ITXT, "XML:com.adobe.xmp", newXmp);
+	    // Insert XMP textual chunk into image
+		insertXMP(is, os, xmpChunk);
     }
   	
   	public static List<Chunk> mergeIDATChunks(List<Chunk> chunks) {

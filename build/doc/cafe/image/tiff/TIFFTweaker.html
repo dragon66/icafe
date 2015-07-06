@@ -365,6 +365,19 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertXMP(cafe.image.meta.adobe.XMP,%20int,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertXMP</a></strong>(<a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp,
+         int&nbsp;pageNumber,
+         <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
+         <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertXMP(cafe.image.meta.adobe.XMP,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertXMP</a></strong>(<a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp,
+         <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
+         <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#mergeTiffImages(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">mergeTiffImages</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;image1,
                <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;image2,
                <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;merged)</code>
@@ -998,6 +1011,35 @@ extends java.lang.Object</pre>
  SamplesPerPixel & 8 != 0.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>original</code> - RandomAccessInputStream for the original TIFF image</dd><dd><code>toBeInserted</code> - RandomAccessInputStream for the TIFF image to be inserted</dd><dd><code>pageNumber</code> - offset where to insert the second TIFF image (zero based)</dd><dd><code>output</code> - RandomAccessOutputStream for the output TIFF image</dd>
 <dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertXMP(cafe.image.meta.adobe.XMP, cafe.io.RandomAccessInputStream, cafe.io.RandomAccessOutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertXMP</h4>
+<pre>public static&nbsp;void&nbsp;insertXMP(<a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp,
+             <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
+             <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)
+                      throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertXMP(cafe.image.meta.adobe.XMP, int, cafe.io.RandomAccessInputStream, cafe.io.RandomAccessOutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertXMP</h4>
+<pre>public static&nbsp;void&nbsp;insertXMP(<a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp,
+             int&nbsp;pageNumber,
+             <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
+             <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)
+                      throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>

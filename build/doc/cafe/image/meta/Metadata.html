@@ -231,20 +231,26 @@ extends java.lang.Object</pre>
          java.lang.String&nbsp;xmp)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.adobe.XMP)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
+         java.io.OutputStream&nbsp;out,
+         <a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>,<a href="../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#readMetadata(java.io.File)">readMetadata</a></strong>(java.io.File&nbsp;image)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>,<a href="../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#readMetadata(java.io.InputStream)">readMetadata</a></strong>(java.io.InputStream&nbsp;is)</code>
 <div class="block">Reads all metadata associated with the input image</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>,<a href="../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#readMetadata(java.lang.String)">readMetadata</a></strong>(java.lang.String&nbsp;image)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#removeMetadata(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.MetadataType...)">removeMetadata</a></strong>(java.io.InputStream&nbsp;is,
               java.io.OutputStream&nbsp;os,
@@ -252,11 +258,11 @@ extends java.lang.Object</pre>
 <div class="block">Remove meta data from image</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#showMetadata()">showMetadata</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#write(java.io.OutputStream)">write</a></strong>(java.io.OutputStream&nbsp;out)</code>
 <div class="block">Writes the metadata out to the output stream</div>
@@ -467,6 +473,20 @@ extends java.lang.Object</pre>
                       java.io.OutputStream&nbsp;out,
                       java.awt.image.BufferedImage&nbsp;thumbnail)
                                throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertXMP(java.io.InputStream, java.io.OutputStream, cafe.image.meta.adobe.XMP)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertXMP</h4>
+<pre>public static&nbsp;void&nbsp;insertXMP(java.io.InputStream&nbsp;is,
+             java.io.OutputStream&nbsp;out,
+             <a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp)
+                      throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>

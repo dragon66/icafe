@@ -1646,6 +1646,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/tiff/IFD.html#getChildren()">getChildren()</a></span> - Method in class cafe.image.tiff.<a href="./cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/meta/png/TextualChunk.html#getChunk()">getChunk()</a></span> - Method in class cafe.image.meta.png.<a href="./cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/png/TextualChunk.html#getChunkType()">getChunkType()</a></span> - Method in class cafe.image.meta.png.<a href="./cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/png/Chunk.html#getChunkType()">getChunkType()</a></span> - Method in class cafe.image.png.<a href="./cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a></dt>
@@ -1747,6 +1749,8 @@
 <dt><span class="strong"><a href="./cafe/image/meta/jpeg/APP12DataSet.html#getData()">getData()</a></span> - Method in class cafe.image.meta.jpeg.<a href="./cafe/image/meta/jpeg/APP12DataSet.html" title="class in cafe.image.meta.jpeg">APP12DataSet</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/Metadata.html#getData()">getData()</a></span> - Method in class cafe.image.meta.<a href="./cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/meta/png/TextualChunk.html#getData()">getData()</a></span> - Method in class cafe.image.meta.png.<a href="./cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/png/Chunk.html#getData()">getData()</a></span> - Method in class cafe.image.png.<a href="./cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a></dt>
 <dd>&nbsp;</dd>
@@ -2969,7 +2973,7 @@
 </dd>
 <dt><span class="strong"><a href="./cafe/image/png/PNGTweaker.html#insertChunk(cafe.image.png.Chunk,%20java.io.InputStream,%20java.io.OutputStream)">insertChunk(Chunk, InputStream, OutputStream)</a></span> - Static method in class cafe.image.png.<a href="./cafe/image/png/PNGTweaker.html" title="class in cafe.image.png">PNGTweaker</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/png/PNGTweaker.html#insertChunks(cafe.image.png.Chunk[],%20java.io.InputStream,%20java.io.OutputStream)">insertChunks(Chunk[], InputStream, OutputStream)</a></span> - Static method in class cafe.image.png.<a href="./cafe/image/png/PNGTweaker.html" title="class in cafe.image.png">PNGTweaker</a></dt>
+<dt><span class="strong"><a href="./cafe/image/png/PNGTweaker.html#insertChunks(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.png.Chunk...)">insertChunks(InputStream, OutputStream, Chunk...)</a></span> - Static method in class cafe.image.png.<a href="./cafe/image/png/PNGTweaker.html" title="class in cafe.image.png">PNGTweaker</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/png/PNGTweaker.html#insertChunks(java.util.List,%20java.io.InputStream,%20java.io.OutputStream)">insertChunks(List&lt;Chunk&gt;, InputStream, OutputStream)</a></span> - Static method in class cafe.image.png.<a href="./cafe/image/png/PNGTweaker.html" title="class in cafe.image.png">PNGTweaker</a></dt>
 <dd>&nbsp;</dd>
@@ -3077,13 +3081,27 @@
 </dd>
 <dt><span class="strong"><a href="./cafe/string/XMLUtils.html#insertTrailingPI(org.w3c.dom.Document,%20java.lang.String,%20java.lang.String)">insertTrailingPI(Document, String, String)</a></span> - Static method in class cafe.string.<a href="./cafe/string/XMLUtils.html" title="class in cafe.string">XMLUtils</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/jpeg/JPEGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.adobe.XMP)">insertXMP(InputStream, OutputStream, XMP)</a></span> - Static method in class cafe.image.jpeg.<a href="./cafe/image/jpeg/JPEGTweaker.html" title="class in cafe.image.jpeg">JPEGTweaker</a></dt>
+<dd>
+<div class="block">Insert a XMP instance into the image.</div>
+</dd>
 <dt><span class="strong"><a href="./cafe/image/jpeg/JPEGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String,%20java.lang.String)">insertXMP(InputStream, OutputStream, String, String)</a></span> - Static method in class cafe.image.jpeg.<a href="./cafe/image/jpeg/JPEGTweaker.html" title="class in cafe.image.jpeg">JPEGTweaker</a></dt>
 <dd>
 <div class="block">Insert a XMP string into the image.</div>
 </dd>
+<dt><span class="strong"><a href="./cafe/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.adobe.XMP)">insertXMP(InputStream, OutputStream, XMP)</a></span> - Static method in class cafe.image.meta.<a href="./cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertXMP(InputStream, OutputStream, String)</a></span> - Static method in class cafe.image.meta.<a href="./cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/png/PNGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.adobe.XMP)">insertXMP(InputStream, OutputStream, XMP)</a></span> - Static method in class cafe.image.png.<a href="./cafe/image/png/PNGTweaker.html" title="class in cafe.image.png">PNGTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/png/PNGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.png.TextualChunk)">insertXMP(InputStream, OutputStream, TextualChunk)</a></span> - Static method in class cafe.image.png.<a href="./cafe/image/png/PNGTweaker.html" title="class in cafe.image.png">PNGTweaker</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/png/PNGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertXMP(InputStream, OutputStream, String)</a></span> - Static method in class cafe.image.png.<a href="./cafe/image/png/PNGTweaker.html" title="class in cafe.image.png">PNGTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/tiff/TIFFTweaker.html#insertXMP(cafe.image.meta.adobe.XMP,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertXMP(XMP, RandomAccessInputStream, RandomAccessOutputStream)</a></span> - Static method in class cafe.image.tiff.<a href="./cafe/image/tiff/TIFFTweaker.html" title="class in cafe.image.tiff">TIFFTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/tiff/TIFFTweaker.html#insertXMP(cafe.image.meta.adobe.XMP,%20int,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertXMP(XMP, int, RandomAccessInputStream, RandomAccessOutputStream)</a></span> - Static method in class cafe.image.tiff.<a href="./cafe/image/tiff/TIFFTweaker.html" title="class in cafe.image.tiff">TIFFTweaker</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/tiff/TIFFTweaker.html#insertXMP(byte[],%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertXMP(byte[], RandomAccessInputStream, RandomAccessOutputStream)</a></span> - Static method in class cafe.image.tiff.<a href="./cafe/image/tiff/TIFFTweaker.html" title="class in cafe.image.tiff">TIFFTweaker</a></dt>
 <dd>&nbsp;</dd>
@@ -3092,6 +3110,8 @@
 <div class="block">Insert XMP data into TIFF image</div>
 </dd>
 <dt><span class="strong"><a href="./cafe/image/tiff/TIFFTweaker.html#insertXMP(java.lang.String,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertXMP(String, RandomAccessInputStream, RandomAccessOutputStream)</a></span> - Static method in class cafe.image.tiff.<a href="./cafe/image/tiff/TIFFTweaker.html" title="class in cafe.image.tiff">TIFFTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/gif/GIFTweaker.html#insertXMPApplicationBlock(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.adobe.XMP)">insertXMPApplicationBlock(InputStream, OutputStream, XMP)</a></span> - Static method in class cafe.image.gif.<a href="./cafe/image/gif/GIFTweaker.html" title="class in cafe.image.gif">GIFTweaker</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFTweaker.html#insertXMPApplicationBlock(java.io.InputStream,%20java.io.OutputStream,%20byte[])">insertXMPApplicationBlock(InputStream, OutputStream, byte[])</a></span> - Static method in class cafe.image.gif.<a href="./cafe/image/gif/GIFTweaker.html" title="class in cafe.image.gif">GIFTweaker</a></dt>
 <dd>&nbsp;</dd>
@@ -5720,6 +5740,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/png/TextualChunk.html#TextualChunk(cafe.image.png.Chunk)">TextualChunk(Chunk)</a></span> - Constructor for class cafe.image.meta.png.<a href="./cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/meta/png/TextualChunk.html#TextualChunk(cafe.image.png.ChunkType,%20java.lang.String,%20java.lang.String)">TextualChunk(ChunkType, String, String)</a></span> - Constructor for class cafe.image.meta.png.<a href="./cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="./cafe/image/meta/png/TextualChunkReader.html" title="class in cafe.image.meta.png"><span class="strong">TextualChunkReader</span></a> - Class in <a href="./cafe/image/meta/png/package-summary.html">cafe.image.meta.png</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/png/TextualChunkReader.html#TextualChunkReader(cafe.image.png.Chunk)">TextualChunkReader(Chunk)</a></span> - Constructor for class cafe.image.meta.png.<a href="./cafe/image/meta/png/TextualChunkReader.html" title="class in cafe.image.meta.png">TextualChunkReader</a></dt>
@@ -6513,6 +6535,8 @@ the order they are declared.</div>
 <dd>
 <div class="block">Writes the metadata out to the output stream</div>
 </dd>
+<dt><span class="strong"><a href="./cafe/image/meta/png/TextualChunk.html#write(java.io.OutputStream)">write(OutputStream)</a></span> - Method in class cafe.image.meta.png.<a href="./cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/Thumbnail.html#write(java.io.OutputStream)">write(OutputStream)</a></span> - Method in class cafe.image.meta.<a href="./cafe/image/meta/Thumbnail.html" title="class in cafe.image.meta">Thumbnail</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/png/Chunk.html#write(java.io.OutputStream)">write(OutputStream)</a></span> - Method in class cafe.image.png.<a href="./cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a></dt>

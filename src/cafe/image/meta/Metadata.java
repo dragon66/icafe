@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    16Apr2015  Changed insertIRB() parameter List to Collection
  * WY    03Mar2015  Added insertXMP()
  * WY    03Feb2015  Added insertExif()
@@ -45,6 +46,7 @@ import cafe.image.ImageType;
 import cafe.image.bmp.BMPTweaker;
 import cafe.image.gif.GIFTweaker;
 import cafe.image.jpeg.JPEGTweaker;
+import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
 import cafe.image.meta.iptc.IPTCDataSet;
@@ -276,6 +278,39 @@ public abstract class Metadata {
 		}		
 	}
 	
+	public static void insertXMP(InputStream is, OutputStream out, XMP xmp) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
+		// Delegate XMP inserting to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.insertXMP(pushbackStream, out, xmp); // No ExtendedXMP
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
+				TIFFTweaker.insertXMP(xmp, randIS, randOS);
+				randIS.close();
+				randOS.close();
+				break;
+			case PNG:
+				PNGTweaker.insertXMP(pushbackStream, out, xmp);
+				break;
+			case GIF:
+				GIFTweaker.insertXMPApplicationBlock(pushbackStream, out, xmp);
+				break;
+			case PCX:
+			case TGA:
+			case BMP:
+				LOGGER.info("{} image format does not support XMP data", imageType);
+				break;
+			default:
+				pushbackStream.close();
+				throw new IllegalArgumentException("XMP inserting is not supported for " + imageType + " image");				
+		}		
+	}
+	
 	public static void insertXMP(InputStream is, OutputStream out, String xmp) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
@@ -425,6 +460,6 @@ public abstract class Metadata {
 	 * @throws IOException
 	 */
 	public void write(OutputStream out) throws IOException {
-		out.write(data);
+		out.write(getData());
 	}	
 }

@@ -1,6 +1,7 @@
 ***************************
-Last modified on 07/05/2015
+Last modified on 07/06/2015
 ***************************
+06Jul2015  Added insertXMP(InputStream, OutputStream, XMP)
 05Jul2015  Added support or PNG Textual chunk
 03Jul2015  Removed NativeMetadata and related code
 03Jul2015  Removed generic type from ImageOptions

@@ -55,10 +55,13 @@ public class XMP extends Metadata {
 	}
 	
 	public byte[] getData() {
+		byte[] data = super.getData();
+		if(data != null && !hasExtendedXmp)
+			return data;
 		try {
 			return XMLUtils.serializeToByteArray(getMergedDocument());
 		} catch (IOException e) {
-			return super.getData();
+			return null;
 		}
 	}
 	

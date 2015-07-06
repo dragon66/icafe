@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================================
+ * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP) 
  * WY    24Jun2015  Renamed splitFramesEx2() to splitAnimatedGIF()
  * WY    30Mar2015  Fixed bug with insertXMP() replacing '\0' with ' '
  * WY    12Mar2015  Cleaned up debugging console output
@@ -161,6 +162,10 @@ public class GIFTweaker {
 		os.close();
 		
 		return true;
+	}
+	
+	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, XMP xmp) throws IOException {
+		insertXMPApplicationBlock(is, os, xmp.getData());
 	}
 	
 	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, byte[] xmp) throws IOException {

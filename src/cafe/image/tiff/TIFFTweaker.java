@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    21Jun2015  Removed copyright notice from generated TIFF images
  * WY    15Apr2015  Changed the argument type for insertIPTC() and insertIRB()
  * WY    07Apr2015  Merge Adobe IPTC and TIFF IPTC if both exist
@@ -1704,6 +1705,14 @@ public class TIFFTweaker {
 		int firstIFDOffset = newList.get(0).getStartOffset();
 		// And write the IFDs
 		writeToStream(output, firstIFDOffset); // DONE!	
+	}
+	
+	public static void insertXMP(XMP xmp, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		insertXMP(xmp.getData(), rin, rout);
+	}
+	
+	public static void insertXMP(XMP xmp, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		insertXMP(xmp.getData(), pageNumber, rin, rout);
 	}
 	
 	public static void insertXMP(byte[] xmp, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {

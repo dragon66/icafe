@@ -60,7 +60,8 @@ public class TestMetadata extends TestBase {
 			fin = new FileInputStream("images/1.jpg");
 			fout = new FileOutputStream("1-xmp-inserted.jpg");
 			if(!xmp.hasExtendedXmp())
-				Metadata.insertXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()));
+				Metadata.insertXMP(fin, fout, xmp);
+				//Metadata.insertXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()));
 			else {
 				Document extendedXmpDoc = xmp.getExtendedXmpDocument();
 				JPEGTweaker.insertXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()), XMLUtils.serializeToStringLS(extendedXmpDoc));

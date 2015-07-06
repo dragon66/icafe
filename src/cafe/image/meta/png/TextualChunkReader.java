@@ -38,8 +38,8 @@ public class TextualChunkReader extends TextReader implements MetadataReader {
 	@Override
 	public void showMetadata() {
 		LOGGER.info("PNG textual chunk starts =>");
-		LOGGER.info("Key word: {}", getKeyword());
-		LOGGER.info("Text: {}", getKeyword().equals("XML:com.adobe.xmp")?"":getText());
+		LOGGER.info("Keyword: {}", getKeyword());
+		LOGGER.info("Text: {}", getKeyword().equals("XML:com.adobe.xmp")?"XMP data skipped ...":getText());
 		LOGGER.info("PNG textual chunk ends <=");
 	}
 

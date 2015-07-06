@@ -48,7 +48,7 @@ public class TestPNGTweaker extends TestBase {
         FileInputStream fi = new FileInputStream(args[0]);
         FileOutputStream fo = new FileOutputStream("NEW.png");
         
-        PNGTweaker.insertChunks(chunks,	fi, fo);
+        PNGTweaker.insertChunks(fi,	fo, chunks);
         
         fi.close();
         fo.close();

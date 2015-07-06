@@ -134,9 +134,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/png/PNGTweaker.html#insertChunks(cafe.image.png.Chunk[],%20java.io.InputStream,%20java.io.OutputStream)">insertChunks</a></strong>(<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>[]&nbsp;chunks,
-            java.io.InputStream&nbsp;is,
-            java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/PNGTweaker.html#insertChunks(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.png.Chunk...)">insertChunks</a></strong>(java.io.InputStream&nbsp;is,
+            java.io.OutputStream&nbsp;os,
+            <a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>...&nbsp;chunks)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
@@ -163,6 +163,18 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../../cafe/image/png/PNGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
          java.io.OutputStream&nbsp;os,
          java.lang.String&nbsp;xmp)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/PNGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.png.TextualChunk)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
+         java.io.OutputStream&nbsp;os,
+         <a href="../../../cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a>&nbsp;xmp)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/PNGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.adobe.XMP)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
+         java.io.OutputStream&nbsp;os,
+         <a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.util.List&lt;<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&gt;</code></td>
@@ -303,15 +315,15 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="insertChunks(cafe.image.png.Chunk[], java.io.InputStream, java.io.OutputStream)">
+<a name="insertChunks(java.io.InputStream, java.io.OutputStream, cafe.image.png.Chunk...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>insertChunks</h4>
-<pre>public static&nbsp;void&nbsp;insertChunks(<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>[]&nbsp;chunks,
-                java.io.InputStream&nbsp;is,
-                java.io.OutputStream&nbsp;os)
+<pre>public static&nbsp;void&nbsp;insertChunks(java.io.InputStream&nbsp;is,
+                java.io.OutputStream&nbsp;os,
+                <a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>...&nbsp;chunks)
                          throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
@@ -357,6 +369,34 @@ extends java.lang.Object</pre>
                     java.io.InputStream&nbsp;is,
                     java.io.OutputStream&nbsp;os)
                              throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertXMP(java.io.InputStream, java.io.OutputStream, cafe.image.meta.adobe.XMP)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertXMP</h4>
+<pre>public static&nbsp;void&nbsp;insertXMP(java.io.InputStream&nbsp;is,
+             java.io.OutputStream&nbsp;os,
+             <a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp)
+                      throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertXMP(java.io.InputStream, java.io.OutputStream, cafe.image.meta.png.TextualChunk)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertXMP</h4>
+<pre>public static&nbsp;void&nbsp;insertXMP(java.io.InputStream&nbsp;is,
+             java.io.OutputStream&nbsp;os,
+             <a href="../../../cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a>&nbsp;xmp)
+                      throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
