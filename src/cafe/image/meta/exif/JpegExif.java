@@ -66,6 +66,7 @@ public class JpegExif extends Exif {
 	 */
 	@Override
 	public void write(OutputStream os) throws IOException {
+		ensureDataRead();
 		// Wraps output stream with a RandomAccessOutputStream
 		RandomAccessOutputStream randOS = new MemoryCacheRandomAccessOutputStream(os);
 		// Write JPEG the EXIF data

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -35,21 +36,17 @@ import cafe.image.meta.MetadataType;
 import cafe.io.IOUtils;
 
 public class IPTC extends Metadata {
-	private IPTCReader reader;
-	private Map<String, List<IPTCDataSet>> datasetMap;
-	
-	public static void showIPTC(byte[] iptc) {
-		if(iptc != null && iptc.length > 0) {
-			IPTCReader reader = new IPTCReader(iptc);
+	public static void showIPTC(byte[] data) {
+		if(data != null && data.length > 0) {
+			IPTC iptc = new IPTC(data);
 			try {
-				reader.read();
-				reader.showMetadata();
+				iptc.read();
+				iptc.showMetadata();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
 	public static void showIPTC(InputStream is) {
 		try {
 			showIPTC(IOUtils.inputStreamToByteArray(is));
@@ -58,14 +55,16 @@ public class IPTC extends Metadata {
 		}
 	}
 	
+	private Map<String, List<IPTCDataSet>> datasetMap;
+	
 	public IPTC() {
 		super(MetadataType.IPTC, null);
 		datasetMap =  new HashMap<String, List<IPTCDataSet>>();
+		isDataRead = true;
 	}
 	
 	public IPTC(byte[] data) {
 		super(MetadataType.IPTC, data);
-		reader = new IPTCReader(data);
 	}
 	
 	public void addDataSet(IPTCDataSet dataSet) {
@@ -114,17 +113,6 @@ public class IPTC extends Metadata {
 	}
 	
 	/**
-	 * Get all the IPTCDataSet as a map for this IPTC data
-	 * 
-	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
-	 */
-	public Map<String, List<IPTCDataSet>> getDataSets() {
-		if(datasetMap != null)
-			return datasetMap;
-		return reader.getDataSets();
-	}
-	
-	/**
 	 * Get a list of IPTCDataSet associated with a key
 	 * 
 	 * @param key name of the data set
@@ -134,21 +122,61 @@ public class IPTC extends Metadata {
 		return getDataSets().get(key);
 	}
 	
-	public IPTCReader getReader() {
-		return reader;
+	/**
+	 * Get all the IPTCDataSet as a map for this IPTC data
+	 * 
+	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
+	 */
+	public Map<String, List<IPTCDataSet>> getDataSets() {
+		ensureDataRead();
+		return datasetMap;
+	}
+	
+	@Override
+	public void read() throws IOException {
+		if(!isDataRead) {
+			int i = 0;
+			int tagMarker = data[i];
+			datasetMap = new HashMap<String, List<IPTCDataSet>>();
+			while (tagMarker == 0x1c) {
+				i++;
+				int recordNumber = data[i++]&0xff;
+				int tag = data[i++]&0xff;
+				int recordSize = IOUtils.readUnsignedShortMM(data, i);
+				i += 2;
+				IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, data, i);
+				String name = dataSet.getName();
+				if(datasetMap.get(name) == null) {
+					List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
+					list.add(dataSet);
+					datasetMap.put(name, list);
+				} else
+					datasetMap.get(name).add(dataSet);
+				i += recordSize;
+				// Sanity check
+				if(i >= data.length) break;	
+				tagMarker = data[i];							
+			}
+			// Remove possible duplicates
+			for (Map.Entry<String, List<IPTCDataSet>> entry : datasetMap.entrySet()){
+			    entry.setValue(new ArrayList<IPTCDataSet>(new HashSet<IPTCDataSet>(entry.getValue())));
+			}
+			
+			isDataRead = true;
+		}
 	}
 	
 	public void showMetadata() {
+		ensureDataRead();
 		if(datasetMap != null){
 			// Print multiple entry IPTCDataSet
 			for(List<IPTCDataSet> iptcs : datasetMap.values()) {
 				for(IPTCDataSet iptc : iptcs)
 					iptc.print();
 			}
-		} else
-			super.showMetadata();
+		}
 	}
-	
+
 	public void write(OutputStream os) throws IOException {
 		for(List<IPTCDataSet> datasets : getDataSets().values())
 			for(IPTCDataSet dataset : datasets)

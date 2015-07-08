@@ -59,13 +59,13 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -92,13 +92,18 @@
 <ul class="blockList">
 <li class="blockList">
 <dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a>, <a href="../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></dd>
+</dl>
+<dl>
 <dt>Direct Known Subclasses:</dt>
 <dd><a href="../../../cafe/image/meta/jpeg/APP12Segment.html" title="class in cafe.image.meta.jpeg">APP12Segment</a>, <a href="../../../cafe/image/meta/jpeg/APP14Segment.html" title="class in cafe.image.meta.jpeg">APP14Segment</a>, <a href="../../../cafe/image/meta/image/Comment.html" title="class in cafe.image.meta.image">Comment</a>, <a href="../../../cafe/image/meta/exif/Exif.html" title="class in cafe.image.meta.exif">Exif</a>, <a href="../../../cafe/image/meta/icc/ICCProfile.html" title="class in cafe.image.meta.icc">ICCProfile</a>, <a href="../../../cafe/image/meta/image/ImageMetadata.html" title="class in cafe.image.meta.image">ImageMetadata</a>, <a href="../../../cafe/image/meta/iptc/IPTC.html" title="class in cafe.image.meta.iptc">IPTC</a>, <a href="../../../cafe/image/meta/adobe/IRB.html" title="class in cafe.image.meta.adobe">IRB</a>, <a href="../../../cafe/image/meta/png/TextualChunk.html" title="class in cafe.image.meta.png">TextualChunk</a>, <a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public abstract class <span class="strong">Metadata</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements <a href="../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a></pre>
 <div class="block">Base class for image metadata.</div>
 <dl><dt><span class="strong">Version:</span></dt>
   <dd>1.0 01/12/2015</dd>
@@ -110,6 +115,33 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#data">data</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#IMAGE_MAGIC_NUMBER_LEN">IMAGE_MAGIC_NUMBER_LEN</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#isDataRead">isDataRead</a></strong></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_summary">
@@ -141,27 +173,27 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#ensureDataRead()">ensureDataRead</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#extractThumbnails(java.io.File,%20java.lang.String)">extractThumbnails</a></strong>(java.io.File&nbsp;image,
                  java.lang.String&nbsp;pathToThumbnail)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#extractThumbnails(java.io.InputStream,%20java.lang.String)">extractThumbnails</a></strong>(java.io.InputStream&nbsp;is,
                  java.lang.String&nbsp;pathToThumbnail)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#extractThumbnails(java.lang.String,%20java.lang.String)">extractThumbnails</a></strong>(java.lang.String&nbsp;image,
                  java.lang.String&nbsp;pathToThumbnail)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#getData()">getData</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>abstract <a href="../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a></code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#getReader()">getReader</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a></code></td>
@@ -237,20 +269,24 @@ extends java.lang.Object</pre>
          <a href="../../../cafe/image/meta/adobe/XMP.html" title="class in cafe.image.meta.adobe">XMP</a>&nbsp;xmp)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#isDataRead()">isDataRead</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>,<a href="../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#readMetadata(java.io.File)">readMetadata</a></strong>(java.io.File&nbsp;image)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>,<a href="../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#readMetadata(java.io.InputStream)">readMetadata</a></strong>(java.io.InputStream&nbsp;is)</code>
 <div class="block">Reads all metadata associated with the input image</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>,<a href="../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#readMetadata(java.lang.String)">readMetadata</a></strong>(java.lang.String&nbsp;image)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#removeMetadata(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.MetadataType...)">removeMetadata</a></strong>(java.io.InputStream&nbsp;is,
               java.io.OutputStream&nbsp;os,
@@ -258,11 +294,11 @@ extends java.lang.Object</pre>
 <div class="block">Remove meta data from image</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
+<tr class="altColor">
+<td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#showMetadata()">showMetadata</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#write(java.io.OutputStream)">write</a></strong>(java.io.OutputStream&nbsp;out)</code>
 <div class="block">Writes the metadata out to the output stream</div>
@@ -276,6 +312,13 @@ extends java.lang.Object</pre>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
 <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_cafe.util.Reader">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;cafe.util.<a href="../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></h3>
+<code><a href="../../../cafe/util/Reader.html#read()">read</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
@@ -284,6 +327,42 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="IMAGE_MAGIC_NUMBER_LEN">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>IMAGE_MAGIC_NUMBER_LEN</h4>
+<pre>public static final&nbsp;int IMAGE_MAGIC_NUMBER_LEN</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#cafe.image.meta.Metadata.IMAGE_MAGIC_NUMBER_LEN">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="data">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>data</h4>
+<pre>protected&nbsp;byte[] data</pre>
+</li>
+</ul>
+<a name="isDataRead">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isDataRead</h4>
+<pre>protected&nbsp;boolean isDataRead</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_detail">
@@ -560,6 +639,15 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
+<a name="ensureDataRead()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureDataRead</h4>
+<pre>protected&nbsp;void&nbsp;ensureDataRead()</pre>
+</li>
+</ul>
 <a name="getData()">
 <!--   -->
 </a>
@@ -567,15 +655,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getData</h4>
 <pre>public&nbsp;byte[]&nbsp;getData()</pre>
-</li>
-</ul>
-<a name="getReader()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getReader</h4>
-<pre>public abstract&nbsp;<a href="../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a>&nbsp;getReader()</pre>
 </li>
 </ul>
 <a name="getType()">
@@ -587,13 +666,30 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>&nbsp;getType()</pre>
 </li>
 </ul>
+<a name="isDataRead()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isDataRead</h4>
+<pre>public&nbsp;boolean&nbsp;isDataRead()</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../cafe/image/meta/MetadataReader.html#isDataRead()">isDataRead</a></code>&nbsp;in interface&nbsp;<code><a href="../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="showMetadata()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>showMetadata</h4>
-<pre>public&nbsp;void&nbsp;showMetadata()</pre>
+<pre>public abstract&nbsp;void&nbsp;showMetadata()</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../cafe/image/meta/MetadataReader.html#showMetadata()">showMetadata</a></code>&nbsp;in interface&nbsp;<code><a href="../../../cafe/image/meta/MetadataReader.html" title="interface in cafe.image.meta">MetadataReader</a></code></dd>
+</dl>
 </li>
 </ul>
 <a name="write(java.io.OutputStream)">
@@ -661,13 +757,13 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>

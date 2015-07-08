@@ -41,6 +41,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cafe.image.meta.Metadata;
+import cafe.image.meta.MetadataType;
 import cafe.image.ImageIO;
 import cafe.image.ImageType;
 import cafe.image.bmp.BMPTweaker;
@@ -64,13 +66,15 @@ import cafe.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/12/2015
  */
-public abstract class Metadata {
+public abstract class Metadata implements MetadataReader {
+	public static final int IMAGE_MAGIC_NUMBER_LEN = 4;
 	// Fields
 	private MetadataType type;
-	private byte[] data;
+	protected byte[] data;
+	protected boolean isDataRead;
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);		
 	
 	public static void  extractThumbnails(File image, String pathToThumbnail) throws IOException {
 		FileInputStream fin = new FileInputStream(image);
@@ -437,21 +441,33 @@ public abstract class Metadata {
 		this.data = data;
 	}
 	
-	public byte[] getData() {
-		return data;
+	protected void ensureDataRead() {
+		if(!isDataRead) {
+			try {
+				read();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}			
+		}
 	}
 	
-	public abstract MetadataReader getReader();
+	public byte[] getData() {
+		if(data != null)
+			return data.clone();
+		
+		return null;
+	}
 	
 	public MetadataType getType() {
 		return type;
 	}
 	
-	public void showMetadata() {
-		MetadataReader reader = getReader();
-		if(reader != null)
-			reader.showMetadata();
+	@Override
+	public boolean isDataRead() {
+		return isDataRead;
 	}
+	
+	public abstract void showMetadata();
 	
 	/**
 	 * Writes the metadata out to the output stream

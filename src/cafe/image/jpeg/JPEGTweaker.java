@@ -88,14 +88,12 @@ import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.Thumbnail;
 import cafe.image.meta.adobe.IRB;
-import cafe.image.meta.adobe.IRBReader;
 import cafe.image.meta.adobe.IRBThumbnail;
 import cafe.image.meta.adobe.ImageResourceID;
 import cafe.image.meta.adobe.ThumbnailResource;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.adobe._8BIM;
 import cafe.image.meta.exif.Exif;
-import cafe.image.meta.exif.ExifReader;
 import cafe.image.meta.exif.ExifThumbnail;
 import cafe.image.meta.exif.JpegExif;
 import cafe.image.meta.icc.ICCProfile;
@@ -1460,22 +1458,20 @@ public class JPEGTweaker {
 		Metadata meta = metadataMap.get(MetadataType.EXIF);
 		if(meta != null) {
 			Exif exif = (Exif)meta;
-			ExifReader reader = exif.getReader();
-			if(!reader.isDataLoaded())
-				reader.read();
-			if(reader.containsThumbnail()) {
-				thumbnails.put("EXIF", reader.getThumbnail());
+			if(!exif.isDataRead())
+				exif.read();
+			if(exif.containsThumbnail()) {
+				thumbnails.put("EXIF", exif.getThumbnail());
 			}
 		}
 		
 		meta = metadataMap.get(MetadataType.PHOTOSHOP);
 		if(meta != null) {
 			IRB irb = (IRB)meta;
-			IRBReader reader = irb.getReader();
-			if(!reader.isDataLoaded())
-				reader.read();
-			if(reader.containsThumbnail()) {
-				thumbnails.put("PHOTOSHOP", reader.getThumbnail());
+			if(!irb.isDataRead())
+				irb.read();
+			if(irb.containsThumbnail()) {
+				thumbnails.put("PHOTOSHOP", irb.getThumbnail());
 			}
 		}
 		

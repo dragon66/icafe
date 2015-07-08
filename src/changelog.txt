@@ -1,6 +1,8 @@
 ***************************
-Last modified on 07/06/2015
+Last modified on 07/08/2015
 ***************************
+08Jul2015  Made Metadata implements MetadataReader directly
+08Jul2015  Removed unnecessary separate MetadataReader implementations
 06Jul2015  Added insertXMP(InputStream, OutputStream, XMP)
 05Jul2015  Added support or PNG Textual chunk
 03Jul2015  Removed NativeMetadata and related code

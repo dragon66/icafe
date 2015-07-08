@@ -21,25 +21,32 @@ package cafe.image.meta.jpeg;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import cafe.io.IOUtils;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 
 public class APP12Segment extends Metadata {
 
-	private APP12SegmentReader reader;
 	private Map<APP12Tag, APP12DataSet> datasetMap;
 	
+	// Obtain a logger instance
+	private static final Logger LOGGER = LoggerFactory.getLogger(APP12Segment.class);
+		
 	public APP12Segment() {
 		super(MetadataType.JPG_APP12, null);
 		datasetMap =  new EnumMap<APP12Tag, APP12DataSet>(APP12Tag.class);
+		isDataRead = true;
 	}
 	
 	public APP12Segment(byte[] data) {
 		super(MetadataType.JPG_APP12, data);
-		this.reader = new APP12SegmentReader(data);
 	}
 	
 	public void addDataSet(APP12DataSet dataSet) {
@@ -57,27 +64,43 @@ public class APP12Segment extends Metadata {
 	}
 	
 	public Map<APP12Tag, APP12DataSet> getDataSets() {
-		if(datasetMap != null)
-			return datasetMap;
-		return reader.getDataSets();
-	}
-
-	@Override
-	public APP12SegmentReader getReader() {
-		return reader;
+		ensureDataRead();
+		return Collections.unmodifiableMap(datasetMap);
 	}
 	
-	public void showMetadata() {
-		if(datasetMap != null){
-			// Print APP12DataSet
-			for(APP12DataSet dataSet : datasetMap.values()) {
-				dataSet.print();
+	@Override
+	public void read() throws IOException {
+		if(!isDataRead) {
+			int i = 0;
+			datasetMap = new EnumMap<APP12Tag, APP12DataSet>(APP12Tag.class);
+			
+			for(;;) {
+				if(i + 4 > data.length) break;
+				int tag = IOUtils.readUnsignedShortMM(data, i);
+				i += 2;
+				int size = IOUtils.readUnsignedShortMM(data, i);
+				i += 2;
+				APP12Tag etag = APP12Tag.fromTag(tag);
+				datasetMap.put(etag, new APP12DataSet(tag, size, data, i));
+				i += size;
 			}
-		} else
-			super.showMetadata();
+			
+		    isDataRead = true;
+		}
+	}
+
+	public void showMetadata() {
+		ensureDataRead();
+		LOGGER.info("JPEG APP12Segment output starts =>");
+		// Print APP12DataSet
+		for(APP12DataSet dataset : datasetMap.values()) {
+			dataset.print();
+		}
+		LOGGER.info("<= JPEG APP12Segment output ends");
 	}
 	
 	public void write(OutputStream os) throws IOException {
+		ensureDataRead();
 		for(APP12DataSet dataset : getDataSets().values())
 			dataset.write(os);
 	}

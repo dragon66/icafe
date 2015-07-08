@@ -37,21 +37,22 @@ import cafe.string.XMLUtils;
 
 public class XMP extends Metadata {
 	// Fields
-	private XMPReader reader;
 	private Document xmpDocument;
 	private Document extendedXmpDocument;
+	//document contains the complete XML as a Tree.
 	private Document mergedXmpDocument;
 	private boolean hasExtendedXmp;
 	private byte[] extendedXmpData;
+	
+	private String xmp;
 		
 	public XMP(byte[] data) {
 		super(MetadataType.XMP, data);
-		reader = new XMPReader(data);
 	}
 	
 	public XMP(String xmp) {
 		super(MetadataType.XMP, null);
-		reader = new XMPReader(xmp);
+		this.xmp = xmp;
 	}
 	
 	public byte[] getData() {
@@ -74,23 +75,6 @@ public class XMP extends Metadata {
 			extendedXmpDocument = XMLUtils.createXML(extendedXmpData);
 
 		return extendedXmpDocument;
-	}
-	
-	public Document getXmpDocument() {
-		if(xmpDocument != null){
-			return xmpDocument;
-		}
-		
-		return reader.getXmpDocument();		
-	}
-	
-	@Override
-	public XMPReader getReader() {
-		return reader;
-	}
-	
-	public boolean hasExtendedXmp() {
-		return hasExtendedXmp;
 	}
 	
 	/**
@@ -126,12 +110,34 @@ public class XMP extends Metadata {
 			return getXmpDocument();
 	}
 	
+	public Document getXmpDocument() {
+		ensureDataRead();		
+		return xmpDocument;
+	}
+	
+	public boolean hasExtendedXmp() {
+		return hasExtendedXmp;
+	}
+	
+	@Override
+	public void read() throws IOException {
+		if(!isDataRead) {
+			if(xmp != null)
+				xmpDocument = XMLUtils.createXML(xmp);
+			else if(data != null)
+				xmpDocument = XMLUtils.createXML(data);
+			
+			isDataRead = true;
+		}
+	}
+	
 	public void setExtendedXMPData(byte[] extendedXmpData) {
 		this.extendedXmpData = extendedXmpData;
 		hasExtendedXmp = true;
 	}
 	
 	public void showMetadata() {
-		XMLUtils.printNode(getMergedDocument(), "");
-	}
+		ensureDataRead();
+		XMLUtils.showXML(getMergedDocument());
+	}	
 }
