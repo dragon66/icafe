@@ -26,12 +26,19 @@ public class SRGBReader implements Reader {
 	private byte renderingIntent;
 	
 	public SRGBReader(Chunk chunk) {
-		//
+		if(chunk == null) throw new IllegalArgumentException("Input chunk is null");
+		
 		if (chunk.getChunkType() != ChunkType.SRGB) {
 			throw new IllegalArgumentException("Not a valid sRGB chunk.");
 		}
 		
 		this.chunk = chunk;
+		
+		try {
+			read();
+		} catch (IOException e) {
+			throw new RuntimeException("SRGBReader: error reading chunk");
+		}
 	}
 	
 	/**

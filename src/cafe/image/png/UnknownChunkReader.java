@@ -11,6 +11,7 @@
 package cafe.image.png;
 
 import java.io.IOException;
+
 import cafe.util.Reader;
 
 /**
@@ -25,9 +26,16 @@ public class UnknownChunkReader implements Reader {
 	private byte[] data;
 	private Chunk chunk;
 		
-	public UnknownChunkReader(Chunk chunk) throws IOException {
+	public UnknownChunkReader(Chunk chunk) {
+		if(chunk == null) throw new IllegalArgumentException("Input chunk is null");
+		
 		this.chunk = chunk;
-		read();
+		
+		try {
+			read();
+		} catch (IOException e) {
+			throw new RuntimeException("UnknownChunkReader: error reading chunk");
+		}
 	}
 	
 	public int getChunkValue() {
@@ -38,8 +46,7 @@ public class UnknownChunkReader implements Reader {
 		return data;
 	}
 	
-	public void read() throws IOException
-    {       
+	public void read() throws IOException {       
    		if (chunk instanceof UnknownChunk) {
    			UnknownChunk unknownChunk = (UnknownChunk)chunk;
    			this.chunkValue = unknownChunk.getChunkValue();

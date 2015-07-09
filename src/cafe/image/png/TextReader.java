@@ -25,14 +25,17 @@ import cafe.util.Reader;
  * @version 1.0 01/01/2013
  */
 public class TextReader implements Reader {
-
+	//
 	private String keyword;
 	private String text;
 	private Chunk chunk;
-		
-	public TextReader(Chunk chunk) throws IOException {
-		this.chunk = chunk;
-		read();
+	
+	public TextReader() {
+		; // Default constructor
+	}
+	
+	public TextReader(Chunk chunk) {
+		setInput(chunk);
 	}
 	
 	public String getKeyword() {
@@ -44,13 +47,11 @@ public class TextReader implements Reader {
 	}
 	
 	// Read text chunks to a String
-   	public void read() throws IOException
-    {       
+   	public void read() throws IOException {       
    		StringBuilder sb = new StringBuilder(1024);
    		byte[] data = chunk.getData();
    		
-        switch (chunk.getChunkType())
-        {
+        switch (chunk.getChunkType()) {
 		   case ZTXT:
 		   {   					  
 			   int keyword_len = 0;
@@ -69,7 +70,6 @@ public class TextReader implements Reader {
 	
                break;
            }
-
 		   case TEXT:
 		   {
 			   int keyword_len = 0;			   
@@ -79,7 +79,6 @@ public class TextReader implements Reader {
 			
                break;
 		   }
-
 		   case ITXT:
            {
 			   // System.setOut(new PrintStream(new File("TextChunk.txt"),"UTF-8"));
@@ -118,8 +117,7 @@ public class TextReader implements Reader {
 			   
 			   sb.setLength(0); // Reset StringBuilder
 			   /////////////////////// End of key.
-			   if(compr) //Compressed text
-			   {
+			   if(compr) {//Compressed text
 				   InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(data,keyword_len+1, data.length-keyword_len-1));
 				   InputStreamReader ir = new InputStreamReader(ii,"UTF-8");
 				   BufferedReader br = new BufferedReader(ir);                       
@@ -131,9 +129,7 @@ public class TextReader implements Reader {
 				   }
 				  
 				   br.close();
-			   }
-			   else //Uncompressed text
-			   {
+			   } else { //Uncompressed text
 				   sb.append(new String(data,keyword_len+1,data.length-keyword_len-1,"UTF-8"));
 				   sb.append("\n");
 			   }
@@ -144,10 +140,27 @@ public class TextReader implements Reader {
 		   }			   
 
            default:
-           {
                throw new IllegalArgumentException("Not a valid textual chunk.");
-           }           
         }
         this.text = sb.toString();
      }
+   	
+   	public void setInput(Chunk chunk) {
+   		validate(chunk);		
+		this.chunk = chunk;
+		try {
+			read();
+		} catch (IOException e) {
+			throw new RuntimeException("TextReader: error reading chunk");
+		}
+   	}
+   	
+   	private static void validate(Chunk chunk) {
+   		if(chunk == null) throw new IllegalArgumentException("Input chunk is null");
+		
+		if (chunk.getChunkType() != ChunkType.TEXT && chunk.getChunkType() != ChunkType.ZTXT &&
+				chunk.getChunkType() != ChunkType.ITXT) {
+			throw new IllegalArgumentException("Not a valid textual chunk.");
+		}
+   	}
 }

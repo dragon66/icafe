@@ -1,6 +1,8 @@
 ***************************
-Last modified on 07/08/2015
+Last modified on 07/09/2015
 ***************************
+09Jul2015  Rewrote TextualChunks to work with multiple textual chunks
+09Jul2015  Added Metadata support for PNG tIME chunk 
 08Jul2015  Made Metadata implements MetadataReader directly
 08Jul2015  Removed unnecessary separate MetadataReader implementations
 06Jul2015  Added insertXMP(InputStream, OutputStream, XMP)

@@ -32,14 +32,20 @@ public class IHDRReader implements Reader {
 	private byte interlaceMethod = 0;
 	private Chunk chunk;
 	
-	public IHDRReader(Chunk chunk) throws IOException {
+	public IHDRReader(Chunk chunk) {
+		if(chunk == null) throw new IllegalArgumentException("Input chunk is null");
 		
 		if (chunk.getChunkType() != ChunkType.IHDR) {
 			throw new IllegalArgumentException("Not a valid IHDR chunk.");
 		}
 		
 		this.chunk = chunk;
-		read();
+		
+		try {
+			read();
+		} catch (IOException e) {
+			throw new RuntimeException("IHDRReader: error reading chunk");
+		}
 	}
 	
 	public int getWidth() { return width; }

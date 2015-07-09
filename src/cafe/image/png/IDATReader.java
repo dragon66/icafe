@@ -42,13 +42,19 @@ public class IDATReader implements Reader {
 		byteOutput = new ByteArrayOutputStream(bufLen);
 	}
 	
-	public IDATReader addChunk(Chunk chunk) throws IOException {
-		//
+	public IDATReader addChunk(Chunk chunk) {
+		if(chunk == null) throw new IllegalArgumentException("Input chunk is null");
+
 		if (chunk.getChunkType() != ChunkType.IDAT) {
 			throw new IllegalArgumentException("Not a valid IDAT chunk.");
 		}		
 		
-		byteOutput.write(chunk.getData());
+		try {
+			byteOutput.write(chunk.getData());
+		} catch (IOException e) {
+			throw new RuntimeException("IDATReader: error adding new chunk");
+		}
+		
 		return this;
 	}
 	

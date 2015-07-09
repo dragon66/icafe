@@ -2,13 +2,13 @@
 <!-- NewPage -->
 <html lang="en">
 <head>
-<title>PLTEReader</title>
+<title>TIMEReader</title>
 <link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
 </head>
 <body>
 <script type="text/javascript"><!--
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="PLTEReader";
+        parent.document.title="TIMEReader";
     }
 //-->
 </script>
@@ -33,12 +33,12 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../cafe/image/png/PLTEBuilder.html" title="class in cafe.image.png"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../cafe/image/png/PNGDescriptor.html" title="class in cafe.image.png"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../cafe/image/png/TIMEBuilder.html" title="class in cafe.image.png"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../cafe/image/png/TRNSBuilder.html" title="class in cafe.image.png"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?cafe/image/png/PLTEReader.html" target="_top">Frames</a></li>
-<li><a href="PLTEReader.html" target="_top">No Frames</a></li>
+<li><a href="../../../index.html?cafe/image/png/TIMEReader.html" target="_top">Frames</a></li>
+<li><a href="TIMEReader.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../../allclasses-noframe.html">All Classes</a></li>
@@ -77,14 +77,14 @@
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">cafe.image.png</div>
-<h2 title="Class PLTEReader" class="title">Class PLTEReader</h2>
+<h2 title="Class TIMEReader" class="title">Class TIMEReader</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>cafe.image.png.PLTEReader</li>
+<li>cafe.image.png.TIMEReader</li>
 </ul>
 </li>
 </ul>
@@ -97,14 +97,9 @@
 </dl>
 <hr>
 <br>
-<pre>public class <span class="strong">PLTEReader</span>
+<pre>public class <span class="strong">TIMEReader</span>
 extends java.lang.Object
 implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></pre>
-<div class="block">PNG PLTE chunk reader</div>
-<dl><dt><span class="strong">Version:</span></dt>
-  <dd>1.0 04/26/2013</dd>
-<dt><span class="strong">Author:</span></dt>
-  <dd>Wen Yu, yuwen_66@yahoo.com</dd></dl>
 </li>
 </ul>
 </div>
@@ -123,7 +118,7 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../cafe/image/png/PLTEReader.html#PLTEReader(cafe.image.png.Chunk)">PLTEReader</a></strong>(<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&nbsp;chunk)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../cafe/image/png/TIMEReader.html#TIMEReader(cafe.image.png.Chunk)">TIMEReader</a></strong>(<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&nbsp;chunk)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -141,20 +136,34 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/png/PLTEReader.html#getBlueMap()">getBlueMap</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/TIMEReader.html#getDay()">getDay</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/png/PLTEReader.html#getGreenMap()">getGreenMap</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/TIMEReader.html#getHour()">getHour</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/png/PLTEReader.html#getRedMap()">getRedMap</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/TIMEReader.html#getMinute()">getMinute</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/TIMEReader.html#getMonth()">getMonth</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/TIMEReader.html#getSecond()">getSecond</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/TIMEReader.html#getYear()">getYear</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/png/PLTEReader.html#read()">read</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/png/TIMEReader.html#read()">read</a></strong>()</code>
+<div class="block">Read the tIME chunk.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -178,13 +187,13 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="PLTEReader(cafe.image.png.Chunk)">
+<a name="TIMEReader(cafe.image.png.Chunk)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>PLTEReader</h4>
-<pre>public&nbsp;PLTEReader(<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&nbsp;chunk)</pre>
+<h4>TIMEReader</h4>
+<pre>public&nbsp;TIMEReader(<a href="../../../cafe/image/png/Chunk.html" title="class in cafe.image.png">Chunk</a>&nbsp;chunk)</pre>
 </li>
 </ul>
 </li>
@@ -195,31 +204,58 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getRedMap()">
+<a name="getDay()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getRedMap</h4>
-<pre>public&nbsp;byte[]&nbsp;getRedMap()</pre>
+<h4>getDay</h4>
+<pre>public&nbsp;int&nbsp;getDay()</pre>
 </li>
 </ul>
-<a name="getGreenMap()">
+<a name="getHour()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getGreenMap</h4>
-<pre>public&nbsp;byte[]&nbsp;getGreenMap()</pre>
+<h4>getHour</h4>
+<pre>public&nbsp;int&nbsp;getHour()</pre>
 </li>
 </ul>
-<a name="getBlueMap()">
+<a name="getMinute()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getBlueMap</h4>
-<pre>public&nbsp;byte[]&nbsp;getBlueMap()</pre>
+<h4>getMinute</h4>
+<pre>public&nbsp;int&nbsp;getMinute()</pre>
+</li>
+</ul>
+<a name="getMonth()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMonth</h4>
+<pre>public&nbsp;int&nbsp;getMonth()</pre>
+</li>
+</ul>
+<a name="getSecond()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSecond</h4>
+<pre>public&nbsp;int&nbsp;getSecond()</pre>
+</li>
+</ul>
+<a name="getYear()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getYear</h4>
+<pre>public&nbsp;int&nbsp;getYear()</pre>
 </li>
 </ul>
 <a name="read()">
@@ -230,6 +266,17 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 <h4>read</h4>
 <pre>public&nbsp;void&nbsp;read()
           throws java.io.IOException</pre>
+<div class="block">Read the tIME chunk.
+ <p>
+ The tIME chunk gives the time of the last image modification (not the time of initial image creation). It contains: 
+ <pre>
+  Year:   2 bytes (complete; for example, 1995, not 95)
+  Month:  1 byte (1-12)
+  Day:    1 byte (1-31)
+  Hour:   1 byte (0-23)
+  Minute: 1 byte (0-59)
+  Second: 1 byte (0-60) (yes, 60, for leap seconds; not 61, a common error)
+  </pre></div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../cafe/util/Reader.html#read()">read</a></code>&nbsp;in interface&nbsp;<code><a href="../../../cafe/util/Reader.html" title="interface in cafe.util">Reader</a></code></dd>
@@ -262,12 +309,12 @@ implements <a href="../../../cafe/util/Reader.html" title="interface in cafe.uti
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../cafe/image/png/PLTEBuilder.html" title="class in cafe.image.png"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../cafe/image/png/PNGDescriptor.html" title="class in cafe.image.png"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../cafe/image/png/TIMEBuilder.html" title="class in cafe.image.png"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../cafe/image/png/TRNSBuilder.html" title="class in cafe.image.png"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../index.html?cafe/image/png/PLTEReader.html" target="_top">Frames</a></li>
-<li><a href="PLTEReader.html" target="_top">No Frames</a></li>
+<li><a href="../../../index.html?cafe/image/png/TIMEReader.html" target="_top">Frames</a></li>
+<li><a href="TIMEReader.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../../allclasses-noframe.html">All Classes</a></li>

@@ -27,14 +27,20 @@ public class PLTEReader implements Reader {
 	private byte[] blueMap;
 	private Chunk chunk;
 	
-	public PLTEReader(Chunk chunk) throws IOException {
-		//
+	public PLTEReader(Chunk chunk) {
+		if(chunk == null) throw new IllegalArgumentException("Input chunk is null");
+		
 		if (chunk.getChunkType() != ChunkType.PLTE) {
 			throw new IllegalArgumentException("Not a valid PLTE chunk.");
 		}
 		
 		this.chunk = chunk;
-		read();
+		
+		try {
+			read();
+		} catch (IOException e) {
+			throw new RuntimeException("PLTEReader: error reading chunk");
+		}
 	}
 	
 	public byte[] getRedMap() { return redMap; }

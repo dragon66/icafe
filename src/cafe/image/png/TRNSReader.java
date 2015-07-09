@@ -25,14 +25,20 @@ public class TRNSReader implements Reader {
 	private byte[] alpha = new byte[0];
 	private Chunk chunk;
 	
-	public TRNSReader(Chunk chunk) throws IOException {
-		//
+	public TRNSReader(Chunk chunk) {
+		if(chunk == null) throw new IllegalArgumentException("Input chunk is null");
+		
 		if (chunk.getChunkType() != ChunkType.TRNS) {
 			throw new IllegalArgumentException("Not a valid TRNS chunk.");
 		}
 		
 		this.chunk = chunk;
-		read();
+		
+		try {
+			read();
+		} catch (IOException e) {
+			throw new RuntimeException("TRNSReader: error reading chunk");
+		}
 	}
 	
 	public byte[] getAlpha() {
