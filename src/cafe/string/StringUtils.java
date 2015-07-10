@@ -715,7 +715,7 @@ public class StringUtils
 		{
 			long  numerator = data[i], denominator = data[i+1];
 			
-			if(denominator == 0) throw new ArithmeticException("Divided by zero");
+			//if(denominator == 0) throw new ArithmeticException("Divided by zero");
 			
 			if (unsigned) {
 				// Converts it to unsigned integer
