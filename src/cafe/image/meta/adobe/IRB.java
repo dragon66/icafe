@@ -72,16 +72,16 @@ public class IRB extends Metadata {
 		return containsThumbnail;
 	}
 	
-	public Map<Short, _8BIM> get8BIM() {
-		ensureDataRead();
-		return Collections.unmodifiableMap(_8bims);
-	}
-	
 	public _8BIM get8BIM(short tag) {
 		ensureDataRead();
 		return _8bims.get(tag);
 	}
 	
+	public Map<Short, _8BIM> get8BIM() {
+		ensureDataRead();
+		return Collections.unmodifiableMap(_8bims);
+	}
+
 	public IRBThumbnail getThumbnail()  {
 		ensureDataRead();
 		return thumbnail.getThumbnail();

@@ -101,8 +101,9 @@ import cafe.image.meta.image.Comment;
 import cafe.image.meta.image.ImageMetadata;
 import cafe.image.meta.iptc.IPTC;
 import cafe.image.meta.iptc.IPTCDataSet;
-import cafe.image.meta.jpeg.APP12Segment;
-import cafe.image.meta.jpeg.APP14Segment;
+import cafe.image.meta.jpeg.JFIFSegment;
+import cafe.image.meta.jpeg.DuckySegment;
+import cafe.image.meta.jpeg.AdobeSegment;
 import cafe.io.FileCacheRandomAccessInputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
@@ -174,6 +175,17 @@ public class JPEGTweaker {
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGTweaker.class);
+	
+	private static short copySegment(short marker, InputStream is, OutputStream os) throws IOException {
+		int length = IOUtils.readUnsignedShortMM(is);
+		byte[] buf = new byte[length - 2];
+		IOUtils.readFully(is, buf);
+		IOUtils.writeShortMM(os, marker);
+		IOUtils.writeShortMM(os, (short) length);
+		IOUtils.write(os, buf);
+		
+		return (IOUtils.readShortMM(is));
+	}
 	
 	/** Copy a single SOS segment */	
 	@SuppressWarnings("unused")
@@ -1376,7 +1388,11 @@ public class JPEGTweaker {
 		for(Segment segment : appnSegments) {
 			byte[] data = segment.getData();
 			length = segment.getLength();
-			if(segment.getMarker() == Marker.APP1) {
+			if(segment.getMarker() == Marker.APP0) {
+				if (Arrays.equals(ArrayUtils.subArray(data, 0, JFIF_ID.length), JFIF_ID)) {
+					metadataMap.put(MetadataType.JPG_JFIF, new JFIFSegment(ArrayUtils.subArray(data, JFIF_ID.length, length - JFIF_ID.length - 2)));
+				}
+			} else if(segment.getMarker() == Marker.APP1) {
 				// Check for EXIF
 				if(Arrays.equals(ArrayUtils.subArray(data, 0, EXIF_ID.length), EXIF_ID)) {
 					// We found EXIF
@@ -1416,7 +1432,7 @@ public class JPEGTweaker {
 				}
 			} else if(segment.getMarker() == Marker.APP12) {
 				if (Arrays.equals(ArrayUtils.subArray(data, 0, DUCKY_ID.length), DUCKY_ID)) {
-					metadataMap.put(MetadataType.JPG_APP12, new APP12Segment(ArrayUtils.subArray(data, DUCKY_ID.length, length - DUCKY_ID.length - 2)));
+					metadataMap.put(MetadataType.JPG_DUCKY, new DuckySegment(ArrayUtils.subArray(data, DUCKY_ID.length, length - DUCKY_ID.length - 2)));
 				}
 			} else if(segment.getMarker() == Marker.APP13) {
 				if (Arrays.equals(ArrayUtils.subArray(data, 0, PHOTOSHOP_IRB_ID.length), PHOTOSHOP_IRB_ID)) {
@@ -1426,7 +1442,7 @@ public class JPEGTweaker {
 				}
 			} else if(segment.getMarker() == Marker.APP14) {
 				if (Arrays.equals(ArrayUtils.subArray(data, 0, ADOBE_ID.length), ADOBE_ID)) {
-					metadataMap.put(MetadataType.JPG_APP14, new APP14Segment(ArrayUtils.subArray(data, ADOBE_ID.length, length - ADOBE_ID.length - 2)));
+					metadataMap.put(MetadataType.JPG_ADOBE, new AdobeSegment(ArrayUtils.subArray(data, ADOBE_ID.length, length - ADOBE_ID.length - 2)));
 				}
 			}
 		}
@@ -1667,7 +1683,30 @@ public class JPEGTweaker {
 							IOUtils.skipFully(is, length - 2);
 							marker = IOUtils.readShortMM(is);
 							break;
-						} // Otherwise go to default
+						}
+						marker = copySegment(marker, is, os);
+						break;						
+					case APP0:
+						if(metadataTypes.contains(MetadataType.JPG_JFIF)) {
+							length = IOUtils.readUnsignedShortMM(is);
+							byte[] temp = new byte[JFIF_ID.length];
+							IOUtils.readFully(is, temp);	
+							// JFIF segment
+							if (Arrays.equals(temp, JFIF_ID)) {
+								IOUtils.skipFully(is, length - JFIF_ID.length - 2);
+							} else {
+								IOUtils.writeShortMM(os, marker);
+								IOUtils.writeShortMM(os, (short) length);
+								IOUtils.write(os, temp); // Write the already read bytes
+								temp = new byte[length - JFIF_ID.length - 2];
+								IOUtils.readFully(is, temp);
+								IOUtils.write(os, temp);
+							}
+							marker = IOUtils.readShortMM(is);
+							break;
+						}
+						marker = copySegment(marker, is, os);
+						break;
 					case APP1:
 						// We are only interested in EXIF and XMP
 						if(metadataTypes.contains(MetadataType.EXIF) || metadataTypes.contains(MetadataType.XMP)) {
@@ -1694,7 +1733,9 @@ public class JPEGTweaker {
 							}
 							marker = IOUtils.readShortMM(is);
 							break;
-						} // Otherwise go to default
+						}
+						marker = copySegment(marker, is, os);
+						break;
 					case APP2:
 						if(metadataTypes.contains(MetadataType.ICC_PROFILE)) {
 							length = IOUtils.readUnsignedShortMM(is);
@@ -1713,9 +1754,11 @@ public class JPEGTweaker {
 							}
 							marker = IOUtils.readShortMM(is);
 							break;
-						} // Otherwise go to default
+						}
+						marker = copySegment(marker, is, os);
+						break;
 					case APP12:
-						if(metadataTypes.contains(MetadataType.JPG_APP12)) {
+						if(metadataTypes.contains(MetadataType.JPG_DUCKY)) {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[DUCKY_ID.length];
 							IOUtils.readFully(is, temp);	
@@ -1732,9 +1775,12 @@ public class JPEGTweaker {
 							}
 							marker = IOUtils.readShortMM(is);
 							break;
-						} // Otherwise go to default
+						}
+						marker = copySegment(marker, is, os);
+						break;
 					case APP13:
-						if(metadataTypes.contains(MetadataType.PHOTOSHOP) || metadataTypes.contains(MetadataType.IPTC)) {
+						if(metadataTypes.contains(MetadataType.PHOTOSHOP) || metadataTypes.contains(MetadataType.IPTC)
+							|| metadataTypes.contains(MetadataType.XMP) || metadataTypes.contains(MetadataType.EXIF)) {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[PHOTOSHOP_IRB_ID.length];
 							IOUtils.readFully(is, temp);	
@@ -1745,16 +1791,16 @@ public class JPEGTweaker {
 								IRB irb = new IRB(temp);
 								// Shallow copy the map.
 								Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());								
-								if(metadataTypes.contains(MetadataType.PHOTOSHOP)) {
-									IOUtils.skipFully(is, length - PHOTOSHOP_IRB_ID.length  - 2);
-								} else {
+								if(!metadataTypes.contains(MetadataType.PHOTOSHOP)) {
 									if(metadataTypes.contains(MetadataType.IPTC)) {
 										// We only remove IPTC_NAA and keep the other IRB data untouched.
 										bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
-									} else if(metadataTypes.contains(MetadataType.XMP)) {
+									} 
+									if(metadataTypes.contains(MetadataType.XMP)) {
 										// We only remove XMP and keep the other IRB data untouched.
 										bimMap.remove(ImageResourceID.XMP_METADATA.getValue());
-									} else if(metadataTypes.contains(MetadataType.EXIF)) {
+									} 
+									if(metadataTypes.contains(MetadataType.EXIF)) {
 										// We only remove EXIF and keep the other IRB data untouched.
 										bimMap.remove(ImageResourceID.EXIF_DATA1.getValue());
 										bimMap.remove(ImageResourceID.EXIF_DATA3.getValue());
@@ -1772,9 +1818,11 @@ public class JPEGTweaker {
 							}
 							marker = IOUtils.readShortMM(is);
 							break;
-						} // Otherwise go to default
+						}
+						marker = copySegment(marker, is, os);
+						break;
 					case APP14:
-						if(metadataTypes.contains(MetadataType.JPG_APP14)) {
+						if(metadataTypes.contains(MetadataType.JPG_ADOBE)) {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[ADOBE_ID.length];
 							IOUtils.readFully(is, temp);	
@@ -1791,15 +1839,11 @@ public class JPEGTweaker {
 							}
 							marker = IOUtils.readShortMM(is);
 							break;
-						} // Otherwise go to default
+						}
+						marker = copySegment(marker, is, os);
+						break;
 					default:
-						length = IOUtils.readUnsignedShortMM(is);
-						byte[] buf = new byte[length - 2];
-						IOUtils.readFully(is, buf);
-						IOUtils.writeShortMM(os, marker);
-						IOUtils.writeShortMM(os, (short) length);
-						IOUtils.write(os, buf);
-						marker = IOUtils.readShortMM(is);
+						marker = copySegment(marker, is, os);
 				}
 			}
 		}

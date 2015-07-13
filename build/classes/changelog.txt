@@ -1,6 +1,8 @@
 ***************************
-Last modified on 07/09/2015
+Last modified on 07/12/2015
 ***************************
+12Jul2015  Added Metadata support for JPEG APP0 (JFIF)
+12Jul2015  Fixed bug with JPEGTweaker removing APP13
 09Jul2015  Rewrote TextualChunks to work with multiple textual chunks
 09Jul2015  Added Metadata support for PNG tIME chunk 
 08Jul2015  Made Metadata implements MetadataReader directly
@@ -9,7 +11,7 @@ Last modified on 07/09/2015
 05Jul2015  Added support or PNG Textual chunk
 03Jul2015  Removed NativeMetadata and related code
 03Jul2015  Removed generic type from ImageOptions
-02Jul2015  Added support for JPEG APP12 and APP14 support
+02Jul2015  Added support for JPEG APP12 and APP14
 01Jul2015  Added support for non-standard XMP identifier
 29Jun2015  Removed a few sub-packages from base package cafe.game
 24Jun2015  Renamed GIFTweaker splitFramesEx2() to splitAnimatedGIF()

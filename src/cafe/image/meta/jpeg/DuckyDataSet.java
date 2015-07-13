@@ -9,7 +9,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * APP12DataSet.java
+ * DuckyDataSet.java
  *
  * Who   Date       Description
  * ====  =======    ============================================================
@@ -28,20 +28,20 @@ import org.slf4j.LoggerFactory;
 import cafe.io.IOUtils;
 import cafe.util.ArrayUtils;
 
-public class APP12DataSet {
+public class DuckyDataSet {
 	private int tag;
 	private int size;
 	private byte[] data;
 	private int offset;
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(APP12DataSet.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DuckyDataSet.class);
 	
-	public APP12DataSet(int tag, byte[] data) {
+	public DuckyDataSet(int tag, byte[] data) {
 		this(tag, data.length, data, 0);
 	}
 	
-	public APP12DataSet(int tag, int size, byte[] data, int offset) {
+	public DuckyDataSet(int tag, int size, byte[] data, int offset) {
 		this.tag = tag;
 		this.size = size;
 		this.data = data;
@@ -66,11 +66,11 @@ public class APP12DataSet {
 			return;
 		}
 			
-		APP12Tag etag = APP12Tag.fromTag(tag);
+		DuckyTag etag = DuckyTag.fromTag(tag);
 		
-		if(etag == APP12Tag.UNKNOWN) {
+		if(etag == DuckyTag.UNKNOWN) {
 			LOGGER.info("Unknown tag: {}", tag);
-		} else if(etag == APP12Tag.QUALITY) {
+		} else if(etag == DuckyTag.QUALITY) {
 			LOGGER.info(etag + ": {}", IOUtils.readUnsignedIntMM(data, offset));
 		} else {
 			String value = "";

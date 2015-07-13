@@ -9,7 +9,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * APP12Segment.java
+ * DuckySegment.java
  *
  * Who   Date       Description
  * ====  =======    ============================================================
@@ -32,38 +32,38 @@ import cafe.io.IOUtils;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 
-public class APP12Segment extends Metadata {
+public class DuckySegment extends Metadata {
 
-	private Map<APP12Tag, APP12DataSet> datasetMap;
+	private Map<DuckyTag, DuckyDataSet> datasetMap;
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(APP12Segment.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DuckySegment.class);
 		
-	public APP12Segment() {
-		super(MetadataType.JPG_APP12, null);
-		datasetMap =  new EnumMap<APP12Tag, APP12DataSet>(APP12Tag.class);
+	public DuckySegment() {
+		super(MetadataType.JPG_DUCKY, null);
+		datasetMap =  new EnumMap<DuckyTag, DuckyDataSet>(DuckyTag.class);
 		isDataRead = true;
 	}
 	
-	public APP12Segment(byte[] data) {
-		super(MetadataType.JPG_APP12, data);
+	public DuckySegment(byte[] data) {
+		super(MetadataType.JPG_DUCKY, data);
 	}
 	
-	public void addDataSet(APP12DataSet dataSet) {
+	public void addDataSet(DuckyDataSet dataSet) {
 		if(datasetMap != null) {
-			datasetMap.put(APP12Tag.fromTag(dataSet.getTag()), dataSet);				
+			datasetMap.put(DuckyTag.fromTag(dataSet.getTag()), dataSet);				
 		}
 	}
 	
-	public void addDataSets(Collection<? extends APP12DataSet> dataSets) {
+	public void addDataSets(Collection<? extends DuckyDataSet> dataSets) {
 		if(datasetMap != null) {
-			for(APP12DataSet dataSet: dataSets) {
-				datasetMap.put(APP12Tag.fromTag(dataSet.getTag()), dataSet);				
+			for(DuckyDataSet dataSet: dataSets) {
+				datasetMap.put(DuckyTag.fromTag(dataSet.getTag()), dataSet);				
 			}
 		}
 	}
 	
-	public Map<APP12Tag, APP12DataSet> getDataSets() {
+	public Map<DuckyTag, DuckyDataSet> getDataSets() {
 		ensureDataRead();
 		return Collections.unmodifiableMap(datasetMap);
 	}
@@ -72,7 +72,7 @@ public class APP12Segment extends Metadata {
 	public void read() throws IOException {
 		if(!isDataRead) {
 			int i = 0;
-			datasetMap = new EnumMap<APP12Tag, APP12DataSet>(APP12Tag.class);
+			datasetMap = new EnumMap<DuckyTag, DuckyDataSet>(DuckyTag.class);
 			
 			for(;;) {
 				if(i + 4 > data.length) break;
@@ -80,8 +80,8 @@ public class APP12Segment extends Metadata {
 				i += 2;
 				int size = IOUtils.readUnsignedShortMM(data, i);
 				i += 2;
-				APP12Tag etag = APP12Tag.fromTag(tag);
-				datasetMap.put(etag, new APP12DataSet(tag, size, data, i));
+				DuckyTag etag = DuckyTag.fromTag(tag);
+				datasetMap.put(etag, new DuckyDataSet(tag, size, data, i));
 				i += size;
 			}
 			
@@ -91,17 +91,17 @@ public class APP12Segment extends Metadata {
 
 	public void showMetadata() {
 		ensureDataRead();
-		LOGGER.info("JPEG APP12Segment output starts =>");
-		// Print APP12DataSet
-		for(APP12DataSet dataset : datasetMap.values()) {
+		LOGGER.info("JPEG DuckySegment output starts =>");
+		// Print DuckyDataSet
+		for(DuckyDataSet dataset : datasetMap.values()) {
 			dataset.print();
 		}
-		LOGGER.info("<= JPEG APP12Segment output ends");
+		LOGGER.info("<= JPEG DuckySegment output ends");
 	}
 	
 	public void write(OutputStream os) throws IOException {
 		ensureDataRead();
-		for(APP12DataSet dataset : getDataSets().values())
+		for(DuckyDataSet dataset : getDataSets().values())
 			dataset.write(os);
 	}
 }

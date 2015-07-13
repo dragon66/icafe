@@ -9,7 +9,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * APP14Segment.java
+ * AdobeSegment.java
  *
  * Who   Date       Description
  * ====  =======    ============================================================
@@ -29,22 +29,22 @@ import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.io.IOUtils;
 
-public class APP14Segment extends Metadata {
+public class AdobeSegment extends Metadata {
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(APP14Segment.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AdobeSegment.class);
 
 	private int m_DCTEncodeVersion;
 	private int m_APP14Flags0;
 	private int m_APP14Flags1;
 	private int m_ColorTransform;
 	
-	public APP14Segment(byte[] data) {
-		super(MetadataType.JPG_APP14, data);
+	public AdobeSegment(byte[] data) {
+		super(MetadataType.JPG_ADOBE, data);
 		ensureDataRead();
 	}
 	
-	public APP14Segment(int dctEncodeVersion, int app14Flags0, int app14Flags1, int colorTransform) {
-		super(MetadataType.JPG_APP14, null);
+	public AdobeSegment(int dctEncodeVersion, int app14Flags0, int app14Flags1, int colorTransform) {
+		super(MetadataType.JPG_ADOBE, null);
 		this.m_DCTEncodeVersion = dctEncodeVersion;
 		this.m_APP14Flags0 = app14Flags0;
 		this.m_APP14Flags1 = app14Flags1;
@@ -92,14 +92,13 @@ public class APP14Segment extends Metadata {
 	public void showMetadata() {
 		ensureDataRead();
 		String[] colorTransform = {"Unknown (RGB or CMYK)", "YCbCr", "YCCK"};
-		LOGGER.info("JPEG APP14Segment output starts =>");
+		LOGGER.info("JPEG AdobeSegment output starts =>");
 		LOGGER.info("DCTEncodeVersion: {}", m_DCTEncodeVersion);
 		LOGGER.info("APP14Flags0: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags0));
 		LOGGER.info("APP14Flags1: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags1));
 		LOGGER.info("ColorTransform: {}", (m_ColorTransform <= 2)?colorTransform[m_ColorTransform]:m_ColorTransform);
-		LOGGER.info("<= JPEG APP14Segment output ends");
+		LOGGER.info("<= JPEG AdobeSegment output ends");
 	}
-
 
 	public void write(OutputStream os) throws IOException {
 		ensureDataRead();

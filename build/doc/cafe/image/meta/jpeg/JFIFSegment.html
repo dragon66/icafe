@@ -2,13 +2,13 @@
 <!-- NewPage -->
 <html lang="en">
 <head>
-<title>APP14Segment</title>
+<title>JFIFSegment</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
 </head>
 <body>
 <script type="text/javascript"><!--
     if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="APP14Segment";
+        parent.document.title="JFIFSegment";
     }
 //-->
 </script>
@@ -33,12 +33,12 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../cafe/image/meta/jpeg/APP12Tag.html" title="enum in cafe.image.meta.jpeg"><span class="strong">Prev Class</span></a></li>
-<li>Next Class</li>
+<li><a href="../../../../cafe/image/meta/jpeg/DuckyTag.html" title="enum in cafe.image.meta.jpeg"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../cafe/image/meta/jpeg/JFIFThumbnail.html" title="class in cafe.image.meta.jpeg"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../../index.html?cafe/image/meta/jpeg/APP14Segment.html" target="_top">Frames</a></li>
-<li><a href="APP14Segment.html" target="_top">No Frames</a></li>
+<li><a href="../../../../index.html?cafe/image/meta/jpeg/JFIFSegment.html" target="_top">Frames</a></li>
+<li><a href="JFIFSegment.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
 <li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
@@ -77,7 +77,7 @@
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">cafe.image.meta.jpeg</div>
-<h2 title="Class APP14Segment" class="title">Class APP14Segment</h2>
+<h2 title="Class JFIFSegment" class="title">Class JFIFSegment</h2>
 </div>
 <div class="contentContainer">
 <ul class="inheritance">
@@ -87,7 +87,7 @@
 <li><a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">cafe.image.meta.Metadata</a></li>
 <li>
 <ul class="inheritance">
-<li>cafe.image.meta.jpeg.APP14Segment</li>
+<li>cafe.image.meta.jpeg.JFIFSegment</li>
 </ul>
 </li>
 </ul>
@@ -102,7 +102,7 @@
 </dl>
 <hr>
 <br>
-<pre>public class <span class="strong">APP14Segment</span>
+<pre>public class <span class="strong">JFIFSegment</span>
 extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a></pre>
 </li>
 </ul>
@@ -137,13 +137,22 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#APP14Segment(byte[])">APP14Segment</a></strong>(byte[]&nbsp;data)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#JFIFSegment(byte[])">JFIFSegment</a></strong>(byte[]&nbsp;data)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#APP14Segment(int,%20int,%20int,%20int)">APP14Segment</a></strong>(int&nbsp;dctEncodeVersion,
-            int&nbsp;app14Flags0,
-            int&nbsp;app14Flags1,
-            int&nbsp;colorTransform)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#JFIFSegment(int,%20int,%20int,%20int,%20int)">JFIFSegment</a></strong>(int&nbsp;majorVersion,
+           int&nbsp;minorVersion,
+           int&nbsp;densityUnit,
+           int&nbsp;xDensity,
+           int&nbsp;yDensity)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#JFIFSegment(int,%20int,%20int,%20int,%20int,%20cafe.image.meta.jpeg.JFIFThumbnail)">JFIFSegment</a></strong>(int&nbsp;majorVersion,
+           int&nbsp;minorVersion,
+           int&nbsp;densityUnit,
+           int&nbsp;xDensity,
+           int&nbsp;yDensity,
+           <a href="../../../../cafe/image/meta/jpeg/JFIFThumbnail.html" title="class in cafe.image.meta.jpeg">JFIFThumbnail</a>&nbsp;thumbnail)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -161,32 +170,52 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getAPP14Flags0()">getAPP14Flags0</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#containsThumbnail()">containsThumbnail</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getAPP14Flags1()">getAPP14Flags1</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#getDensityUnit()">getDensityUnit</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getColorTransform()">getColorTransform</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#getMajorVersion()">getMajorVersion</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#getDCTEncodeVersion()">getDCTEncodeVersion</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#getMinorVersion()">getMinorVersion</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#read()">read</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../cafe/image/meta/jpeg/JFIFThumbnail.html" title="class in cafe.image.meta.jpeg">JFIFThumbnail</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#getThumbnail()">getThumbnail</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#getThumbnailHeight()">getThumbnailHeight</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#getThumbnailWidth()">getThumbnailWidth</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#getXDensity()">getXDensity</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#getYDensity()">getYDensity</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#showMetadata()">showMetadata</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#read()">read</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/APP14Segment.html#write(java.io.OutputStream)">write</a></strong>(java.io.OutputStream&nbsp;os)</code>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#showMetadata()">showMetadata</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/jpeg/JFIFSegment.html#write(java.io.OutputStream)">write</a></strong>(java.io.OutputStream&nbsp;os)</code>
 <div class="block">Writes the metadata out to the output stream</div>
 </td>
 </tr>
@@ -219,25 +248,40 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="APP14Segment(byte[])">
+<a name="JFIFSegment(byte[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>APP14Segment</h4>
-<pre>public&nbsp;APP14Segment(byte[]&nbsp;data)</pre>
+<h4>JFIFSegment</h4>
+<pre>public&nbsp;JFIFSegment(byte[]&nbsp;data)</pre>
 </li>
 </ul>
-<a name="APP14Segment(int, int, int, int)">
+<a name="JFIFSegment(int, int, int, int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>JFIFSegment</h4>
+<pre>public&nbsp;JFIFSegment(int&nbsp;majorVersion,
+           int&nbsp;minorVersion,
+           int&nbsp;densityUnit,
+           int&nbsp;xDensity,
+           int&nbsp;yDensity)</pre>
+</li>
+</ul>
+<a name="JFIFSegment(int, int, int, int, int, cafe.image.meta.jpeg.JFIFThumbnail)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>APP14Segment</h4>
-<pre>public&nbsp;APP14Segment(int&nbsp;dctEncodeVersion,
-            int&nbsp;app14Flags0,
-            int&nbsp;app14Flags1,
-            int&nbsp;colorTransform)</pre>
+<h4>JFIFSegment</h4>
+<pre>public&nbsp;JFIFSegment(int&nbsp;majorVersion,
+           int&nbsp;minorVersion,
+           int&nbsp;densityUnit,
+           int&nbsp;xDensity,
+           int&nbsp;yDensity,
+           <a href="../../../../cafe/image/meta/jpeg/JFIFThumbnail.html" title="class in cafe.image.meta.jpeg">JFIFThumbnail</a>&nbsp;thumbnail)</pre>
 </li>
 </ul>
 </li>
@@ -248,40 +292,85 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getAPP14Flags0()">
+<a name="containsThumbnail()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getAPP14Flags0</h4>
-<pre>public&nbsp;int&nbsp;getAPP14Flags0()</pre>
+<h4>containsThumbnail</h4>
+<pre>public&nbsp;boolean&nbsp;containsThumbnail()</pre>
 </li>
 </ul>
-<a name="getAPP14Flags1()">
+<a name="getDensityUnit()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getAPP14Flags1</h4>
-<pre>public&nbsp;int&nbsp;getAPP14Flags1()</pre>
+<h4>getDensityUnit</h4>
+<pre>public&nbsp;int&nbsp;getDensityUnit()</pre>
 </li>
 </ul>
-<a name="getColorTransform()">
+<a name="getMajorVersion()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getColorTransform</h4>
-<pre>public&nbsp;int&nbsp;getColorTransform()</pre>
+<h4>getMajorVersion</h4>
+<pre>public&nbsp;int&nbsp;getMajorVersion()</pre>
 </li>
 </ul>
-<a name="getDCTEncodeVersion()">
+<a name="getMinorVersion()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getDCTEncodeVersion</h4>
-<pre>public&nbsp;int&nbsp;getDCTEncodeVersion()</pre>
+<h4>getMinorVersion</h4>
+<pre>public&nbsp;int&nbsp;getMinorVersion()</pre>
+</li>
+</ul>
+<a name="getThumbnail()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getThumbnail</h4>
+<pre>public&nbsp;<a href="../../../../cafe/image/meta/jpeg/JFIFThumbnail.html" title="class in cafe.image.meta.jpeg">JFIFThumbnail</a>&nbsp;getThumbnail()</pre>
+</li>
+</ul>
+<a name="getThumbnailHeight()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getThumbnailHeight</h4>
+<pre>public&nbsp;int&nbsp;getThumbnailHeight()</pre>
+</li>
+</ul>
+<a name="getThumbnailWidth()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getThumbnailWidth</h4>
+<pre>public&nbsp;int&nbsp;getThumbnailWidth()</pre>
+</li>
+</ul>
+<a name="getXDensity()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getXDensity</h4>
+<pre>public&nbsp;int&nbsp;getXDensity()</pre>
+</li>
+</ul>
+<a name="getYDensity()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getYDensity</h4>
+<pre>public&nbsp;int&nbsp;getYDensity()</pre>
 </li>
 </ul>
 <a name="read()">
@@ -354,12 +443,12 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../cafe/image/meta/jpeg/APP12Tag.html" title="enum in cafe.image.meta.jpeg"><span class="strong">Prev Class</span></a></li>
-<li>Next Class</li>
+<li><a href="../../../../cafe/image/meta/jpeg/DuckyTag.html" title="enum in cafe.image.meta.jpeg"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../cafe/image/meta/jpeg/JFIFThumbnail.html" title="class in cafe.image.meta.jpeg"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
-<li><a href="../../../../index.html?cafe/image/meta/jpeg/APP14Segment.html" target="_top">Frames</a></li>
-<li><a href="APP14Segment.html" target="_top">No Frames</a></li>
+<li><a href="../../../../index.html?cafe/image/meta/jpeg/JFIFSegment.html" target="_top">Frames</a></li>
+<li><a href="JFIFSegment.html" target="_top">No Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
 <li><a href="../../../../allclasses-noframe.html">All Classes</a></li>

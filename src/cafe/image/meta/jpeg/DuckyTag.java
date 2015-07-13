@@ -9,7 +9,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * APP12Tag.java
+ * DuckyTag.java
  *
  * Who   Date       Description
  * ====  =======    ============================================================
@@ -21,7 +21,7 @@ package cafe.image.meta.jpeg;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum APP12Tag {
+public enum DuckyTag {
 	//
 	QUALITY(1, "Quality"),
 	COMMENT(2, "Comment"),
@@ -29,16 +29,16 @@ public enum APP12Tag {
 	 
 	UNKNOWN(999, "Unknown");
 	 
-	private static final Map<Integer, APP12Tag> recordMap = new HashMap<Integer, APP12Tag>();
+	private static final Map<Integer, DuckyTag> recordMap = new HashMap<Integer, DuckyTag>();
 	 
 	static {
-		for(APP12Tag record : values()) {
+		for(DuckyTag record : values()) {
 			recordMap.put(record.getTag(), record);
 		}
 	}
 	 
-	public static APP12Tag fromTag(int value) {
-		 APP12Tag record = recordMap.get(value);
+	public static DuckyTag fromTag(int value) {
+		 DuckyTag record = recordMap.get(value);
 		 if (record == null)
 			 return UNKNOWN;
 		 return record;
@@ -48,7 +48,7 @@ public enum APP12Tag {
    
 	private final String name;
    
-	private APP12Tag(int tag, String name) {
+	private DuckyTag(int tag, String name) {
 		this.tag = tag;
 		this.name = name;
 	}

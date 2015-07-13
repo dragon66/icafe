@@ -120,10 +120,10 @@ public class TestMetadata extends TestBase {
 		fin.close();
 		fout.close();
 		
-		fin = new FileInputStream("images/table.jpg");
-		fout = new FileOutputStream("table-metadata-removed.jpg");
+		fin = new FileInputStream("images/12.jpg");
+		fout = new FileOutputStream("12-metadata-removed.jpg");
 		
-		Metadata.removeMetadata(fin, fout, MetadataType.IPTC, MetadataType.PHOTOSHOP, MetadataType.ICC_PROFILE, MetadataType.XMP, MetadataType.EXIF);
+		Metadata.removeMetadata(fin, fout, MetadataType.JPG_JFIF, MetadataType.JPG_ADOBE, MetadataType.IPTC, MetadataType.ICC_PROFILE, MetadataType.XMP, MetadataType.EXIF);
 		
 		fin.close();
 		fout.close();
