@@ -112,7 +112,7 @@ public class JFIFSegment extends Metadata {
 	}
 	
 	public JFIFThumbnail getThumbnail() {
-		return thumbnail;
+		return new JFIFThumbnail(thumbnail);
 	}
 	
 	public int getThumbnailHeight() {

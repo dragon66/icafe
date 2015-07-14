@@ -12,7 +12,8 @@
  * JFIFThumbnail.java
  *
  * Who   Date       Description
- * ====  =======    ============================================================
+ * ====  =======    =================================================
+ * WY    14Jul2015  Added copy constructor
  * WY    12Jul2015  Initial creation
  */
 
@@ -28,6 +29,14 @@ public class JFIFThumbnail extends Thumbnail {
 
 	public JFIFThumbnail(BufferedImage thumbnail) {
 		super(thumbnail);
+	}
+	
+	public JFIFThumbnail(JFIFThumbnail other) { // Copy constructor
+		this.dataType = other.dataType;
+		this.height = other.height;
+		this.width = other.width;
+		this.thumbnail = other.thumbnail;
+		this.compressedThumbnail = other.compressedThumbnail;
 	}
 
 	@Override
