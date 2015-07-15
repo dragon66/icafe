@@ -45,7 +45,7 @@ public class JFIFThumbnail extends Thumbnail {
 		if(thumbnail == null) throw new IllegalArgumentException("Expected raw data thumbnail does not exist!");
 		int[] rgbs = thumbnail.getRGB(0, 0, thumbnail.getWidth(), thumbnail.getHeight(), null, 0, thumbnail.getWidth());
 		for(int rgb : rgbs) {
-			os.write(rgb >> 24); // Red
+			os.write(rgb >> 16); // Red
 			os.write(rgb >> 8); // Green
 			os.write(rgb); // Blue
 		}
