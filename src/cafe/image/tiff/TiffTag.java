@@ -811,12 +811,12 @@ public enum TiffTag implements Tag {
 			byte[] byteValue = (byte[]) value;
 			String description = "";
 			try {
-				description = new String(byteValue, "UTF-16LE");
+				description = new String(byteValue, "UTF-16LE").trim();
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 
-			return description.trim();
+			return description;
 		}
 	},
 	
@@ -826,12 +826,12 @@ public enum TiffTag implements Tag {
 			byte[] byteValue = (byte[])value;
 			String description = "";
 			try {
-				description = new String(byteValue, "UTF-16LE");
+				description = new String(byteValue, "UTF-16LE").trim();
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 			
-			return description.trim();
+			return description;
 		}
 	},
 	
@@ -841,12 +841,12 @@ public enum TiffTag implements Tag {
 			byte[] byteValue = (byte[])value;
 			String description = "";
 			try {
-				description = new String(byteValue, "UTF-16LE");
+				description = new String(byteValue, "UTF-16LE").trim();
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 			
-			return description.trim();
+			return description;
 		}
 	},
 	
@@ -856,12 +856,12 @@ public enum TiffTag implements Tag {
 			byte[] byteValue = (byte[])value;
 			String description = "";
 			try {
-				description = new String(byteValue, "UTF-16LE");
+				description = new String(byteValue, "UTF-16LE").trim();
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 			
-			return description.trim();
+			return description;
 		}
 	},
 	
@@ -871,12 +871,12 @@ public enum TiffTag implements Tag {
 			byte[] byteValue = (byte[]) value;
 			String description = "";
 			try {
-				description = new String(byteValue, "UTF-16LE");
+				description = new String(byteValue, "UTF-16LE").trim();
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 
-			return description.trim();
+			return description;
 		}
 	},
 	

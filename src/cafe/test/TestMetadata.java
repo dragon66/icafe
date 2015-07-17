@@ -25,7 +25,6 @@ import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.JpegExif;
 import cafe.image.meta.exif.TiffExif;
 import cafe.image.meta.iptc.IPTCDataSet;
-import cafe.image.meta.iptc.IPTCRecord;
 import cafe.image.meta.iptc.IPTCApplicationTag;
 import cafe.image.tiff.FieldType;
 import cafe.image.tiff.TiffTag;
@@ -144,18 +143,18 @@ public class TestMetadata extends TestBase {
 	
 	private static List<IPTCDataSet> createIPTCDataSet() {
 		List<IPTCDataSet> iptcs = new ArrayList<IPTCDataSet>();
-		iptcs.add(new IPTCDataSet(IPTCRecord.APPLICATION, IPTCApplicationTag.COPYRIGHT_NOTICE.getTag(), "Copyright 2014-2015, yuwen_66@yahoo.com"));
-		iptcs.add(new IPTCDataSet(IPTCApplicationTag.CATEGORY.getTag(), "ICAFE"));
-		iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
+		iptcs.add(new IPTCDataSet(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2015, yuwen_66@yahoo.com"));
+		iptcs.add(new IPTCDataSet(IPTCApplicationTag.CATEGORY, "ICAFE"));
+		iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!"));
 		
 		return iptcs;
 	}
 	
 	private static List<_8BIM> createPhotoshopIPTC() {
 		IPTC_NAA iptc = new IPTC_NAA();
-		iptc.addDataSet(new IPTCDataSet(IPTCRecord.APPLICATION, IPTCApplicationTag.COPYRIGHT_NOTICE.getTag(), "Copyright 2014-2015, yuwen_66@yahoo.com"));
-		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS.getTag(), "Welcome 'icafe' user!"));
-		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.CATEGORY.getTag(), "ICAFE"));
+		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.COPYRIGHT_NOTICE, "Copyright 2014-2015, yuwen_66@yahoo.com"));
+		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!"));
+		iptc.addDataSet(new IPTCDataSet(IPTCApplicationTag.CATEGORY, "ICAFE"));
 		
 		return new ArrayList<_8BIM>(Arrays.asList(iptc));
 	}

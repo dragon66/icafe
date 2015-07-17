@@ -105,7 +105,7 @@ public class ICCProfile extends Metadata {
 	}
 	
 	public String getColorSpace() {
-		return new String(header.colorSpace);
+		return new String(header.colorSpace).trim();
 	}
 	
 	public String getDateTimeCreated() {
@@ -124,15 +124,15 @@ public class ICCProfile extends Metadata {
 	}
 	
 	public String getDeviceManufacturer() {
-		return new String(header.deviceManufacturer);
+		return new String(header.deviceManufacturer).trim();
 	}
 	
 	public String getDeviceModel() {
-		return new String(header.deviceModel);
+		return new String(header.deviceModel).trim();
 	}
 	
 	public String getPCS() {
-		return new String(header.PCS);
+		return new String(header.PCS).trim();
 	}
 	
 	public float[] getPCSXYZ() {
@@ -144,11 +144,11 @@ public class ICCProfile extends Metadata {
 	}
 	
 	public String getPreferredCMMType() {
-		return new String(header.preferredCMMType);
+		return new String(header.preferredCMMType).trim();
 	}
 	
 	public String getPrimaryPlatformSignature() {
-		return new String(header.primaryPlatformSignature);
+		return new String(header.primaryPlatformSignature).trim();
 	}
 	
 	public String getProfileClass() {
@@ -194,11 +194,11 @@ public class ICCProfile extends Metadata {
 	}
 	
 	public String getProfileCreator() {
-		return new String(header.profileCreator);
+		return new String(header.profileCreator).trim();
 	}
 	
 	public String getProfileFileSignature() {
-		return new String(header.profileFileSignature);
+		return new String(header.profileFileSignature).trim();
 	}
 	
 	public String getProfileFlags() {
