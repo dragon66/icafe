@@ -28,6 +28,10 @@ public final class UndefinedField extends TiffField<byte[]> {
 		this.data = data;
 	}
 	
+	public byte[] getData() {
+		return data.clone();
+	}
+	
 	public String getDataAsString() {
 		return StringUtils.byteArrayToHexString(data, 0, 10);
 	}

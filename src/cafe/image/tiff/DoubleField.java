@@ -28,6 +28,10 @@ public class DoubleField extends TiffField<double[]> {
 		this.data = data;
 	}
 	
+	public double[] getData() {
+		return data.clone();
+	}
+	
 	public String getDataAsString() {
 		return Arrays.toString(data);
 	}

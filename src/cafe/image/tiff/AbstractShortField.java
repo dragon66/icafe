@@ -20,6 +20,10 @@ public abstract class AbstractShortField extends TiffField<short[]> {
 		super(tag, fieldType, data.length);
 		this.data = data;	
 	}
+	
+	public short[] getData() {
+		return data.clone();
+	}
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		if (data.length <= 2) {

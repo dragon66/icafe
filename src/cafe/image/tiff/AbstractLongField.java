@@ -21,8 +21,12 @@ public abstract class AbstractLongField extends TiffField<int[]> {
 		this.data = data;
 	}
 	
+	public int[] getData() {
+		return data.clone();
+	}
+	
 	public int[] getDataAsLong() {
-		return data;
+		return getData();
 	}
 	
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {

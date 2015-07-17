@@ -28,6 +28,10 @@ public class FloatField extends TiffField<float[]> {
 		this.data = data;
 	}
 	
+	public float[] getData() {
+		return data.clone();
+	}
+	
 	public String getDataAsString() {
 		return Arrays.toString(data);
 	}
