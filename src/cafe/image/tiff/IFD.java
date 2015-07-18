@@ -111,7 +111,7 @@ public final class IFD {
 			
 			return field.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix);
 		}
-		return null;
+		return "";
 	}
 	
 	/** Get all the fields for this IFD from the internal map. */
