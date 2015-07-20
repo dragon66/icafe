@@ -1,6 +1,7 @@
 ***************************
-Last modified on 07/12/2015
+Last modified on 07/19/2015
 ***************************
+19Jul2015  Renamed MetadataType.PHOTOSHOP to MetadataType.PHOTOSHOP_IRB
 12Jul2015  Added Metadata support for JPEG APP0 (JFIF)
 12Jul2015  Fixed bug with JPEGTweaker removing APP13
 09Jul2015  Rewrote TextualChunks to work with multiple textual chunks

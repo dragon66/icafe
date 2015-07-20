@@ -28,7 +28,7 @@ public final class ASCIIField extends TiffField<String> {
 	}
 	
 	public String getDataAsString() {
-		return data.substring(0, data.length() - 1);
+		return data.trim();
 	}
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
