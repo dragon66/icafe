@@ -39,6 +39,7 @@ import cafe.image.meta.Thumbnail;
 import cafe.image.writer.ImageWriter;
 import cafe.image.writer.JPEGWriter;
 import cafe.io.IOUtils;
+import cafe.util.ArrayUtils;
 
 public class ThumbnailResource extends _8BIM {
 	// Check to make sure id is either ImageResourceID.THUMBNAIL_RESOURCE_PS4
@@ -81,22 +82,28 @@ public class ThumbnailResource extends _8BIM {
 	}
 	
 	// id is either ImageResourceID.THUMBNAIL_RESOURCE_PS4 or ImageResourceID.THUMBNAIL_RESOURCE_PS5
-	public ThumbnailResource(ImageResourceID id, int dataType, int width, int height, byte[] data) {
+	public ThumbnailResource(ImageResourceID id, int dataType, int width, int height, byte[] thumbnailData) {
 		super(validateID(id), "THUMBNAIL_RESOURCE", null);
+		// Initialize fields
+		this.id = id;
+		this.dataType = dataType;
+		/** Sometimes, we don't have information about width and height */
+		this.width = (width > 0)? width : 0; 
+		this.height = (height > 0)? height : 0;
 		// paddedRowBytes = (width * bitsPerPixel + 31) / 32 * 4.
 		// totalSize = paddedRowBytes * height * numOfPlanes
-		int bitsPerPixel = 24;
-		int numOfPlanes = 1;
-		int paddedRowBytes = (width * 24 + 31)/32 * 4;
-		int totalSize = paddedRowBytes * height * numOfPlanes;
-		int sizeAfterCompression = data.length;
-		
-		init(id, dataType, width, height, paddedRowBytes, totalSize, sizeAfterCompression, bitsPerPixel, numOfPlanes, data);
+		this.paddedRowBytes = (width * 24 + 31)/32 * 4;
+		this.totalSize = paddedRowBytes * height * numOfPlanes;
+		this.compressedSize = thumbnailData.length;
+		this.bitsPerPixel = 24;
+		this.numOfPlanes = 1;
+		setThumbnailImage(id, dataType, width, height, totalSize, thumbnailData);
 	}
 		
-	public ThumbnailResource(ImageResourceID id, int dataType, int width, int height, int paddedRowBytes, int totalSize, int compressedSize, int bitsPerPixel, int numOfPlanes, byte[] data) {
-		super(validateID(id), "THUMBNAIL_RESOURCE", null);
-		init(id, dataType, width, height, paddedRowBytes, totalSize, compressedSize, bitsPerPixel, numOfPlanes, data);
+	public ThumbnailResource(ImageResourceID id, byte[] data) {
+		super(validateID(id), "THUMBNAIL_RESOURCE", data);
+		this.id = id;
+		read();
 	}
 		
 	private IRBThumbnail createThumbnail(BufferedImage thumbnail) throws IOException {
@@ -167,25 +174,14 @@ public class ThumbnailResource extends _8BIM {
 		return width;
 	}
 		
-	private void init(ImageResourceID id, int dataType, int width, int height, int paddedRowBytes, int totalSize, int compressedSize, int bitsPerPixel, int numOfPlanes, byte[] data) {
-		// Initialize fields
-		this.id = id;
-		/** Sometimes, we don't have information about width and height */
-		this.width = (width > 0)? width : 0; 
-		this.height = (height > 0)? height : 0;
-		this.paddedRowBytes = paddedRowBytes;
-		this.totalSize = totalSize;
-		this.compressedSize = compressedSize;
-		this.bitsPerPixel = bitsPerPixel;
-		this.numOfPlanes = numOfPlanes;
-		this.dataType = dataType;
+	private void setThumbnailImage(ImageResourceID id, int dataType, int width, int height, int totalSize, byte[] thumbnailData) {
 		// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
 		if(dataType == Thumbnail.DATA_TYPE_KJpegRGB) {
-			thumbnail.setImage(width, height, dataType, data);
+			thumbnail.setImage(width, height, dataType, thumbnailData);
 		} else if(dataType == Thumbnail.DATA_TYPE_KRawRGB) {
 			// kRawRGB - NOT tested yet!
 			//Create a BufferedImage
-			DataBuffer db = new DataBufferByte(data, totalSize);
+			DataBuffer db = new DataBufferByte(thumbnailData, totalSize);
 			int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
 			if(id == ImageResourceID.THUMBNAIL_RESOURCE_PS4)
 				off = new int[]{2, 1, 0}; // RGB band offset for BGR for photoshop4.0 BGR format
@@ -198,6 +194,26 @@ public class ThumbnailResource extends _8BIM {
 			thumbnail.setImage(new BufferedImage(cm, raster, false, null));
 		} else
 			throw new UnsupportedOperationException("Unsupported IRB thumbnail data type: " + dataType);
+	}
+	
+	private void read() {
+		this.dataType = IOUtils.readIntMM(data, 0); //1 = kJpegRGB. Also supports kRawRGB (0).
+		this.width = IOUtils.readIntMM(data, 4);
+		this.height = IOUtils.readIntMM(data, 8);
+		// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
+		this.paddedRowBytes = IOUtils.readIntMM(data, 12);
+		// Total size = widthbytes * height * planes
+		this.totalSize = IOUtils.readIntMM(data, 16);
+		// Size after compression. Used for consistency check.
+		this.compressedSize = IOUtils.readIntMM(data, 20);
+		this.bitsPerPixel = IOUtils.readShortMM(data, 24); // Bits per pixel. = 24
+		this.numOfPlanes = IOUtils.readShortMM(data, 26); // Number of planes. = 1
+		byte[] thumbnailData = null;
+		if(dataType == Thumbnail.DATA_TYPE_KJpegRGB)
+			thumbnailData = ArrayUtils.subArray(data, 28, compressedSize);
+		else if(dataType == Thumbnail.DATA_TYPE_KRawRGB)
+			thumbnailData = ArrayUtils.subArray(data, 28, totalSize);
+		setThumbnailImage(id, dataType, width, height, totalSize, thumbnailData);
 	}
 	
 	public void write(OutputStream os) throws IOException {

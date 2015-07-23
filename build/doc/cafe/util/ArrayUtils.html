@@ -522,7 +522,8 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>concat</h4>
-<pre>public static&nbsp;&lt;T&gt;&nbsp;T[]&nbsp;concat(T[]...&nbsp;arrays)</pre>
+<pre>@SafeVarargs
+public static&nbsp;&lt;T&gt;&nbsp;T[]&nbsp;concat(T[]...&nbsp;arrays)</pre>
 <div class="block">Type safe concatenation of arrays with upper type bound T
  <p>
  Note: if type parameter is not explicitly supplied, it will be inferred as the 
@@ -541,8 +542,9 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>concat</h4>
-<pre>public static&nbsp;&lt;T&gt;&nbsp;T[]&nbsp;concat(java.lang.Class&lt;T&gt;&nbsp;type,
-             T[]...&nbsp;arrays)</pre>
+<pre>@SafeVarargs
+public static&nbsp;&lt;T&gt;&nbsp;T[]&nbsp;concat(java.lang.Class&lt;T&gt;&nbsp;type,
+                         T[]...&nbsp;arrays)</pre>
 <div class="block">Type safe concatenation of arrays with upper type bound T</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - type bound for the concatenated array</dd><dd><code>arrays</code> - arrays to be concatenated</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a concatenation of the arrays.</dd>

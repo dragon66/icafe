@@ -31,8 +31,9 @@ import cafe.string.StringUtils;
  */
 public enum ImageResourceID {
 	// Adobe Image Resource Block IDs - JPEG APP13
-	OBSOLETE0("Obsolete. Photoshop 2.0 only. Contains five 2 byte values: number of channels, rows, columns, depth, and mode.", (short)0x03e8),
+	CHANNELS_ROWS_COLUMNS_DEPTH_MODE("Obsolete. Photoshop 2.0 only. Contains five 2 byte values: number of channels, rows, columns, depth, and mode.", (short)0x03e8),
 	PRINT_MANAGER_INFO("Optional. Macintosh print manager print info record.", (short)0x03e9),
+	XML("XML data.", (short)0x03ea),
 	INDEXED_COLOR_TABLE("Obsolete. Photoshop 2.0 only. Contains the indexed color table.", (short)0x03eb),
 	RESOLUTION_INFO("ResolutionInfo structure.", (short)0x03ed),
 	ALPHA_CHANNEL_NAMES("Names of the alpha channels as a series of Pascal strings.", (short)0x03ee),
@@ -109,10 +110,11 @@ public enum ImageResourceID {
 	WINDOWS_DEVMODE("(Photoshop CS5) Windows DEVMODE. Variable OS specific info for Windows. DEVMODE. It is recommened that you do not interpret or use this data.", (short)0x043d),
 	AUTO_SAVE_FILE_PATH("(Photoshop CS6) Auto Save File Path. Unicode string. It is recommened that you do not interpret or use this data.", (short)0x043e),
 	AUTO_SAVE_FORMAT("(Photoshop CS6) Auto Save Format. Unicode string. It is recommened that you do not interpret or use this data.", (short)0x043f),
-	// 0x07d0-0x0bb6 (2000-2998)
+	// 0x07d0-0x0bb8 (2000-3000)
 	PATH_INFO0("Path Information (saved paths).", (short)0x07d0),
 	PATH_INFO998("Path Information (saved paths).", (short)0x0bb6),
 	CLIPPING_PATH_NAME("Name of clipping path.", (short)0x0bb7),
+	ORIGIN_PATH_INFO("Origin path info.", (short)0x0bb8),
 	// 0x0fa0-0x1387 (4000-4999)
 	PLUGIN_RESOURCE0("Plug-In resource.", (short)0x0fa0),
 	PLUGIN_RESOURCE999("Plug-In resource.", (short)0x1387),

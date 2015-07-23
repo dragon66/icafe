@@ -108,6 +108,7 @@ import cafe.image.compression.packbits.Packbits;
 import cafe.image.jpeg.Marker;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
+import cafe.image.meta.adobe.DDB;
 import cafe.image.meta.adobe.IRB;
 import cafe.image.meta.adobe.IRBThumbnail;
 import cafe.image.meta.adobe.ImageResourceID;
@@ -2530,6 +2531,10 @@ public class TIFFTweaker {
 		field = currIFD.getField(TiffTag.EXIF_SUB_IFD);
 		if(field != null) { // We have found EXIF SubIFD
 			metadataMap.put(MetadataType.EXIF, new TiffExif(currIFD));
+		}
+		field = currIFD.getField(TiffTag.IMAGE_SOURCE_DATA);
+		if(field != null) {
+			metadataMap.put(MetadataType.PHOTOSHOP_DDB, new DDB((byte[])field.getData()));
 		}
 		
 		return metadataMap;

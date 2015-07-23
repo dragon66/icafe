@@ -44,9 +44,11 @@ public enum IPTCObjectDataTag implements IPTCTag {
 		 return false;
 	 }
 	 
+	 // Default implementation. Could be replaced by individual ENUM
 	 public String getDataAsString(byte[] data) {
 		 try {
-			 return new String(data, "UTF-8").trim();
+			 String strVal = new String(data, "UTF-8").trim();
+			 if(strVal.length() > 0) return strVal;
 		 } catch (UnsupportedEncodingException e) {
 			 e.printStackTrace();
 		 }
