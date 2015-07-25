@@ -34,6 +34,10 @@ public class DDBEntry {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(DDBEntry.class);
 
+	public DDBEntry(DataBlockType etype, int size, byte[] data, ReadStrategy readStrategy) {
+		this(etype.getValue(), size, data, readStrategy);
+	}
+	
 	public DDBEntry(int type, int size, byte[] data, ReadStrategy readStrategy) {
 		this.type = type;
 		if(size < 0) throw new IllegalArgumentException("Input size is negative");
@@ -44,12 +48,20 @@ public class DDBEntry {
 	}
 
 	public void print() {
-		LOGGER.info("Type: 0x{}", Integer.toHexString(type));
+		DataBlockType etype = getTypeEnum();
+		if(etype != DataBlockType.UNKNOWN)
+			LOGGER.info("Type: {} ({})", etype, etype.getDescription());
+		else
+			LOGGER.info("Type: Unknown (value 0x{})", Integer.toHexString(type));
 		LOGGER.info("Size: {}", size);	
 	}
 	
 	public int getType() {
 		return type;
+	}
+	
+	public DataBlockType getTypeEnum() {
+		return DataBlockType.fromInt(type);
 	}
 	
 	public int getSize() {
