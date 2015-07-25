@@ -131,6 +131,7 @@ import cafe.io.FileCacheRandomAccessOutputStream;
 import cafe.io.IOUtils;
 import cafe.io.RandomAccessInputStream;
 import cafe.io.RandomAccessOutputStream;
+import cafe.io.ReadStrategy;
 import cafe.io.ReadStrategyII;
 import cafe.io.ReadStrategyMM;
 import cafe.io.WriteStrategyII;
@@ -2534,7 +2535,9 @@ public class TIFFTweaker {
 		}
 		field = currIFD.getField(TiffTag.IMAGE_SOURCE_DATA);
 		if(field != null) {
-			metadataMap.put(MetadataType.PHOTOSHOP_DDB, new DDB((byte[])field.getData()));
+			boolean bigEndian = (rin.getEndian() == IOUtils.BIG_ENDIAN);
+			ReadStrategy readStrategy = bigEndian?ReadStrategyMM.getInstance():ReadStrategyII.getInstance();
+			metadataMap.put(MetadataType.PHOTOSHOP_DDB, new DDB((byte[])field.getData(), readStrategy));
 		}
 		
 		return metadataMap;

@@ -34,7 +34,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../cafe/image/meta/adobe/_8BIM.html" title="class in cafe.image.meta.adobe"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../cafe/image/meta/adobe/ImageResourceID.html" title="enum in cafe.image.meta.adobe"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../cafe/image/meta/adobe/DDBEntry.html" title="class in cafe.image.meta.adobe"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?cafe/image/meta/adobe/DDB.html" target="_top">Frames</a></li>
@@ -123,6 +123,10 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#_8BIM">_8BIM</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#DDB_ID">DDB_ID</a></strong></code>&nbsp;</td>
 </tr>
@@ -148,7 +152,8 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#DDB(byte[])">DDB</a></strong>(byte[]&nbsp;data)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#DDB(byte[],%20cafe.io.ReadStrategy)">DDB</a></strong>(byte[]&nbsp;data,
+   <a href="../../../../cafe/io/ReadStrategy.html" title="interface in cafe.io">ReadStrategy</a>&nbsp;readStrategy)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -166,18 +171,24 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.util.Map&lt;java.lang.Integer,<a href="../../../../cafe/image/meta/adobe/DDBEntry.html" title="class in cafe.image.meta.adobe">DDBEntry</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#getEntries()">getEntries</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#read()">read</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#showDDB(byte[])">showDDB</a></strong>(byte[]&nbsp;data)</code>&nbsp;</td>
-</tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#showDDB(java.io.InputStream)">showDDB</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#showDDB(byte[],%20cafe.io.ReadStrategy)">showDDB</a></strong>(byte[]&nbsp;data,
+       <a href="../../../../cafe/io/ReadStrategy.html" title="interface in cafe.io">ReadStrategy</a>&nbsp;readStrategy)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#showDDB(java.io.InputStream,%20cafe.io.ReadStrategy)">showDDB</a></strong>(java.io.InputStream&nbsp;is,
+       <a href="../../../../cafe/io/ReadStrategy.html" title="interface in cafe.io">ReadStrategy</a>&nbsp;readStrategy)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../cafe/image/meta/adobe/DDB.html#showMetadata()">showMetadata</a></strong>()</code>&nbsp;</td>
 </tr>
@@ -213,11 +224,21 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <a name="DDB_ID">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>DDB_ID</h4>
 <pre>public static final&nbsp;java.lang.String DDB_ID</pre>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#cafe.image.meta.adobe.DDB.DDB_ID">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="_8BIM">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>_8BIM</h4>
+<pre>public static final&nbsp;int _8BIM</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../constant-values.html#cafe.image.meta.adobe.DDB._8BIM">Constant Field Values</a></dd></dl>
 </li>
 </ul>
 </li>
@@ -228,13 +249,14 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="DDB(byte[])">
+<a name="DDB(byte[], cafe.io.ReadStrategy)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>DDB</h4>
-<pre>public&nbsp;DDB(byte[]&nbsp;data)</pre>
+<pre>public&nbsp;DDB(byte[]&nbsp;data,
+   <a href="../../../../cafe/io/ReadStrategy.html" title="interface in cafe.io">ReadStrategy</a>&nbsp;readStrategy)</pre>
 </li>
 </ul>
 </li>
@@ -245,22 +267,33 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="showDDB(byte[])">
+<a name="showDDB(byte[], cafe.io.ReadStrategy)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>showDDB</h4>
-<pre>public static&nbsp;void&nbsp;showDDB(byte[]&nbsp;data)</pre>
+<pre>public static&nbsp;void&nbsp;showDDB(byte[]&nbsp;data,
+           <a href="../../../../cafe/io/ReadStrategy.html" title="interface in cafe.io">ReadStrategy</a>&nbsp;readStrategy)</pre>
 </li>
 </ul>
-<a name="showDDB(java.io.InputStream)">
+<a name="showDDB(java.io.InputStream, cafe.io.ReadStrategy)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>showDDB</h4>
-<pre>public static&nbsp;void&nbsp;showDDB(java.io.InputStream&nbsp;is)</pre>
+<pre>public static&nbsp;void&nbsp;showDDB(java.io.InputStream&nbsp;is,
+           <a href="../../../../cafe/io/ReadStrategy.html" title="interface in cafe.io">ReadStrategy</a>&nbsp;readStrategy)</pre>
+</li>
+</ul>
+<a name="getEntries()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEntries</h4>
+<pre>public&nbsp;java.util.Map&lt;java.lang.Integer,<a href="../../../../cafe/image/meta/adobe/DDBEntry.html" title="class in cafe.image.meta.adobe">DDBEntry</a>&gt;&nbsp;getEntries()</pre>
 </li>
 </ul>
 <a name="read()">
@@ -316,7 +349,7 @@ extends <a href="../../../../cafe/image/meta/Metadata.html" title="class in cafe
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../cafe/image/meta/adobe/_8BIM.html" title="class in cafe.image.meta.adobe"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../cafe/image/meta/adobe/ImageResourceID.html" title="enum in cafe.image.meta.adobe"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../cafe/image/meta/adobe/DDBEntry.html" title="class in cafe.image.meta.adobe"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?cafe/image/meta/adobe/DDB.html" target="_top">Frames</a></li>

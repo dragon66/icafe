@@ -1,6 +1,7 @@
 ***************************
-Last modified on 07/23/2015
+Last modified on 07/24/2015
 ***************************
+24Jul2015  Added DDBEntry for DDB
 23Jul2015  Added skeleton implementation of DDB
 19Jul2015  Renamed MetadataType.PHOTOSHOP to MetadataType.PHOTOSHOP_IRB
 12Jul2015  Added Metadata support for JPEG APP0 (JFIF)

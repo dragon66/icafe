@@ -43,8 +43,7 @@ import java.util.regex.*;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 09/18/2012
  */
-public class StringUtils
-{
+public class StringUtils {
 	
 	private static final char[] HEXES = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
@@ -102,8 +101,7 @@ public class StringUtils
 	 * @param s the input string
 	 * @return a string with the first character of all words capitalized
 	 */
-	public static String capitalize(String s) 
-	{   
+	public static String capitalize(String s) {   
 		StringBuffer myStringBuffer = new StringBuffer();
 		Pattern p = Pattern.compile("\\b(\\w)(\\w*)");
 		Matcher m = p.matcher(s);
@@ -116,13 +114,11 @@ public class StringUtils
         return m.appendTail(myStringBuffer).toString();
 	}
 	
-	public static String capitalizeFully(String s) 
-	{   
+	public static String capitalizeFully(String s) {   
 		return capitalize(s.toLowerCase());
 	}
 	
-	public static String concat(Iterable<? extends CharSequence> strings, String delimiter)
-    {
+	public static String concat(Iterable<? extends CharSequence> strings, String delimiter) {
         int capacity = 0;
         int delimLength = delimiter.length();
 
@@ -153,8 +149,7 @@ public class StringUtils
         return buffer.toString();
     }
 	
-	public static String concat(String first, String second) 
-	{
+	public static String concat(String first, String second) {
 		if(first == null) return second;
 		if(second == null) return first;
 		
@@ -165,8 +160,7 @@ public class StringUtils
 		return sb.toString();
 	}
 	
-	public static String concat(String first, String... strings)
-	{
+	public static String concat(String first, String... strings) {
 		StringBuilder sb;
 		
 		if(first != null) sb = new StringBuilder(first);
@@ -180,8 +174,7 @@ public class StringUtils
 		return sb.toString();
 	}
 		
-	public static <T extends CharSequence> String concat(T[] strings, String delimiter)
-    {
+	public static <T extends CharSequence> String concat(T[] strings, String delimiter) {
         int capacity = 0;
         int delimLength = delimiter.length();
         
@@ -216,8 +209,7 @@ public class StringUtils
 	 * @param regex the regular expression to which this string is to be matched
 	 * @return true if a match is found, otherwise false
 	 */
-	public static boolean contains(String input, String regex) 
-	{
+	public static boolean contains(String input, String regex) {
 		Pattern p = Pattern.compile(regex);
 		Matcher m = p.matcher(input);
         
@@ -288,8 +280,7 @@ public class StringUtils
 	 * @param url URL string to be encoded
 	 * @return a encoded URL string
 	 */	
-	public static String encodeURL(String url)
-	{
+	public static String encodeURL(String url) {
 		String result = null;
 	    
 		try {
@@ -349,8 +340,7 @@ public class StringUtils
      *
 	 * @return a string with the specified characters replaced by HTML entities
 	 */
-	public static String escapeHTML(String input) 
-	{
+	public static String escapeHTML(String input) {
 		Iterator<Character> itr = stringIterator(input);
 		StringBuilder result = new StringBuilder();		
 		
@@ -473,13 +463,11 @@ public class StringUtils
 	 * @param queryString a URL string with a query string attached
 	 * @return a valid URL string to be used as a link
 	 */
-	public static String escapeQueryStringAmp(String queryString)
-	{
+	public static String escapeQueryStringAmp(String queryString) {
 		return queryString.replace("&", "&amp;");
 	}
 	
-	public static String escapeRegex(String input) 
-	{
+	public static String escapeRegex(String input) {
 		Iterator<Character> itr = stringIterator(input);
 		StringBuilder result = new StringBuilder();		
 		
@@ -564,7 +552,7 @@ public class StringUtils
 		return buffer.toString();
 	}
 	
-	public static boolean isInCharset(String input, String encoding){
+	public static boolean isInCharset(String input, String encoding) {
 		Charset charset = null;
 		try {
 			// May throw different unchecked exceptions
@@ -587,8 +575,7 @@ public class StringUtils
 	 * @return true if the input string is null, empty, or contains only white
 	 * spaces, otherwise false
 	 */
-	public static boolean isNullOrEmpty(CharSequence str)
-	{
+	public static boolean isNullOrEmpty(CharSequence str) {
 		return ((str == null) || (str.length() == 0));
 	}
 	
@@ -703,8 +690,7 @@ public class StringUtils
 	 * 		  otherwise false 
 	 * @return a string representation of the int array.
 	 */
-	public static String rationalArrayToString(int[] data, boolean unsigned) 
-	{
+	public static String rationalArrayToString(int[] data, boolean unsigned) {
 		if(data.length%2 != 0)
 			throw new IllegalArgumentException("Data length is odd number, expect even!");
 
@@ -736,8 +722,7 @@ public class StringUtils
 		return rational.toString();
 	}
 	
-	public static String rationalToString(DecimalFormat df, boolean unsigned, int ... rational) 
-	{
+	public static String rationalToString(DecimalFormat df, boolean unsigned, int ... rational) {
 		if(rational.length < 2) throw new IllegalArgumentException("Input data length is too short");
 		if(rational[1] == 0) throw new ArithmeticException("Divided by zero");
 		
@@ -761,14 +746,21 @@ public class StringUtils
 	 * @param replacement the string to be substituted for the match
 	 * @return the resulting String
 	 */
-	public static String replaceLast(String input, String regex, String replacement) 
-	{
+	public static String replaceLast(String input, String regex, String replacement) {
 		return input.replaceAll(regex+"(?!.*"+regex+")", replacement); // Using negative look ahead
-	}	
+	}
 	
-	public static String reverse(String s) 
-	{
-	    int i, len = s.length();
+	public static String reverse(String s) {
+		if(s == null) return null;
+		
+		return new StringBuilder(s).reverse().toString();
+	}
+	
+	// This method will not work for surrogate pairs
+	public static String reverse2(String s) {
+		if(s == null) return null;
+		
+		int i, len = s.length();
 	    StringBuilder dest = new StringBuilder(len);
 
 	    for (i = (len - 1); i >= 0; i--)
@@ -777,8 +769,7 @@ public class StringUtils
 	    return dest.toString();
 	}
 	
-	public static String reverse(String str, String delimiter) 
-	{	
+	public static String reverse(String str, String delimiter) {	
 		if(isNullOrEmpty(delimiter)) {
 			return str;
 		}
@@ -789,8 +780,7 @@ public class StringUtils
 		return sb.toString();
 	}
 	
-	public static String reverse2(String str, String delimiter) 
-	{
+	public static String reverse2(String str, String delimiter) {
 		if(isNullOrEmpty(delimiter) || isNullOrEmpty(str) || (str.trim().length() == 0) || (str.indexOf(delimiter) < 0)) {
 			return str;
 		} 			
@@ -808,8 +798,7 @@ public class StringUtils
 		return sb.substring(0, sb.lastIndexOf(delimiter));
 	}
 	
-	private static void reverseIt(String str, String delimiter, StringBuilder sb)
-	{
+	private static void reverseIt(String str, String delimiter, StringBuilder sb) {
 		if(isNullOrEmpty(str) || (str.trim().length() == 0) || str.indexOf(delimiter) < 0) {
 			sb.append(str);
 			return;
@@ -820,8 +809,7 @@ public class StringUtils
 		sb.append(str.substring(0, str.indexOf(delimiter)));
 	}
 		
-	public static String reverseWords(String s) 
-	{
+	public static String reverseWords(String s) {
 		String[] stringArray = s.split("\\b");
 		StringBuilder sb = new StringBuilder(s.length());
 		
@@ -841,13 +829,11 @@ public class StringUtils
 	 * 		  otherwise false 
 	 * @return a string representation of the short array.
 	 */
-	public static String shortArrayToString(short[] data, boolean unsigned) 
-	{
+	public static String shortArrayToString(short[] data, boolean unsigned) {
 		return shortArrayToString(data, 0, data.length, unsigned);
 	}
 	
-	public static String shortArrayToString(short[] data, int offset, int length, boolean unsigned) 
-	{
+	public static String shortArrayToString(short[] data, int offset, int length, boolean unsigned) {
 		if ( data == null ) {
 		      return null;
 		}
@@ -931,8 +917,7 @@ public class StringUtils
 	 * @param string input string to be iterated
 	 * @return an iterator for the input string
 	 */
-	public static Iterator<Character> stringIterator(final String string) 
-	{
+	public static Iterator<Character> stringIterator(final String string) {
 		// Ensure the error is found as soon as possible.
 		if (string == null)
 			throw new NullPointerException();

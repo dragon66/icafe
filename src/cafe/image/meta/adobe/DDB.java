@@ -20,6 +20,9 @@ package cafe.image.meta.adobe;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +30,21 @@ import org.slf4j.LoggerFactory;
 import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.io.IOUtils;
+import cafe.io.ReadStrategy;
+import cafe.util.ArrayUtils;
 
 public class DDB extends Metadata {
+	private ReadStrategy readStrategy;
+	private Map<Integer, DDBEntry> entries = new HashMap<Integer, DDBEntry>();
+	// DDB unique ID
 	public static final String DDB_ID = "Adobe Photoshop Document Data Block\0";
-		
+	public static final int _8BIM = 0x3842494d; // "8BIM"
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(DDB.class);
 	
-	public static void showDDB(byte[] data) {
+	public static void showDDB(byte[] data, ReadStrategy readStrategy) {
 		if(data != null && data.length > 0) {
-			DDB ddb = new DDB(data);
+			DDB ddb = new DDB(data, readStrategy);
 			try {
 				ddb.read();
 				ddb.showMetadata();
@@ -46,20 +54,25 @@ public class DDB extends Metadata {
 		}
 	}
 	
-	public static void showDDB(InputStream is) {
+	public static void showDDB(InputStream is, ReadStrategy readStrategy) {
 		try {
-			showDDB(IOUtils.inputStreamToByteArray(is));
+			showDDB(IOUtils.inputStreamToByteArray(is), readStrategy);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public DDB(byte[] data) {
+	public DDB(byte[] data, ReadStrategy readStrategy) {
 		super(MetadataType.PHOTOSHOP_DDB, data);
+		if(readStrategy == null) throw new IllegalArgumentException("Input readStategy is null");
+		this.readStrategy = readStrategy;
+	}
+	
+	public Map<Integer, DDBEntry> getEntries() {
+		return Collections.unmodifiableMap(entries);
 	}
 	
 	@Override
-	// TODO this is not actually working yet. Need further analyzing of DDB structure
 	public void read() throws IOException {
 		if(!isDataRead) {
 			int i = 0;
@@ -68,25 +81,14 @@ public class DDB extends Metadata {
 			}
 			i += DDB_ID.length();
 			while((i+4) < data.length) {
-				String _8bim = new String(data, i, 4);
+				int signature = readStrategy.readInt(data, i);
 				i += 4;
-				if(_8bim.equals("8BIM")) {
-					String id = new String(data, i, 4);
+				if(signature ==_8BIM) {
+					int type = readStrategy.readInt(data, i);
 					i += 4;
-					if(id.equals("Layr")) {
-						LOGGER.info("Layer Data");
-					} else if(id.equals("LMsk")) {
-						LOGGER.info("User Data");
-					} else if(id.equals("Patt")) {
-						LOGGER.info("Pattern");
-					} else if(id.equals("Anno")) {
-						LOGGER.info("Annotations");
-					} else {
-						LOGGER.info(id.trim());
-					}
-					long size = IOUtils.readUnsignedIntMM(data, i); // For some reason, this value is incorrect!!!
+					int size = readStrategy.readInt(data, i);
 					i += 4;
-					LOGGER.info("Data length: {}", size);
+					entries.put(type, new DDBEntry(type, size, ArrayUtils.subArray(data, i, size), readStrategy));
 					i += ((size + 3)>>2)<<2;// Skip data with padding bytes (padded to a 4 byte offset)
 				}
 			}
@@ -97,6 +99,9 @@ public class DDB extends Metadata {
 	public void showMetadata() {
 		ensureDataRead();
 		LOGGER.info("<<Adobe DDB information starts>>");
+		for(DDBEntry entry : entries.values()) {
+			entry.print();
+		}
 		LOGGER.info("<<Adobe DDB information ends>>");
 	}
 }
