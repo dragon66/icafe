@@ -88,7 +88,20 @@ public class DDB extends Metadata {
 					i += 4;
 					int size = readStrategy.readInt(data, i);
 					i += 4;
-					entries.put(type, new DDBEntry(type, size, ArrayUtils.subArray(data, i, size), readStrategy));
+					DataBlockType etype = DataBlockType.fromInt(type);
+					switch(etype) {
+						case Layr:
+							entries.put(type, new LayerData(size, ArrayUtils.subArray(data, i, size), readStrategy));
+							break;
+						case LMsk:
+							entries.put(type, new UserMask(size, ArrayUtils.subArray(data, i, size), readStrategy));
+							break;
+						case FMsk:
+							entries.put(type, new FilterMask(size, ArrayUtils.subArray(data, i, size), readStrategy));
+							break;
+						default:
+							entries.put(type, new DDBEntry(type, size, ArrayUtils.subArray(data, i, size), readStrategy));
+					}
 					i += ((size + 3)>>2)<<2;// Skip data with padding bytes (padded to a 4 byte offset)
 				}
 			}

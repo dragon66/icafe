@@ -25,10 +25,9 @@ import cafe.io.ReadStrategy;
 
 //Building block for DDB
 public class DDBEntry {
-	// TODO: create enumeration for type
 	private int type;
 	private int size;
-	private byte[] data;
+	protected byte[] data;
 	protected ReadStrategy readStrategy;
 	
 	// Obtain a logger instance
