@@ -66,6 +66,8 @@ public class LayerData extends DDBEntry {
 				i += 4;
 				channels.add(new Channel(id, len));
 			}
+			int blendModeSignature = readStrategy.readInt(data, i);
+			i += 4;
 			int blendMode = readStrategy.readInt(data, i);
 			i += 4;
 			int opacity = data[i++]&0xff;
@@ -73,10 +75,13 @@ public class LayerData extends DDBEntry {
 			int flags = data[i++]&0xff;
 			int filler = data[i++]&0xff;
 			int extraLen = readStrategy.readInt(data, i);
+			i += 4;
+			i += extraLen; // Skip the extra data for now
 			// TODO: read the following structure:
 			//Layer mask data
 			//Layer blending ranges
 			//Layer name: Pascal string, padded to a multiple of 4 bytes
+			//Additional layer information (optional)
 		}	
 	}
 }
