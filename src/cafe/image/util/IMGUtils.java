@@ -1180,7 +1180,7 @@ public class IMGUtils {
 	public static byte[] rgb2bilevel(int[] rgb) {
 		// RGB to gray-scale
 		byte[] pixels = new byte[rgb.length];
-		int sum = 0;
+		long sum = 0;
 		
 		for(int i = 0; i < rgb.length; i++) {
 			if((rgb[i] >>> 24) < 0x80) pixels[i] = (byte)0xff; // Dealing with transparency color
@@ -1190,7 +1190,7 @@ public class IMGUtils {
 		}
 		
 		// Calculate threshold
-		int threshold = (sum/pixels.length);
+		int threshold = (int)(sum/pixels.length);
 		
 		// Reduce gray-scale to BW - we assume PhotoMetric.WHITE_IS_ZERO
 		for(int l = 0; l < pixels.length; l++) {
@@ -1217,7 +1217,7 @@ public class IMGUtils {
 		// RGB to gray-scale
 		byte[] pixels = new byte[rgb.length];
 		byte[] mask = new byte[rgb.length];
-		int sum = 0;
+		long sum = 0;
 		
 		Arrays.fill(mask, (byte)0x01);
 		
@@ -1231,7 +1231,7 @@ public class IMGUtils {
 		}
 		
 		// Calculate threshold
-		int threshold = (sum/pixels.length);
+		int threshold = (int)(sum/pixels.length);
 		
 		IMGUtils.dither_FloydSteinberg(pixels, mask, imageWidth, imageHeight, threshold, err_limit);
 		

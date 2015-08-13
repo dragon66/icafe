@@ -14,8 +14,7 @@ package cafe.image.jpeg;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/16/2012
  */
-public class JPEGConsts
-{
+public class JPEGConsts {
 	public static final int SUBSAMPLING_NONE = 0; // aka 1x1 (4:4:4)
 	public static final int SUBSAMPLING_422  = 1; // aka 2x1
 	public static final int SUBSAMPLING_420  = 2; // aka 2x2
