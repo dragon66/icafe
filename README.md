@@ -106,8 +106,9 @@ Then you can use the SNAPSHOT version of ICAFE in your pom.xml:
 </dependency>
 ``` 
 
-Suggestions? custom requirements? email me: yuwen_66@yahoo.com
+Suggestions? custom requirements? [Opene] an issue or send mail me directly: yuwen_66@yahoo.com
 
 Go to the [wiki] page to see this library in action or grab the "icafe.jar" from the lib folder and try it yourself!
 
 [wiki]:https://github.com/dragon66/icafe/wiki
+[Open]:https://github.com/dragon66/icafe/issues/new
