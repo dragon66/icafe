@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ==========================================================
+ * WY    17Aug2015  Revised to write animated GIF frame by frame
  * WY    17Nov2014  Revised writeGraphicControlBlock() to take more parameters
  * WY    17Nov2014  Added new writeFrame() method to take more parameters
  * WY    16Apr2014  Added writeFrame() to support animated GIF
@@ -102,13 +103,12 @@ public class GIFWriter extends ImageWriter {
 	private int logicalScreenHeight;
 	
 	private boolean animated;
-	
 	private int loopCount;
+	private boolean firstFrame = true;	
 	
 	public GIFWriter() {}
 	
-	private void encode(byte[] pixels, OutputStream os) throws Exception 
-	{
+	private void encode(byte[] pixels, OutputStream os) throws Exception {
 		// Define local variables
 		int parent = 0;
 		int son = 0;
@@ -191,9 +191,20 @@ public class GIFWriter extends ImageWriter {
 		// Flush the last code buffer
 		flush_buf(os, bufIndex+1);
     }
+	
+	/**
+	 * This is intended to be called after writing all the frames if we write
+	 * an animated GIF frame by frame.
+	 * 
+	 * @param os OutputStream for the animated GIF
+	 * @throws Exception
+	 */
+	public void finishWrite(OutputStream os) throws Exception {	   	
+    	os.write(IMAGE_TRAILER);
+		os.close();    	
+	}
     
-    private void flush_buf(OutputStream os, int len) throws Exception
-	{
+    private void flush_buf(OutputStream os, int len) throws Exception {
 		os.write(len);
 		os.write(bytes_buf,0,len);
 		// Clear the bytes buffer
@@ -206,8 +217,7 @@ public class GIFWriter extends ImageWriter {
     	return ImageType.GIF;
     }
     
-    private void init_encoder(int bitsPerPixel )
-	{
+    private void init_encoder(int bitsPerPixel ) {
 		clearCode = 1 << bitsPerPixel;
 	    endOfImage = clearCode + 1;
   	    codeLen = bitsPerPixel + 1;
@@ -218,9 +228,28 @@ public class GIFWriter extends ImageWriter {
 		Arrays.fill(suffix, 0);
     }
     
+    /**
+     * This is intended to be called first when writing an animated GIF
+     * frame by frame.
+     * 
+     * @param os OutputStream for the animated GIF
+     * @param logicalScreenWidth width of the logical screen. If it is less than
+     *        or equal zero, it will be determined from the first frame
+     * @param logicalScreenHeight height of the logical screen. If it is less than
+     *        or equal zero, it will be determined from the first frame
+     * @throws Exception
+     */
+    public void prepareForWrite(OutputStream os, int logicalScreenWidth, int logicalScreenHeight) throws Exception {
+    	// Header first
+    	writeHeader(os, true);
+    	this.logicalScreenWidth = logicalScreenWidth;
+    	this.logicalScreenHeight = logicalScreenHeight;
+    	// We are going to write animated GIF, so enable animated flag
+    	animated = true;
+    }
+    
     // Translate codes into bytes
-    private void send_code_to_buffer(int code, OutputStream os)throws Exception
-	{
+    private void send_code_to_buffer(int code, OutputStream os)throws Exception	{
 		int temp = codeLen;
 		// Shift the code to the left of the last byte in bytes_buf
         bytes_buf[bufIndex] |= ((code&MASK[empty_bits])<<(8-empty_bits));
@@ -251,10 +280,11 @@ public class GIFWriter extends ImageWriter {
 		// Set logical screen size
 		logicalScreenWidth = imageWidth;
 		logicalScreenHeight = imageHeight;
+		firstFrame = true;
 		// We only need to write one frame, so disable animated flag
     	animated = false;
 		// Write the image frame
-		writeFrame(pixels, imageWidth, imageHeight, 0, 0, 0, os, true);
+		writeFrame(pixels, imageWidth, imageHeight, 0, 0, 0, os);
 		// Make a clean end up of the image
 		os.write(IMAGE_TRAILER);
 		os.close();
@@ -284,9 +314,7 @@ public class GIFWriter extends ImageWriter {
 			int imageWidth = images[i].getWidth();
 			int imageHeight = images[i].getHeight();
 			int[] pixels = IMGUtils.getRGB(images[i]);//images[i].getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-			
-			if(i == 0) writeFrame(pixels, imageWidth, imageHeight, 0, 0, delays[i], os, true);
-			else writeFrame(pixels, imageWidth, imageHeight, 0, 0, delays[i], os, false);
+			writeFrame(pixels, imageWidth, imageHeight, 0, 0, delays[i], os);
     	}
     	
     	os.write(IMAGE_TRAILER);
@@ -323,10 +351,8 @@ public class GIFWriter extends ImageWriter {
 					if(pixel == transColor) pixels[j] = pixel; 
 				}
 			}
-			if(i == 0) writeFrame(pixels, imageWidth, imageHeight, frames[i].getLeftPosition(), frames[i].getTopPosition(),
-					frames[i].getDelay(), frames[i].getDisposalMethod(), frames[i].getUserInputFlag(), os, true);
-			else writeFrame(pixels, imageWidth, imageHeight, frames[i].getLeftPosition(), frames[i].getTopPosition(), 
-					frames[i].getDelay(), frames[i].getDisposalMethod(), frames[i].getUserInputFlag(), os, false);
+			writeFrame(pixels, imageWidth, imageHeight, frames[i].getLeftPosition(), frames[i].getTopPosition(),
+					frames[i].getDelay(), frames[i].getDisposalMethod(), frames[i].getUserInputFlag(), os);
     	}
     	
     	os.write(IMAGE_TRAILER);
@@ -343,9 +369,53 @@ public class GIFWriter extends ImageWriter {
     public void writeAnimatedGIF(List<GIFFrame> frames, OutputStream os) throws Exception {
     	writeAnimatedGIF(frames.toArray(new GIFFrame[0]), os);
     }
+    
+    public void writeFrame(OutputStream os, GIFFrame frame) throws Exception {
+    	// Retrieve image dimension
+    	BufferedImage image = frame.getFrame();
+    	int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		// Determine the logical screen dimension
+		if(firstFrame) {
+			if(logicalScreenWidth <= 0)
+				logicalScreenWidth = imageWidth;
+			if(logicalScreenHeight <= 0)
+				logicalScreenHeight = imageHeight;
+		}			
+		int[] pixels = IMGUtils.getRGB(image);//image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+		// Handle transparency color if explicitly set
+    	if(frame.getTransparencyFlag() == GIFFrame.TRANSPARENCY_INDEX_SET && frame.getTransparentColor() != -1) {
+			int transColor = (frame.getTransparentColor() & 0x00ffffff);				
+			for(int j = pixels.length - 1; j > 0; j--) {
+				int pixel = (pixels[j] & 0x00ffffff);
+				if(pixel == transColor) pixels[j] = pixel; 
+			}
+		}    	
+		writeFrame(pixels, imageWidth, imageHeight, frame.getLeftPosition(), frame.getTopPosition(),
+				frame.getDelay(), frame.getDisposalMethod(), frame.getUserInputFlag(), os);
+    }
+    
+    public void writeFrame(OutputStream os, BufferedImage frame) throws Exception {
+    	writeFrame(os, frame, 100); // default delay is 100 milliseconds
+    }
+    
+    public void writeFrame(OutputStream os, BufferedImage frame, int delay) throws Exception {
+    	// Retrieve image dimension
+		int imageWidth = frame.getWidth();
+		int imageHeight = frame.getHeight();
+		// Determine the logical screen dimension
+		if(firstFrame) {
+			if(logicalScreenWidth <= 0)
+				logicalScreenWidth = imageWidth;
+			if(logicalScreenHeight <= 0)
+				logicalScreenHeight = imageHeight;
+		}
+		if(delay <= 0) delay = 100;
+		int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+		writeFrame(pixels, imageWidth, imageHeight, 0, 0, delay, os);
+    }
 
-	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition,  int delay, int disposalMethod, int userInputFlag, OutputStream os, boolean writeLSD) throws Exception
-	{	
+	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition, int delay, int disposalMethod, int userInputFlag, OutputStream os) throws Exception {	
 		// Reset empty_bits
     	empty_bits = 0x08;
     	
@@ -371,7 +441,7 @@ public class GIFWriter extends ImageWriter {
         
 	    int num_of_color = 1<<bitsPerPixel;
 	    
-	    if(writeLSD) {
+	    if(firstFrame) {
 	    	// Logical screen descriptor
 			byte  flags = (byte)0x88;//0b10001000 (having sorted global color map) - To be updated
 			byte  bgcolor = 0x00;// To be set
@@ -392,9 +462,10 @@ public class GIFWriter extends ImageWriter {
       	// Output the graphic control block
 	    writeGraphicControlBlock(os, delay, (byte)transparent_color, disposalMethod, userInputFlag);
         // Output image descriptor
-        if(writeLSD)
+        if(firstFrame) {
         	writeImageDescriptor(os, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, -1);
-        else {
+			firstFrame = false;
+        } else {
         	writeImageDescriptor(os, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, bitsPerPixel - 1);
         	// Write local colorPalette
         	writePalette(os, num_of_color);
@@ -405,14 +476,12 @@ public class GIFWriter extends ImageWriter {
 		os.write(0x00);
 	}
 	
-	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition,  int delay, OutputStream os, boolean writeLSD) throws Exception
-	{	
-    	writeFrame(pixels, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, delay, GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND, GIFFrame.USER_INPUT_NONE, os, writeLSD);
+	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition, int delay, OutputStream os) throws Exception	{	
+    	writeFrame(pixels, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, delay, GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND, GIFFrame.USER_INPUT_NONE, os);
     }
 	
 	// Unit of delay is supposed to be in millisecond
-    private void writeGraphicControlBlock(OutputStream os, int delay, byte transparent_color, int disposalMethod, int userInputFlag) throws Exception
-    {
+    private void writeGraphicControlBlock(OutputStream os, int delay, byte transparent_color, int disposalMethod, int userInputFlag) throws Exception {
     	// Scale delay
     	delay = Math.round(delay/10.0f);
     	
@@ -441,8 +510,7 @@ public class GIFWriter extends ImageWriter {
 			os.write("GIF87a".getBytes());			
 	}
 	
-    private void writeImageDescriptor(OutputStream os, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition, int colorTableSize) throws Exception
-    {
+    private void writeImageDescriptor(OutputStream os, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition, int colorTableSize) throws Exception {
 		byte imageDescriptor[] = new byte[10];
 		imageDescriptor[0] = IMAGE_SEPARATOR;// Image separator ","
 		imageDescriptor[1] = (byte)(imageLeftPosition&0xff);// Image left position
@@ -462,8 +530,7 @@ public class GIFWriter extends ImageWriter {
 	}
     
     // Write logical screen descriptor
-	private void writeLSD(OutputStream os, short screen_width, short screen_height, short flags, byte bgcolor, byte aspectRatio) throws IOException
-	{
+	private void writeLSD(OutputStream os, short screen_width, short screen_height, short flags, byte bgcolor, byte aspectRatio) throws IOException	{
 		byte[] descriptor = new byte[7]; 
 		// Screen_width
 	    descriptor[0] = (byte)(screen_width&0xff);
@@ -481,8 +548,7 @@ public class GIFWriter extends ImageWriter {
 	    os.write(descriptor);
 	}
 	
-    private void writeNetscapeApplicationBlock(OutputStream os, int loopCounts) throws Exception
-    {
+    private void writeNetscapeApplicationBlock(OutputStream os, int loopCounts) throws Exception {
     	byte[] buf = new byte[19];
  		buf[0] = EXTENSION_INTRODUCER; // Extension introducer
  		buf[1] = APPLICATION_EXTENSION_LABEL; // Application extension label
@@ -507,8 +573,7 @@ public class GIFWriter extends ImageWriter {
  		os.write(buf);
     }
     
-    private void writePalette(OutputStream os, int num_of_color) throws Exception
-	{
+    private void writePalette(OutputStream os, int num_of_color) throws Exception {
         int index = 0;
         byte colors[] = new byte[num_of_color*3];
         

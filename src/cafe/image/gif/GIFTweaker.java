@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================================
+ * WY    17Aug2015  Revised to write animated GIF frame by frame
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP) 
  * WY    24Jun2015  Renamed splitFramesEx2() to splitAnimatedGIF()
  * WY    30Mar2015  Fixed bug with insertXMP() replacing '\0' with ' '
@@ -164,6 +165,18 @@ public class GIFTweaker {
 		return true;
 	}
 	
+	/**
+	 * This is intended to be called after writing all the frames if we write
+	 * an animated GIF frame by frame.
+	 * 
+	 * @param os OutputStream for the animated GIF
+	 * @throws Exception
+	 */
+	public static void finishWrite(OutputStream os) throws Exception {	   	
+    	os.write(IMAGE_TRAILER);
+		os.close();    	
+	}
+	
 	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, XMP xmp) throws IOException {
 		insertXMPApplicationBlock(is, os, xmp.getData());
 	}
@@ -225,6 +238,22 @@ public class GIFTweaker {
  			bytesRead = is.read(buf);
  		}
     }
+	
+	/**
+     * This is intended to be called first when writing an animated GIF
+     * frame by frame.
+     * 
+     * @param writer GIFWriter to write the animated GIF
+     * @param os OutputStream for the animated GIF
+     * @param logicalScreenWidth width of the logical screen. If it is less than
+     *        or equal zero, it will be determined from the first frame
+     * @param logicalScreenHeight height of the logical screen. If it is less than
+     *        or equal zero, it will be determined from the first frame
+     * @throws Exception
+     */
+	public static void prepareForWrite(GIFWriter writer, OutputStream os, int logicalScreenWidth, int logicalScreenHeight) throws Exception {
+		writer.prepareForWrite(os, logicalScreenWidth, logicalScreenHeight);
+	}
 	
 	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, String xmp) throws IOException {
 		Document doc = XMLUtils.createXML(xmp);
@@ -600,6 +629,18 @@ public class GIFTweaker {
 	
 	public static void writeAnimatedGIF(List<GIFFrame> frames, OutputStream os) throws Exception {
 		writeAnimatedGIF(frames, 0, os);
+	}
+	
+	public static void writeFrame(GIFWriter writer, OutputStream os, BufferedImage frame) throws Exception {
+		writer.writeFrame(os, frame);
+	}
+	
+	public static void writeFrame(GIFWriter writer, OutputStream os, BufferedImage frame, int delay) throws Exception {
+		writer.writeFrame(os, frame, delay);
+	}
+	
+	public static void writeFrame(GIFWriter writer, OutputStream os, GIFFrame frame) throws Exception {
+		writer.writeFrame(os, frame);
 	}
 	
 	private GIFTweaker() {}

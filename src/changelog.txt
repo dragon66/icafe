@@ -1,6 +1,7 @@
 ***************************
-Last modified on 07/28/2015
+Last modified on 08/17/2015
 ***************************
+17Aug2015  Revised GIFWriter to write animated GIF frame by frame
 28Jul2015  Added new DDBEntry subclasses
 25Jul2015  Added DataBlockType for DDB
 24Jul2015  Added DDBEntry for DDB

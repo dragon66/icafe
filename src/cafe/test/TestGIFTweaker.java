@@ -15,6 +15,7 @@ import cafe.image.options.PNGOptions;
 import cafe.image.options.TIFFOptions;
 import cafe.image.png.Filter;
 import cafe.image.tiff.TiffFieldEnum.Compression;
+import cafe.image.writer.GIFWriter;
 import cafe.image.writer.ImageWriter;
 import cafe.util.FileUtils;
 
@@ -41,7 +42,18 @@ public class TestGIFTweaker extends TestBase {
 		}
 		
 		long t1 = System.currentTimeMillis();
-		GIFTweaker.writeAnimatedGIF(images, 0, fout);
+		// Uncomment the following line to write frames all at once
+		// GIFTweaker.writeAnimatedGIF(images, 0, fout);
+		// Comment out the following lines if writing frames all at once
+		// Start writing animated GIF frame by frame to save memory
+		GIFWriter animatedGIFWriter = new GIFWriter();
+		// Set logical screen width and height to zero to use first frame width and height 
+		GIFTweaker.prepareForWrite(animatedGIFWriter, fout, 0, 0);
+		for(int i = 0; i < images.length; i++)
+			GIFTweaker.writeFrame(animatedGIFWriter, fout, images[i]);
+		// wrap it up
+		GIFTweaker.finishWrite(fout);
+		// End of writing animated GIF frame by frame
 		long t2 = System.currentTimeMillis();
 		logger.info("time used: {}ms", (t2-t1));
 		
