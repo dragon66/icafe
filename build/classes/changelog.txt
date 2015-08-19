@@ -1,6 +1,9 @@
 ***************************
-Last modified on 07/28/2015
+Last modified on 08/18/2015
 ***************************
+18Aug2015  Added support for GIFWriter to use ImageParam
+18Aug2015  Removed fields and methods similar to GIFFrame
+17Aug2015  Revised GIFWriter to write animated GIF frame by frame
 28Jul2015  Added new DDBEntry subclasses
 25Jul2015  Added DataBlockType for DDB
 24Jul2015  Added DDBEntry for DDB

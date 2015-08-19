@@ -142,8 +142,24 @@ extends <a href="../../../cafe/image/writer/ImageWriter.html" title="class in ca
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#finishWrite(java.io.OutputStream)">finishWrite</a></strong>(java.io.OutputStream&nbsp;os)</code>
+<div class="block">This is intended to be called after writing all the frames if we write
+ an animated GIF frame by frame.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../cafe/image/ImageType.html" title="enum in cafe.image">ImageType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#getImageType()">getImageType</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#prepareForWrite(java.io.OutputStream,%20int,%20int)">prepareForWrite</a></strong>(java.io.OutputStream&nbsp;os,
+               int&nbsp;logicalScreenWidth,
+               int&nbsp;logicalScreenHeight)</code>
+<div class="block">This is intended to be called first when writing an animated GIF
+ frame by frame.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -179,6 +195,22 @@ extends <a href="../../../cafe/image/writer/ImageWriter.html" title="class in ca
                 java.io.OutputStream&nbsp;os)</code>
 <div class="block">Writes a list of GIFFrame as an animated GIF</div>
 </td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20java.awt.image.BufferedImage)">writeFrame</a></strong>(java.io.OutputStream&nbsp;os,
+          java.awt.image.BufferedImage&nbsp;frame)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20java.awt.image.BufferedImage,%20int)">writeFrame</a></strong>(java.io.OutputStream&nbsp;os,
+          java.awt.image.BufferedImage&nbsp;frame,
+          int&nbsp;delay)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20cafe.image.gif.GIFFrame)">writeFrame</a></strong>(java.io.OutputStream&nbsp;os,
+          <a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>&nbsp;frame)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -226,6 +258,21 @@ extends <a href="../../../cafe/image/writer/ImageWriter.html" title="class in ca
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="finishWrite(java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>finishWrite</h4>
+<pre>public&nbsp;void&nbsp;finishWrite(java.io.OutputStream&nbsp;os)
+                 throws java.lang.Exception</pre>
+<div class="block">This is intended to be called after writing all the frames if we write
+ an animated GIF frame by frame.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>os</code> - OutputStream for the animated GIF</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
+</li>
+</ul>
 <a name="getImageType()">
 <!--   -->
 </a>
@@ -237,6 +284,25 @@ extends <a href="../../../cafe/image/writer/ImageWriter.html" title="class in ca
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../cafe/image/writer/ImageWriter.html#getImageType()">getImageType</a></code>&nbsp;in class&nbsp;<code><a href="../../../cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="prepareForWrite(java.io.OutputStream, int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>prepareForWrite</h4>
+<pre>public&nbsp;void&nbsp;prepareForWrite(java.io.OutputStream&nbsp;os,
+                   int&nbsp;logicalScreenWidth,
+                   int&nbsp;logicalScreenHeight)
+                     throws java.lang.Exception</pre>
+<div class="block">This is intended to be called first when writing an animated GIF
+ frame by frame.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>os</code> - OutputStream for the animated GIF</dd><dd><code>logicalScreenWidth</code> - width of the logical screen. If it is less than
+        or equal zero, it will be determined from the first frame</dd><dd><code>logicalScreenHeight</code> - height of the logical screen. If it is less than
+        or equal zero, it will be determined from the first frame</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
 </li>
 </ul>
 <a name="setLoopCount(int)">
@@ -303,7 +369,7 @@ extends <a href="../../../cafe/image/writer/ImageWriter.html" title="class in ca
 <a name="writeAnimatedGIF(java.util.List, java.io.OutputStream)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>writeAnimatedGIF</h4>
 <pre>public&nbsp;void&nbsp;writeAnimatedGIF(java.util.List&lt;<a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>&gt;&nbsp;frames,
@@ -312,6 +378,46 @@ extends <a href="../../../cafe/image/writer/ImageWriter.html" title="class in ca
 <div class="block">Writes a list of GIFFrame as an animated GIF</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>frames</code> - a list of GIFFrame</dd><dd><code>os</code> - OutputStream for the animated GIF</dd>
 <dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
+</li>
+</ul>
+<a name="writeFrame(java.io.OutputStream, cafe.image.gif.GIFFrame)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeFrame</h4>
+<pre>public&nbsp;void&nbsp;writeFrame(java.io.OutputStream&nbsp;os,
+              <a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>&nbsp;frame)
+                throws java.lang.Exception</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
+</li>
+</ul>
+<a name="writeFrame(java.io.OutputStream, java.awt.image.BufferedImage)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeFrame</h4>
+<pre>public&nbsp;void&nbsp;writeFrame(java.io.OutputStream&nbsp;os,
+              java.awt.image.BufferedImage&nbsp;frame)
+                throws java.lang.Exception</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
+</li>
+</ul>
+<a name="writeFrame(java.io.OutputStream, java.awt.image.BufferedImage, int)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>writeFrame</h4>
+<pre>public&nbsp;void&nbsp;writeFrame(java.io.OutputStream&nbsp;os,
+              java.awt.image.BufferedImage&nbsp;frame,
+              int&nbsp;delay)
+                throws java.lang.Exception</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
 </ul>

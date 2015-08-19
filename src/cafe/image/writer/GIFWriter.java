@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ==========================================================
+ * WY    18Aug2015  Added support to use ImageParam to control dither
  * WY    17Aug2015  Revised to write animated GIF frame by frame
  * WY    17Nov2014  Revised writeGraphicControlBlock() to take more parameters
  * WY    17Nov2014  Added new writeFrame() method to take more parameters
@@ -27,6 +28,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.gif.GIFFrame;
 import static cafe.image.gif.GIFTweaker.*;
@@ -104,7 +106,7 @@ public class GIFWriter extends ImageWriter {
 	
 	private boolean animated;
 	private int loopCount;
-	private boolean firstFrame = true;	
+	private boolean firstFrame = true;
 	
 	public GIFWriter() {}
 	
@@ -416,6 +418,8 @@ public class GIFWriter extends ImageWriter {
     }
 
 	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition, int delay, int disposalMethod, int userInputFlag, OutputStream os) throws Exception {	
+		ImageParam param = getImageParam();
+		
 		// Reset empty_bits
     	empty_bits = 0x08;
     	
@@ -429,10 +433,13 @@ public class GIFWriter extends ImageWriter {
 	    
 	    colorInfo = IMGUtils.checkColorDepth(pixels, newPixels, colorPalette);
 		
-	    if(colorInfo[0] > 0x08)
-			colorInfo = IMGUtils.reduceColorsFloydSteinberg(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette);
-			//colorInfo = IMGUtils.reduceColors(pixels, bitsPerPixel, newPixels, colorPalette);
-		
+	    if(colorInfo[0] > 0x08) {
+	    	if(param.isApplyDither())
+	    		colorInfo = IMGUtils.reduceColorsFloydSteinberg(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette);
+	    	else
+	    		colorInfo = IMGUtils.reduceColors(pixels, bitsPerPixel, newPixels, colorPalette);
+	    }
+	    
 	    bitsPerPixel = colorInfo[0];
 	    
 	    transparent_color = colorInfo[1];

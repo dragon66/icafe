@@ -998,19 +998,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#DISPOSAL_LEAVE_AS_IS">DISPOSAL_LEAVE_AS_IS</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#DISPOSAL_LEAVE_AS_IS">DISPOSAL_LEAVE_AS_IS</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#DISPOSAL_RESTORE_TO_BACKGROUND">DISPOSAL_RESTORE_TO_BACKGROUND</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#DISPOSAL_RESTORE_TO_BACKGROUND">DISPOSAL_RESTORE_TO_BACKGROUND</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#DISPOSAL_RESTORE_TO_PREVIOUS">DISPOSAL_RESTORE_TO_PREVIOUS</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#DISPOSAL_RESTORE_TO_PREVIOUS">DISPOSAL_RESTORE_TO_PREVIOUS</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#DISPOSAL_UNSPECIFIED">DISPOSAL_UNSPECIFIED</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#DISPOSAL_UNSPECIFIED">DISPOSAL_UNSPECIFIED</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/io/FileCacheRandomAccessOutputStream.html#disposeBefore(long)">disposeBefore(long)</a></span> - Method in class cafe.io.<a href="./cafe/io/FileCacheRandomAccessOutputStream.html" title="class in cafe.io">FileCacheRandomAccessOutputStream</a></dt>
 <dd>&nbsp;</dd>
@@ -1414,6 +1406,16 @@
 </dd>
 <dt><span class="strong"><a href="./cafe/image/tiff/TIFFTweaker.html#finishInsert(cafe.io.RandomAccessOutputStream,%20java.util.List)">finishInsert(RandomAccessOutputStream, List&lt;IFD&gt;)</a></span> - Static method in class cafe.image.tiff.<a href="./cafe/image/tiff/TIFFTweaker.html" title="class in cafe.image.tiff">TIFFTweaker</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/gif/GIFTweaker.html#finishWrite(java.io.OutputStream)">finishWrite(OutputStream)</a></span> - Static method in class cafe.image.gif.<a href="./cafe/image/gif/GIFTweaker.html" title="class in cafe.image.gif">GIFTweaker</a></dt>
+<dd>
+<div class="block">This is intended to be called after writing all the frames if we write
+ an animated GIF frame by frame.</div>
+</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/GIFWriter.html#finishWrite(java.io.OutputStream)">finishWrite(OutputStream)</a></span> - Method in class cafe.image.writer.<a href="./cafe/image/writer/GIFWriter.html" title="class in cafe.image.writer">GIFWriter</a></dt>
+<dd>
+<div class="block">This is intended to be called after writing all the frames if we write
+ an animated GIF frame by frame.</div>
+</dd>
 <dt><span class="strong"><a href="./cafe/util/LinkedList.html#first()">first()</a></span> - Method in class cafe.util.<a href="./cafe/util/LinkedList.html" title="class in cafe.util">LinkedList</a></dt>
 <dd>
 <div class="block">Return an iterator representing the first node in the list.</div>
@@ -1920,8 +1922,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#getDelay()">getDelay()</a></span> - Method in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#getDelay()">getDelay()</a></span> - Method in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/jpeg/JFIFSegment.html#getDensityUnit()">getDensityUnit()</a></span> - Method in class cafe.image.meta.jpeg.<a href="./cafe/image/meta/jpeg/JFIFSegment.html" title="class in cafe.image.meta.jpeg">JFIFSegment</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/bmp/BmpCompression.html#getDescription()">getDescription()</a></span> - Method in enum cafe.image.bmp.<a href="./cafe/image/bmp/BmpCompression.html" title="enum in cafe.image.bmp">BmpCompression</a></dt>
@@ -1957,8 +1957,6 @@
 <dt><span class="strong"><a href="./cafe/image/jpeg/JPEGConsts.html#getDeZigzagMatrix()">getDeZigzagMatrix()</a></span> - Static method in class cafe.image.jpeg.<a href="./cafe/image/jpeg/JPEGConsts.html" title="class in cafe.image.jpeg">JPEGConsts</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#getDisposalMethod()">getDisposalMethod()</a></span> - Method in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#getDisposalMethod()">getDisposalMethod()</a></span> - Method in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/reader/GIFReader.html#getDisposalMethod()">getDisposalMethod()</a></span> - Method in class cafe.image.reader.<a href="./cafe/image/reader/GIFReader.html" title="class in cafe.image.reader">GIFReader</a></dt>
 <dd>&nbsp;</dd>
@@ -2221,8 +2219,6 @@
 <dt><span class="strong"><a href="./cafe/image/png/TextReader.html#getKeyword()">getKeyword()</a></span> - Method in class cafe.image.png.<a href="./cafe/image/png/TextReader.html" title="class in cafe.image.png">TextReader</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#getLeftPosition()">getLeftPosition()</a></span> - Method in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#getLeftPosition()">getLeftPosition()</a></span> - Method in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/jpeg/Segment.html#getLength()">getLength()</a></span> - Method in class cafe.image.jpeg.<a href="./cafe/image/jpeg/Segment.html" title="class in cafe.image.jpeg">Segment</a></dt>
 <dd>&nbsp;</dd>
@@ -2561,19 +2557,13 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#getTopPosition()">getTopPosition()</a></span> - Method in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#getTopPosition()">getTopPosition()</a></span> - Method in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/adobe/ThumbnailResource.html#getTotalSize()">getTotalSize()</a></span> - Method in class cafe.image.meta.adobe.<a href="./cafe/image/meta/adobe/ThumbnailResource.html" title="class in cafe.image.meta.adobe">ThumbnailResource</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#getTransparencyFlag()">getTransparencyFlag()</a></span> - Method in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#getTransparencyFlag()">getTransparencyFlag()</a></span> - Method in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#getTransparentColor()">getTransparentColor()</a></span> - Method in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/ImageParam.html#getTransparentColor()">getTransparentColor()</a></span> - Method in class cafe.image.<a href="./cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#getTransparentColor()">getTransparentColor()</a></span> - Method in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/reader/GIFReader.html#getTransparentColor()">getTransparentColor()</a></span> - Method in class cafe.image.reader.<a href="./cafe/image/reader/GIFReader.html" title="class in cafe.image.reader">GIFReader</a></dt>
 <dd>&nbsp;</dd>
@@ -2590,8 +2580,6 @@
 <dt><span class="strong"><a href="./cafe/image/tiff/TIFFTweaker.html#getUncompressedStripByteCounts(cafe.image.tiff.IFD,%20int)">getUncompressedStripByteCounts(IFD, int)</a></span> - Static method in class cafe.image.tiff.<a href="./cafe/image/tiff/TIFFTweaker.html" title="class in cafe.image.tiff">TIFFTweaker</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#getUserInputFlag()">getUserInputFlag()</a></span> - Method in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#getUserInputFlag()">getUserInputFlag()</a></span> - Method in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/date/DateTime.html#getUTCTimeInMillis()">getUTCTimeInMillis()</a></span> - Method in class cafe.date.<a href="./cafe/date/DateTime.html" title="class in cafe.date">DateTime</a></dt>
 <dd>&nbsp;</dd>
@@ -2698,14 +2686,6 @@
 <dt><a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options"><span class="strong">GIFOptions</span></a> - Class in <a href="./cafe/image/options/package-summary.html">cafe.image.options</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#GIFOptions()">GIFOptions()</a></span> - Constructor for class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#GIFOptions(int)">GIFOptions(int)</a></span> - Constructor for class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#GIFOptions(int,%20int)">GIFOptions(int, int)</a></span> - Constructor for class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#GIFOptions(int,%20int,%20int,%20int)">GIFOptions(int, int, int, int)</a></span> - Constructor for class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#GIFOptions(int,%20int,%20int,%20int,%20int,%20int,%20int)">GIFOptions(int, int, int, int, int, int, int)</a></span> - Constructor for class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./cafe/image/reader/GIFReader.html" title="class in cafe.image.reader"><span class="strong">GIFReader</span></a> - Class in <a href="./cafe/image/reader/package-summary.html">cafe.image.reader</a></dt>
 <dd>
@@ -4001,6 +3981,16 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/tiff/TIFFTweaker.html#prepareForInsert(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20java.util.List)">prepareForInsert(RandomAccessInputStream, RandomAccessOutputStream, List&lt;IFD&gt;)</a></span> - Static method in class cafe.image.tiff.<a href="./cafe/image/tiff/TIFFTweaker.html" title="class in cafe.image.tiff">TIFFTweaker</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/gif/GIFTweaker.html#prepareForWrite(cafe.image.writer.GIFWriter,%20java.io.OutputStream,%20int,%20int)">prepareForWrite(GIFWriter, OutputStream, int, int)</a></span> - Static method in class cafe.image.gif.<a href="./cafe/image/gif/GIFTweaker.html" title="class in cafe.image.gif">GIFTweaker</a></dt>
+<dd>
+<div class="block">This is intended to be called first when writing an animated GIF
+ frame by frame.</div>
+</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/GIFWriter.html#prepareForWrite(java.io.OutputStream,%20int,%20int)">prepareForWrite(OutputStream, int, int)</a></span> - Method in class cafe.image.writer.<a href="./cafe/image/writer/GIFWriter.html" title="class in cafe.image.writer">GIFWriter</a></dt>
+<dd>
+<div class="block">This is intended to be called first when writing an animated GIF
+ frame by frame.</div>
+</dd>
 <dt><span class="strong"><a href="./cafe/image/util/NeuQuant.html#prime1">prime1</a></span> - Static variable in class cafe.image.util.<a href="./cafe/image/util/NeuQuant.html" title="class in cafe.image.util">NeuQuant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/util/NeuQuant.html#prime2">prime2</a></span> - Static variable in class cafe.image.util.<a href="./cafe/image/util/NeuQuant.html" title="class in cafe.image.util">NeuQuant</a></dt>
@@ -6070,15 +6060,9 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#TRANSPARENCY_COLOR_NONE">TRANSPARENCY_COLOR_NONE</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#TRANSPARENCY_COLOR_NONE">TRANSPARENCY_COLOR_NONE</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#TRANSPARENCY_INDEX_NONE">TRANSPARENCY_INDEX_NONE</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#TRANSPARENCY_INDEX_NONE">TRANSPARENCY_INDEX_NONE</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#TRANSPARENCY_INDEX_SET">TRANSPARENCY_INDEX_SET</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#TRANSPARENCY_INDEX_SET">TRANSPARENCY_INDEX_SET</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/ImageParam.ImageParamBuilder.html#transparent(boolean)">transparent(boolean)</a></span> - Method in class cafe.image.<a href="./cafe/image/ImageParam.ImageParamBuilder.html" title="class in cafe.image">ImageParam.ImageParamBuilder</a></dt>
 <dd>&nbsp;</dd>
@@ -6178,11 +6162,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#USER_INPUT_EXPECTED">USER_INPUT_EXPECTED</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#USER_INPUT_EXPECTED">USER_INPUT_EXPECTED</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/gif/GIFFrame.html#USER_INPUT_NONE">USER_INPUT_NONE</a></span> - Static variable in class cafe.image.gif.<a href="./cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/options/GIFOptions.html#USER_INPUT_NONE">USER_INPUT_NONE</a></span> - Static variable in class cafe.image.options.<a href="./cafe/image/options/GIFOptions.html" title="class in cafe.image.options">GIFOptions</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./cafe/image/meta/adobe/UserMask.html" title="class in cafe.image.meta.adobe"><span class="strong">UserMask</span></a> - Class in <a href="./cafe/image/meta/adobe/package-summary.html">cafe.image.meta.adobe</a></dt>
 <dd>&nbsp;</dd>
@@ -6787,6 +6767,18 @@ the order they are declared.</div>
 <dt><span class="strong"><a href="./cafe/io/EndianAwareOutputStream.html#writeFloat(float)">writeFloat(float)</a></span> - Method in class cafe.io.<a href="./cafe/io/EndianAwareOutputStream.html" title="class in cafe.io">EndianAwareOutputStream</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/io/RandomAccessOutputStream.html#writeFloat(float)">writeFloat(float)</a></span> - Method in class cafe.io.<a href="./cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/gif/GIFTweaker.html#writeFrame(cafe.image.writer.GIFWriter,%20java.io.OutputStream,%20java.awt.image.BufferedImage)">writeFrame(GIFWriter, OutputStream, BufferedImage)</a></span> - Static method in class cafe.image.gif.<a href="./cafe/image/gif/GIFTweaker.html" title="class in cafe.image.gif">GIFTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/gif/GIFTweaker.html#writeFrame(cafe.image.writer.GIFWriter,%20java.io.OutputStream,%20java.awt.image.BufferedImage,%20int)">writeFrame(GIFWriter, OutputStream, BufferedImage, int)</a></span> - Static method in class cafe.image.gif.<a href="./cafe/image/gif/GIFTweaker.html" title="class in cafe.image.gif">GIFTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/gif/GIFTweaker.html#writeFrame(cafe.image.writer.GIFWriter,%20java.io.OutputStream,%20cafe.image.gif.GIFFrame)">writeFrame(GIFWriter, OutputStream, GIFFrame)</a></span> - Static method in class cafe.image.gif.<a href="./cafe/image/gif/GIFTweaker.html" title="class in cafe.image.gif">GIFTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20cafe.image.gif.GIFFrame)">writeFrame(OutputStream, GIFFrame)</a></span> - Method in class cafe.image.writer.<a href="./cafe/image/writer/GIFWriter.html" title="class in cafe.image.writer">GIFWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20java.awt.image.BufferedImage)">writeFrame(OutputStream, BufferedImage)</a></span> - Method in class cafe.image.writer.<a href="./cafe/image/writer/GIFWriter.html" title="class in cafe.image.writer">GIFWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20java.awt.image.BufferedImage,%20int)">writeFrame(OutputStream, BufferedImage, int)</a></span> - Method in class cafe.image.writer.<a href="./cafe/image/writer/GIFWriter.html" title="class in cafe.image.writer">GIFWriter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/jpeg/JPEGTweaker.html#writeICCProfile(java.io.OutputStream,%20byte[])">writeICCProfile(OutputStream, byte[])</a></span> - Static method in class cafe.image.jpeg.<a href="./cafe/image/jpeg/JPEGTweaker.html" title="class in cafe.image.jpeg">JPEGTweaker</a></dt>
 <dd>

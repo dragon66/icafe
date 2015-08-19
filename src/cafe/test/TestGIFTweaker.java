@@ -41,12 +41,15 @@ public class TestGIFTweaker extends TestBase {
 			fin.close();
 		}
 		
+		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
+		
 		long t1 = System.currentTimeMillis();
 		// Uncomment the following line to write frames all at once
 		// GIFTweaker.writeAnimatedGIF(images, 0, fout);
 		// Comment out the following lines if writing frames all at once
 		// Start writing animated GIF frame by frame to save memory
 		GIFWriter animatedGIFWriter = new GIFWriter();
+		animatedGIFWriter.setImageParam(builder.applyDither(true).build());
 		// Set logical screen width and height to zero to use first frame width and height 
 		GIFTweaker.prepareForWrite(animatedGIFWriter, fout, 0, 0);
 		for(int i = 0; i < images.length; i++)
@@ -59,8 +62,7 @@ public class TestGIFTweaker extends TestBase {
 		
 		ImageWriter writer = ImageIO.getWriter(ImageType.GIF);
 		ImageType imageType = writer.getImageType();
-		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
-		  
+			  
 		switch(imageType) {
 			case TIFF:// Set TIFF-specific options
 		  		 TIFFOptions tiffOptions = new TIFFOptions();

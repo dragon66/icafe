@@ -54,9 +54,9 @@ import cafe.image.meta.Metadata;
 import cafe.image.meta.MetadataType;
 import cafe.image.meta.adobe.XMP;
 import cafe.image.meta.image.Comment;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.ImageIO;
-import cafe.image.options.GIFOptions;
 import cafe.image.reader.GIFReader;
 import cafe.image.writer.GIFWriter;
 import cafe.image.writer.ImageWriter;
@@ -289,13 +289,13 @@ public class GIFTweaker {
 					// Determine the disposal method
 					disposalMethod = ((packedFields&0x1c)>>2);
 					switch(disposalMethod) {
-						case GIFOptions.DISPOSAL_UNSPECIFIED:
+						case GIFFrame.DISPOSAL_UNSPECIFIED:
 							// Frame disposal method: UNSPECIFIED
-						case GIFOptions.DISPOSAL_LEAVE_AS_IS:
+						case GIFFrame.DISPOSAL_LEAVE_AS_IS:
 							// Frame disposal method: LEAVE_AS_IS
-						case GIFOptions.DISPOSAL_RESTORE_TO_BACKGROUND:
+						case GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND:
 							// Frame disposal method: RESTORE_TO_BACKGROUND
-						case GIFOptions.DISPOSAL_RESTORE_TO_PREVIOUS:
+						case GIFFrame.DISPOSAL_RESTORE_TO_PREVIOUS:
 							// Frame disposal method: RESTORE_TO_PREVIOUS
 							break;
 						default:
@@ -596,6 +596,8 @@ public class GIFTweaker {
 	 */
 	public static void writeAnimatedGIF(BufferedImage[] images, int[] delays, int loopCount,  OutputStream os) throws Exception {
 		GIFWriter writer = new GIFWriter();
+		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
+		writer.setImageParam(builder.applyDither(true).build());
 		writer.setLoopCount(loopCount);
 		writer.writeAnimatedGIF(images, delays, os);
 	}
@@ -615,6 +617,8 @@ public class GIFTweaker {
 	 */
 	public static void writeAnimatedGIF(GIFFrame[] frames, int loopCount, OutputStream os) throws Exception {
 		GIFWriter writer = new GIFWriter();
+		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
+		writer.setImageParam(builder.applyDither(true).build());
 		writer.setLoopCount(loopCount);
 		writer.writeAnimatedGIF(frames, os);
 	}
