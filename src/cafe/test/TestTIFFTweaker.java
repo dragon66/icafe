@@ -82,12 +82,12 @@ public class TestTIFFTweaker extends TestBase {
 				tiffOptions.setDeflateCompressionLevel(6);
 				builder.imageOptions(tiffOptions);
 				
-				frames[0].setFrameMeta(builder.colorType(ImageColorType.GRAY_SCALE).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
+				frames[0].setFrameParam(builder.colorType(ImageColorType.GRAY_SCALE).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
 				
 				tiffOptions = new TIFFOptions(tiffOptions); // Copy constructor		
 				tiffOptions.setTiffCompression(Compression.DEFLATE);
 								
-				frames[1].setFrameMeta(builder.imageOptions(tiffOptions).build());
+				frames[1].setFrameParam(builder.imageOptions(tiffOptions).build());
 				
 				tiffOptions = new TIFFOptions(tiffOptions);				
 				tiffOptions.setTiffCompression(Compression.CCITTFAX4);
@@ -95,13 +95,20 @@ public class TestTIFFTweaker extends TestBase {
 				ImageParam meta = builder.colorType(ImageColorType.BILEVEL).ditherThreshold(50).imageOptions(tiffOptions).build();
 				
 				for(int i = 2; i < frames.length; i++)
-					frames[i].setFrameMeta(meta);
+					frames[i].setFrameParam(meta);
 				
 				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
 				
-				if(args[1].equalsIgnoreCase("writemultipage"))
-					TIFFTweaker.writeMultipageTIFF(rout, frames);
-				else {
+				if(args[1].equalsIgnoreCase("writemultipage")) {
+					//TIFFTweaker.writeMultipageTIFF(rout, frames);
+					TIFFWriter writer = new TIFFWriter();
+					List<IFD> ifds = new ArrayList<IFD>();
+					int writeOffset = TIFFTweaker.prepareForWrite(rout);
+					for(int i = 0; i < frames.length; i++) {
+						writeOffset = TIFFTweaker.writePage(frames[i], rout, ifds, writeOffset, writer);
+					}
+					TIFFTweaker.finishWrite(rout, ifds);
+				} else {
 					// This one line test one time insert using insertPages
 					//TIFFTweaker.insertPages(rin, rout, 0, frames);
 					// The following lines test insert pages each at a time

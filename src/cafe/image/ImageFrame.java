@@ -39,7 +39,7 @@ public class ImageFrame {
 		return frameParam;
 	}
 	
-	public void setFrameMeta(ImageParam frameParam) {
+	public void setFrameParam(ImageParam frameParam) {
 		this.frameParam = frameParam;
 	}
 }

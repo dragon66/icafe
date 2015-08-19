@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    19Aug2015  Added code to write multipage TIFF page by page
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    21Jun2015  Removed copyright notice from generated TIFF images
  * WY    15Apr2015  Changed the argument type for insertIPTC() and insertIRB()
@@ -635,6 +636,10 @@ public class TIFFTweaker {
 		writeToStream(rout, firstIFDOffset);
 	}
 	
+	public static void finishWrite(RandomAccessOutputStream rout, List<IFD> list) throws IOException {
+		finishInsert(rout, list);
+	}
+	
 	// Used to calculate how many bytes to read in case we have only one strip or tile
 	private static int[] getBytes2Read(IFD ifd) {
 		// Let's calculate how many bytes we are supposed to read
@@ -1224,6 +1229,13 @@ public class TIFFTweaker {
 		}	
 		
 		return writeOffset;
+	}
+	
+	public static int insertPage(ImageFrame page, int pageNumber, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
+		BufferedImage image = page.getFrame();
+		writer.setImageParam(page.getFrameParam());
+		
+		return insertPage(image, pageNumber, rout, ifds, writeOffset, writer);
 	}
 	
 	// Insert images into existing TIFF image using default writer parameters
@@ -2102,6 +2114,13 @@ public class TIFFTweaker {
 		return writeOffset;
 	}
 	
+	public static int prepareForWrite(RandomAccessOutputStream rout) throws IOException {
+		// Write header first
+		writeHeader(IOUtils.BIG_ENDIAN, rout);
+		// Write offset
+		return FIRST_WRITE_OFFSET;
+	}
+	
 	public static void printIFDs(Collection<IFD> list, String indent) {
 		int id = 0;
 		LOGGER.info("Printing IFDs ... ");
@@ -2972,6 +2991,29 @@ public class TIFFTweaker {
 		int firstIFDOffset = list.get(0).getStartOffset();
 		
 		writeToStream(rout, firstIFDOffset);
+	}
+	
+	public static int writePage(BufferedImage image, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
+		// Grab image pixels in ARGB format
+		int imageWidth = image.getWidth();
+		int imageHeight = image.getHeight();
+		int[] pixels = IMGUtils.getRGB(image);//image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+		
+		try {
+			writeOffset = writer.writePage(pixels, 0, 0, imageWidth, imageHeight, rout, writeOffset);
+			ifds.add(writer.getIFD());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	
+		return writeOffset;
+	}
+	
+	public static int writePage(ImageFrame page, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
+		BufferedImage image = page.getFrame();
+		writer.setImageParam(page.getFrameParam());
+		
+		return writePage(image, rout, ifds, writeOffset, writer);
 	}
 	
 	private static void writeToStream(RandomAccessOutputStream rout, int firstIFDOffset) throws IOException {

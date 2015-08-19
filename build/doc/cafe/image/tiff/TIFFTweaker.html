@@ -194,24 +194,29 @@ extends java.lang.Object</pre>
             java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;list)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#finishWrite(cafe.io.RandomAccessOutputStream,%20java.util.List)">finishWrite</a></strong>(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
+           java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;list)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#getPageCount(cafe.io.RandomAccessInputStream)">getPageCount</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin)</code>
 <div class="block">Get the total number of pages for the TIFF image</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#getUncompressedStripByteCounts(cafe.image.tiff.IFD,%20int)">getUncompressedStripByteCounts</a></strong>(<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&nbsp;ifd,
                               int&nbsp;strips)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertExif(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20cafe.image.meta.exif.Exif,%20boolean)">insertExif</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
           <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
           <a href="../../../cafe/image/meta/exif/Exif.html" title="class in cafe.image.meta.exif">Exif</a>&nbsp;exif,
           boolean&nbsp;update)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertExif(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20cafe.image.meta.exif.Exif,%20int,%20boolean)">insertExif</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
           <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
@@ -221,7 +226,7 @@ extends java.lang.Object</pre>
 <div class="block">Insert EXIF data with optional thumbnail IFD</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertICCProfile(byte[],%20int,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertICCProfile</a></strong>(byte[]&nbsp;icc_profile,
                 int&nbsp;pageNumber,
@@ -230,7 +235,7 @@ extends java.lang.Object</pre>
 <div class="block">Insert ICC_Profile into TIFF page</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertICCProfile(java.awt.color.ICC_Profile,%20int,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertICCProfile</a></strong>(java.awt.color.ICC_Profile&nbsp;icc_profile,
                 int&nbsp;pageNumber,
@@ -239,20 +244,20 @@ extends java.lang.Object</pre>
 <div class="block">Insert ICC_Profile into TIFF page</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertICCProfile(java.awt.color.ICC_Profile,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">insertICCProfile</a></strong>(java.awt.color.ICC_Profile&nbsp;icc_profile,
                 <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
                 <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertIPTC(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20java.util.Collection,%20boolean)">insertIPTC</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
           <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
           java.util.Collection&lt;<a href="../../../cafe/image/meta/iptc/IPTCDataSet.html" title="class in cafe.image.meta.iptc">IPTCDataSet</a>&gt;&nbsp;iptcs,
           boolean&nbsp;update)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertIPTC(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20int,%20java.util.Collection,%20boolean)">insertIPTC</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
           <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
@@ -262,14 +267,14 @@ extends java.lang.Object</pre>
 <div class="block">Insert IPTC data into TIFF image.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertIRB(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20java.util.Collection,%20boolean)">insertIRB</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
          <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
          java.util.Collection&lt;<a href="../../../cafe/image/meta/adobe/_8BIM.html" title="class in cafe.image.meta.adobe">_8BIM</a>&gt;&nbsp;bims,
          boolean&nbsp;update)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertIRB(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20int,%20java.util.Collection,%20boolean)">insertIRB</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
          <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
@@ -277,7 +282,7 @@ extends java.lang.Object</pre>
          java.util.Collection&lt;<a href="../../../cafe/image/meta/adobe/_8BIM.html" title="class in cafe.image.meta.adobe">_8BIM</a>&gt;&nbsp;bims,
          boolean&nbsp;update)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertPage(java.awt.image.BufferedImage,%20int,%20cafe.io.RandomAccessOutputStream,%20java.util.List,%20int,%20cafe.image.writer.TIFFWriter)">insertPage</a></strong>(java.awt.image.BufferedImage&nbsp;image,
           int&nbsp;pageNumber,
@@ -287,6 +292,15 @@ extends java.lang.Object</pre>
           <a href="../../../cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a>&nbsp;writer)</code>
 <div class="block">Insert a single page into a TIFF image</div>
 </td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#insertPage(cafe.image.ImageFrame,%20int,%20cafe.io.RandomAccessOutputStream,%20java.util.List,%20int,%20cafe.image.writer.TIFFWriter)">insertPage</a></strong>(<a href="../../../cafe/image/ImageFrame.html" title="class in cafe.image">ImageFrame</a>&nbsp;page,
+          int&nbsp;pageNumber,
+          <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
+          java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;ifds,
+          int&nbsp;writeOffset,
+          <a href="../../../cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a>&nbsp;writer)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
@@ -405,44 +419,48 @@ extends java.lang.Object</pre>
                 java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;ifds)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#prepareForWrite(cafe.io.RandomAccessOutputStream)">prepareForWrite</a></strong>(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#printIFD(cafe.image.tiff.IFD,%20java.lang.Class,%20java.lang.String)">printIFD</a></strong>(<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&nbsp;currIFD,
         java.lang.Class&lt;? extends <a href="../../../cafe/image/tiff/Tag.html" title="interface in cafe.image.tiff">Tag</a>&gt;&nbsp;tagClass,
         java.lang.String&nbsp;indent)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#printIFDs(java.util.Collection,%20java.lang.String)">printIFDs</a></strong>(java.util.Collection&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;list,
          java.lang.String&nbsp;indent)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#readIFDs(java.util.List,%20cafe.io.RandomAccessInputStream)">readIFDs</a></strong>(java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;list,
         <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>,<a href="../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#readMetadata(cafe.io.RandomAccessInputStream)">readMetadata</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>,<a href="../../../cafe/image/meta/Metadata.html" title="class in cafe.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#readMetadata(cafe.io.RandomAccessInputStream,%20int)">readMetadata</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
             int&nbsp;pageNumber)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#removeMetadata(int,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20cafe.image.meta.MetadataType...)">removeMetadata</a></strong>(int&nbsp;pageNumber,
               <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
               <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
               <a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>...&nbsp;metadataTypes)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#removeMetadata(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20cafe.image.meta.MetadataType...)">removeMetadata</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
               <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
               <a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>...&nbsp;metadataTypes)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#removeMetadata(java.util.Set,%20int,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">removeMetadata</a></strong>(java.util.Set&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>&gt;&nbsp;metadataTypes,
               int&nbsp;pageNumber,
@@ -451,13 +469,13 @@ extends java.lang.Object</pre>
 <div class="block">Remove meta data from TIFF image</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#removeMetadata(java.util.Set,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">removeMetadata</a></strong>(java.util.Set&lt;<a href="../../../cafe/image/meta/MetadataType.html" title="enum in cafe.image.meta">MetadataType</a>&gt;&nbsp;metadataTypes,
               <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
               <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#removePages(int,%20int,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">removePages</a></strong>(int&nbsp;startPage,
            int&nbsp;endPage,
@@ -466,7 +484,7 @@ extends java.lang.Object</pre>
 <div class="block">Remove a range of pages from a multiple page TIFF image</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#removePages(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20int...)">removePages</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
            <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
@@ -474,48 +492,64 @@ extends java.lang.Object</pre>
 <div class="block">Remove pages from a multiple page TIFF image</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#retainPages(int,%20int,%20cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream)">retainPages</a></strong>(int&nbsp;startPage,
            int&nbsp;endPage,
            <a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
            <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#retainPages(cafe.io.RandomAccessInputStream,%20cafe.io.RandomAccessOutputStream,%20int...)">retainPages</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
            <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
            int...&nbsp;pages)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#splitPages(cafe.io.RandomAccessInputStream,%20java.lang.String)">splitPages</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;rin,
           java.lang.String&nbsp;outputFilePrefix)</code>
 <div class="block">Split a multiple page TIFF into single page TIFFs</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#write(cafe.image.tiff.TIFFImage,%20cafe.io.RandomAccessOutputStream)">write</a></strong>(<a href="../../../cafe/image/tiff/TIFFImage.html" title="class in cafe.image.tiff">TIFFImage</a>&nbsp;tiffImage,
      <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#writeMultipageTIFF(cafe.io.RandomAccessOutputStream,%20java.awt.image.BufferedImage...)">writeMultipageTIFF</a></strong>(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
                   java.awt.image.BufferedImage...&nbsp;images)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#writeMultipageTIFF(cafe.io.RandomAccessOutputStream,%20cafe.image.ImageFrame...)">writeMultipageTIFF</a></strong>(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
                   <a href="../../../cafe/image/ImageFrame.html" title="class in cafe.image">ImageFrame</a>...&nbsp;frames)</code>
 <div class="block">Write an array of ImageFrames as a multiple page TIFF.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#writeMultipageTIFF(cafe.io.RandomAccessOutputStream,%20cafe.image.ImageParam[],%20java.awt.image.BufferedImage...)">writeMultipageTIFF</a></strong>(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
                   <a href="../../../cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a>[]&nbsp;imageParam,
                   java.awt.image.BufferedImage...&nbsp;images)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#writePage(java.awt.image.BufferedImage,%20cafe.io.RandomAccessOutputStream,%20java.util.List,%20int,%20cafe.image.writer.TIFFWriter)">writePage</a></strong>(java.awt.image.BufferedImage&nbsp;image,
+         <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
+         java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;ifds,
+         int&nbsp;writeOffset,
+         <a href="../../../cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a>&nbsp;writer)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/tiff/TIFFTweaker.html#writePage(cafe.image.ImageFrame,%20cafe.io.RandomAccessOutputStream,%20java.util.List,%20int,%20cafe.image.writer.TIFFWriter)">writePage</a></strong>(<a href="../../../cafe/image/ImageFrame.html" title="class in cafe.image">ImageFrame</a>&nbsp;page,
+         <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
+         java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;ifds,
+         int&nbsp;writeOffset,
+         <a href="../../../cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a>&nbsp;writer)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -692,6 +726,19 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;void&nbsp;finishInsert(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
                 java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;list)
                          throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="finishWrite(cafe.io.RandomAccessOutputStream, java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>finishWrite</h4>
+<pre>public static&nbsp;void&nbsp;finishWrite(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
+               java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;list)
+                        throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
@@ -898,6 +945,23 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>image</code> - a BufferedImage to insert</dd><dd><code>pageNumber</code> - page number (relative to the existing pages) to insert the page</dd><dd><code>rout</code> - RandomAccessOutputStream to write new image</dd><dd><code>ifds</code> - a list of IFDs for all the existing and inserted pages</dd><dd><code>writeOffset</code> - stream offset to insert this page</dd><dd><code>writer</code> - TIFFWriter instance</dd>
 <dt><span class="strong">Returns:</span></dt><dd>stream offset after inserting this page</dd>
 <dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertPage(cafe.image.ImageFrame, int, cafe.io.RandomAccessOutputStream, java.util.List, int, cafe.image.writer.TIFFWriter)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertPage</h4>
+<pre>public static&nbsp;int&nbsp;insertPage(<a href="../../../cafe/image/ImageFrame.html" title="class in cafe.image">ImageFrame</a>&nbsp;page,
+             int&nbsp;pageNumber,
+             <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
+             java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;ifds,
+             int&nbsp;writeOffset,
+             <a href="../../../cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a>&nbsp;writer)
+                      throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
@@ -1160,6 +1224,18 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
+<a name="prepareForWrite(cafe.io.RandomAccessOutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>prepareForWrite</h4>
+<pre>public static&nbsp;int&nbsp;prepareForWrite(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout)
+                           throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
 <a name="printIFDs(java.util.Collection, java.lang.String)">
 <!--   -->
 </a>
@@ -1402,13 +1478,45 @@ extends java.lang.Object</pre>
 <a name="writeMultipageTIFF(cafe.io.RandomAccessOutputStream, cafe.image.ImageParam[], java.awt.image.BufferedImage...)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>writeMultipageTIFF</h4>
 <pre>public static&nbsp;void&nbsp;writeMultipageTIFF(<a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
                       <a href="../../../cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a>[]&nbsp;imageParam,
                       java.awt.image.BufferedImage...&nbsp;images)
                                throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="writePage(java.awt.image.BufferedImage, cafe.io.RandomAccessOutputStream, java.util.List, int, cafe.image.writer.TIFFWriter)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writePage</h4>
+<pre>public static&nbsp;int&nbsp;writePage(java.awt.image.BufferedImage&nbsp;image,
+            <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
+            java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;ifds,
+            int&nbsp;writeOffset,
+            <a href="../../../cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a>&nbsp;writer)
+                     throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="writePage(cafe.image.ImageFrame, cafe.io.RandomAccessOutputStream, java.util.List, int, cafe.image.writer.TIFFWriter)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>writePage</h4>
+<pre>public static&nbsp;int&nbsp;writePage(<a href="../../../cafe/image/ImageFrame.html" title="class in cafe.image">ImageFrame</a>&nbsp;page,
+            <a href="../../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a>&nbsp;rout,
+            java.util.List&lt;<a href="../../../cafe/image/tiff/IFD.html" title="class in cafe.image.tiff">IFD</a>&gt;&nbsp;ifds,
+            int&nbsp;writeOffset,
+            <a href="../../../cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a>&nbsp;writer)
+                     throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
