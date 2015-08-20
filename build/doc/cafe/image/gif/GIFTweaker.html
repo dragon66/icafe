@@ -234,6 +234,16 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(java.awt.image.BufferedImage[],%20int[],%20int,%20cafe.image.ImageParam,%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(java.awt.image.BufferedImage[]&nbsp;images,
+                int[]&nbsp;delays,
+                int&nbsp;loopCount,
+                <a href="../../../cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a>&nbsp;param,
+                java.io.OutputStream&nbsp;os)</code>
+<div class="block">Create animated GIFs from a series of BufferedImage</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(java.awt.image.BufferedImage[],%20int[],%20int,%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(java.awt.image.BufferedImage[]&nbsp;images,
                 int[]&nbsp;delays,
                 int&nbsp;loopCount,
@@ -241,11 +251,20 @@ extends java.lang.Object</pre>
 <div class="block">Create animated GIFs from a series of BufferedImage</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(java.awt.image.BufferedImage[],%20int[],%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(java.awt.image.BufferedImage[]&nbsp;images,
                 int[]&nbsp;delays,
                 java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/gif/GIFTweaker.html#writeAnimatedGIF(cafe.image.gif.GIFFrame[],%20int,%20cafe.image.ImageParam,%20java.io.OutputStream)">writeAnimatedGIF</a></strong>(<a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>[]&nbsp;frames,
+                int&nbsp;loopCount,
+                <a href="../../../cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a>&nbsp;param,
+                java.io.OutputStream&nbsp;os)</code>
+<div class="block">Write an array of GIFFrame as an animated GIF.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
@@ -564,6 +583,24 @@ public static&nbsp;void&nbsp;splitFrames2(java.io.InputStream&nbsp;animatedGIF,
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
 </ul>
+<a name="writeAnimatedGIF(java.awt.image.BufferedImage[], int[], int, cafe.image.ImageParam, java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeAnimatedGIF</h4>
+<pre>public static&nbsp;void&nbsp;writeAnimatedGIF(java.awt.image.BufferedImage[]&nbsp;images,
+                    int[]&nbsp;delays,
+                    int&nbsp;loopCount,
+                    <a href="../../../cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a>&nbsp;param,
+                    java.io.OutputStream&nbsp;os)
+                             throws java.lang.Exception</pre>
+<div class="block">Create animated GIFs from a series of BufferedImage</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>images</code> - an array of BufferedImage</dd><dd><code>delays</code> - delay times in millisecond between the frames</dd><dd><code>loopCount</code> - loop count for the animated GIF</dd><dd><code>param</code> - internal GIFWriter write parameters</dd><dd><code>os</code> - OutputStream to write the image</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
+</li>
+</ul>
 <a name="writeAnimatedGIF(java.awt.image.BufferedImage[], int[], java.io.OutputStream)">
 <!--   -->
 </a>
@@ -591,6 +628,24 @@ public static&nbsp;void&nbsp;splitFrames2(java.io.InputStream&nbsp;animatedGIF,
 <div class="block">Write an array of GIFFrame as an animated GIF. This method gives a user more control over the frame
  parameters such as delay, frame position, disposal method etc.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>frames</code> - array of GIFFrame</dd><dd><code>loopCount</code> - loopCount for the animated GIF</dd><dd><code>os</code> - OutputStream to write the image</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
+</li>
+</ul>
+<a name="writeAnimatedGIF(cafe.image.gif.GIFFrame[], int, cafe.image.ImageParam, java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeAnimatedGIF</h4>
+<pre>public static&nbsp;void&nbsp;writeAnimatedGIF(<a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>[]&nbsp;frames,
+                    int&nbsp;loopCount,
+                    <a href="../../../cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a>&nbsp;param,
+                    java.io.OutputStream&nbsp;os)
+                             throws java.lang.Exception</pre>
+<div class="block">Write an array of GIFFrame as an animated GIF. This method gives a user more control over the frame
+ parameters such as delay, frame position, disposal method etc.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>frames</code> - array of GIFFrame</dd><dd><code>loopCount</code> - loopCount for the animated GIF</dd><dd><code>os</code> - OutputStream to write the image</dd><dd><code>param</code> - internal GIFWriter write parameters</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>

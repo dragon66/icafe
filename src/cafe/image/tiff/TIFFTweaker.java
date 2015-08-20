@@ -2115,10 +2115,7 @@ public class TIFFTweaker {
 	}
 	
 	public static int prepareForWrite(RandomAccessOutputStream rout) throws IOException {
-		// Write header first
-		writeHeader(IOUtils.BIG_ENDIAN, rout);
-		// Write offset
-		return FIRST_WRITE_OFFSET;
+		return writeHeader(IOUtils.BIG_ENDIAN, rout);
 	}
 	
 	public static void printIFDs(Collection<IFD> list, String indent) {
@@ -2912,9 +2909,8 @@ public class TIFFTweaker {
 	 */
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageFrame ... frames) throws IOException {
 		// Write header first
-		writeHeader(IOUtils.BIG_ENDIAN, rout);
+		int writeOffset = writeHeader(IOUtils.BIG_ENDIAN, rout);
 		// Write pages
-		int writeOffset = FIRST_WRITE_OFFSET;
 		int pageNumber = 0;
 		int maxPageNumber = frames.length;
 		List<IFD> list = new ArrayList<IFD>(frames.length);
@@ -2947,10 +2943,9 @@ public class TIFFTweaker {
 	}
 	
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageParam[] imageParam, BufferedImage ... images) throws IOException {
-		// Write header first
-		writeHeader(IOUtils.BIG_ENDIAN, rout);
+		// Write header first		
+		int writeOffset = writeHeader(IOUtils.BIG_ENDIAN, rout);
 		// Write pages
-		int writeOffset = FIRST_WRITE_OFFSET;
 		int pageNumber = 0;
 		int maxPageNumber = images.length;
 		List<IFD> list = new ArrayList<IFD>(images.length);

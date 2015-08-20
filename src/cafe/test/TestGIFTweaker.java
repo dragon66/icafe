@@ -41,7 +41,7 @@ public class TestGIFTweaker extends TestBase {
 			fin.close();
 		}
 		
-		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
+		ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();
 		
 		long t1 = System.currentTimeMillis();
 		// Uncomment the following line to write frames all at once

@@ -54,6 +54,8 @@ public class ImageParam {
     // DEFAULT_IMAGE_PARAM is immutable given the fact the arrays it contains are empty
     public static final ImageParam DEFAULT_IMAGE_PARAM = new ImageParamBuilder().build();
     
+	public static final int DEFAULT_DITHER_THRESHOLD = 18;
+    
     private ImageParam(ImageParamBuilder builder) {
 		width = builder.width;
 		height = builder.height;
@@ -79,6 +81,10 @@ public class ImageParam {
     
     public int getBitsPerPixel() {
     	return bitsPerPixel;
+    }
+    
+    public static ImageParamBuilder getBuilder() {
+    	return new ImageParamBuilder();
     }
     
     public ImageColorType getColorType() {
@@ -159,7 +165,7 @@ public class ImageParam {
 	    // Whether alpha channel is included or not
 	    private boolean hasAlpha = false;
 	    private boolean applyDither = false;
-	    private int ditherThreshold = 255;
+	    private int ditherThreshold = 18;
 	    // Transparency related variables
 	    private boolean transparent = false;
 	    private int transparentColor;

@@ -594,10 +594,22 @@ public class GIFTweaker {
 	 * @param loopCount loop count for the animated GIF
 	 * @param os OutputStream to write the image
 	 */
-	public static void writeAnimatedGIF(BufferedImage[] images, int[] delays, int loopCount,  OutputStream os) throws Exception {
+	public static void writeAnimatedGIF(BufferedImage[] images, int[] delays, int loopCount, OutputStream os) throws Exception {
+		writeAnimatedGIF(images, delays, loopCount, ImageParam.getBuilder().applyDither(true).ditherThreshold(ImageParam.DEFAULT_DITHER_THRESHOLD).build(), os);
+	}
+	
+	/**
+	 * Create animated GIFs from a series of BufferedImage
+	 * 
+	 * @param images an array of BufferedImage 
+	 * @param delays delay times in millisecond between the frames
+	 * @param loopCount loop count for the animated GIF
+	 * @param param internal GIFWriter write parameters
+	 * @param os OutputStream to write the image
+	 */
+	public static void writeAnimatedGIF(BufferedImage[] images, int[] delays, int loopCount, ImageParam param, OutputStream os) throws Exception {
 		GIFWriter writer = new GIFWriter();
-		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
-		writer.setImageParam(builder.applyDither(true).build());
+		writer.setImageParam(param);
 		writer.setLoopCount(loopCount);
 		writer.writeAnimatedGIF(images, delays, os);
 	}
@@ -616,9 +628,22 @@ public class GIFTweaker {
 	 * @throws Exception
 	 */
 	public static void writeAnimatedGIF(GIFFrame[] frames, int loopCount, OutputStream os) throws Exception {
+		writeAnimatedGIF(frames, loopCount, ImageParam.getBuilder().applyDither(true).ditherThreshold(ImageParam.DEFAULT_DITHER_THRESHOLD).build(), os);
+	}
+	
+	/**
+	 * Write an array of GIFFrame as an animated GIF. This method gives a user more control over the frame
+	 * parameters such as delay, frame position, disposal method etc.
+	 * 
+	 * @param frames array of GIFFrame
+	 * @param loopCount loopCount for the animated GIF
+	 * @param os OutputStream to write the image
+	 * @param param internal GIFWriter write parameters
+	 * @throws Exception
+	 */
+	public static void writeAnimatedGIF(GIFFrame[] frames, int loopCount, ImageParam param, OutputStream os) throws Exception {
 		GIFWriter writer = new GIFWriter();
-		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
-		writer.setImageParam(builder.applyDither(true).build());
+		writer.setImageParam(param);
 		writer.setLoopCount(loopCount);
 		writer.writeAnimatedGIF(frames, os);
 	}
