@@ -194,11 +194,13 @@ public class GIFReader extends ImageReader {
 		// This single call will trigger the reading of the global scope data
 		BufferedImage bi = getFrameAsBufferedImage(is);
 		if(bi == null) return null;
+		int maxWidth = (width < logicalScreenWidth)? width:logicalScreenWidth;
+		int maxHeight = (height < logicalScreenHeight)? height:logicalScreenHeight;
 		if(baseImage == null)
 			baseImage = new BufferedImage(logicalScreenWidth, logicalScreenHeight, BufferedImage.TYPE_INT_ARGB);
-		Rectangle area = new Rectangle(image_x, image_y, width, height);
+		Rectangle area = new Rectangle(image_x, image_y, maxWidth, maxHeight);
 		// Create a backup bufferedImage from the base image for the area of the current frame
-		BufferedImage backup = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage backup = new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_ARGB);
 		backup.setData(baseImage.getData(area));
 		/* End of backup */
 		Graphics2D g = baseImage.createGraphics();
