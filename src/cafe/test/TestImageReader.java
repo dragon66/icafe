@@ -75,7 +75,7 @@ public class TestImageReader extends TestBase {
 		  
 		 FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
 				
-		 ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
+		 ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();
 		  
 		 switch(imageType) {
 		  	case TIFF:// Set TIFF-specific options

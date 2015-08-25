@@ -524,7 +524,7 @@ extends java.lang.Object</pre>
                java.lang.String&nbsp;regex)</pre>
 <div class="block">Regular expression version of the String contains method.
  If used with a match from start or match from end regular expression,
- it becomes the regular expression version of the <code>startsWith(String prefix)</code> or <code>String.endsWith(String suffix)</code>
+ it becomes the regular expression version of the <code>startsWith(String)</code> or <code>String.endsWith(String)</code>
  methods.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>input</code> - the input string</dd><dd><code>regex</code> - the regular expression to which this string is to be matched</dd>
 <dt><span class="strong">Returns:</span></dt><dd>true if a match is found, otherwise false</dd></dl>
@@ -552,7 +552,8 @@ extends java.lang.Object</pre>
 <div class="block">Converts DMS to decimal 
 
  Input: latitude or longitude in the DMS format ( example: N 43° 36' 15.894")</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>hemisphereOUmeridien</code> - => {W,E,S,N}</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>hemisphereOUmeridien</code> - => {W,E,S,N}</dd>
+<dt><span class="strong">Returns:</span></dt><dd>latitude or longitude in decimal format</dd></dl>
 </li>
 </ul>
 <a name="encodeURL(java.lang.String)">

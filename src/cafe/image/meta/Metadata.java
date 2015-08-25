@@ -115,6 +115,10 @@ public abstract class Metadata implements MetadataReader {
 		extractThumbnails(new File(image), pathToThumbnail);
 	}
 	
+	public static void insertExif(InputStream is, OutputStream os, Exif exif) throws IOException {
+		insertExif(is, os, exif);
+	}
+	
 	/**
 	 * @param is input image stream 
 	 * @param os output image stream
@@ -122,22 +126,18 @@ public abstract class Metadata implements MetadataReader {
 	 * @param update True to keep the original data, otherwise false
 	 * @throws IOException 
 	 */
-	public static void insertExif(InputStream is, OutputStream out, Exif exif) throws IOException {
-		insertExif(is, out, exif);
-	}
-	
-	public static void insertExif(InputStream is, OutputStream out, Exif exif, boolean update) throws IOException {
+	public static void insertExif(InputStream is, OutputStream os, Exif exif, boolean update) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PushbackInputStream pushbackStream = new PushbackInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = IMGUtils.guessImageType(pushbackStream);		
 		// Delegate EXIF inserting to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
-				JPEGTweaker.insertExif(pushbackStream, out, exif, update);
+				JPEGTweaker.insertExif(pushbackStream, os, exif, update);
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(pushbackStream);
-				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
 				TIFFTweaker.insertExif(randIS, randOS, exif, update);
 				randIS.close();
 				randOS.close();

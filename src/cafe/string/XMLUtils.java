@@ -386,8 +386,9 @@ public class XMLUtils {
 	/**
 	 * Serialize XML Document to string using Transformer
 	 * 
-	 * @param doc XML Document
-	 * @return String representation of the the Document
+	 * @param node XML node
+	 * @param encoding encoding of the XML document
+	 * @return String representation of the XML Document
 	 * @throws IOException
 	 */
 	public static String serializeToString(Node node, String encoding) throws IOException {

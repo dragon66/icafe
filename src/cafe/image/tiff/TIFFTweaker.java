@@ -2666,8 +2666,8 @@ public class TIFFTweaker {
 	 * 
 	 * @param startPage start page number (inclusive) 
 	 * @param endPage end page number (inclusive)
-	 * @param is input image stream
-	 * @param os output image stream
+	 * @param rin input image stream
+	 * @param rout output image stream
 	 * @return number of pages removed
 	 * @throws IOException
 	 */

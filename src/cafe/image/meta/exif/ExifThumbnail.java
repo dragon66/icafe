@@ -157,7 +157,7 @@ public class ExifThumbnail extends Thumbnail {
 			// Create a JPEGWriter to write the image
 			ImageWriter jpgWriter = ImageIO.getWriter(ImageType.JPG);
 			// Create a ImageParam builder
-			ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
+			ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();
 			// Create JPEGOptions		
 			JPEGOptions jpegOptions = new JPEGOptions();			
 			jpegOptions.setQuality(writeQuality);

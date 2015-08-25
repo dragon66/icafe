@@ -202,13 +202,13 @@ implements <a href="../../../cafe/image/meta/MetadataReader.html" title="interfa
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.exif.Exif)">insertExif</a></strong>(java.io.InputStream&nbsp;is,
-          java.io.OutputStream&nbsp;out,
+          java.io.OutputStream&nbsp;os,
           <a href="../../../cafe/image/meta/exif/Exif.html" title="class in cafe.image.meta.exif">Exif</a>&nbsp;exif)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20cafe.image.meta.exif.Exif,%20boolean)">insertExif</a></strong>(java.io.InputStream&nbsp;is,
-          java.io.OutputStream&nbsp;out,
+          java.io.OutputStream&nbsp;os,
           <a href="../../../cafe/image/meta/exif/Exif.html" title="class in cafe.image.meta.exif">Exif</a>&nbsp;exif,
           boolean&nbsp;update)</code>&nbsp;</td>
 </tr>
@@ -433,11 +433,10 @@ implements <a href="../../../cafe/image/meta/MetadataReader.html" title="interfa
 <li class="blockList">
 <h4>insertExif</h4>
 <pre>public static&nbsp;void&nbsp;insertExif(java.io.InputStream&nbsp;is,
-              java.io.OutputStream&nbsp;out,
+              java.io.OutputStream&nbsp;os,
               <a href="../../../cafe/image/meta/exif/Exif.html" title="class in cafe.image.meta.exif">Exif</a>&nbsp;exif)
                        throws java.io.IOException</pre>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - input image stream</dd><dd><code>os</code> - output image stream</dd><dd><code>exif</code> - Exif instance</dd><dd><code>update</code> - True to keep the original data, otherwise false</dd>
-<dt><span class="strong">Throws:</span></dt>
+<dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
@@ -448,11 +447,12 @@ implements <a href="../../../cafe/image/meta/MetadataReader.html" title="interfa
 <li class="blockList">
 <h4>insertExif</h4>
 <pre>public static&nbsp;void&nbsp;insertExif(java.io.InputStream&nbsp;is,
-              java.io.OutputStream&nbsp;out,
+              java.io.OutputStream&nbsp;os,
               <a href="../../../cafe/image/meta/exif/Exif.html" title="class in cafe.image.meta.exif">Exif</a>&nbsp;exif,
               boolean&nbsp;update)
                        throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - input image stream</dd><dd><code>os</code> - output image stream</dd><dd><code>exif</code> - Exif instance</dd><dd><code>update</code> - True to keep the original data, otherwise false</dd>
+<dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>

@@ -273,7 +273,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		
 		JPEGWriter jpgWriter = new JPEGWriter();
 		
-		ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
+		ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();
 		
 		if(grayscale)
 			builder.colorType(ImageColorType.GRAY_SCALE);

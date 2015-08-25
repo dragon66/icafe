@@ -74,8 +74,8 @@ public class TestTIFFTweaker extends TestBase {
 					fin.close();
 				}				
 				
-				ImageParam.ImageParamBuilder builder = new ImageParam.ImageParamBuilder();
-				  
+				ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();
+				
 				TIFFOptions tiffOptions = new TIFFOptions();
 				tiffOptions.setTiffCompression(Compression.LZW);
 				tiffOptions.setApplyPredictor(true);

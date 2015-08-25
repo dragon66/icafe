@@ -473,7 +473,7 @@ public class GIFTweaker {
 	 * @param outputFilePrefix optional prefix for the output image
 	 * @throws Exception
 	 * 
-	 * @deprecated Use {@link #splitAnimateGIF(InputStream, ImageWriter, String) splitAnimagedGIF} instead.
+	 * @deprecated Use {@link #splitAnimatedGIF(InputStream, ImageWriter, String) splitAnimagedGIF} instead.
 	 */
 	@Deprecated
 	public static void splitFrames2(InputStream animatedGIF, ImageWriter writer, String outputFilePrefix) throws Exception {
@@ -550,7 +550,6 @@ public class GIFTweaker {
 	 * Split animated GIF to individual GIF images.
 	 * 
 	 * @param animatedGIF input animated GIF stream
-	 * @param writer ImageWriter for the output frame
 	 * @param outputFilePrefix optional path prefix for the output image
 	 * @throws Exception
 	 */

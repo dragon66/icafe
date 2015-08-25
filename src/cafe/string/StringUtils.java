@@ -202,7 +202,7 @@ public class StringUtils {
 	 * Regular expression version of the String contains method.
 	 * If used with a match from start or match from end regular expression,
 	 * it becomes the regular expression version of the {@link String#
-	 * startsWith(String prefix)} or {@link String#endsWith(String suffix)}
+	 * startsWith(String)} or {@link String#endsWith(String)}
 	 * methods.
 	 * 
 	 * @param input the input string
@@ -259,7 +259,7 @@ public class StringUtils {
 	 *
 	 * Input: latitude or longitude in the DMS format ( example: N 43° 36' 15.894")
 	 * @param hemisphereOUmeridien => {W,E,S,N}
-	 * @return: latitude or longitude in decimal format
+	 * @return latitude or longitude in decimal format
 	 */
 	public double DMSToDecimal(String hemisphereOUmeridien, double degrees, double minutes, double seconds) {
 		double LatOrLon = 0;

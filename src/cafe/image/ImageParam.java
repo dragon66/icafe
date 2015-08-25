@@ -156,9 +156,9 @@ public class ImageParam {
 	public static class ImageParamBuilder implements Builder<ImageParam> {
 		// Parameters - initialized to default values
 		// Common parameters for all image formats
-		private int width = 0;
-		private int height = 0;
-		private int bitsPerPixel = 0;
+		private int width;
+		private int height;
+		private int bitsPerPixel;
 	    private ImageColorType colorType = ImageColorType.FULL_COLOR;
 	    private int rgbColorPalette[];
 	    private byte componentColorPalette[][]; // For RGBA separate components
@@ -177,7 +177,7 @@ public class ImageParam {
 	    // Additional format-specific parameters
 	    private ImageOptions imageOptions;
 		
-	    public ImageParamBuilder() {	}
+	    private ImageParamBuilder() {;}
 	    
 	    public ImageParamBuilder applyDither(boolean applyDither) {
 	    	this.applyDither = applyDither;

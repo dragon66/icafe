@@ -251,7 +251,7 @@ public class Packbits
 	 * actually casts it to a signed value of -128.
 	 *
 	 * @param inb	raw data to calculate byte runs on
-	 * @param runs	output to contain length of each byte run
+	 * @return	output to contain length of each byte run
 	 *				this buffer must be as long as input buffer
 	 *				to handle worst case.
 	 */
