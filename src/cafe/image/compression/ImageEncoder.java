@@ -18,7 +18,7 @@ public interface ImageEncoder {
 	 * @param start offset in the pixel array where the encoding starts (the actual position could be anywhere inside the
 	 * 	   			offset byte which maybe kept track of by the implementation class through a parameter such as
 	 * 				<em>currPos</em> if the encoder is pixel oriented).
-	 * @param len the number of pixels to be encoded if the encode is pixel oriented like CCITT or the number of bytes to
+	 * @param len the number of pixels to be encoded if the encoder is pixel oriented like CCITT or the number of bytes to
 	 * 		  	  be encoded if the encoder is byte oriented like LZW etc.
 	 */
 	public void encode(byte[] pixels, int start, int len) throws Exception;

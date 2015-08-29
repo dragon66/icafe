@@ -1205,7 +1205,7 @@ public class IMGUtils {
 	}
 	
 	/**
-	 * RGB to GrayScale image conversion with Floyd-Steinberg dither
+	 * RGB to bilevel image conversion with Floyd-Steinberg dither
 	 * 
 	 * @param rgb input RGB image array (format: ARGBARGBARGB...)
 	 * @param imageWidth image width

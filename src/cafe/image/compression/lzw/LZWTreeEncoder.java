@@ -97,13 +97,17 @@ public class LZWTreeEncoder implements ImageEncoder {
 		this.writer = writer;
 	}
 	
-	/**
-	 * @param len the number of bytes to be encoded
+    /**
+	 * LZW encode the pixel byte array.
+	 * 
+	 * @param pixels pixel array to be encoded
+	 * @param start offset to the pixel array to start encoding
+	 * @param len number of bytes to be encoded
+	 * @throws Exception
 	 */
 	public void encode(byte[] pixels, int start, int len) throws Exception {
-		if(start < 0 || len <= 0) {
-			return;
-		}
+		if(start < 0 || len <= 0) return;
+		if(start + len > pixels.length) len = pixels.length - start;
 		// Define local variables
 		int son = 0;
 		int brother = 0;

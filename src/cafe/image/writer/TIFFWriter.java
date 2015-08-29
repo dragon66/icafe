@@ -641,7 +641,10 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		int bitsPerPixel = colorInfo[0];
 		
 		if(colorInfo[0]>0x08) {
-			colorInfo = IMGUtils.reduceColorsFloydSteinberg(pixels, imageWidth, imageHeight, 8, newPixels, colorPalette);
+			if(getImageParam().isApplyDither())
+				colorInfo = IMGUtils.reduceColorsFloydSteinberg(pixels, imageWidth, imageHeight, 8, newPixels, colorPalette);
+			else
+	    		colorInfo = IMGUtils.reduceColors(pixels, bitsPerPixel, newPixels, colorPalette);
 			bitsPerPixel = 8;
 		}
 		

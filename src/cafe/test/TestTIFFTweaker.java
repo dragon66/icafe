@@ -82,7 +82,7 @@ public class TestTIFFTweaker extends TestBase {
 				tiffOptions.setDeflateCompressionLevel(6);
 				builder.imageOptions(tiffOptions);
 				
-				frames[0].setFrameParam(builder.colorType(ImageColorType.GRAY_SCALE).applyDither(true).ditherThreshold(18).hasAlpha(true).build());
+				frames[0].setFrameParam(builder.colorType(ImageColorType.GRAY_SCALE).hasAlpha(true).build());
 				
 				tiffOptions = new TIFFOptions(tiffOptions); // Copy constructor		
 				tiffOptions.setTiffCompression(Compression.DEFLATE);
@@ -92,7 +92,7 @@ public class TestTIFFTweaker extends TestBase {
 				tiffOptions = new TIFFOptions(tiffOptions);				
 				tiffOptions.setTiffCompression(Compression.CCITTFAX4);
 				
-				ImageParam meta = builder.colorType(ImageColorType.BILEVEL).ditherThreshold(50).imageOptions(tiffOptions).build();
+				ImageParam meta = builder.colorType(ImageColorType.BILEVEL).applyDither(true).ditherThreshold(50).imageOptions(tiffOptions).build();
 				
 				for(int i = 2; i < frames.length; i++)
 					frames[i].setFrameParam(meta);

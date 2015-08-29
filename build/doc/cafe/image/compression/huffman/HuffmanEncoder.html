@@ -229,7 +229,7 @@ implements <a href="../../../../cafe/image/compression/ImageEncoder.html" title=
 <dd><code><a href="../../../../cafe/image/compression/ImageEncoder.html#encode(byte[],%20int,%20int)">encode</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../cafe/image/compression/ImageEncoder.html" title="interface in cafe.image.compression">ImageEncoder</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>pixels</code> - array of pixels (This has nothing to do with the actual bits per pixel since it could be pixel packed)</dd><dd><code>start</code> - offset in the pixel array where the encoding starts (the actual position could be anywhere inside the
                                 offset byte which maybe kept track of by the implementation class through a parameter such as
-                                <em>currPos</em> if the encoder is pixel oriented).</dd><dd><code>len</code> - the number of pixels to be encoded if the encode is pixel oriented like CCITT or the number of bytes to
+                                <em>currPos</em> if the encoder is pixel oriented).</dd><dd><code>len</code> - the number of pixels to be encoded if the encoder is pixel oriented like CCITT or the number of bytes to
                           be encoded if the encoder is byte oriented like LZW etc.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>

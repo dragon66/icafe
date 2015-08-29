@@ -157,7 +157,7 @@ implements <a href="../../../../cafe/image/compression/ImageEncoder.html" title=
 <td class="colLast"><code><strong><a href="../../../../cafe/image/compression/lzw/LZWTreeEncoder.html#encode(byte[],%20int,%20int)">encode</a></strong>(byte[]&nbsp;pixels,
       int&nbsp;start,
       int&nbsp;len)</code>
-<div class="block">The actual encoding implementation</div>
+<div class="block">LZW encode the pixel byte array.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -262,14 +262,11 @@ implements <a href="../../../../cafe/image/compression/ImageEncoder.html" title=
           int&nbsp;start,
           int&nbsp;len)
             throws java.lang.Exception</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../cafe/image/compression/ImageEncoder.html#encode(byte[],%20int,%20int)">ImageEncoder</a></code></strong></div>
-<div class="block">The actual encoding implementation</div>
+<div class="block">LZW encode the pixel byte array.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../cafe/image/compression/ImageEncoder.html#encode(byte[],%20int,%20int)">encode</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../cafe/image/compression/ImageEncoder.html" title="interface in cafe.image.compression">ImageEncoder</a></code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>len</code> - the number of bytes to be encoded</dd><dd><code>pixels</code> - array of pixels (This has nothing to do with the actual bits per pixel since it could be pixel packed)</dd><dd><code>start</code> - offset in the pixel array where the encoding starts (the actual position could be anywhere inside the
-                                offset byte which maybe kept track of by the implementation class through a parameter such as
-                                <em>currPos</em> if the encoder is pixel oriented).</dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>pixels</code> - pixel array to be encoded</dd><dd><code>start</code> - offset to the pixel array to start encoding</dd><dd><code>len</code> - number of bytes to be encoded</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
