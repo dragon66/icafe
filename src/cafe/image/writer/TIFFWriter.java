@@ -51,6 +51,7 @@ import cafe.image.compression.packbits.Packbits;
 import cafe.image.options.ImageOptions;
 import cafe.image.options.JPEGOptions;
 import cafe.image.options.TIFFOptions;
+import cafe.image.quant.DitherMethod;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.RationalField;
 import cafe.image.tiff.TiffFieldEnum.*;
@@ -93,6 +94,10 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TIFFWriter.class);
 	
 	public TIFFWriter() {}
+	
+	public TIFFWriter(ImageParam param) {
+		super(param);
+	}
 		
 	// Predictor for PLANARY_CONFIGURATION value 1
 	private static byte[] applyPredictor(int numOfSamples, byte[] input, int imageWidth, int imageHeight) {
@@ -610,7 +615,12 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 			writeIndexed(pixels, imageWidth, imageHeight, compression);
 		} else if(param.getColorType() == ImageColorType.BILEVEL) {
 			if(param.isApplyDither()) {
-				writeBilevel(IMGUtils.rgb2bilevelDither(pixels, imageWidth, imageHeight, param.getDitherThreshold()), imageWidth, imageHeight, compression);
+				byte[] bilevelPixels = null;
+				if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
+					bilevelPixels = IMGUtils.rgb2bilevelDiffusionDither(pixels, imageWidth, imageHeight, param.getDitherThreshold());
+				else
+					bilevelPixels = IMGUtils.rgb2bilevelOrderedDither(pixels, imageWidth, imageHeight, param.getDitherMatrix());
+				writeBilevel(bilevelPixels, imageWidth, imageHeight, compression);
 			} else 
 				writeBilevel(IMGUtils.rgb2bilevel(pixels), imageWidth, imageHeight, compression);
 		} else {

@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ==================================================
+ * WY    03Sep2015  Added support for different dither type
  * WY    30Dec2014  Added new meta data fields hasICCP, containsThumbnail,
  *                  icc_profile, and thumbnails
  * WY    17Dec2014  Replaced different color type fields with ImageColorType
@@ -23,6 +24,7 @@ package cafe.image;
 import java.awt.image.BufferedImage;
 
 import cafe.image.options.ImageOptions;
+import cafe.image.quant.DitherMethod;
 import cafe.util.Builder;
 
 /**
@@ -41,6 +43,8 @@ public class ImageParam {
     private final byte componentColorPalette[][];
     private final boolean hasAlpha;
     private final boolean isApplyDither;
+    private final int[][] ditherMatrix;
+    private final DitherMethod ditherMethod;
     private final int ditherThreshold;
     private final boolean transparent;
     private final int transparentColor;
@@ -48,13 +52,27 @@ public class ImageParam {
     private final byte icc_profile[];
     private final boolean containsThumbnail;    
     private final BufferedImage thumbnails[];
-    
+     
     private final ImageOptions imageOptions;
     
     // DEFAULT_IMAGE_PARAM is immutable given the fact the arrays it contains are empty
     public static final ImageParam DEFAULT_IMAGE_PARAM = new ImageParamBuilder().build();
     
-	public static final int DEFAULT_DITHER_THRESHOLD = 18;
+    private static final DitherMethod DEFAULT_DITHER_METHOD = DitherMethod.FLOYD_STEINBERG;
+	
+    private static final int DEFAULT_DITHER_THRESHOLD = 18;	
+	
+    // Default Bayer 8X8 threshold matrix for ordered dither
+    private static final int[][] DEFAULT_DITHER_MATRIX = {
+			{ 1, 49, 13, 61,  4, 52, 16, 64},
+			{ 33, 17, 45, 29, 36, 20, 48, 32},
+			{  9, 57,  5, 53, 12, 60,  8, 56},
+			{ 41, 25, 37, 21, 44, 28, 40, 24},
+			{  3, 51, 15, 63,  2, 50, 14, 62},
+			{ 35, 19, 47, 31, 34, 18, 46, 30},
+			{ 11, 59,  7, 55, 10, 58,  6, 54},
+			{ 43, 27, 39, 23, 42, 26, 38, 22}
+	};
     
     private ImageParam(ImageParamBuilder builder) {
 		width = builder.width;
@@ -65,6 +83,8 @@ public class ImageParam {
 		componentColorPalette = builder.componentColorPalette;
 		hasAlpha = builder.hasAlpha;
 		isApplyDither = builder.applyDither;
+		ditherMatrix = builder.ditherMatrix;
+		ditherMethod = builder.ditherMethod;
 		ditherThreshold = builder.ditherThreshold;
 		transparentColor = builder.transparentColor;
 		transparent = builder.transparent;
@@ -95,6 +115,18 @@ public class ImageParam {
     	return componentColorPalette;
     }
 	
+    public int[][] getDitherMatrix() {
+    	int[][] copy = new int[ditherMatrix.length][];
+    	for(int i = 0; i < ditherMatrix.length; i++) {
+    		copy[i] = ditherMatrix[i].clone();
+    	}
+    	return copy;
+    }
+    
+    public DitherMethod getDitherMethod() {
+    	return ditherMethod;
+    }
+    
 	public int getDitherThreshold() {
     	return ditherThreshold;
     }
@@ -165,7 +197,10 @@ public class ImageParam {
 	    // Whether alpha channel is included or not
 	    private boolean hasAlpha = false;
 	    private boolean applyDither = false;
-	    private int ditherThreshold = 18;
+	    private DitherMethod ditherMethod = DEFAULT_DITHER_METHOD;
+	    // Bayer 8X8 matrix
+	    private int[][] ditherMatrix = DEFAULT_DITHER_MATRIX;
+	    private int ditherThreshold = DEFAULT_DITHER_THRESHOLD;
 	    // Transparency related variables
 	    private boolean transparent = false;
 	    private int transparentColor;
@@ -205,6 +240,16 @@ public class ImageParam {
 	    
 	    public ImageParamBuilder containsThumbnail(boolean containsThumbnail) {
 	    	this.containsThumbnail = containsThumbnail;
+	    	return this;
+	    }
+	    
+	    public ImageParamBuilder ditherMatrix(int[][] ditherMatrix) {
+	    	this.ditherMatrix = ditherMatrix;
+	    	return this;
+	    }
+	    
+	    public ImageParamBuilder ditherMethod(DitherMethod ditherMethod) {
+	    	this.ditherMethod = ditherMethod;
 	    	return this;
 	    }
 	    
@@ -250,8 +295,10 @@ public class ImageParam {
 	    	this.componentColorPalette = null;
 	    	this.hasAlpha = false;
 	    	this.applyDither = false;
-	    	this.ditherThreshold = 255;
-	    	this.transparent = false;
+	      	this.ditherMatrix = DEFAULT_DITHER_MATRIX;
+	      	this.ditherMethod = DEFAULT_DITHER_METHOD;
+	    	this.ditherThreshold = DEFAULT_DITHER_THRESHOLD;
+	      	this.transparent = false;
 	    	this.transparentColor = 0;
 	    	this.hasICCP = false;
 	    	this.icc_profile = null;

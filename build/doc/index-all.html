@@ -347,6 +347,8 @@
 </dd>
 <dt><span class="strong"><a href="./cafe/image/writer/BMPWriter.html#BMPWriter()">BMPWriter()</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/BMPWriter.html" title="class in cafe.image.writer">BMPWriter</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/BMPWriter.html#BMPWriter(cafe.image.ImageParam)">BMPWriter(ImageParam)</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/BMPWriter.html" title="class in cafe.image.writer">BMPWriter</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/util/WuQuant.html#Bottom(cafe.image.util.Box,%20int,%20int[][][])">Bottom(Box, int, int[][][])</a></span> - Method in class cafe.image.util.<a href="./cafe/image/util/WuQuant.html" title="class in cafe.image.util">WuQuant</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./cafe/string/BoyerMoore.html" title="class in cafe.string"><span class="strong">BoyerMoore</span></a> - Class in <a href="./cafe/string/package-summary.html">cafe.string</a></dt>
@@ -473,6 +475,8 @@
 <dt><a href="./cafe/image/options/package-summary.html">cafe.image.options</a> - package cafe.image.options</dt>
 <dd>&nbsp;</dd>
 <dt><a href="./cafe/image/png/package-summary.html">cafe.image.png</a> - package cafe.image.png</dt>
+<dd>&nbsp;</dd>
+<dt><a href="./cafe/image/quant/package-summary.html">cafe.image.quant</a> - package cafe.image.quant</dt>
 <dd>&nbsp;</dd>
 <dt><a href="./cafe/image/reader/package-summary.html">cafe.image.reader</a> - package cafe.image.reader</dt>
 <dd>&nbsp;</dd>
@@ -940,8 +944,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/string/Base64.html#decodeToByteArray(java.lang.String)">decodeToByteArray(String)</a></span> - Static method in class cafe.string.<a href="./cafe/string/Base64.html" title="class in cafe.string">Base64</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/ImageParam.html#DEFAULT_DITHER_THRESHOLD">DEFAULT_DITHER_THRESHOLD</a></span> - Static variable in class cafe.image.<a href="./cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/ImageParam.html#DEFAULT_IMAGE_PARAM">DEFAULT_IMAGE_PARAM</a></span> - Static variable in class cafe.image.<a href="./cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/png/Filter.html#defilter_average(int,%20int,%20byte[],%20int)">defilter_average(int, int, byte[], int)</a></span> - Static method in class cafe.image.png.<a href="./cafe/image/png/Filter.html" title="class in cafe.image.png">Filter</a></dt>
@@ -1012,6 +1014,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/io/RandomAccessOutputStream.html#disposeBefore(long)">disposeBefore(long)</a></span> - Method in class cafe.io.<a href="./cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#dither_Bayer(byte[],%20byte[],%20int,%20int,%20int[][])">dither_Bayer(byte[], byte[], int, int, int[][])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
+<dd>
+<div class="block">Dither gray-scale image using Bayer threshold matrix</div>
+</dd>
 <dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#dither_FloydSteinberg(byte[],%20byte[],%20int,%20int,%20int,%20int)">dither_FloydSteinberg(byte[], byte[], int, int, int, int)</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
 <dd>
 <div class="block">Dither gray-scale image using Floyd-Steinberg error diffusion</div>
@@ -1020,6 +1026,12 @@
 <dd>
 <div class="block">Floyd-Steinberg dithering, based on PPMQuant.c by Jef Poskanzer <jef@acme.com>.</div>
 </dd>
+<dt><span class="strong"><a href="./cafe/image/ImageParam.ImageParamBuilder.html#ditherMatrix(int[][])">ditherMatrix(int[][])</a></span> - Method in class cafe.image.<a href="./cafe/image/ImageParam.ImageParamBuilder.html" title="class in cafe.image">ImageParam.ImageParamBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/ImageParam.ImageParamBuilder.html#ditherMethod(cafe.image.quant.DitherMethod)">ditherMethod(DitherMethod)</a></span> - Method in class cafe.image.<a href="./cafe/image/ImageParam.ImageParamBuilder.html" title="class in cafe.image">ImageParam.ImageParamBuilder</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="./cafe/image/quant/DitherMethod.html" title="enum in cafe.image.quant"><span class="strong">DitherMethod</span></a> - Enum in <a href="./cafe/image/quant/package-summary.html">cafe.image.quant</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/ImageParam.ImageParamBuilder.html#ditherThreshold(int)">ditherThreshold(int)</a></span> - Method in class cafe.image.<a href="./cafe/image/ImageParam.ImageParamBuilder.html" title="class in cafe.image">ImageParam.ImageParamBuilder</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/string/StringUtils.html#DMSToDecimal(java.lang.String,%20double,%20double,%20double)">DMSToDecimal(String, double, double, double)</a></span> - Method in class cafe.string.<a href="./cafe/string/StringUtils.html" title="class in cafe.string">StringUtils</a></dt>
@@ -1968,6 +1980,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/reader/GIFReader.html#getDisposalMethod()">getDisposalMethod()</a></span> - Method in class cafe.image.reader.<a href="./cafe/image/reader/GIFReader.html" title="class in cafe.image.reader">GIFReader</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/ImageParam.html#getDitherMatrix()">getDitherMatrix()</a></span> - Method in class cafe.image.<a href="./cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/ImageParam.html#getDitherMethod()">getDitherMethod()</a></span> - Method in class cafe.image.<a href="./cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/ImageParam.html#getDitherThreshold()">getDitherThreshold()</a></span> - Method in class cafe.image.<a href="./cafe/image/ImageParam.html" title="class in cafe.image">ImageParam</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/image/ImageMetadata.html#getDocument()">getDocument()</a></span> - Method in class cafe.image.meta.image.<a href="./cafe/image/meta/image/ImageMetadata.html" title="class in cafe.image.meta.image">ImageMetadata</a></dt>
@@ -2712,6 +2728,8 @@
 </dd>
 <dt><span class="strong"><a href="./cafe/image/writer/GIFWriter.html#GIFWriter()">GIFWriter()</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/GIFWriter.html" title="class in cafe.image.writer">GIFWriter</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/GIFWriter.html#GIFWriter(cafe.image.ImageParam)">GIFWriter(ImageParam)</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/GIFWriter.html" title="class in cafe.image.writer">GIFWriter</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/meta/exif/Exif.html#gpsSubIFD">gpsSubIFD</a></span> - Variable in class cafe.image.meta.exif.<a href="./cafe/image/meta/exif/Exif.html" title="class in cafe.image.meta.exif">Exif</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./cafe/image/meta/exif/GPSTag.html" title="enum in cafe.image.meta.exif"><span class="strong">GPSTag</span></a> - Enum in <a href="./cafe/image/meta/exif/package-summary.html">cafe.image.meta.exif</a></dt>
@@ -2960,6 +2978,8 @@
  methods for all image writers.</div>
 </dd>
 <dt><span class="strong"><a href="./cafe/image/writer/ImageWriter.html#ImageWriter()">ImageWriter()</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/ImageWriter.html#ImageWriter(cafe.image.ImageParam)">ImageWriter(ImageParam)</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/ImageWriter.html" title="class in cafe.image.writer">ImageWriter</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util"><span class="strong">IMGUtils</span></a> - Class in <a href="./cafe/image/util/package-summary.html">cafe.image.util</a></dt>
 <dd>
@@ -3452,6 +3472,8 @@
 <div class="block">JPEG image writer</div>
 </dd>
 <dt><span class="strong"><a href="./cafe/image/writer/JPEGWriter.html#JPEGWriter()">JPEGWriter()</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/JPEGWriter.html" title="class in cafe.image.writer">JPEGWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/JPEGWriter.html#JPEGWriter(cafe.image.ImageParam)">JPEGWriter(ImageParam)</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/JPEGWriter.html" title="class in cafe.image.writer">JPEGWriter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/reader/JPEGReader.html#JPG">JPG</a></span> - Static variable in class cafe.image.reader.<a href="./cafe/image/reader/JPEGReader.html" title="class in cafe.image.reader">JPEGReader</a></dt>
 <dd>&nbsp;</dd>
@@ -3984,6 +4006,8 @@
 <div class="block">PNG image writer</div>
 </dd>
 <dt><span class="strong"><a href="./cafe/image/writer/PNGWriter.html#PNGWriter()">PNGWriter()</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/PNGWriter.html" title="class in cafe.image.writer">PNGWriter</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/PNGWriter.html#PNGWriter(cafe.image.ImageParam)">PNGWriter(ImageParam)</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/PNGWriter.html" title="class in cafe.image.writer">PNGWriter</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/util/LinkedListStack.html#pop()">pop()</a></span> - Method in class cafe.util.<a href="./cafe/util/LinkedListStack.html" title="class in cafe.util">LinkedListStack</a></dt>
 <dd>&nbsp;</dd>
@@ -4923,10 +4947,12 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#rgb2bilevel(int[])">rgb2bilevel(int[])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#rgb2bilevelDither(int[],%20int,%20int,%20int)">rgb2bilevelDither(int[], int, int, int)</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
+<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#rgb2bilevelDiffusionDither(int[],%20int,%20int,%20int)">rgb2bilevelDiffusionDither(int[], int, int, int)</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
 <dd>
 <div class="block">RGB to bilevel image conversion with Floyd-Steinberg dither</div>
 </dd>
+<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#rgb2bilevelOrderedDither(int[],%20int,%20int,%20int[][])">rgb2bilevelOrderedDither(int[], int, int, int[][])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#RGB2CMYK(java.awt.color.ICC_ColorSpace,%20int[],%20float[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2CMYK(ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#RGB2CMYK(java.awt.color.ICC_ColorSpace,%20int[],%20int,%20int,%20boolean)">RGB2CMYK(ICC_ColorSpace, int[], int, int, boolean)</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
@@ -5905,6 +5931,8 @@
 </dd>
 <dt><span class="strong"><a href="./cafe/image/writer/TIFFWriter.html#TIFFWriter()">TIFFWriter()</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/writer/TIFFWriter.html#TIFFWriter(cafe.image.ImageParam)">TIFFWriter(ImageParam)</a></span> - Constructor for class cafe.image.writer.<a href="./cafe/image/writer/TIFFWriter.html" title="class in cafe.image.writer">TIFFWriter</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="./cafe/image/png/TIMEBuilder.html" title="class in cafe.image.png"><span class="strong">TIMEBuilder</span></a> - Class in <a href="./cafe/image/png/package-summary.html">cafe.image.png</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/png/TIMEBuilder.html#TIMEBuilder()">TIMEBuilder()</a></span> - Constructor for class cafe.image.png.<a href="./cafe/image/png/TIMEBuilder.html" title="class in cafe.image.png">TIMEBuilder</a></dt>
@@ -6322,6 +6350,10 @@
 <dd>
 <div class="block">Returns the enum constant of this type with the specified name.</div>
 </dd>
+<dt><span class="strong"><a href="./cafe/image/quant/DitherMethod.html#valueOf(java.lang.String)">valueOf(String)</a></span> - Static method in enum cafe.image.quant.<a href="./cafe/image/quant/DitherMethod.html" title="enum in cafe.image.quant">DitherMethod</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this type with the specified name.</div>
+</dd>
 <dt><span class="strong"><a href="./cafe/image/tiff/FieldType.html#valueOf(java.lang.String)">valueOf(String)</a></span> - Static method in enum cafe.image.tiff.<a href="./cafe/image/tiff/FieldType.html" title="enum in cafe.image.tiff">FieldType</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this type with the specified name.</div>
@@ -6512,6 +6544,11 @@ the order they are declared.</div>
 the order they are declared.</div>
 </dd>
 <dt><span class="strong"><a href="./cafe/image/png/ColorType.html#values()">values()</a></span> - Static method in enum cafe.image.png.<a href="./cafe/image/png/ColorType.html" title="enum in cafe.image.png">ColorType</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum type, in
+the order they are declared.</div>
+</dd>
+<dt><span class="strong"><a href="./cafe/image/quant/DitherMethod.html#values()">values()</a></span> - Static method in enum cafe.image.quant.<a href="./cafe/image/quant/DitherMethod.html" title="enum in cafe.image.quant">DitherMethod</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum type, in
 the order they are declared.</div>

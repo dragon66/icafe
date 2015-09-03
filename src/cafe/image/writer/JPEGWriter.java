@@ -83,6 +83,10 @@ public class JPEGWriter extends ImageWriter {
     private static final String comment = "Created by JPEGWriter 1.0 - Wen Yu (yuwen_66@yahoo.com)";
 		   
 	public JPEGWriter() {}
+	
+	public JPEGWriter(ImageParam param) {
+		super(param);
+	}
    	
 	// Expand array to make image width and height a multiple of 8
 	private float[][] expandArray(float[][] component, int width, int height) {

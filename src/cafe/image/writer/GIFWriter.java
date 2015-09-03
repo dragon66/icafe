@@ -110,6 +110,10 @@ public class GIFWriter extends ImageWriter {
 	
 	public GIFWriter() {}
 	
+	public GIFWriter(ImageParam param) {
+		super(param);
+	}
+	
 	private void encode(byte[] pixels, OutputStream os) throws Exception {
 		// Define local variables
 		int parent = 0;

@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    03Sep2015  Added ordered dither support for bilevel image
  * WY    03Feb2015  Added createThumbnail() to create a thumbnail from an image
  * WY    27Jan2015  Added createThumbnail8BIM() to wrap a BufferedImage to _8BIM
  * WY    22Jan2015  Factored out guessImageType(byte[])
@@ -261,6 +262,46 @@ public class IMGUtils {
 	}
 	
 	/**
+	 * Dither gray-scale image using Bayer threshold matrix
+	 *
+	 * @param gray input gray-scale image array - also as output BW image array
+	 * @param mask a mask array for transparent pixels - 0 transparent, 1 opaque
+	 * @param width image width
+	 * @param height image height
+	 * @param threshold Bayer threshold matrix used to convert to BW image
+	 */	
+	public static void dither_Bayer(byte[] gray, byte[] mask, int width, int height, int[][] threshold) {
+		int level = threshold.length;
+		int scaler = level*level + 1;
+		
+		for(int i = 0; i < level; i++)
+			for(int j = 0; j < level; j++)
+				threshold[i][j] = ((threshold[i][j]<<8)/scaler); // Scale to 256 colors
+					
+		for (int row = 0, index = 0; row < height; row++)
+		{
+			for (int col = 0; col < width; index++, col++) {
+				if(mask[index] == 0) { 
+					// make transparency color white (Assume WHITE_IS_ZERO)
+					gray[index] = 0; 
+					continue; 
+				}
+				// Apply ordered dither
+				int intensity = (gray[index]&0xff);
+				if (intensity > 255) intensity = 255;
+				else if (intensity < 0) intensity = 0;
+				
+				// Find the nearest color index	- black or white
+				if(intensity <=  threshold[row%level][col%level]) {
+					gray[index] = 1;
+				} else {
+					gray[index] = 0;
+				}
+			}
+		}
+	}
+	
+	/**
 	 * Dither gray-scale image using Floyd-Steinberg error diffusion
 	 *
 	 * @param gray input gray-scale image array - also as output BW image array
@@ -270,8 +311,7 @@ public class IMGUtils {
 	 * @param threshold gray-scale threshold to convert to BW image
 	 * @param err_limit limit of the error (range 0-255 inclusive)
 	 */	
-	public static void dither_FloydSteinberg(byte[] gray, byte[] mask, int width, int height, int threshold, int err_limit)
-	{
+	public static void dither_FloydSteinberg(byte[] gray, byte[] mask, int width, int height, int threshold, int err_limit)	{
 		// Define error arrays
 		// Errors for the current line
 		int[] tempErr;
@@ -332,6 +372,14 @@ public class IMGUtils {
 	/**
 	 * Floyd-Steinberg dithering, based on PPMQuant.c by Jef Poskanzer <jef@acme.com>.
 	 * For simplicity, only forward error diffusion is implemented.
+	 * 
+	 * @param rgbTriplet input pixels in ARGB format 
+	 * @param width width of the image
+	 * @param height height of the image
+	 * @param newPixels output pixels
+	 * @param no_of_color number of colors used
+	 * @param colorPalette color palette
+	 * @param transparent_index transparent color index of the color palette
 	 */
 	public static void dither_FloydSteinberg(int[] rgbTriplet, int width, int height, byte[] newPixels, int no_of_color, 
 		                                      int[] colorPalette, int transparent_index)
@@ -1204,6 +1252,26 @@ public class IMGUtils {
 		return pixels;
 	}
 	
+	public static byte[] rgb2bilevelOrderedDither(int[] rgb, int imageWidth, int imageHeight, int[][] threshold) {
+		// RGB to gray-scale
+		byte[] pixels = new byte[rgb.length];
+		byte[] mask = new byte[rgb.length];
+		
+		Arrays.fill(mask, (byte)0x01);
+		
+		for(int i = 0; i < rgb.length; i++) {
+			if((rgb[i] >>> 24) < 0x80) {
+				pixels[i] = (byte)0xff; // Dealing with transparency color
+				mask[i] = 0x00;
+			} else
+				pixels[i] = (byte)(((rgb[i]>>16)&0xff)*0.2126 + ((rgb[i]>>8)&0xff)*0.7152 + (rgb[i]&0xff)*0.0722);
+		}
+		
+		IMGUtils.dither_Bayer(pixels, mask, imageWidth, imageHeight, threshold);
+		
+		return pixels;
+	}
+	
 	/**
 	 * RGB to bilevel image conversion with Floyd-Steinberg dither
 	 * 
@@ -1213,7 +1281,7 @@ public class IMGUtils {
 	 * @param err_limit Floyd-Steinberg error diffusion error limit (range 0-255 inclusive)
 	 * @return byte array for the BW image
 	 */
-	public static byte[] rgb2bilevelDither(int[] rgb, int imageWidth, int imageHeight, int err_limit) {
+	public static byte[] rgb2bilevelDiffusionDither(int[] rgb, int imageWidth, int imageHeight, int err_limit) {
 		// RGB to gray-scale
 		byte[] pixels = new byte[rgb.length];
 		byte[] mask = new byte[rgb.length];

@@ -64,6 +64,12 @@ public class PNGWriter extends ImageWriter {
 	
 	/** PNG signature constant */
     private static final long SIGNATURE = 0x89504E470D0A1A0AL;
+    
+    public PNGWriter() {}
+    
+    public PNGWriter(ImageParam param) {
+    	super(param);
+    }
 	
 	// Apply dynamic filtering by "the minimum sum of absolute differences" (MSAD) heuristic 
 	private static void apply_adaptive_filter(int[] filter_type, byte[] pixBytes, int height, int bytesPerPixel, int bytesPerScanLine) {

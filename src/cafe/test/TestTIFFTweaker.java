@@ -20,6 +20,7 @@ import cafe.image.meta.exif.Exif;
 import cafe.image.meta.exif.ExifTag;
 import cafe.image.meta.exif.TiffExif;
 import cafe.image.options.TIFFOptions;
+import cafe.image.quant.DitherMethod;
 import cafe.image.tiff.FieldType;
 import cafe.image.tiff.TIFFTweaker;
 import cafe.image.tiff.TiffFieldEnum.Compression;
@@ -92,10 +93,10 @@ public class TestTIFFTweaker extends TestBase {
 				tiffOptions = new TIFFOptions(tiffOptions);				
 				tiffOptions.setTiffCompression(Compression.CCITTFAX4);
 				
-				ImageParam meta = builder.colorType(ImageColorType.BILEVEL).applyDither(true).ditherThreshold(50).imageOptions(tiffOptions).build();
+				ImageParam param = builder.colorType(ImageColorType.BILEVEL).applyDither(true).ditherMethod(DitherMethod.BAYER).imageOptions(tiffOptions).build();
 				
 				for(int i = 2; i < frames.length; i++)
-					frames[i].setFrameParam(meta);
+					frames[i].setFrameParam(param);
 				
 				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
 				

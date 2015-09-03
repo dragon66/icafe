@@ -21,6 +21,7 @@ import cafe.image.options.JPEGOptions;
 import cafe.image.options.PNGOptions;
 import cafe.image.options.TIFFOptions;
 import cafe.image.png.Filter;
+import cafe.image.quant.DitherMethod;
 import cafe.image.reader.ImageReader;
 import cafe.image.tiff.TiffFieldEnum.PhotoMetric;
 import cafe.image.tiff.TiffFieldEnum.Compression;
@@ -71,7 +72,7 @@ public class TestImageReader extends TestBase {
 			 }
 		 });
 		  
-		 ImageType imageType = ImageType.JPG;
+		 ImageType imageType = ImageType.TIFF;
 		  
 		 FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
 				
@@ -81,7 +82,7 @@ public class TestImageReader extends TestBase {
 		  	case TIFF:// Set TIFF-specific options
 		  		 TIFFOptions tiffOptions = new TIFFOptions();
 		  		 tiffOptions.setApplyPredictor(true);
-		  		 tiffOptions.setTiffCompression(Compression.JPG);
+		  		 tiffOptions.setTiffCompression(Compression.CCITTFAX4);
 		  		 tiffOptions.setJPEGQuality(60);
 		  		 tiffOptions.setPhotoMetric(PhotoMetric.SEPARATED);
 		  		 tiffOptions.setWriteICCProfile(true);
@@ -106,7 +107,7 @@ public class TestImageReader extends TestBase {
 		 }
 		  
 		 t1 = System.currentTimeMillis();
-		 ImageIO.write(img, fo, imageType, builder.colorType(ImageColorType.FULL_COLOR).applyDither(true).ditherThreshold(18).hasAlpha(true).build());			
+		 ImageIO.write(img, fo, imageType, builder.colorType(ImageColorType.BILEVEL).applyDither(true).ditherMethod(DitherMethod.BAYER).hasAlpha(true).build());			
 		 t2 = System.currentTimeMillis();
 		
 		 fo.close();

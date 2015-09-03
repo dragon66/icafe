@@ -30,6 +30,12 @@ public abstract class ImageWriter
 {	
 	private ImageParam imageParam = ImageParam.DEFAULT_IMAGE_PARAM;
 	
+	protected ImageWriter() {}
+	
+	protected ImageWriter(ImageParam param) {
+		this.imageParam = param;
+	}
+	
 	private int[] getPixels(Image img, int imageWidth, int imageHeight) throws Exception
 	{	
 		int[] pixels = null;

@@ -11,6 +11,7 @@
 package cafe.image.writer;
 
 import cafe.image.ImageColorType;
+import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.util.IMGUtils;
 
@@ -176,7 +177,13 @@ public class BMPWriter extends ImageWriter {
 	//private static int BI_RLE4      = 2;
 	//private static int BI_BITFIELDS = 3;
   
-	private BitmapHeader bitmapHeader; 
+	private BitmapHeader bitmapHeader;
+	
+	public BMPWriter() {}
+	
+	public BMPWriter(ImageParam param) {
+		super(param);
+	}
 
 	@Override
 	public ImageType getImageType() {

@@ -594,7 +594,7 @@ public class GIFTweaker {
 	 * @param os OutputStream to write the image
 	 */
 	public static void writeAnimatedGIF(BufferedImage[] images, int[] delays, int loopCount, OutputStream os) throws Exception {
-		writeAnimatedGIF(images, delays, loopCount, ImageParam.getBuilder().applyDither(true).ditherThreshold(ImageParam.DEFAULT_DITHER_THRESHOLD).build(), os);
+		writeAnimatedGIF(images, delays, loopCount, ImageParam.getBuilder().applyDither(true).build(), os);
 	}
 	
 	/**
@@ -627,7 +627,7 @@ public class GIFTweaker {
 	 * @throws Exception
 	 */
 	public static void writeAnimatedGIF(GIFFrame[] frames, int loopCount, OutputStream os) throws Exception {
-		writeAnimatedGIF(frames, loopCount, ImageParam.getBuilder().applyDither(true).ditherThreshold(ImageParam.DEFAULT_DITHER_THRESHOLD).build(), os);
+		writeAnimatedGIF(frames, loopCount, ImageParam.getBuilder().applyDither(true).build(), os);
 	}
 	
 	/**
