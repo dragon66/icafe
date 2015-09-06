@@ -13,6 +13,7 @@ package cafe.image.writer;
 import cafe.image.ImageColorType;
 import cafe.image.ImageParam;
 import cafe.image.ImageType;
+import cafe.image.quant.DitherMethod;
 import cafe.image.util.IMGUtils;
 
 import java.io.*; 
@@ -199,6 +200,7 @@ public class BMPWriter extends ImageWriter {
 
 	private void write256ColorBitmap(int[] pixels, int imageWidth, 
 	             int imageHeight, OutputStream os) throws Exception {
+		ImageParam param = getImageParam();
 		int nindex = 0;
 		int index = 0;
 		int npad = 0;
@@ -230,7 +232,14 @@ public class BMPWriter extends ImageWriter {
 		// Reduce colors to 256
 		byte[] newPixels = new byte[imageWidth*imageHeight];
 		int[] colorPalette = new int[256];
-		IMGUtils.reduceColors(pixels, 8, newPixels, colorPalette);
+		
+		if(param.isApplyDither()) {
+    		if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
+        		IMGUtils.reduceColorsDiffusionDither(pixels, imageWidth, imageHeight, 8, newPixels, colorPalette);	        		
+    		else
+        		IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, 8, newPixels, colorPalette, param.getDitherMatrix());
+    	} else
+    		IMGUtils.reduceColors(pixels, 8, newPixels, colorPalette);
 		
 		// Write out the color palette
 		for (int i=0; i<256; i++)

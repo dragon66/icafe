@@ -32,6 +32,7 @@ import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.gif.GIFFrame;
 import static cafe.image.gif.GIFTweaker.*;
+import cafe.image.quant.DitherMethod;
 import cafe.image.util.IMGUtils;
 
 /**
@@ -438,9 +439,13 @@ public class GIFWriter extends ImageWriter {
 	    colorInfo = IMGUtils.checkColorDepth(pixels, newPixels, colorPalette);
 		
 	    if(colorInfo[0] > 0x08) {
-	    	if(param.isApplyDither())
-	    		colorInfo = IMGUtils.reduceColorsFloydSteinberg(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette);
-	    	else
+	    	bitsPerPixel = 8;
+	    	if(param.isApplyDither()) {
+	    		if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
+	        		colorInfo = IMGUtils.reduceColorsDiffusionDither(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette);	        		
+	    		else
+	        		colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette, param.getDitherMatrix());
+	    	} else
 	    		colorInfo = IMGUtils.reduceColors(pixels, bitsPerPixel, newPixels, colorPalette);
 	    }
 	    
@@ -448,8 +453,6 @@ public class GIFWriter extends ImageWriter {
 	    
 	    transparent_color = colorInfo[1];
 	    
-	    if(bitsPerPixel > 0x08) bitsPerPixel = 0x08;
-        
 	    int num_of_color = 1<<bitsPerPixel;
 	    
 	    if(firstFrame) {

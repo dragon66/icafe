@@ -131,6 +131,16 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#correctGamma(int[],%20byte[])">correctGamma</a></strong>(int[]&nbsp;rgbColorPalette,
+            byte[]&nbsp;gammaTable)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#createGammaTable(float,%20float)">createGammaTable</a></strong>(float&nbsp;gamma,
+                float&nbsp;displayExponent)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#createThumbnail(java.io.InputStream)">createThumbnail</a></strong>(java.io.InputStream&nbsp;is)</code>
 <div class="block">Creates a thumbnail from image input stream</div>
@@ -154,6 +164,19 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#dither_Bayer(int[],%20int,%20int,%20byte[],%20int,%20int[],%20int,%20int[][])">dither_Bayer</a></strong>(int[]&nbsp;rgbTriplet,
+            int&nbsp;width,
+            int&nbsp;height,
+            byte[]&nbsp;newPixels,
+            int&nbsp;no_of_color,
+            int[]&nbsp;colorPalette,
+            int&nbsp;transparent_index,
+            int[][]&nbsp;threshold)</code>
+<div class="block">Dither color image using Bayer threshold matrix.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#dither_FloydSteinberg(byte[],%20byte[],%20int,%20int,%20int,%20int)">dither_FloydSteinberg</a></strong>(byte[]&nbsp;gray,
                      byte[]&nbsp;mask,
                      int&nbsp;width,
@@ -163,7 +186,7 @@ extends java.lang.Object</pre>
 <div class="block">Dither gray-scale image using Floyd-Steinberg error diffusion</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#dither_FloydSteinberg(int[],%20int,%20int,%20byte[],%20int,%20int[],%20int)">dither_FloydSteinberg</a></strong>(int[]&nbsp;rgbTriplet,
                      int&nbsp;width,
@@ -175,12 +198,12 @@ extends java.lang.Object</pre>
 <div class="block">Floyd-Steinberg dithering, based on PPMQuant.c by Jef Poskanzer <jef@acme.com>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#easyRGB2CMYK(int[],%20boolean)">easyRGB2CMYK</a></strong>(int[]&nbsp;rgb,
             boolean&nbsp;hasAlpha)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#filterImage(java.awt.image.BufferedImageOp,%20java.awt.image.BufferedImage,%20java.awt.image.BufferedImage)">filterImage</a></strong>(java.awt.image.BufferedImageOp&nbsp;bufferedImageOp,
            java.awt.image.BufferedImage&nbsp;srcImg,
@@ -188,55 +211,55 @@ extends java.lang.Object</pre>
 <div class="block">Entry point for image filtering operation.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#getBitDepth(byte[],%20boolean)">getBitDepth</a></strong>(byte[]&nbsp;input,
            boolean&nbsp;hasAlpha)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.awt.color.ICC_ColorSpace</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#getICCColorSpace(java.lang.String)">getICCColorSpace</a></strong>(java.lang.String&nbsp;pathToICCProfile)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.awt.color.ICC_Profile</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#getICCProfile(java.lang.String)">getICCProfile</a></strong>(java.lang.String&nbsp;pathToICCProfile)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#getRGB(java.awt.image.BufferedImage)">getRGB</a></strong>(java.awt.image.BufferedImage&nbsp;image)</code>
 <div class="block">Retrieves RGB values from Raster.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#getRGB2(java.awt.image.BufferedImage)">getRGB2</a></strong>(java.awt.image.BufferedImage&nbsp;image)</code>
 <div class="block">Retrieves RGB values from DataBuffer.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../cafe/image/ImageType.html" title="enum in cafe.image">ImageType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#guessImageType(byte[])">guessImageType</a></strong>(byte[]&nbsp;magicNumber)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../cafe/image/ImageType.html" title="enum in cafe.image">ImageType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#guessImageType(java.io.PushbackInputStream)">guessImageType</a></strong>(java.io.PushbackInputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../cafe/image/ImageType.html" title="enum in cafe.image">ImageType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#guessImageType(cafe.io.RandomAccessInputStream)">guessImageType</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;is)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.awt.image.WritableRaster</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#iccp2rgbRaster(java.awt.image.WritableRaster,%20java.awt.image.ColorModel)">iccp2rgbRaster</a></strong>(java.awt.image.WritableRaster&nbsp;raster,
               java.awt.image.ColorModel&nbsp;cm)</code>
 <div class="block">Convert ICC_ColorSpace raster to RGB raster w/o alpha</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#invertBits(byte[])">invertBits</a></strong>(byte[]&nbsp;input)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColors(int[],%20int,%20byte[],%20int[])">reduceColors</a></strong>(int[]&nbsp;rgbTriplets,
             int&nbsp;colorDepth,
@@ -245,17 +268,27 @@ extends java.lang.Object</pre>
 <div class="block">Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm".</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsFloydSteinberg(int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsFloydSteinberg</a></strong>(int[]&nbsp;rgbTriplet,
-                          int&nbsp;width,
-                          int&nbsp;height,
-                          int&nbsp;colorDepth,
-                          byte[]&nbsp;newPixels,
-                          int[]&nbsp;colorPalette)</code>
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsDiffusionDither(int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither</a></strong>(int[]&nbsp;rgbTriplet,
+                           int&nbsp;width,
+                           int&nbsp;height,
+                           int&nbsp;colorDepth,
+                           byte[]&nbsp;newPixels,
+                           int[]&nbsp;colorPalette)</code>
 <div class="block">Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
  followed by Floyd-Steinberg error diffusion dithering.</div>
 </td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsOrderedDither(int[],%20int,%20int,%20int,%20byte[],%20int[],%20int[][])">reduceColorsOrderedDither</a></strong>(int[]&nbsp;rgbTriplet,
+                         int&nbsp;width,
+                         int&nbsp;height,
+                         int&nbsp;colorDepth,
+                         byte[]&nbsp;newPixels,
+                         int[]&nbsp;colorPalette,
+                         int[][]&nbsp;threshold)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
@@ -403,6 +436,26 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd>an int array holding the color depth and the transparent color index if any</dd></dl>
 </li>
 </ul>
+<a name="createGammaTable(float, float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createGammaTable</h4>
+<pre>public static&nbsp;byte[]&nbsp;createGammaTable(float&nbsp;gamma,
+                      float&nbsp;displayExponent)</pre>
+</li>
+</ul>
+<a name="correctGamma(int[], byte[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>correctGamma</h4>
+<pre>public static&nbsp;void&nbsp;correctGamma(int[]&nbsp;rgbColorPalette,
+                byte[]&nbsp;gammaTable)</pre>
+</li>
+</ul>
 <a name="createThumbnail(java.io.InputStream)">
 <!--   -->
 </a>
@@ -462,6 +515,25 @@ extends java.lang.Object</pre>
                          int&nbsp;err_limit)</pre>
 <div class="block">Dither gray-scale image using Floyd-Steinberg error diffusion</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>gray</code> - input gray-scale image array - also as output BW image array</dd><dd><code>mask</code> - a mask array for transparent pixels - 0 transparent, 1 opaque</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>threshold</code> - gray-scale threshold to convert to BW image</dd><dd><code>err_limit</code> - limit of the error (range 0-255 inclusive)</dd></dl>
+</li>
+</ul>
+<a name="dither_Bayer(int[], int, int, byte[], int, int[], int, int[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>dither_Bayer</h4>
+<pre>public static&nbsp;void&nbsp;dither_Bayer(int[]&nbsp;rgbTriplet,
+                int&nbsp;width,
+                int&nbsp;height,
+                byte[]&nbsp;newPixels,
+                int&nbsp;no_of_color,
+                int[]&nbsp;colorPalette,
+                int&nbsp;transparent_index,
+                int[][]&nbsp;threshold)</pre>
+<div class="block">Dither color image using Bayer threshold matrix. This method sometimes makes the
+ images look too bright. Gamma correction usually can compensate for this problem.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rgbTriplet</code> - input pixels in ARGB format</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>newPixels</code> - pixel array after dither</dd><dd><code>no_of_color</code> - actual number of colors used by the color palette</dd><dd><code>colorPalette</code> - color palette</dd><dd><code>transparent_index</code> - transparent color index for the color palette</dd><dd><code>threshold</code> - Bayer threshold matrix</dd></dl>
 </li>
 </ul>
 <a name="dither_FloydSteinberg(int[], int, int, byte[], int, int[], int)">
@@ -647,20 +719,35 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd>a two element int array holding the color depth and the transparent color index if any</dd></dl>
 </li>
 </ul>
-<a name="reduceColorsFloydSteinberg(int[], int, int, int, byte[], int[])">
+<a name="reduceColorsDiffusionDither(int[], int, int, int, byte[], int[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>reduceColorsFloydSteinberg</h4>
-<pre>public static&nbsp;int[]&nbsp;reduceColorsFloydSteinberg(int[]&nbsp;rgbTriplet,
-                               int&nbsp;width,
-                               int&nbsp;height,
-                               int&nbsp;colorDepth,
-                               byte[]&nbsp;newPixels,
-                               int[]&nbsp;colorPalette)</pre>
+<h4>reduceColorsDiffusionDither</h4>
+<pre>public static&nbsp;int[]&nbsp;reduceColorsDiffusionDither(int[]&nbsp;rgbTriplet,
+                                int&nbsp;width,
+                                int&nbsp;height,
+                                int&nbsp;colorDepth,
+                                byte[]&nbsp;newPixels,
+                                int[]&nbsp;colorPalette)</pre>
 <div class="block">Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
  followed by Floyd-Steinberg error diffusion dithering.</div>
+</li>
+</ul>
+<a name="reduceColorsOrderedDither(int[], int, int, int, byte[], int[], int[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>reduceColorsOrderedDither</h4>
+<pre>public static&nbsp;int[]&nbsp;reduceColorsOrderedDither(int[]&nbsp;rgbTriplet,
+                              int&nbsp;width,
+                              int&nbsp;height,
+                              int&nbsp;colorDepth,
+                              byte[]&nbsp;newPixels,
+                              int[]&nbsp;colorPalette,
+                              int[][]&nbsp;threshold)</pre>
 </li>
 </ul>
 <a name="rgb2bilevel(int[])">

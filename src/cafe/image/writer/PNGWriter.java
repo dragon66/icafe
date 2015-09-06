@@ -43,6 +43,7 @@ import cafe.image.png.PNGTweaker;
 import cafe.image.png.TIMEBuilder;
 import cafe.image.png.TRNSBuilder;
 import cafe.image.png.TextBuilder;
+import cafe.image.quant.DitherMethod;
 import cafe.image.util.IMGUtils;
 import cafe.io.IOUtils;
 import cafe.util.ArrayUtils;
@@ -349,6 +350,7 @@ public class PNGWriter extends ImageWriter {
 	}
 	
 	private void writeIndexed(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {
+		ImageParam param = getImageParam();
 		// The rule of thumb is never apply any filter to index color image
 		int[] filter_type = new int[imageHeight];
 		int bytesPerScanLine = imageWidth * 1;
@@ -359,8 +361,14 @@ public class PNGWriter extends ImageWriter {
 		int bitsPerPixel = colorInfo[0];
 		
 		if(colorInfo[0]>0x08) {
-			colorInfo = IMGUtils.reduceColorsFloydSteinberg(pixels, imageWidth, imageHeight, 8, bytePixels, colorPalette);
 			bitsPerPixel = 8;
+			if(param.isApplyDither()) {
+				if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
+					colorInfo = IMGUtils.reduceColorsDiffusionDither(pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette);
+				else
+					colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette, param.getDitherMatrix());				
+			} else
+	    		colorInfo = IMGUtils.reduceColors(pixels, bitsPerPixel, bytePixels, colorPalette);
 		}
 		
 		switch(bitsPerPixel) {

@@ -788,6 +788,8 @@
 <dd>
 <div class="block">Read an input TIFF and write it to a new TIFF.</div>
 </dd>
+<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#correctGamma(int[],%20byte[])">correctGamma(int[], byte[])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="./cafe/util/zip/CRC32.html" title="class in cafe.util.zip"><span class="strong">CRC32</span></a> - Class in <a href="./cafe/util/zip/package-summary.html">cafe.util.zip</a></dt>
 <dd>
 <div class="block">Table based CRC32 implementation.</div>
@@ -799,6 +801,8 @@
 <dt><span class="strong"><a href="./cafe/string/XMLUtils.html#createElement(org.w3c.dom.Document,%20java.lang.String)">createElement(Document, String)</a></span> - Static method in class cafe.string.<a href="./cafe/string/XMLUtils.html" title="class in cafe.string">XMLUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/tiff/FieldType.html#createField(cafe.image.tiff.Tag,%20cafe.image.tiff.FieldType,%20java.lang.Object)">createField(Tag, FieldType, Object)</a></span> - Static method in enum cafe.image.tiff.<a href="./cafe/image/tiff/FieldType.html" title="enum in cafe.image.tiff">FieldType</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#createGammaTable(float,%20float)">createGammaTable(float, float)</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/image/util/InverseColorMap.html#createInverseMap(int,%20int[])">createInverseMap(int, int[])</a></span> - Method in class cafe.image.util.<a href="./cafe/image/util/InverseColorMap.html" title="class in cafe.image.util">InverseColorMap</a></dt>
 <dd>
@@ -1017,6 +1021,10 @@
 <dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#dither_Bayer(byte[],%20byte[],%20int,%20int,%20int[][])">dither_Bayer(byte[], byte[], int, int, int[][])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
 <dd>
 <div class="block">Dither gray-scale image using Bayer threshold matrix</div>
+</dd>
+<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#dither_Bayer(int[],%20int,%20int,%20byte[],%20int,%20int[],%20int,%20int[][])">dither_Bayer(int[], int, int, byte[], int, int[], int, int[][])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
+<dd>
+<div class="block">Dither color image using Bayer threshold matrix.</div>
 </dd>
 <dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#dither_FloydSteinberg(byte[],%20byte[],%20int,%20int,%20int,%20int)">dither_FloydSteinberg(byte[], byte[], int, int, int, int)</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
 <dd>
@@ -4733,11 +4741,13 @@
 <dd>
 <div class="block">Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm".</div>
 </dd>
-<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#reduceColorsFloydSteinberg(int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsFloydSteinberg(int[], int, int, int, byte[], int[])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
+<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#reduceColorsDiffusionDither(int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither(int[], int, int, int, byte[], int[])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
 <dd>
 <div class="block">Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
  followed by Floyd-Steinberg error diffusion dithering.</div>
 </dd>
+<dt><span class="strong"><a href="./cafe/image/util/IMGUtils.html#reduceColorsOrderedDither(int[],%20int,%20int,%20int,%20byte[],%20int[],%20int[][])">reduceColorsOrderedDither(int[], int, int, int, byte[], int[], int[][])</a></span> - Static method in class cafe.image.util.<a href="./cafe/image/util/IMGUtils.html" title="class in cafe.image.util">IMGUtils</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/util/LangUtils.html#relativize(java.net.URI,%20java.net.URI)">relativize(URI, URI)</a></span> - Static method in class cafe.util.<a href="./cafe/util/LangUtils.html" title="class in cafe.util">LangUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./cafe/util/BinarySearchTree.html#remove(E)">remove(E)</a></span> - Method in class cafe.util.<a href="./cafe/util/BinarySearchTree.html" title="class in cafe.util">BinarySearchTree</a></dt>

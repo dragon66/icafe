@@ -13,7 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
- * WY    03Sep2015  Added ordered dither support for bilevel image
+ * WY    05Sep2015  Added ordered dither support for color images
+ * WY    03Sep2015  Added ordered dither support for bilevel images
  * WY    03Feb2015  Added createThumbnail() to create a thumbnail from an image
  * WY    27Jan2015  Added createThumbnail8BIM() to wrap a BufferedImage to _8BIM
  * WY    22Jan2015  Factored out guessImageType(byte[])
@@ -84,6 +85,9 @@ public class IMGUtils {
 	private static byte[] JPG = {(byte)0xff, (byte)0xd8, (byte)0xff};
 	private static byte[] PCX = {0x0a};
 	private static byte[] JPG2000 = {0x00, 0x00, 0x00, 0x0C};
+	
+	private static float GAMMA = 0.45455f; // Default gamma
+	private static float DISPLAY_EXPONENT = 1.8f; // Default display exponent
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(IMGUtils.class);
@@ -169,6 +173,27 @@ public class IMGUtils {
 		colorInfo[1] = transparent_index;
 
         return colorInfo;
+	}
+	
+	// Byte type image data gamma correction table
+	public static byte[] createGammaTable(float gamma, float displayExponent) {
+		 int size =  1 << 8;
+		 byte[] gammaTable = new byte[size];
+		 double decodingExponent = 1d / ((double)gamma * (double)displayExponent);
+		 for (int i = 0; i < size; i++)
+			 gammaTable[i] = (byte)(Math.pow((double)i / (size - 1), decodingExponent) * (size - 1));
+		 
+		 return gammaTable;
+    }
+	
+	// Gamma correction for palette based image data
+	public static void correctGamma(int[] rgbColorPalette, byte[] gammaTable) {
+		for(int i = 0; i < rgbColorPalette.length; i++) {
+			byte red = gammaTable[((rgbColorPalette[i]&0xff0000)>>16)];
+			byte green = gammaTable[((rgbColorPalette[i]&0x00ff00)>>8)];
+			byte blue = gammaTable[(rgbColorPalette[i]&0x0000ff)];
+			rgbColorPalette[i] = ((rgbColorPalette[i]&0xff000000)|((red&0xff)<<16)|((green&0xff)<<8)|(blue&0xff));
+		}
 	}
 	
 	/**
@@ -367,6 +392,63 @@ public class IMGUtils {
 			// Clear the error arrays
 			Arrays.fill(nextErr, 0);
 		}
+	}
+	
+	/**
+	 * Dither color image using Bayer threshold matrix. This method sometimes makes the
+	 * images look too bright. Gamma correction usually can compensate for this problem.
+	 * 
+	 * @param rgbTriplet input pixels in ARGB format
+	 * @param width image width
+ 	 * @param height image height
+	 * @param newPixels pixel array after dither
+	 * @param no_of_color actual number of colors used by the color palette
+	 * @param colorPalette color palette
+	 * @param transparent_index transparent color index for the color palette
+	 * @param threshold Bayer threshold matrix
+	 */
+	public static void dither_Bayer(int[] rgbTriplet, int width, int height, byte[] newPixels, int no_of_color, 
+            int[] colorPalette, int transparent_index, int[][] threshold)
+	{
+		int index = 0, red, green, blue;
+		InverseColorMap invMap;
+		
+		invMap = new InverseColorMap();
+		invMap.createInverseMap(no_of_color, colorPalette);
+		
+		int level = threshold.length;
+		int scaler = threshold.length*threshold.length + 1;
+		
+		for (int row = 0; row < height; row++)
+		{
+			for (int col = 0; col < width; index++, col++)
+			{				
+				if((rgbTriplet[index] >>> 24) < 0x80 )// Transparent, no dither
+				{
+					newPixels[index] = (byte)transparent_index;	
+					continue;
+				}
+				// Diffuse errors
+				red = ((rgbTriplet[index]&0xff0000)>>>16);
+				red += red*threshold[row%level][col%level]/scaler;
+				if (red > 255) red = 255;
+				else if (red < 0) red = 0;
+				
+				green = ((rgbTriplet[index]&0x00ff00)>>>8);
+				green += green*threshold[row%level][col%level]/scaler;
+				if (green > 255) green = 255;
+				else if (green < 0) green = 0;
+				
+				blue = (rgbTriplet[index]&0x0000ff);
+				blue += blue*threshold[row%level][col%level]/scaler;
+				if (blue > 255) blue = 255;
+				else if (blue < 0) blue = 0;			
+				// Find the nearest color index for this pixel
+				newPixels[index] = (byte)invMap.getNearestColorIndex(red, green, blue);
+			}
+		}
+		// Fixed value Gamma correction
+		correctGamma(colorPalette, IMGUtils.createGammaTable(GAMMA, DISPLAY_EXPONENT));
 	}
 	
 	/**
@@ -969,8 +1051,9 @@ public class IMGUtils {
 	 * @param colorPalette the color map for the image
 	 * @return a two element int array holding the color depth and the transparent color index if any
 	 */
-	public static int[] reduceColors(int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette) 
-	{
+	public static int[] reduceColors(int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
+		if(colorDepth > 8 || colorDepth < 1) 
+			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
 		int no_of_color = 1<<colorDepth;
 		int[] colorFreq = new int[4096];
 		int[] indexColor = new int[4096];
@@ -1132,12 +1215,36 @@ public class IMGUtils {
 	 * Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
 	 * followed by Floyd-Steinberg error diffusion dithering.
 	 */
-	public static int[] reduceColorsFloydSteinberg(int[] rgbTriplet, int width, int height, int colorDepth, byte[] newPixels, final int[] colorPalette) 
-	{
+	public static int[] reduceColorsDiffusionDither(int[] rgbTriplet, int width, int height, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
+		if(colorDepth > 8 || colorDepth < 1) 
+			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
+		int[] colorInfo = new int[2];
+		int colors = reduceColorsPopularity(rgbTriplet, colorDepth, colorPalette, colorInfo);
+		// Call Floyd-Steinberg dither
+		dither_FloydSteinberg(rgbTriplet, width, height, newPixels, colors, colorPalette, colorInfo[1]);
+		// Return the actual bits per pixel and the transparent color index if any
+
+		return colorInfo;
+	}
+	
+	public static int[] reduceColorsOrderedDither(int[] rgbTriplet, int width, int height, int colorDepth, byte[] newPixels, final int[] colorPalette, int[][] threshold)	{
+		if(colorDepth > 8 || colorDepth < 1) 
+			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
+		int[] colorInfo = new int[2];
+		int colors = reduceColorsPopularity(rgbTriplet, colorDepth, colorPalette, colorInfo);
+		
+		dither_Bayer(rgbTriplet, width, height, newPixels, colors, colorPalette, colorInfo[1], threshold);
+		// Return the actual bits per pixel and the transparent color index if any
+
+		return colorInfo;
+	}
+	
+	private static int reduceColorsPopularity(int[] rgbTriplet, int colorDepth, final int[] colorPalette, int[] colorInfo)	{
+		if(colorDepth > 8 || colorDepth < 1) 
+			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
 		int no_of_color = 1<<colorDepth;
 		int[] colorFreq = new int[4096];
 		int[] indexColor = new int[4096];
-		int[] colorInfo = new int[2];// Return value
 		int[] colorIndex;
 		int bitsPerPixel = 1;
 		int transparent_color = -1;// Transparent color 
@@ -1210,18 +1317,19 @@ public class IMGUtils {
 		// Determine the actual bits we need
 		while ((1<<bitsPerPixel) < colorCount)  bitsPerPixel++;
 		
+		if(bitsPerPixel > colorDepth) bitsPerPixel = colorDepth;
+		
 		if(transparent_color >= 0)// Set the colorPalette for the transparent color
 		{
-			transparent_index = (bitsPerPixel <= colorDepth)?(1<<bitsPerPixel)-1:no_of_color;
+			transparent_index = (1<<bitsPerPixel)-1;
 			colorPalette[transparent_index] = transparent_color;
 			colorCount--;//We need the actual number of color now
 		}	
-		// Call Floyd-Steinberg dither
-		dither_FloydSteinberg(rgbTriplet, width, height, newPixels, (colorCount < no_of_color)?colorCount:no_of_color, colorPalette, transparent_index);
 		// Return the actual bits per pixel and the transparent color index if any
 		colorInfo[0] = bitsPerPixel;
 		colorInfo[1] = transparent_index;
-		return colorInfo;
+		
+		return (colorCount < no_of_color)?colorCount:no_of_color; // Actual colors
 	}
 	
 	// This works quite well without dither

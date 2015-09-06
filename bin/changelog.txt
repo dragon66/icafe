@@ -1,6 +1,7 @@
 ***************************
-Last modified on 08/19/2015
+Last modified on 09/05/2015
 ***************************
+05Sep2015  Added ordered dither support for color images
 19Aug2015  Added code to TIFFTweaker to write multipage TIFF page by page
 18Aug2015  Added support for GIFWriter to use ImageParam
 18Aug2015  Removed fields and methods similar to GIFFrame
