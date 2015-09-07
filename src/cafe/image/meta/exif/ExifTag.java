@@ -122,9 +122,9 @@ public enum ExifTag implements Tag {
 	
 	FLASH_ENERGY("FlashEnergy", (short)0xa20b),
 	SPATIAL_FREQUENCY_RESPONSE("SpatialFrequencyResponse", (short)0xa20c),
-	FOCAL_PLANE_X_RESOLUTION("FocalPlanXResolution", (short)0xa20e),
-	FOCAL_PLANE_Y_RESOLUTION("FocalPlanYResolution", (short)0xa20f),
-	FOCAL_PLANE_RESOLUTION_UNIT("FocalPlanResolutionUnit", (short)0xa210),
+	FOCAL_PLANE_X_RESOLUTION("FocalPlaneXResolution", (short)0xa20e),
+	FOCAL_PLANE_Y_RESOLUTION("FocalPlaneYResolution", (short)0xa20f),
+	FOCAL_PLANE_RESOLUTION_UNIT("FocalPlaneResolutionUnit", (short)0xa210),
 	
 	SUBJECT_LOCATION("SubjectLocation", (short)0xa214),
 	EXPOSURE_INDEX("ExposureIndex", (short)0xa215),
