@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    08Sep2015  Changed Shell sort to use Knuth's sequence
  * WY    14Jun2015  Bug fix for toNBits() to use long data type internally 
  * WY    04Jun2015  Rewrote all concatenation related methods
  * WY    02Jun2015  Bug fix for generic concatenation methods
@@ -739,51 +740,57 @@ public class ArrayUtils
 	}
    	
     // Shell sort
-    public static void shellsort(int[] array)
-    {
-	   shellsort(array, 0, array.length-1);
+    public static void shellsort(int[] array) {
+    	shellsort(array, 0, array.length-1);
     }
    	
-    public static void shellsort(int[] array, int start, int end)
-    {
-	   int mid = (start + end)/2;
-
-	   while ( mid > start )
-	   {
-		   for (int i = mid; i <= end; i++)
-		   {
-			   int temp = array[i];
-			   int j = i;
-			   while ( j >= mid && temp <= array[j - mid + start])
-			   {
-				   array[j] = array[j - mid + start];
-				   j -= (mid - start);
-			   }
-			   array[j] = temp;
-		   }
-		   mid = (start + mid)/2;
-	   }
-    }
+    public static void shellsort(int[] array, int start, int end) {
+    	if(start < 0 || end < 0 || start > end) throw new IllegalArgumentException("Invalid array index");
+    	int gap = 1;
+    	int len = end - start + 1;
+ 	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
+    	while(gap < len) gap = 3*gap + 1;
+    	while ( gap > 0 )
+    	{
+    		int begin = start + gap;
+    		for (int i = begin; i <= end; i++)
+    		{
+    			int temp = array[i];
+    			int j = i;
+    			while ( j >= begin && temp <= array[j - gap])
+    			{
+    				array[j] = array[j - gap];
+    				j -= gap;
+    			}
+    			array[j] = temp;
+    		}
+    		gap /= 3;
+    	}
+	}
    	
     // Shell sort
-    public static <T extends Comparable<? super T>> void shellsort(T[] array, int start, int end)
-    {
-	   int mid = (start + end)/2;
-	   while ( mid > start )
-	   {
-		   for (int i = mid; i <= end; i++)
-		   {
-			   T temp = array[i];
-			   int j = i;
-			   while ( j >= mid && temp.compareTo(array[j - mid + start]) <= 0)
-			   {
-				   array[j] = array[j - mid + start];
-				   j -= (mid - start);
-			   }
-			   array[j] = temp;
-		   }
-		   mid = (start + mid)/2;
-	   }
+    public static <T extends Comparable<? super T>> void shellsort(T[] array, int start, int end) {
+    	if(start < 0 || end < 0 || start > end) throw new IllegalArgumentException("Invalid array index");
+	   	int gap = 1;
+	   	int len = end - start + 1;
+  	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
+	   	while(gap < len) gap = 3*gap + 1;
+	   	while ( gap > 0 )
+	   	{
+	   		int begin = start + gap;
+	   		for (int i = begin; i <= end; i++)
+	   		{
+	   			T temp = array[i];
+	   			int j = i;
+	   			while ( j >= begin && temp.compareTo(array[j - gap]) <= 0)
+	   			{
+	   				array[j] = array[j - gap];
+	   				j -= gap;
+	   			}
+	   			array[j] = temp;
+	   		}
+	   		gap /= 3;
+	   	}
     } 	
 
     public static byte[] subArray(byte[] src, int offset, int len) {

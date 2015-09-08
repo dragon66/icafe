@@ -1113,24 +1113,26 @@ public class IMGUtils {
         }
 	  	*/
 		// Shell sort
-  	    int mid = colorCount/2;
-	    while ( mid > 0 )
+        int gap = 1;
+  	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
+  	    while(gap < colorCount) gap = 3*gap + 1;
+	    while ( gap > 0 )
 	    {
-		   for (int i = mid; i < colorCount; i++)
+		   for (int i = gap; i < colorCount; i++)
 		   {
 			   temp = colorFreq[i];
 			   temp1 = indexColor[i];
 			   int j = i;
-			   while ( j >= mid && temp >= colorFreq[j - mid])
+			   while ( j >= gap && temp >= colorFreq[j - gap])
 			   {
-				   colorFreq[j] = colorFreq[j - mid];
-				   indexColor[j] = indexColor[j - mid];
-				   j -= mid;
+				   colorFreq[j] = colorFreq[j - gap];
+				   indexColor[j] = indexColor[j - gap];
+				   j -= gap;
 			   }
 			   colorFreq[j] = temp;
 			   indexColor[j] = temp1;
 		   }
-		   mid /= 2;
+		   gap /= 3;
 	    }
 	   	colorIndex = new int[no_of_color>=colorCount?no_of_color:colorCount];
 		// Take the first no_of_color items as the palette 
@@ -1279,24 +1281,26 @@ public class IMGUtils {
         }
         // Sort the colors according to their frequencies
      	// Shell sort
-  	    int mid = colorCount/2;
-	    while ( mid > 0 )
+  	    int gap = 1;
+  	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
+  	    while(gap < colorCount) gap = 3*gap + 1;
+	    while ( gap > 0 )
 	    {
-		   for (int i = mid; i < colorCount; i++)
+		   for (int i = gap; i < colorCount; i++)
 		   {
 			   temp = colorFreq[i];
 			   temp1 = indexColor[i];
 			   int j = i;
-			   while ( j >= mid && temp >= colorFreq[j - mid])
+			   while ( j >= gap && temp >= colorFreq[j - gap])
 			   {
-				   colorFreq[j] = colorFreq[j - mid];
-				   indexColor[j] = indexColor[j - mid];
-				   j -= mid;
+				   colorFreq[j] = colorFreq[j - gap];
+				   indexColor[j] = indexColor[j - gap];
+				   j -= gap;
 			   }
 			   colorFreq[j] = temp;
 			   indexColor[j] = temp1;
 		   }
-		   mid /= 2;
+		   gap /= 3;
 	    }
 	   	colorIndex = new int[no_of_color];
 		// Take the first no_of_color items as the palette 

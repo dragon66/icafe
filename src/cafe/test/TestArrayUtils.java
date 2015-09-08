@@ -47,7 +47,7 @@ public class TestArrayUtils extends TestBase {
         
         logger.info("{}", Arrays.deepToString(array));
         
-        ArrayUtils.shellsort(array,1, array.length-1);
+        ArrayUtils.shellsort(array, 1, array.length-1);
 
         logger.info("{}", Arrays.deepToString(array));
         
