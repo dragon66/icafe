@@ -78,6 +78,11 @@ Image metadata manipulation:
  
 **NOTE**: The metadata related part of has become another repository "pixymeta" which has no dependency on reading and writing function of "icafe". There is also an Android version called "pixymeta-android".
 
+Who is using ICAFE
+------------------
+
+* ExifStock http://www.stockphoto-tools.com/
+
 Where can I get the latest release?
 -----------------------------------
 There is currently no stable release of ICAFE. However you can pull the latest SNAPSHOT from Sonatype SNAPSHOT repository by adding the snapshot repository to your pom.xml:
