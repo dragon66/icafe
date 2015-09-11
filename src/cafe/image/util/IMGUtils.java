@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    10Sep2015  Removed ColorEntry from checkColorDepth()
  * WY    05Sep2015  Added ordered dither support for color images
  * WY    03Sep2015  Added ordered dither support for bilevel images
  * WY    03Feb2015  Added createThumbnail() to create a thumbnail from an image
@@ -116,21 +117,8 @@ public class IMGUtils {
 		int transparent_color = -1;// Transparent color
 		int[] colorInfo = new int[2];// Return value
 		
-		// Inner class to hold a RGB color index	
-		class ColorEntry
-		{
-			int index = 0;
-			
-			ColorEntry(int index)
-			{
-				this.index = index;				
-			}
-		}
-		
-		IntHashtable<ColorEntry> rgbHash = new IntHashtable<ColorEntry>(1023);
+		IntHashtable<Integer> rgbHash = new IntHashtable<Integer>(1023);
 				
-		ColorEntry rgbEntry = null;
-	
 		for (int i = 0; i < rgbTriplets.length; i++)
 		{
 			temp = (rgbTriplets[i]&0x00ffffff);
@@ -145,21 +133,17 @@ public class IMGUtils {
 				temp = Integer.MAX_VALUE;
 			}	
 
-			rgbEntry = rgbHash.get(temp);
+            Integer entry = rgbHash.get(temp);
 			
-			if (rgbEntry!=null)
-			{
-				newPixels[i] = (byte)rgbEntry.index;
-			}
-			else
-			{
-				if(index > 0xff)
-				{// More than 256 colors, have to reduce
+			if (entry!=null) {
+				newPixels[i] = entry.byteValue();
+			} else {
+				if(index > 0xff) {// More than 256 colors, have to reduce
 				 // Colors before saving as an indexed color image
 					colorInfo[0] = 24;
 					return colorInfo;
 				}
-				rgbHash.put(temp, new ColorEntry(index));
+				rgbHash.put(temp, index);
 				newPixels[i] = (byte)index;
 				colorPalette[index++] = ((0xff<<24)|temp);
 			}
@@ -246,7 +230,7 @@ public class IMGUtils {
 	/**
 	 * Wraps a BufferedImage inside a Photoshop _8BIM
 	 * @param thumbnail input thumbnail image
-	 * @return a Photoshop _8BMI
+	 * @return a Photoshop _8BIM
 	 * @throws IOException
 	 */
 	public static _8BIM createThumbnail8BIM(BufferedImage thumbnail) throws IOException {

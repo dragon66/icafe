@@ -1,4 +1,4 @@
-package cafe.image.util;
+package cafe.image.quant;
 
 import java.io.*;
 import java.awt.*;

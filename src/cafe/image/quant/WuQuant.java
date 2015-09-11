@@ -12,7 +12,7 @@
 
 */
 
-package cafe.image.util;
+package cafe.image.quant;
 
 class Box {
     public int r0;	 /* min value, exclusive */
