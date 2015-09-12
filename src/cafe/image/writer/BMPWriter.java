@@ -239,7 +239,7 @@ public class BMPWriter extends ImageWriter {
     		else
         		IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, 8, newPixels, colorPalette, param.getDitherMatrix());
     	} else
-    		IMGUtils.reduceColors(pixels, 8, newPixels, colorPalette);
+    		IMGUtils.reduceColorsWu(pixels, 8, newPixels, colorPalette);
 		
 		// Write out the color palette
 		for (int i=0; i<256; i++)

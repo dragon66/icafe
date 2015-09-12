@@ -95,6 +95,25 @@
 <br>
 <pre>public class <span class="strong">WuQuant</span>
 extends java.lang.Object</pre>
+<div class="block">Java port of
+ C Implementation of Wu's Color Quantizer (v. 2)
+ (see Graphics Gems vol. II, pp. 126-133)
+ Author:        Xiaolin Wu
+ Dept. of Computer Science
+ Univ. of Western Ontario
+ London, Ontario N6A 5B7
+ wu@csd.uwo.ca
+ 
+ Algorithm: Greedy orthogonal bipartition of RGB space for variance
+ minimization aided by inclusion-exclusion tricks.
+ For speed no nearest neighbor search is done. Slightly
+ better performance can be expected by more sophisticated
+ but more expensive versions.
+ 
+ The author thanks Tom Lane at Tom_Lane@G.GP.CS.CMU.EDU for much of
+ additional documentation and a cure to a previous bug.
+ 
+ Free to distribute, comments and suggestions are appreciated.</div>
 </li>
 </ul>
 </div>
@@ -113,7 +132,8 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#WuQuant()">WuQuant</a></strong>()</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#WuQuant(int[],%20int)">WuQuant</a></strong>(int[]&nbsp;pixels,
+       int&nbsp;lut_size)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -131,78 +151,10 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#Bottom(cafe.image.quant.Box,%20int,%20int[][][])">Bottom</a></strong>(cafe.image.quant.Box&nbsp;cube,
-      int&nbsp;dir,
-      int[][][]&nbsp;mmt)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#Cut(cafe.image.quant.Box,%20cafe.image.quant.Box)">Cut</a></strong>(cafe.image.quant.Box&nbsp;set1,
-   cafe.image.quant.Box&nbsp;set2)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int[][]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#getQadd()">getQadd</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#Hist3d(int[][][],%20int[][][],%20int[][][],%20int[][][],%20float[][][])">Hist3d</a></strong>(int[][][]&nbsp;vwt,
-      int[][][]&nbsp;vmr,
-      int[][][]&nbsp;vmg,
-      int[][][]&nbsp;vmb,
-      float[][][]&nbsp;vm2)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#M3d(int[][][],%20int[][][],%20int[][][],%20int[][][],%20float[][][])">M3d</a></strong>(int[][][]&nbsp;vwt,
-   int[][][]&nbsp;vmr,
-   int[][][]&nbsp;vmg,
-   int[][][]&nbsp;vmb,
-   float[][][]&nbsp;vm2)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#Mark(cafe.image.quant.Box,%20int,%20int[][][])">Mark</a></strong>(cafe.image.quant.Box&nbsp;cube,
-    int&nbsp;label,
-    int[][][]&nbsp;tag)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>float</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#Maximize(cafe.image.quant.Box,%20int,%20int,%20int,%20int[],%20long,%20long,%20long,%20long)">Maximize</a></strong>(cafe.image.quant.Box&nbsp;cube,
-        int&nbsp;dir,
-        int&nbsp;first,
-        int&nbsp;last,
-        int[]&nbsp;cut,
-        long&nbsp;wholer,
-        long&nbsp;wholeg,
-        long&nbsp;wholeb,
-        long&nbsp;wholew)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#Top(cafe.image.quant.Box,%20int,%20int,%20int[][][])">Top</a></strong>(cafe.image.quant.Box&nbsp;cube,
-   int&nbsp;dir,
-   int&nbsp;pos,
-   int[][][]&nbsp;mmt)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>float</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#Var(cafe.image.quant.Box)">Var</a></strong>(cafe.image.quant.Box&nbsp;cube)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#Vol(cafe.image.quant.Box,%20int[][][])">Vol</a></strong>(cafe.image.quant.Box&nbsp;cube,
-   int[][][]&nbsp;mmt)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#wuQuantization(short[][],%20short[][],%20short[][],%20int,%20int,%20int)">wuQuantization</a></strong>(short[][]&nbsp;r,
-              short[][]&nbsp;g,
-              short[][]&nbsp;b,
-              int&nbsp;w,
-              int&nbsp;h,
-              int&nbsp;nK)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/quant/WuQuant.html#quantize(byte[],%20int[],%20int[])">quantize</a></strong>(byte[]&nbsp;newPixels,
+        int[]&nbsp;lut,
+        int[]&nbsp;colorInfo)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -226,13 +178,14 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="WuQuant()">
+<a name="WuQuant(int[], int)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>WuQuant</h4>
-<pre>public&nbsp;WuQuant()</pre>
+<pre>public&nbsp;WuQuant(int[]&nbsp;pixels,
+       int&nbsp;lut_size)</pre>
 </li>
 </ul>
 </li>
@@ -243,133 +196,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getQadd()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getQadd</h4>
-<pre>public&nbsp;int[][]&nbsp;getQadd()</pre>
-</li>
-</ul>
-<a name="wuQuantization(short[][], short[][], short[][], int, int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>wuQuantization</h4>
-<pre>public&nbsp;int[]&nbsp;wuQuantization(short[][]&nbsp;r,
-                   short[][]&nbsp;g,
-                   short[][]&nbsp;b,
-                   int&nbsp;w,
-                   int&nbsp;h,
-                   int&nbsp;nK)</pre>
-</li>
-</ul>
-<a name="Hist3d(int[][][], int[][][], int[][][], int[][][], float[][][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Hist3d</h4>
-<pre>public&nbsp;void&nbsp;Hist3d(int[][][]&nbsp;vwt,
-          int[][][]&nbsp;vmr,
-          int[][][]&nbsp;vmg,
-          int[][][]&nbsp;vmb,
-          float[][][]&nbsp;vm2)</pre>
-</li>
-</ul>
-<a name="M3d(int[][][], int[][][], int[][][], int[][][], float[][][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>M3d</h4>
-<pre>public&nbsp;void&nbsp;M3d(int[][][]&nbsp;vwt,
-       int[][][]&nbsp;vmr,
-       int[][][]&nbsp;vmg,
-       int[][][]&nbsp;vmb,
-       float[][][]&nbsp;vm2)</pre>
-</li>
-</ul>
-<a name="Vol(cafe.image.quant.Box, int[][][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Vol</h4>
-<pre>public&nbsp;long&nbsp;Vol(cafe.image.quant.Box&nbsp;cube,
-       int[][][]&nbsp;mmt)</pre>
-</li>
-</ul>
-<a name="Bottom(cafe.image.quant.Box, int, int[][][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Bottom</h4>
-<pre>public&nbsp;long&nbsp;Bottom(cafe.image.quant.Box&nbsp;cube,
-          int&nbsp;dir,
-          int[][][]&nbsp;mmt)</pre>
-</li>
-</ul>
-<a name="Top(cafe.image.quant.Box, int, int, int[][][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Top</h4>
-<pre>public&nbsp;long&nbsp;Top(cafe.image.quant.Box&nbsp;cube,
-       int&nbsp;dir,
-       int&nbsp;pos,
-       int[][][]&nbsp;mmt)</pre>
-</li>
-</ul>
-<a name="Var(cafe.image.quant.Box)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Var</h4>
-<pre>public&nbsp;float&nbsp;Var(cafe.image.quant.Box&nbsp;cube)</pre>
-</li>
-</ul>
-<a name="Maximize(cafe.image.quant.Box, int, int, int, int[], long, long, long, long)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Maximize</h4>
-<pre>public&nbsp;float&nbsp;Maximize(cafe.image.quant.Box&nbsp;cube,
-             int&nbsp;dir,
-             int&nbsp;first,
-             int&nbsp;last,
-             int[]&nbsp;cut,
-             long&nbsp;wholer,
-             long&nbsp;wholeg,
-             long&nbsp;wholeb,
-             long&nbsp;wholew)</pre>
-</li>
-</ul>
-<a name="Cut(cafe.image.quant.Box, cafe.image.quant.Box)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Cut</h4>
-<pre>public&nbsp;int&nbsp;Cut(cafe.image.quant.Box&nbsp;set1,
-      cafe.image.quant.Box&nbsp;set2)</pre>
-</li>
-</ul>
-<a name="Mark(cafe.image.quant.Box, int, int[][][])">
+<a name="quantize(byte[], int[], int[])">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>Mark</h4>
-<pre>public&nbsp;void&nbsp;Mark(cafe.image.quant.Box&nbsp;cube,
-        int&nbsp;label,
-        int[][][]&nbsp;tag)</pre>
+<h4>quantize</h4>
+<pre>public&nbsp;int&nbsp;quantize(byte[]&nbsp;newPixels,
+           int[]&nbsp;lut,
+           int[]&nbsp;colorInfo)</pre>
 </li>
 </ul>
 </li>

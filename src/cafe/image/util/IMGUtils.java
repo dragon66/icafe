@@ -61,6 +61,7 @@ import cafe.image.ImageIO;
 import cafe.image.ImageType;
 import cafe.image.meta.adobe.ImageResourceID;
 import cafe.image.meta.adobe._8BIM;
+import cafe.image.quant.WuQuant;
 import cafe.image.writer.ImageWriter;
 import cafe.image.writer.JPEGWriter;
 import cafe.io.IOUtils;
@@ -1194,6 +1195,15 @@ public class IMGUtils {
 		// Return the actual bits per pixel and the transparent color index if any
 		colorInfo[0] = bitsPerPixel;
 		colorInfo[1] = transparent_index;
+		return colorInfo;
+	}
+	
+	// Color quantization using Wu's algorithm
+	public static int[] reduceColorsWu(int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
+		WuQuant quant = new WuQuant(rgbTriplets, 1<<colorDepth);
+		int[] colorInfo = new int[2];
+		quant.quantize(newPixels, colorPalette, colorInfo);
+		
 		return colorInfo;
 	}
 	

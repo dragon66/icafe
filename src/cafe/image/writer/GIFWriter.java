@@ -446,7 +446,7 @@ public class GIFWriter extends ImageWriter {
 	    		else
 	        		colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette, param.getDitherMatrix());
 	    	} else
-	    		colorInfo = IMGUtils.reduceColors(pixels, bitsPerPixel, newPixels, colorPalette);
+	    		colorInfo = IMGUtils.reduceColorsWu(pixels, bitsPerPixel, newPixels, colorPalette);
 	    }
 	    
 	    bitsPerPixel = colorInfo[0];

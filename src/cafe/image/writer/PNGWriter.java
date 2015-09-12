@@ -368,7 +368,7 @@ public class PNGWriter extends ImageWriter {
 				else
 					colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette, param.getDitherMatrix());				
 			} else
-	    		colorInfo = IMGUtils.reduceColors(pixels, bitsPerPixel, bytePixels, colorPalette);
+	    		colorInfo = IMGUtils.reduceColorsWu(pixels, bitsPerPixel, bytePixels, colorPalette);
 		}
 		
 		switch(bitsPerPixel) {
