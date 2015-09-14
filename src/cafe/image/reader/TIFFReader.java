@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    13Sep2015  Extract unpackStrip() method
  * WY    08Jan2015  Better exception handling to resume from failed frame decoding 
  * WY    06Jan2015  Enhancement to decode multipage TIFF 
  * WY    10Dec2014  Fixed bug for bitsPerSample%8 != 0 case to assume BIG_ENDIAN  
@@ -281,6 +282,13 @@ public class TIFFReader extends ImageReader {
 					case DEFLATE_ADOBE:
 						decoder = new DeflateDecoder();
 						break;
+					case PACKBITS:
+						for(int i = 0; i < stripByteCounts.length; i++) {
+							int bytes2Read = stripBytes[i];
+							unpackStrip(pixels, offset, stripBytes[i], stripOffsets[i], stripByteCounts[i]);
+							offset += bytes2Read;
+						}
+						break;
 					default:
 				}
 				if(decoder != null) {
@@ -323,13 +331,9 @@ public class TIFFReader extends ImageReader {
 					case PACKBITS:
 						for(int i = 0; i < stripByteCounts.length; i++) {
 							int bytes2Read = stripBytes[i];
-							byte[] temp = new byte[stripByteCounts[i]];
-							randIS.seek(stripOffsets[i]);
-							randIS.readFully(temp);
-							byte[] temp2 = new byte[bytes2Read];
-							Packbits.unpackbits(temp, temp2);
-							System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
+							unpackStrip(pixels, offset, stripBytes[i], stripOffsets[i], stripByteCounts[i]);
 							offset += bytes2Read;
+					offset += bytes2Read;
 						}
 						break;
 					case LZW:
@@ -707,13 +711,8 @@ public class TIFFReader extends ImageReader {
 					case PACKBITS:
 						for(int i = 0; i < stripByteCounts.length; i++) {
 							int bytes2Read = stripBytes[i];
-							temp = new byte[stripByteCounts[i]];
-							randIS.seek(stripOffsets[i]);
-							randIS.readFully(temp);
-							temp2 = new byte[bytes2Read];
-							Packbits.unpackbits(temp, temp2);
-							System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
-							offset += bytes2Read;
+							unpackStrip(pixels, offset, stripBytes[i], stripOffsets[i], stripByteCounts[i]);
+							offset += bytes2Read;			
 						}
 						break;
 					case LZW:
@@ -1544,5 +1543,15 @@ public class TIFFReader extends ImageReader {
 			}
 		}
 		return input;
+	}
+	
+	// Unpack PACKBITS encoded strips
+	private void unpackStrip(byte[] pixels, int offset, int bytes2Read, int stripOffset, int stripByteCount) throws IOException {
+		byte[] temp = new byte[stripByteCount];
+		randIS.seek(stripOffset);
+		randIS.readFully(temp);
+		byte[] temp2 = new byte[bytes2Read];
+		Packbits.unpackbits(temp, temp2);
+		System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
 	}
 }
