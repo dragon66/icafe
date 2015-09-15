@@ -130,48 +130,40 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#bgColour">bgColour</a></strong></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected int[][]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#colormap">colormap</a></strong></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#cutnetsize">cutnetsize</a></strong></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#gamma">gamma</a></strong></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#initalpha">initalpha</a></strong></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#initBiasRadius">initBiasRadius</a></strong></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#initrad">initrad</a></strong></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#maxnetpos">maxnetpos</a></strong></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#maxprime">maxprime</a></strong></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#ncycles">ncycles</a></strong></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#netsize">netsize</a></strong></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#pixels">pixels</a></strong></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
@@ -217,36 +209,25 @@ extends java.lang.Object</pre>
 <table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colFirst" scope="col">Modifier</th>
-<th class="colLast" scope="col">Constructor and Description</th>
+<th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(java.awt.Image,%20java.awt.image.ImageObserver)">NeuQuant</a></strong>(java.awt.Image&nbsp;im,
-        java.awt.image.ImageObserver&nbsp;obs)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(java.awt.Image,%20int,%20int)">NeuQuant</a></strong>(java.awt.Image&nbsp;im,
+<td class="colOne"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(java.awt.Image,%20int,%20int)">NeuQuant</a></strong>(java.awt.Image&nbsp;im,
         int&nbsp;w,
         int&nbsp;h)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(int)">NeuQuant</a></strong>(int&nbsp;sample)</code>&nbsp;</td>
-</tr>
 <tr class="rowColor">
-<td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(int,%20java.awt.Image,%20java.awt.image.ImageObserver)">NeuQuant</a></strong>(int&nbsp;sample,
-        java.awt.Image&nbsp;im,
-        java.awt.image.ImageObserver&nbsp;obs)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(int[])">NeuQuant</a></strong>(int[]&nbsp;pixels)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(int,%20java.awt.Image,%20int,%20int)">NeuQuant</a></strong>(int&nbsp;sample,
+<td class="colOne"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(int,%20java.awt.Image,%20int,%20int)">NeuQuant</a></strong>(int&nbsp;sample,
         java.awt.Image&nbsp;im,
         int&nbsp;w,
         int&nbsp;h)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#NeuQuant(int,%20int[])">NeuQuant</a></strong>(int&nbsp;sample,
+        int[]&nbsp;pixels)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -265,49 +246,21 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#convert(int)">convert</a></strong>(int&nbsp;pixel)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>java.awt.Color</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#getColor(int)">getColor</a></strong>(int&nbsp;i)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#getColorCount()">getColorCount</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#init()">init</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>int[][]</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#getColourMap()">getColourMap</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected int</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#inxsearch(int,%20int,%20int)">inxsearch</a></strong>(int&nbsp;b,
-         int&nbsp;g,
-         int&nbsp;r)</code>&nbsp;</td>
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#quantize()">quantize</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#lookup(boolean,%20int,%20int,%20int)">lookup</a></strong>(boolean&nbsp;rgb,
-      int&nbsp;x,
-      int&nbsp;g,
-      int&nbsp;y)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#lookup(java.awt.Color)">lookup</a></strong>(java.awt.Color&nbsp;c)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#lookup(int)">lookup</a></strong>(int&nbsp;pixel)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#setUpArrays()">setUpArrays</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#writeColourMap(boolean,%20java.io.OutputStream)">writeColourMap</a></strong>(boolean&nbsp;rgb,
-              java.io.OutputStream&nbsp;out)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/quant/NeuQuant.html#quantize(byte[],%20int[],%20int[])">quantize</a></strong>(byte[]&nbsp;newPixels,
+        int[]&nbsp;colorMap,
+        int[]&nbsp;colorInfo)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -491,15 +444,6 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#cafe.image.quant.NeuQuant.betagamma">Constant Field Values</a></dd></dl>
 </li>
 </ul>
-<a name="colormap">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>colormap</h4>
-<pre>protected&nbsp;int[][] colormap</pre>
-</li>
-</ul>
 <a name="prime1">
 <!--   -->
 </a>
@@ -543,20 +487,11 @@ extends java.lang.Object</pre>
 <a name="maxprime">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>maxprime</h4>
 <pre>public static final&nbsp;int maxprime</pre>
 <dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#cafe.image.quant.NeuQuant.maxprime">Constant Field Values</a></dd></dl>
-</li>
-</ul>
-<a name="pixels">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>pixels</h4>
-<pre>protected&nbsp;int[] pixels</pre>
 </li>
 </ul>
 </li>
@@ -575,10 +510,7 @@ extends java.lang.Object</pre>
 <h4>NeuQuant</h4>
 <pre>public&nbsp;NeuQuant(java.awt.Image&nbsp;im,
         int&nbsp;w,
-        int&nbsp;h)
-         throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+        int&nbsp;h)</pre>
 </li>
 </ul>
 <a name="NeuQuant(int, java.awt.Image, int, int)">
@@ -590,49 +522,26 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;NeuQuant(int&nbsp;sample,
         java.awt.Image&nbsp;im,
         int&nbsp;w,
-        int&nbsp;h)
-         throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+        int&nbsp;h)</pre>
 </li>
 </ul>
-<a name="NeuQuant(java.awt.Image, java.awt.image.ImageObserver)">
+<a name="NeuQuant(int[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>NeuQuant</h4>
-<pre>public&nbsp;NeuQuant(java.awt.Image&nbsp;im,
-        java.awt.image.ImageObserver&nbsp;obs)
-         throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<pre>public&nbsp;NeuQuant(int[]&nbsp;pixels)</pre>
 </li>
 </ul>
-<a name="NeuQuant(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>NeuQuant</h4>
-<pre>protected&nbsp;NeuQuant(int&nbsp;sample)
-            throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="NeuQuant(int, java.awt.Image, java.awt.image.ImageObserver)">
+<a name="NeuQuant(int, int[])">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>NeuQuant</h4>
 <pre>public&nbsp;NeuQuant(int&nbsp;sample,
-        java.awt.Image&nbsp;im,
-        java.awt.image.ImageObserver&nbsp;obs)
-         throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+        int[]&nbsp;pixels)</pre>
 </li>
 </ul>
 </li>
@@ -652,94 +561,33 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;int&nbsp;getColorCount()</pre>
 </li>
 </ul>
-<a name="getColor(int)">
+<a name="getColourMap()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getColor</h4>
-<pre>public&nbsp;java.awt.Color&nbsp;getColor(int&nbsp;i)</pre>
+<h4>getColourMap</h4>
+<pre>public&nbsp;int[][]&nbsp;getColourMap()</pre>
 </li>
 </ul>
-<a name="writeColourMap(boolean, java.io.OutputStream)">
+<a name="quantize()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>writeColourMap</h4>
-<pre>public&nbsp;int&nbsp;writeColourMap(boolean&nbsp;rgb,
-                 java.io.OutputStream&nbsp;out)
-                   throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
+<h4>quantize</h4>
+<pre>public&nbsp;int[]&nbsp;quantize()</pre>
 </li>
 </ul>
-<a name="setUpArrays()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setUpArrays</h4>
-<pre>protected&nbsp;void&nbsp;setUpArrays()</pre>
-</li>
-</ul>
-<a name="init()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>init</h4>
-<pre>public&nbsp;void&nbsp;init()</pre>
-</li>
-</ul>
-<a name="convert(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>convert</h4>
-<pre>public&nbsp;int&nbsp;convert(int&nbsp;pixel)</pre>
-</li>
-</ul>
-<a name="lookup(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>lookup</h4>
-<pre>public&nbsp;int&nbsp;lookup(int&nbsp;pixel)</pre>
-</li>
-</ul>
-<a name="lookup(java.awt.Color)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>lookup</h4>
-<pre>public&nbsp;int&nbsp;lookup(java.awt.Color&nbsp;c)</pre>
-</li>
-</ul>
-<a name="lookup(boolean, int, int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>lookup</h4>
-<pre>public&nbsp;int&nbsp;lookup(boolean&nbsp;rgb,
-         int&nbsp;x,
-         int&nbsp;g,
-         int&nbsp;y)</pre>
-</li>
-</ul>
-<a name="inxsearch(int, int, int)">
+<a name="quantize(byte[], int[], int[])">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>inxsearch</h4>
-<pre>protected&nbsp;int&nbsp;inxsearch(int&nbsp;b,
-            int&nbsp;g,
-            int&nbsp;r)</pre>
+<h4>quantize</h4>
+<pre>public&nbsp;int&nbsp;quantize(byte[]&nbsp;newPixels,
+           int[]&nbsp;colorMap,
+           int[]&nbsp;colorInfo)</pre>
 </li>
 </ul>
 </li>

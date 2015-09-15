@@ -52,6 +52,7 @@ import cafe.image.options.ImageOptions;
 import cafe.image.options.JPEGOptions;
 import cafe.image.options.TIFFOptions;
 import cafe.image.quant.DitherMethod;
+import cafe.image.quant.QuantMethod;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.RationalField;
 import cafe.image.tiff.TiffFieldEnum.*;
@@ -658,7 +659,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 				else
 					colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette, param.getDitherMatrix());				
 			} else
-	    		colorInfo = IMGUtils.reduceColorsWu(pixels, bitsPerPixel, newPixels, colorPalette);
+	    		colorInfo = IMGUtils.reduceColors(QuantMethod.WU_QUANT, pixels, bitsPerPixel, newPixels, colorPalette);
 		}
 		
 		switch(bitsPerPixel) {

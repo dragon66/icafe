@@ -44,6 +44,7 @@ import cafe.image.png.TIMEBuilder;
 import cafe.image.png.TRNSBuilder;
 import cafe.image.png.TextBuilder;
 import cafe.image.quant.DitherMethod;
+import cafe.image.quant.QuantMethod;
 import cafe.image.util.IMGUtils;
 import cafe.io.IOUtils;
 import cafe.util.ArrayUtils;
@@ -368,7 +369,7 @@ public class PNGWriter extends ImageWriter {
 				else
 					colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette, param.getDitherMatrix());				
 			} else
-	    		colorInfo = IMGUtils.reduceColorsWu(pixels, bitsPerPixel, bytePixels, colorPalette);
+	    		colorInfo = IMGUtils.reduceColors(QuantMethod.WU_QUANT, pixels, bitsPerPixel, bytePixels, colorPalette);
 		}
 		
 		switch(bitsPerPixel) {

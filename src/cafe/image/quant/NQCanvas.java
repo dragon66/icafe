@@ -12,8 +12,7 @@ public class NQCanvas extends Canvas {
 	 */
 	private static final long serialVersionUID = -5075876371476649415L;
 	private NeuQuant nq = null;
-	private int pixels[] = null;
-    private int w = 0;;
+	private int w = 0;;
     private int h = 0;
     private Image image = null;
     private String url = null;
@@ -24,7 +23,7 @@ public class NQCanvas extends Canvas {
     
     public void set () {
         try {
-            System.err.println ("Fetching " + url + " ...");
+            System.out.println ("Fetching " + url + " ...");
             Image img = null;
             try {
                 java.net.URL u = new java.net.URL (url);
@@ -38,20 +37,18 @@ public class NQCanvas extends Canvas {
             try {
 		        tracker.waitForID(0);
 	        } catch (InterruptedException e) { }
-            System.err.println ("w = " + img.getWidth (this));
-            System.err.println ("h = " + img.getHeight (this));
+            System.out.println ("w = " + img.getWidth (this));
+            System.out.println ("h = " + img.getHeight (this));
             set (img);
         } catch (Exception ex) {
-            System.err.println(ex);
+            System.out.println(ex);
         }
     }
     
     public void set (Image img) throws IOException {
-        nq = new NeuQuant (img, this);
-        nq.init();
         w = img.getWidth (this);
     	h = img.getHeight (this);
-        pixels = new int [w * h];
+        int pixels[] = new int [w * h];
         java.awt.image.PixelGrabber pg
             = new java.awt.image.PixelGrabber(img, 0, 0, w, h, pixels, 0, w);
        	try {
@@ -60,7 +57,8 @@ public class NQCanvas extends Canvas {
 	    if ((pg.getStatus() & java.awt.image.ImageObserver.ABORT) != 0) {
 	        throw new IOException ("Image pixel grab aborted or errored");
 	  	}
-	  	for (int i = 0; i < w*h; i++) pixels[i] = nq.convert(pixels[i]);
+	    nq = new NeuQuant (pixels);
+        pixels = nq.quantize();
 	  	this.image = this.createImage(new MemoryImageSource(w, h, pixels, 0, w));
     }
     
@@ -77,9 +75,8 @@ public class NQCanvas extends Canvas {
 	    frame.setVisible(true);
 	    frame.addWindowListener (new java.awt.event.WindowAdapter() {
 	        public void windowClosing(java.awt.event.WindowEvent e) { 
-		        System.err.println("Closing program");		
+		        System.out.println("Closing program");		
 		        System.exit(0); }
 	    } );
-
     }
 }

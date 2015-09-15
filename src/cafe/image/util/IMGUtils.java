@@ -61,6 +61,8 @@ import cafe.image.ImageIO;
 import cafe.image.ImageType;
 import cafe.image.meta.adobe.ImageResourceID;
 import cafe.image.meta.adobe._8BIM;
+import cafe.image.quant.NeuQuant;
+import cafe.image.quant.QuantMethod;
 import cafe.image.quant.WuQuant;
 import cafe.image.writer.ImageWriter;
 import cafe.image.writer.JPEGWriter;
@@ -1198,11 +1200,15 @@ public class IMGUtils {
 		return colorInfo;
 	}
 	
-	// Color quantization using Wu's algorithm
-	public static int[] reduceColorsWu(int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
-		WuQuant quant = new WuQuant(rgbTriplets, 1<<colorDepth);
+	// Color quantization
+	public static int[] reduceColors(QuantMethod quantMethod, int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
 		int[] colorInfo = new int[2];
-		quant.quantize(newPixels, colorPalette, colorInfo);
+		if(quantMethod == QuantMethod.WU_QUANT)
+			new WuQuant(rgbTriplets, 1<<colorDepth).quantize(newPixels, colorPalette, colorInfo);
+		else if(quantMethod == QuantMethod.NEU_QUANT)
+			new NeuQuant(rgbTriplets).quantize(newPixels, colorPalette, colorInfo);
+		else
+			reduceColors(rgbTriplets, colorDepth, newPixels, colorPalette);
 		
 		return colorInfo;
 	}

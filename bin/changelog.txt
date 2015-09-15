@@ -1,7 +1,8 @@
 ***************************
-Last modified on 09/12/2015
+Last modified on 09/14/2015
 ***************************
-12Sep2015  Added Xiaolin Wu's quantization algorithm to IMGUtils
+14Sep2015  Added NeuQuant (Neural network) color quantization algorithm
+12Sep2015  Added Xiaolin Wu's color quantization algorithm
 10Sep2015  Moved quantization related code to package cafe.image.quant
 08Sep2015  Changed Shell sort to use Knuth's sequence
 05Sep2015  Added ordered dither support for color images

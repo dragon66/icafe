@@ -33,6 +33,7 @@ import cafe.image.ImageType;
 import cafe.image.gif.GIFFrame;
 import static cafe.image.gif.GIFTweaker.*;
 import cafe.image.quant.DitherMethod;
+import cafe.image.quant.QuantMethod;
 import cafe.image.util.IMGUtils;
 
 /**
@@ -446,7 +447,7 @@ public class GIFWriter extends ImageWriter {
 	    		else
 	        		colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette, param.getDitherMatrix());
 	    	} else
-	    		colorInfo = IMGUtils.reduceColorsWu(pixels, bitsPerPixel, newPixels, colorPalette);
+	    		colorInfo = IMGUtils.reduceColors(QuantMethod.WU_QUANT, pixels, bitsPerPixel, newPixels, colorPalette);
 	    }
 	    
 	    bitsPerPixel = colorInfo[0];
