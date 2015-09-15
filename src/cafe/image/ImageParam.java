@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 
 import cafe.image.options.ImageOptions;
 import cafe.image.quant.DitherMethod;
+import cafe.image.quant.QuantMethod;
 import cafe.util.Builder;
 
 /**
@@ -46,6 +47,7 @@ public class ImageParam {
     private final int[][] ditherMatrix;
     private final DitherMethod ditherMethod;
     private final int ditherThreshold;
+    private final QuantMethod quantMethod;
     private final boolean transparent;
     private final int transparentColor;
     private final boolean hasICCP;
@@ -59,8 +61,8 @@ public class ImageParam {
     public static final ImageParam DEFAULT_IMAGE_PARAM = new ImageParamBuilder().build();
     
     private static final DitherMethod DEFAULT_DITHER_METHOD = DitherMethod.FLOYD_STEINBERG;
-	
-    private static final int DEFAULT_DITHER_THRESHOLD = 18;	
+	private static final int DEFAULT_DITHER_THRESHOLD = 18;
+	private static final QuantMethod DEFAULT_QUANT_METHOD = QuantMethod.POPULARITY;
 	
     // Default Bayer 8X8 threshold matrix for ordered dither
     private static final int[][] DEFAULT_DITHER_MATRIX = {
@@ -86,6 +88,7 @@ public class ImageParam {
 		ditherMatrix = builder.ditherMatrix;
 		ditherMethod = builder.ditherMethod;
 		ditherThreshold = builder.ditherThreshold;
+		quantMethod = builder.quantMethod;
 		transparentColor = builder.transparentColor;
 		transparent = builder.transparent;
 		hasICCP = builder.hasICCP;
@@ -130,6 +133,10 @@ public class ImageParam {
 	public int getDitherThreshold() {
     	return ditherThreshold;
     }
+	
+	public QuantMethod getQuantMethod() {
+		return quantMethod;
+	}
     
     public byte[] getICCProfile() {
     	return icc_profile;
@@ -198,6 +205,7 @@ public class ImageParam {
 	    private boolean hasAlpha = false;
 	    private boolean applyDither = false;
 	    private DitherMethod ditherMethod = DEFAULT_DITHER_METHOD;
+	    private QuantMethod quantMethod = DEFAULT_QUANT_METHOD;
 	    // Bayer 8X8 matrix
 	    private int[][] ditherMatrix = DEFAULT_DITHER_MATRIX;
 	    private int ditherThreshold = DEFAULT_DITHER_THRESHOLD;
@@ -258,6 +266,11 @@ public class ImageParam {
 	    	return this;
 	    }
 	    
+	    public ImageParamBuilder quantMethod(QuantMethod quantMethod) {
+	    	this.quantMethod = quantMethod;
+	    	return this;
+	    }
+	    
 	    public ImageParamBuilder hasAlpha(boolean hasAlpha) {
 			this.hasAlpha = hasAlpha;
 			return this;
@@ -298,6 +311,7 @@ public class ImageParam {
 	      	this.ditherMatrix = DEFAULT_DITHER_MATRIX;
 	      	this.ditherMethod = DEFAULT_DITHER_METHOD;
 	    	this.ditherThreshold = DEFAULT_DITHER_THRESHOLD;
+	    	this.quantMethod = DEFAULT_QUANT_METHOD;
 	      	this.transparent = false;
 	    	this.transparentColor = 0;
 	    	this.hasICCP = false;

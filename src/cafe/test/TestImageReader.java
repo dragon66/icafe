@@ -22,6 +22,7 @@ import cafe.image.options.PNGOptions;
 import cafe.image.options.TIFFOptions;
 import cafe.image.png.Filter;
 import cafe.image.quant.DitherMethod;
+import cafe.image.quant.QuantMethod;
 import cafe.image.reader.ImageReader;
 import cafe.image.tiff.TiffFieldEnum.PhotoMetric;
 import cafe.image.tiff.TiffFieldEnum.Compression;
@@ -107,7 +108,7 @@ public class TestImageReader extends TestBase {
 		 }
 		  
 		 t1 = System.currentTimeMillis();
-		 ImageIO.write(img, fo, imageType, builder.colorType(ImageColorType.BILEVEL).applyDither(true).ditherMethod(DitherMethod.BAYER).hasAlpha(true).build());			
+		 ImageIO.write(img, fo, imageType, builder.quantMethod(QuantMethod.WU_QUANT).colorType(ImageColorType.INDEXED).applyDither(true).ditherMethod(DitherMethod.FLOYD_STEINBERG).hasAlpha(true).build());			
 		 t2 = System.currentTimeMillis();
 		
 		 fo.close();

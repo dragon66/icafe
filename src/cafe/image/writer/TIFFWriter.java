@@ -52,7 +52,6 @@ import cafe.image.options.ImageOptions;
 import cafe.image.options.JPEGOptions;
 import cafe.image.options.TIFFOptions;
 import cafe.image.quant.DitherMethod;
-import cafe.image.quant.QuantMethod;
 import cafe.image.tiff.ASCIIField;
 import cafe.image.tiff.RationalField;
 import cafe.image.tiff.TiffFieldEnum.*;
@@ -655,11 +654,11 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 			bitsPerPixel = 8;
 			if(param.isApplyDither()) {
 				if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
-					colorInfo = IMGUtils.reduceColorsDiffusionDither(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette);
+					colorInfo = IMGUtils.reduceColorsDiffusionDither(param.getQuantMethod(), pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette);
 				else
-					colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette, param.getDitherMatrix());				
+					colorInfo = IMGUtils.reduceColorsOrderedDither(param.getQuantMethod(), pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette, param.getDitherMatrix());				
 			} else
-	    		colorInfo = IMGUtils.reduceColors(QuantMethod.WU_QUANT, pixels, bitsPerPixel, newPixels, colorPalette);
+	    		colorInfo = IMGUtils.reduceColors(param.getQuantMethod(), pixels, bitsPerPixel, newPixels, colorPalette);
 		}
 		
 		switch(bitsPerPixel) {

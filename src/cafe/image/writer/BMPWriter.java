@@ -14,7 +14,6 @@ import cafe.image.ImageColorType;
 import cafe.image.ImageParam;
 import cafe.image.ImageType;
 import cafe.image.quant.DitherMethod;
-import cafe.image.quant.QuantMethod;
 import cafe.image.util.IMGUtils;
 
 import java.io.*; 
@@ -236,11 +235,11 @@ public class BMPWriter extends ImageWriter {
 		
 		if(param.isApplyDither()) {
     		if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
-        		IMGUtils.reduceColorsDiffusionDither(pixels, imageWidth, imageHeight, 8, newPixels, colorPalette);	        		
+        		IMGUtils.reduceColorsDiffusionDither(param.getQuantMethod(), pixels, imageWidth, imageHeight, 8, newPixels, colorPalette);	        		
     		else
-        		IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, 8, newPixels, colorPalette, param.getDitherMatrix());
+        		IMGUtils.reduceColorsOrderedDither(param.getQuantMethod(), pixels, imageWidth, imageHeight, 8, newPixels, colorPalette, param.getDitherMatrix());
     	} else
-    		IMGUtils.reduceColors(QuantMethod.WU_QUANT, pixels, 8, newPixels, colorPalette);
+    		IMGUtils.reduceColors(param.getQuantMethod(), pixels, 8, newPixels, colorPalette);
 		
 		// Write out the color palette
 		for (int i=0; i<256; i++)

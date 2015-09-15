@@ -278,7 +278,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsDiffusionDither(int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither</a></strong>(int[]&nbsp;rgbTriplet,
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsDiffusionDither(int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither</a></strong>(int[]&nbsp;rgbTriplets,
                            int&nbsp;width,
                            int&nbsp;height,
                            int&nbsp;colorDepth,
@@ -290,7 +290,28 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsDiffusionDither(cafe.image.quant.QuantMethod,%20int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither</a></strong>(<a href="../../../cafe/image/quant/QuantMethod.html" title="enum in cafe.image.quant">QuantMethod</a>&nbsp;quantMethod,
+                           int[]&nbsp;rgbTriplets,
+                           int&nbsp;width,
+                           int&nbsp;height,
+                           int&nbsp;colorDepth,
+                           byte[]&nbsp;newPixels,
+                           int[]&nbsp;colorPalette)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsOrderedDither(int[],%20int,%20int,%20int,%20byte[],%20int[],%20int[][])">reduceColorsOrderedDither</a></strong>(int[]&nbsp;rgbTriplet,
+                         int&nbsp;width,
+                         int&nbsp;height,
+                         int&nbsp;colorDepth,
+                         byte[]&nbsp;newPixels,
+                         int[]&nbsp;colorPalette,
+                         int[][]&nbsp;threshold)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsOrderedDither(cafe.image.quant.QuantMethod,%20int[],%20int,%20int,%20int,%20byte[],%20int[],%20int[][])">reduceColorsOrderedDither</a></strong>(<a href="../../../cafe/image/quant/QuantMethod.html" title="enum in cafe.image.quant">QuantMethod</a>&nbsp;quantMethod,
+                         int[]&nbsp;rgbTriplets,
                          int&nbsp;width,
                          int&nbsp;height,
                          int&nbsp;colorDepth,
@@ -746,7 +767,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>reduceColorsDiffusionDither</h4>
-<pre>public static&nbsp;int[]&nbsp;reduceColorsDiffusionDither(int[]&nbsp;rgbTriplet,
+<pre>public static&nbsp;int[]&nbsp;reduceColorsDiffusionDither(int[]&nbsp;rgbTriplets,
                                 int&nbsp;width,
                                 int&nbsp;height,
                                 int&nbsp;colorDepth,
@@ -756,6 +777,21 @@ extends java.lang.Object</pre>
  followed by Floyd-Steinberg error diffusion dithering.</div>
 </li>
 </ul>
+<a name="reduceColorsDiffusionDither(cafe.image.quant.QuantMethod, int[], int, int, int, byte[], int[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>reduceColorsDiffusionDither</h4>
+<pre>public static&nbsp;int[]&nbsp;reduceColorsDiffusionDither(<a href="../../../cafe/image/quant/QuantMethod.html" title="enum in cafe.image.quant">QuantMethod</a>&nbsp;quantMethod,
+                                int[]&nbsp;rgbTriplets,
+                                int&nbsp;width,
+                                int&nbsp;height,
+                                int&nbsp;colorDepth,
+                                byte[]&nbsp;newPixels,
+                                int[]&nbsp;colorPalette)</pre>
+</li>
+</ul>
 <a name="reduceColorsOrderedDither(int[], int, int, int, byte[], int[], int[][])">
 <!--   -->
 </a>
@@ -763,6 +799,22 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>reduceColorsOrderedDither</h4>
 <pre>public static&nbsp;int[]&nbsp;reduceColorsOrderedDither(int[]&nbsp;rgbTriplet,
+                              int&nbsp;width,
+                              int&nbsp;height,
+                              int&nbsp;colorDepth,
+                              byte[]&nbsp;newPixels,
+                              int[]&nbsp;colorPalette,
+                              int[][]&nbsp;threshold)</pre>
+</li>
+</ul>
+<a name="reduceColorsOrderedDither(cafe.image.quant.QuantMethod, int[], int, int, int, byte[], int[], int[][])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>reduceColorsOrderedDither</h4>
+<pre>public static&nbsp;int[]&nbsp;reduceColorsOrderedDither(<a href="../../../cafe/image/quant/QuantMethod.html" title="enum in cafe.image.quant">QuantMethod</a>&nbsp;quantMethod,
+                              int[]&nbsp;rgbTriplets,
                               int&nbsp;width,
                               int&nbsp;height,
                               int&nbsp;colorDepth,

@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    Added parameter to ImageParam to set quantization method
  * WY    10Sep2015  Removed ColorEntry from checkColorDepth()
  * WY    05Sep2015  Added ordered dither support for color images
  * WY    03Sep2015  Added ordered dither support for bilevel images
@@ -1217,13 +1218,31 @@ public class IMGUtils {
 	 * Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
 	 * followed by Floyd-Steinberg error diffusion dithering.
 	 */
-	public static int[] reduceColorsDiffusionDither(int[] rgbTriplet, int width, int height, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
+	public static int[] reduceColorsDiffusionDither(int[] rgbTriplets, int width, int height, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
 		if(colorDepth > 8 || colorDepth < 1) 
 			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
 		int[] colorInfo = new int[2];
-		int colors = reduceColorsPopularity(rgbTriplet, colorDepth, colorPalette, colorInfo);
+		int colors = reduceColorsPopularity(rgbTriplets, colorDepth, colorPalette, colorInfo);
 		// Call Floyd-Steinberg dither
-		dither_FloydSteinberg(rgbTriplet, width, height, newPixels, colors, colorPalette, colorInfo[1]);
+		dither_FloydSteinberg(rgbTriplets, width, height, newPixels, colors, colorPalette, colorInfo[1]);
+		// Return the actual bits per pixel and the transparent color index if any
+
+		return colorInfo;
+	}
+	
+	public static int[] reduceColorsDiffusionDither(QuantMethod quantMethod, int[] rgbTriplets, int width, int height, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
+		if(colorDepth > 8 || colorDepth < 1) 
+			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
+		int[] colorInfo = new int[2];
+		int colors = 0;
+		if(quantMethod == QuantMethod.WU_QUANT)
+			colors = new WuQuant(rgbTriplets, 1<<colorDepth).quantize(colorPalette, colorInfo);
+		else if(quantMethod == QuantMethod.NEU_QUANT)
+			colors = new NeuQuant(rgbTriplets).quantize(colorPalette, colorInfo);
+		else
+			colors = reduceColorsPopularity(rgbTriplets, colorDepth, colorPalette, colorInfo);
+		// Call Floyd-Steinberg dither
+		dither_FloydSteinberg(rgbTriplets, width, height, newPixels, colors, colorPalette, colorInfo[1]);
 		// Return the actual bits per pixel and the transparent color index if any
 
 		return colorInfo;
@@ -1236,6 +1255,23 @@ public class IMGUtils {
 		int colors = reduceColorsPopularity(rgbTriplet, colorDepth, colorPalette, colorInfo);
 		
 		dither_Bayer(rgbTriplet, width, height, newPixels, colors, colorPalette, colorInfo[1], threshold);
+		// Return the actual bits per pixel and the transparent color index if any
+
+		return colorInfo;
+	}
+	
+	public static int[] reduceColorsOrderedDither(QuantMethod quantMethod, int[] rgbTriplets, int width, int height, int colorDepth, byte[] newPixels, final int[] colorPalette, int[][] threshold)	{
+		if(colorDepth > 8 || colorDepth < 1) 
+			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
+		int[] colorInfo = new int[2];
+		int colors = 0;
+		if(quantMethod == QuantMethod.WU_QUANT)
+			colors = new WuQuant(rgbTriplets, 1<<colorDepth).quantize(colorPalette, colorInfo);
+		else if(quantMethod == QuantMethod.NEU_QUANT)
+			colors = new NeuQuant(rgbTriplets).quantize(colorPalette, colorInfo);
+		else
+			colors = reduceColorsPopularity(rgbTriplets, colorDepth, colorPalette, colorInfo);
+		dither_Bayer(rgbTriplets, width, height, newPixels, colors, colorPalette, colorInfo[1], threshold);
 		// Return the actual bits per pixel and the transparent color index if any
 
 		return colorInfo;

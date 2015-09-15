@@ -208,6 +208,25 @@ public class NeuQuant {
         
         return netsize;
     }
+    
+    public int quantize (final int[] colorMap, int[] colorInfo) {
+        learn ();
+        fix ();
+        inxbuild ();
+        for(int i = 0; i < netsize; i++) {
+        	int b = colormap[i][0];
+	    	int g = colormap[i][1];
+	    	int r = colormap[i][2];
+	    	int a = colormap[i][3];
+	    	colorMap[i] = (a << 24 | r << 16 | g << 8 | b);
+        }
+        int bitsPerPixel = 0;
+        while ((1<<bitsPerPixel) < netsize)  bitsPerPixel++;
+        colorInfo[0] = bitsPerPixel;
+        colorInfo[1] = -1;
+        
+        return netsize;
+    }
 
     private void altersingle(double alpha, int i, double b, double g, double r) {
         // Move neuron i towards biased (b,g,r) by factor alpha

@@ -137,6 +137,66 @@ public class WuQuant {
        
        return lut_size;
     }
+    
+    // TODO: figure out a way to deal with transparency
+    public int quantize(final int[] lut, int[] colorInfo) {
+       Box cube[] = new Box[MAXCOLOR];
+       int lut_r, lut_g, lut_b;
+     
+       int next, i, k;
+       long weight;
+       float vv[] = new float[MAXCOLOR], temp;
+       
+       Hist3d(wt, mr, mg, mb, m2);
+       M3d(wt, mr, mg, mb, m2);
+       
+       for(i = 0; i < MAXCOLOR; i++)
+    	   cube[i] = new Box();
+       
+       cube[0].r0 = cube[0].g0 = cube[0].b0 = 0;
+       cube[0].r1 = cube[0].g1 = cube[0].b1 = QUANT_SIZE - 1;
+       next = 0;
+       
+       for(i = 1; i < lut_size; ++i){
+    	   if (Cut(cube[next], cube[i])) {
+    		   /* volume test ensures we won't try to cut one-cell box */
+    		   vv[next] = (cube[next].vol > 1) ? Var(cube[next]) : 0.0f;
+    		   vv[i] = (cube[i].vol > 1) ? Var(cube[i]) : 0.0f;
+    	   } else {
+    		   vv[next] = 0.0f;   /* don't try to split this box again */
+    		   i--;              /* didn't create box i */
+    	   }
+    	   next = 0; temp = vv[0];
+    	   for(k = 1; k <= i; ++k)
+    		   if (vv[k] > temp) {
+    			   temp = vv[k]; next = k;
+    		   }
+    	   if (temp <= 0.0f) {
+    		   k = i+1;
+    		   break;
+    	   }
+       }
+   
+       for(k = 0; k < lut_size; ++k){
+    	   weight = Vol(cube[k], wt);
+    	   if (weight > 0) {
+    		   lut_r = (int)(Vol(cube[k], mr) / weight);
+    		   lut_g = (int)(Vol(cube[k], mg) / weight);
+    		   lut_b = (int)(Vol(cube[k], mb) / weight);
+    		   lut[k] = (255<<24) | (lut_r  << 16) | (lut_g << 8) | lut_b;
+    	   }
+    	   else	{
+      		   lut[k] = 0;		
+    	   }
+       }
+
+       int bitsPerPixel = 0;
+       while ((1<<bitsPerPixel) < lut_size)  bitsPerPixel++;
+       colorInfo[0] = bitsPerPixel;
+       colorInfo[1] = -1;
+       
+       return lut_size;
+    }
 
 	/* Histogram is in elements 1..HISTSIZE along each axis,
 	 * element 0 is for base or marginal value

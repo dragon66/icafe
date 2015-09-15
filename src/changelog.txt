@@ -1,6 +1,7 @@
 ***************************
-Last modified on 09/14/2015
+Last modified on 09/15/2015
 ***************************
+15Sep2015  Added parameter to ImageParam to set quantization method
 14Sep2015  Added NeuQuant (Neural network) color quantization algorithm
 12Sep2015  Added Xiaolin Wu's color quantization algorithm
 10Sep2015  Moved quantization related code to package cafe.image.quant

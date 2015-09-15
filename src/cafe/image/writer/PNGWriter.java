@@ -44,7 +44,6 @@ import cafe.image.png.TIMEBuilder;
 import cafe.image.png.TRNSBuilder;
 import cafe.image.png.TextBuilder;
 import cafe.image.quant.DitherMethod;
-import cafe.image.quant.QuantMethod;
 import cafe.image.util.IMGUtils;
 import cafe.io.IOUtils;
 import cafe.util.ArrayUtils;
@@ -365,11 +364,11 @@ public class PNGWriter extends ImageWriter {
 			bitsPerPixel = 8;
 			if(param.isApplyDither()) {
 				if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
-					colorInfo = IMGUtils.reduceColorsDiffusionDither(pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette);
+					colorInfo = IMGUtils.reduceColorsDiffusionDither(param.getQuantMethod(), pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette);
 				else
-					colorInfo = IMGUtils.reduceColorsOrderedDither(pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette, param.getDitherMatrix());				
+					colorInfo = IMGUtils.reduceColorsOrderedDither(param.getQuantMethod(), pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette, param.getDitherMatrix());				
 			} else
-	    		colorInfo = IMGUtils.reduceColors(QuantMethod.WU_QUANT, pixels, bitsPerPixel, bytePixels, colorPalette);
+	    		colorInfo = IMGUtils.reduceColors(param.getQuantMethod(), pixels, bitsPerPixel, bytePixels, colorPalette);
 		}
 		
 		switch(bitsPerPixel) {
