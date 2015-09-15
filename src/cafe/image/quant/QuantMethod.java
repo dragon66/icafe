@@ -4,5 +4,5 @@ package cafe.image.quant;
 public enum QuantMethod {
 	POPULARITY, // Popularity
 	WU_QUANT, // Xiaolin Wu
-	NEU_QUANT; // Neuro network
+	NEU_QUANT; // Neural network
 }
