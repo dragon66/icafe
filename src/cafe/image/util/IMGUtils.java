@@ -13,7 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
- * WY    Added parameter to ImageParam to set quantization method
+ * WY    16Sep2015  Added getScaledInstance() to IMGUtils
+ * WY    15Sep2015  Added parameter to ImageParam to set quantization method
  * WY    10Sep2015  Removed ColorEntry from checkColorDepth()
  * WY    05Sep2015  Added ordered dither support for color images
  * WY    03Sep2015  Added ordered dither support for bilevel images
@@ -34,6 +35,7 @@ package cafe.image.util;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.color.ColorSpace;
 import java.awt.color.ICC_ColorSpace;
 import java.awt.color.ICC_Profile;
@@ -222,13 +224,10 @@ public class IMGUtils {
 		}			
 		if(imageWidth < thumbnailWidth) thumbnailWidth = imageWidth;			
 		if(imageHeight < thumbnailHeight) thumbnailHeight = imageHeight;
-		BufferedImage thumbnail = new BufferedImage(thumbnailWidth, thumbnailHeight, BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = thumbnail.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-		        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-		g.drawImage(original, 0, 0, thumbnailWidth, thumbnailHeight, null);
-				
-		return thumbnail;
+			
+		return getScaledInstance(original, thumbnailWidth, thumbnailHeight,				
+				RenderingHints.VALUE_INTERPOLATION_BICUBIC,
+				true);
 	}
 	
 	/**
@@ -946,6 +945,79 @@ public class IMGUtils {
 				return image.getRGB(0, 0, imageWidth, imageHeight, rgbs, 0, imageWidth);
 		}
 	}
+	
+	/**
+	 * Convenience method that returns a scaled instance of the
+     * provided {@code BufferedImage}.
+     *
+     * @param img the original image to be scaled
+     * @param targetWidth the desired width of the scaled instance,
+     *    in pixels
+     * @param targetHeight the desired height of the scaled instance,
+     *    in pixels
+     * @param hint one of the rendering hints that corresponds to
+     *    {@code RenderingHints.KEY_INTERPOLATION} (e.g.
+     *    {@code RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
+     *    {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR},
+     *    {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
+     * @param higherQuality if true, this method will use a multi-step
+     *    scaling technique that provides higher quality than the usual
+     *    one-step technique (only useful in down-scaling cases, where
+     *    {@code targetWidth} or {@code targetHeight} is
+     *    smaller than the original dimensions, and generally only when
+     *    the {@code BILINEAR} hint is specified)
+     * @return a scaled version of the original {@codey BufferedImage}
+     */
+	 // From https://today.java.net/article/2007/03/30/perils-imagegetscaledinstance
+    public static BufferedImage getScaledInstance(BufferedImage img,
+                                                  int targetWidth,
+                                                  int targetHeight,
+                                                  Object hint,
+                                                  boolean higherQuality)
+    {
+        int type = (img.getTransparency() == Transparency.OPAQUE) ?
+            BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
+        BufferedImage ret = (BufferedImage)img;
+        int w, h;
+        if (higherQuality) {
+            // Use multi-step technique: start with original size, then
+            // scale down in multiple passes with drawImage()
+            // until the target size is reached
+            w = img.getWidth();
+            h = img.getHeight();
+        } else {
+            // Use one-step technique: scale directly from original
+            // size to target size with a single drawImage() call
+            w = targetWidth;
+            h = targetHeight;
+        }
+        
+        do {
+            if (higherQuality && w > targetWidth) {
+                w /= 2;
+                if (w < targetWidth) {
+                    w = targetWidth;
+                }
+            }
+
+            if (higherQuality && h > targetHeight) {
+                h /= 2;
+                if (h < targetHeight) {
+                    h = targetHeight;
+                }
+            }
+
+            BufferedImage tmp = new BufferedImage(w, h, type);
+            Graphics2D g2 = tmp.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hint);
+            g2.drawImage(ret, 0, 0, w, h, null);
+            g2.dispose();
+
+            ret = tmp;
+        } while (w != targetWidth || h != targetHeight);
+
+        return ret;
+    }	
 	
 	public static ImageType guessImageType(byte[] magicNumber) {
 		ImageType imageType = ImageType.UNKNOWN;

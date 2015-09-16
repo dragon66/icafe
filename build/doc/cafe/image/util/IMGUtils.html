@@ -237,29 +237,40 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static java.awt.image.BufferedImage</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#getScaledInstance(java.awt.image.BufferedImage,%20int,%20int,%20java.lang.Object,%20boolean)">getScaledInstance</a></strong>(java.awt.image.BufferedImage&nbsp;img,
+                 int&nbsp;targetWidth,
+                 int&nbsp;targetHeight,
+                 java.lang.Object&nbsp;hint,
+                 boolean&nbsp;higherQuality)</code>
+<div class="block">Convenience method that returns a scaled instance of the
+ provided <code>BufferedImage</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../cafe/image/ImageType.html" title="enum in cafe.image">ImageType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#guessImageType(byte[])">guessImageType</a></strong>(byte[]&nbsp;magicNumber)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../cafe/image/ImageType.html" title="enum in cafe.image">ImageType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#guessImageType(java.io.PushbackInputStream)">guessImageType</a></strong>(java.io.PushbackInputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../cafe/image/ImageType.html" title="enum in cafe.image">ImageType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#guessImageType(cafe.io.RandomAccessInputStream)">guessImageType</a></strong>(<a href="../../../cafe/io/RandomAccessInputStream.html" title="class in cafe.io">RandomAccessInputStream</a>&nbsp;is)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.awt.image.WritableRaster</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#iccp2rgbRaster(java.awt.image.WritableRaster,%20java.awt.image.ColorModel)">iccp2rgbRaster</a></strong>(java.awt.image.WritableRaster&nbsp;raster,
               java.awt.image.ColorModel&nbsp;cm)</code>
 <div class="block">Convert ICC_ColorSpace raster to RGB raster w/o alpha</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#invertBits(byte[])">invertBits</a></strong>(byte[]&nbsp;input)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColors(int[],%20int,%20byte[],%20int[])">reduceColors</a></strong>(int[]&nbsp;rgbTriplets,
             int&nbsp;colorDepth,
@@ -268,7 +279,7 @@ extends java.lang.Object</pre>
 <div class="block">Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm".</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColors(cafe.image.quant.QuantMethod,%20int[],%20int,%20byte[],%20int[])">reduceColors</a></strong>(<a href="../../../cafe/image/quant/QuantMethod.html" title="enum in cafe.image.quant">QuantMethod</a>&nbsp;quantMethod,
             int[]&nbsp;rgbTriplets,
@@ -276,7 +287,7 @@ extends java.lang.Object</pre>
             byte[]&nbsp;newPixels,
             int[]&nbsp;colorPalette)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsDiffusionDither(int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither</a></strong>(int[]&nbsp;rgbTriplets,
                            int&nbsp;width,
@@ -288,7 +299,7 @@ extends java.lang.Object</pre>
  followed by Floyd-Steinberg error diffusion dithering.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsDiffusionDither(cafe.image.quant.QuantMethod,%20int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither</a></strong>(<a href="../../../cafe/image/quant/QuantMethod.html" title="enum in cafe.image.quant">QuantMethod</a>&nbsp;quantMethod,
                            int[]&nbsp;rgbTriplets,
@@ -298,7 +309,7 @@ extends java.lang.Object</pre>
                            byte[]&nbsp;newPixels,
                            int[]&nbsp;colorPalette)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsOrderedDither(int[],%20int,%20int,%20int,%20byte[],%20int[],%20int[][])">reduceColorsOrderedDither</a></strong>(int[]&nbsp;rgbTriplet,
                          int&nbsp;width,
@@ -308,7 +319,7 @@ extends java.lang.Object</pre>
                          int[]&nbsp;colorPalette,
                          int[][]&nbsp;threshold)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#reduceColorsOrderedDither(cafe.image.quant.QuantMethod,%20int[],%20int,%20int,%20int,%20byte[],%20int[],%20int[][])">reduceColorsOrderedDither</a></strong>(<a href="../../../cafe/image/quant/QuantMethod.html" title="enum in cafe.image.quant">QuantMethod</a>&nbsp;quantMethod,
                          int[]&nbsp;rgbTriplets,
@@ -319,11 +330,11 @@ extends java.lang.Object</pre>
                          int[]&nbsp;colorPalette,
                          int[][]&nbsp;threshold)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#rgb2bilevel(int[])">rgb2bilevel</a></strong>(int[]&nbsp;rgb)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#rgb2bilevelDiffusionDither(int[],%20int,%20int,%20int)">rgb2bilevelDiffusionDither</a></strong>(int[]&nbsp;rgb,
                           int&nbsp;imageWidth,
@@ -332,14 +343,14 @@ extends java.lang.Object</pre>
 <div class="block">RGB to bilevel image conversion with Floyd-Steinberg dither</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#rgb2bilevelOrderedDither(int[],%20int,%20int,%20int[][])">rgb2bilevelOrderedDither</a></strong>(int[]&nbsp;rgb,
                         int&nbsp;imageWidth,
                         int&nbsp;imageHeight,
                         int[][]&nbsp;threshold)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#RGB2CMYK_Inverted(java.awt.color.ICC_ColorSpace,%20int[],%20float[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2CMYK_Inverted</a></strong>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
                  int[]&nbsp;rgb,
@@ -350,7 +361,7 @@ extends java.lang.Object</pre>
                  int&nbsp;imageWidth,
                  int&nbsp;imageHeight)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#RGB2CMYK(java.awt.color.ICC_ColorSpace,%20int[],%20float[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2CMYK</a></strong>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
         int[]&nbsp;rgb,
@@ -361,7 +372,7 @@ extends java.lang.Object</pre>
         int&nbsp;imageWidth,
         int&nbsp;imageHeight)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#RGB2CMYK(java.awt.color.ICC_ColorSpace,%20int[],%20int,%20int,%20boolean)">RGB2CMYK</a></strong>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
         int[]&nbsp;rgb,
@@ -369,25 +380,25 @@ extends java.lang.Object</pre>
         int&nbsp;imageHeight,
         boolean&nbsp;hasAlpha)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#rgb2grayscale(int[])">rgb2grayscale</a></strong>(int[]&nbsp;rgb)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static float[][]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#rgb2grayscale(int[],%20int,%20int)">rgb2grayscale</a></strong>(int[]&nbsp;rgb,
              int&nbsp;imageWidth,
              int&nbsp;imageHeight)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#rgb2grayscaleA(int[])">rgb2grayscaleA</a></strong>(int[]&nbsp;rgb)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#RGB2YCbCr(int[])">RGB2YCbCr</a></strong>(int[]&nbsp;rgb)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#RGB2YCbCr(int[][],%20int[][],%20int[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2YCbCr</a></strong>(int[][]&nbsp;red,
          int[][]&nbsp;green,
@@ -398,7 +409,7 @@ extends java.lang.Object</pre>
          int&nbsp;imageWidth,
          int&nbsp;imageHeight)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#RGB2YCbCr(int[],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2YCbCr</a></strong>(int[]&nbsp;rgb,
          float[][]&nbsp;Y,
@@ -407,11 +418,11 @@ extends java.lang.Object</pre>
          int&nbsp;imageWidth,
          int&nbsp;imageHeight)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#RGB2YCbCrA(int[])">RGB2YCbCrA</a></strong>(int[]&nbsp;rgba)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/util/IMGUtils.html#RGB2YCCK_Inverted(java.awt.color.ICC_ColorSpace,%20int[],%20float[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2YCCK_Inverted</a></strong>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
                  int[]&nbsp;rgb,
@@ -676,6 +687,34 @@ extends java.lang.Object</pre>
 <div class="block">Retrieves RGB values from DataBuffer. This one is slower than getRGB()</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>image</code> - input BufferedImage</dd>
 <dt><span class="strong">Returns:</span></dt><dd>integer array - default RGB color space representation</dd></dl>
+</li>
+</ul>
+<a name="getScaledInstance(java.awt.image.BufferedImage, int, int, java.lang.Object, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getScaledInstance</h4>
+<pre>public static&nbsp;java.awt.image.BufferedImage&nbsp;getScaledInstance(java.awt.image.BufferedImage&nbsp;img,
+                                             int&nbsp;targetWidth,
+                                             int&nbsp;targetHeight,
+                                             java.lang.Object&nbsp;hint,
+                                             boolean&nbsp;higherQuality)</pre>
+<div class="block">Convenience method that returns a scaled instance of the
+ provided <code>BufferedImage</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>img</code> - the original image to be scaled</dd><dd><code>targetWidth</code> - the desired width of the scaled instance,
+    in pixels</dd><dd><code>targetHeight</code> - the desired height of the scaled instance,
+    in pixels</dd><dd><code>hint</code> - one of the rendering hints that corresponds to
+    <code>RenderingHints.KEY_INTERPOLATION</code> (e.g.
+    <code>RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR</code>,
+    <code>RenderingHints.VALUE_INTERPOLATION_BILINEAR</code>,
+    <code>RenderingHints.VALUE_INTERPOLATION_BICUBIC</code>)</dd><dd><code>higherQuality</code> - if true, this method will use a multi-step
+    scaling technique that provides higher quality than the usual
+    one-step technique (only useful in down-scaling cases, where
+    <code>targetWidth</code> or <code>targetHeight</code> is
+    smaller than the original dimensions, and generally only when
+    the <code>BILINEAR</code> hint is specified)</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a scaled version of the original </dd></dl>
 </li>
 </ul>
 <a name="guessImageType(byte[])">
