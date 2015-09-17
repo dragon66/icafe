@@ -184,7 +184,7 @@ public class PNGWriter extends ImageWriter {
 	private void addTextChunks(List<Chunk> chunks) {
 		// Add text chunks
 		TextBuilder txtBuilder = new TextBuilder(ChunkType.TEXT);
-		txtBuilder.keyword("Software").text("PNGWriter 1.0, Wen Yu (yuwen_66@yahoo.com)");
+		txtBuilder.keyword("Software").text("ICAFE - https://github.com/dragon66/icafe");
         chunks.add(txtBuilder.build());
   	}
 	

@@ -12,13 +12,15 @@
  * GIFTweaker.java
  *
  * Who   Date       Description
- * ====  =========  =====================================================================
+ * ====  =========  ====================================================
+ * WY    16Sep2015  Added insertComment() to insert comment extension
  * WY    17Aug2015  Revised to write animated GIF frame by frame
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP) 
  * WY    24Jun2015  Renamed splitFramesEx2() to splitAnimatedGIF()
  * WY    30Mar2015  Fixed bug with insertXMP() replacing '\0' with ' '
  * WY    12Mar2015  Cleaned up debugging console output
- * WY    03Mar2015  Added overloaded insertXMPApplicationBlock() with XMP string as input
+ * WY    03Mar2015  Added overloaded insertXMPApplicationBlock() with
+ *                  XMP string as input
  * WY    13Feb2015  Added insertXMPApplicationBlock() to insert XMP meta data
  * WY    13Feb2015  Added code to readMetadata() Comment and XMP meta data
  * WY    20Jan2015  Renamed snoop() to readMetadata() to work with Metadata.readMetadata()
@@ -175,6 +177,49 @@ public class GIFTweaker {
 	public static void finishWrite(OutputStream os) throws Exception {	   	
     	os.write(IMAGE_TRAILER);
 		os.close();    	
+	}
+	
+	public static void insertComment(InputStream is, OutputStream os, String comment) throws IOException {
+		// Read and copy header and LSD
+ 		// Create a new data transfer object to hold data
+ 		DataTransferObject DTO = new DataTransferObject();
+ 		readHeader(is, DTO);
+ 		readLSD(is, DTO);
+ 		os.write(DTO.header);
+ 		os.write(DTO.logicalScreenDescriptor);
+		if((DTO.logicalScreenDescriptor[4]&0x80) == 0x80) {
+			int bitsPerPixel = (DTO.logicalScreenDescriptor[4]&0x07)+1;
+			int colorsUsed = (1 << bitsPerPixel);
+			
+			readGlobalPalette(is, colorsUsed, DTO);
+			os.write(DTO.globalPalette);
+		}		 		
+		os.write(EXTENSION_INTRODUCER);
+		os.write(COMMENT_EXTENSION_LABEL);
+		byte[] commentBytes = comment.getBytes();
+		int numBlocks = commentBytes.length/0xff;
+		int leftOver = commentBytes.length % 0xff;
+		int offset = 0;
+		if(numBlocks > 0) {
+			for(int i = 0; i < numBlocks; i++) {
+				os.write(0xff);
+				os.write(commentBytes, offset, 0xff);
+				offset += 0xff;
+			}
+		}
+		if(leftOver > 0) {
+			os.write(leftOver);
+			os.write(commentBytes, offset, leftOver);
+		}
+		os.write(0);
+		// Copy the rest of the input stream
+ 		byte buf[] = new byte[10240]; // 10K
+ 		int bytesRead = is.read(buf);
+ 		
+ 		while(bytesRead != -1) {
+ 			os.write(buf, 0, bytesRead);
+ 			bytesRead = is.read(buf);
+ 		}
 	}
 	
 	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, XMP xmp) throws IOException {

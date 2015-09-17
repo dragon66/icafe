@@ -80,7 +80,7 @@ public class JPEGWriter extends ImageWriter {
 	private boolean writeICCProfile;
 	private boolean isTiffFlavor;
 		
-    private static final String comment = "Created by JPEGWriter 1.0 - Wen Yu (yuwen_66@yahoo.com)";
+    private static final String comment = "Created by ICAFE - https://github.com/dragon66/icafe";
 		   
 	public JPEGWriter() {}
 	

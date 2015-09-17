@@ -310,13 +310,13 @@ public class GIFReader extends ImageReader {
 					// Check for transparent color flag
 					if((packedFields&0x01) == 0x01)
 					{
-						IOUtils.skipFully(is,2);
+						IOUtils.skipFully(is, 2);
 						transparent = true;
 						LOGGER.info("transparent gif...");					 
 						transparent_color = is.read();
 						len = is.read();// len=0, block terminator!
 					} else {
-						IOUtils.skipFully(is,3);
+						IOUtils.skipFully(is, 3);
 						len = is.read();// len=0, block terminator!
 					}
 				}

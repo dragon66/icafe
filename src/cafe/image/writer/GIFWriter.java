@@ -377,6 +377,27 @@ public class GIFWriter extends ImageWriter {
     	writeAnimatedGIF(frames.toArray(new GIFFrame[0]), os);
     }
     
+    public void writeComment(OutputStream os, String comment) throws Exception {
+    	os.write(EXTENSION_INTRODUCER);
+		os.write(COMMENT_EXTENSION_LABEL);
+		byte[] commentBytes = comment.getBytes();
+		int numBlocks = commentBytes.length/0xff;
+		int leftOver = commentBytes.length % 0xff;
+		int offset = 0;
+		if(numBlocks > 0) {
+			for(int i = 0; i < numBlocks; i++) {
+				os.write(0xff);
+				os.write(commentBytes, offset, 0xff);
+				offset += 0xff;
+			}
+		}
+		if(leftOver > 0) {
+			os.write(leftOver);
+			os.write(commentBytes, offset, leftOver);
+		}
+		os.write(0);
+    }
+    
     public void writeFrame(OutputStream os, GIFFrame frame) throws Exception {
     	// Retrieve image dimension
     	BufferedImage image = frame.getFrame();
@@ -469,6 +490,7 @@ public class GIFWriter extends ImageWriter {
 			writeLSD(os, (short)logicalScreenWidth, (short)logicalScreenHeight, flags, bgcolor, aspectRatio);
 			// Write the global colorPalette
 			writePalette(os, num_of_color);
+			writeComment(os, "Created by ICAFE - https://github.com/dragon66/icafe");
 			if(animated)// Write Netscape extension block
 				writeNetscapeApplicationBlock(os, loopCount);
 	    }		

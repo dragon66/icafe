@@ -447,8 +447,8 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		// and a new STRIP_BYTE_COUNTS field as well
 		tiffField = new LongField(TiffTag.STRIP_BYTE_COUNTS.getValue(), CollectionUtils.integerListToIntArray(stripByteCounts));
 		ifd.addField(tiffField);
-		// Add our footprint/snake feet too
-		String softWare = "TIFFWriter 1.0, Wen Yu (yuwen_66@yahoo.com)\0";
+		// Add software field
+		String softWare = "ICAFE - https://github.com/dragon66/icafe\0";
 		tiffField = new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare);
 		ifd.addField(tiffField);
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss z");
@@ -772,11 +772,8 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		// and a new STRIP_BYTE_COUNTS field as well
 		tiffField = new LongField(TiffTag.STRIP_BYTE_COUNTS.getValue(), CollectionUtils.integerListToIntArray(stripByteCounts));
 		ifd.addField(tiffField);
-		// Add our footprint/snake feet too
-		String copyRight = "Copyright (c) Wen Yu, 2013 (yuwen_66@yahoo.com)\0";
-		tiffField = new ASCIIField(TiffTag.COPYRIGHT.getValue(), copyRight);
-		ifd.addField(tiffField);		
-		String softWare = "TIFFWriter 1.0\0";
+		// Add software field
+		String softWare = "ICAFE - https://github.com/dragon66/icafe\0";
 		tiffField = new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare);
 		ifd.addField(tiffField);
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss z");

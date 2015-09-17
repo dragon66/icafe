@@ -94,5 +94,12 @@ public class TestGIFTweaker extends TestBase {
 		GIFTweaker.splitAnimatedGIF(is, writer, "split");
 		
 		is.close();
+		
+		is = new FileInputStream("images/tmp-00.gif");
+		fout = new FileOutputStream("tmp-00-comment-inserted.gif");
+		GIFTweaker.insertComment(is, fout, "I am a piggy!");
+		
+		is.close();
+		fout.close();
 	}
 }

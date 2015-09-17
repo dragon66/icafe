@@ -467,7 +467,7 @@ public class TIFFTweaker {
 		}
 		
 		// Add software field.
-		String softWare = "Created by ICAFE - https://github.com/dragon66/icafe\0";
+		String softWare = "ICAFE - https://github.com/dragon66/icafe\0";
 		ifd.addField(new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare));
 		
 		/* The following are added to work with old-style JPEG compression (type 6) */		

@@ -201,16 +201,21 @@ extends <a href="../../../cafe/image/writer/ImageWriter.html" title="class in ca
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#writeComment(java.io.OutputStream,%20java.lang.String)">writeComment</a></strong>(java.io.OutputStream&nbsp;os,
+            java.lang.String&nbsp;comment)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20java.awt.image.BufferedImage)">writeFrame</a></strong>(java.io.OutputStream&nbsp;os,
           java.awt.image.BufferedImage&nbsp;frame)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20java.awt.image.BufferedImage,%20int)">writeFrame</a></strong>(java.io.OutputStream&nbsp;os,
           java.awt.image.BufferedImage&nbsp;frame,
           int&nbsp;delay)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../cafe/image/writer/GIFWriter.html#writeFrame(java.io.OutputStream,%20cafe.image.gif.GIFFrame)">writeFrame</a></strong>(java.io.OutputStream&nbsp;os,
           <a href="../../../cafe/image/gif/GIFFrame.html" title="class in cafe.image.gif">GIFFrame</a>&nbsp;frame)</code>&nbsp;</td>
@@ -390,6 +395,19 @@ extends <a href="../../../cafe/image/writer/ImageWriter.html" title="class in ca
 <div class="block">Writes a list of GIFFrame as an animated GIF</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>frames</code> - a list of GIFFrame</dd><dd><code>os</code> - OutputStream for the animated GIF</dd>
 <dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd></dl>
+</li>
+</ul>
+<a name="writeComment(java.io.OutputStream, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeComment</h4>
+<pre>public&nbsp;void&nbsp;writeComment(java.io.OutputStream&nbsp;os,
+                java.lang.String&nbsp;comment)
+                  throws java.lang.Exception</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
 </ul>

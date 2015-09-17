@@ -1,6 +1,7 @@
 ***************************
-Last modified on 09/15/2015
+Last modified on 09/16/2015
 ***************************
+16Sep2015  Added insertComment() to GIFTweaker to insert comment block
 15Sep2015  Added parameter to ImageParam to set quantization method
 14Sep2015  Added NeuQuant (Neural network) color quantization algorithm
 12Sep2015  Added Xiaolin Wu's color quantization algorithm
