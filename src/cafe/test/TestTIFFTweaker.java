@@ -38,14 +38,18 @@ public class TestTIFFTweaker extends TestBase {
 	}
 	
 	public void test(String ... args) throws Exception {
-		RandomAccessInputStream rin = new FileCacheRandomAccessInputStream(new FileInputStream(args[0]));
+		FileInputStream fin = new FileInputStream(args[0]);
+		RandomAccessInputStream rin = new FileCacheRandomAccessInputStream(fin);
+		FileOutputStream fout = null;
 		RandomAccessOutputStream rout = null;
 		
 		if(args.length > 1) {			
 			if(args[1].equalsIgnoreCase("copycat")) {
-				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
+				fout = new FileOutputStream("NEW.tif");
+				rout = new FileCacheRandomAccessOutputStream(fout);
 				TIFFTweaker.copyCat(rin, rout);
 				rout.close();
+				fout.close();
 			} else if(args[1].equalsIgnoreCase("snoop")) {
 				TIFFTweaker.readMetadata(rin);
 			} else if(args[1].equalsIgnoreCase("extractThumbnail")){
@@ -59,17 +63,19 @@ public class TestTIFFTweaker extends TestBase {
 				}
 			} else if(args[1].equalsIgnoreCase("retainpage")) {
 				int pageCount = TIFFTweaker.getPageCount(rin);
-				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
+				fout = new FileOutputStream("NEW.tif");
+				rout = new FileCacheRandomAccessOutputStream(fout);
 				if(pageCount > 1)
 					TIFFTweaker.retainPages(rin, rout, pageCount - 1); // Last page
 				else
 					TIFFTweaker.copyCat(rin, rout);
 				rout.close();
+				fout.close();
 			} else if(args[1].equalsIgnoreCase("writemultipage") || args[1].equalsIgnoreCase("insertpage")) {
 				File[] files = FileUtils.listFilesMatching(new File(args[2]), args[3]);
 				ImageFrame[] frames = new ImageFrame[files.length];				
 				for(int i = 0; i < files.length; i++) {
-					FileInputStream fin = new FileInputStream(files[i]);
+					fin = new FileInputStream(files[i]);
 					BufferedImage image = javax.imageio.ImageIO.read(fin);
 					frames[i] = new ImageFrame(image);
 					fin.close();
@@ -98,7 +104,8 @@ public class TestTIFFTweaker extends TestBase {
 				for(int i = 2; i < frames.length; i++)
 					frames[i].setFrameParam(param);
 				
-				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
+				fout = new FileOutputStream("NEW.tif");
+				rout = new FileCacheRandomAccessOutputStream(fout);
 				
 				if(args[1].equalsIgnoreCase("writemultipage")) {
 					//TIFFTweaker.writeMultipageTIFF(rout, frames);
@@ -146,24 +153,30 @@ public class TestTIFFTweaker extends TestBase {
 					logger.info("time used: {}ms", (t2-t1));
 				}
 				rout.close();
+				fout.close();
 			} else if(args[1].equalsIgnoreCase("splitpage")) {
 				TIFFTweaker.splitPages(rin, FileUtils.getNameWithoutExtension(new File(args[0])));
 			} else if(args[1].equalsIgnoreCase("insertexif")) {
-				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("EXIF.tif"));
+				fout = new FileOutputStream("EXIF.tif");
+				rout = new FileCacheRandomAccessOutputStream(fout);
 				TIFFTweaker.insertExif(rin, rout, populateExif(), true);
 				rout.close();
+				fout.close();
 			} else if(args[1].equalsIgnoreCase("removepage")) {
 				int pageCount = TIFFTweaker.getPageCount(rin);
-				rout = new FileCacheRandomAccessOutputStream(new FileOutputStream("NEW.tif"));
+				fout = new FileOutputStream("NEW.tif");
+				rout = new FileCacheRandomAccessOutputStream(fout);
 				if(pageCount > 1)
 					TIFFTweaker.removePages(rin, rout, 0, 1, 1, 1, 5, 5, 4, 100, -100);
 				else
 					TIFFTweaker.copyCat(rin, rout);
 				rout.close();
+				fout.close();
 			}
 		}
 		
 		rin.close();
+		fin.close();
 	}
 	
 	// This method is for testing only

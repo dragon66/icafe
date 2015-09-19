@@ -34,12 +34,11 @@ public class MemoryCacheRandomAccessOutputStream extends RandomAccessOutputStrea
 	private long length = 0L;
 	private List<byte[]> cache;
 	private long cacheStart = 0L;
-	private OutputStream out; 
 	private long flushPos = 0L;
 	
-	public MemoryCacheRandomAccessOutputStream(OutputStream os) {
+	public MemoryCacheRandomAccessOutputStream(OutputStream dist) {
+		super(dist);
 		cache = new ArrayList<byte[]>(10);
-		out = os;
 	}
 	
 	public void close() throws IOException {
@@ -187,7 +186,7 @@ public class MemoryCacheRandomAccessOutputStream extends RandomAccessOutputStrea
                 offset = 0;
             }
             int nbytes = (int)Math.min(len, (BUFFER_SIZE - offset));
-            out.write(buf, offset, nbytes);
+            dist.write(buf, offset, nbytes);
             buf = null;
             len -= nbytes;
             flushPos += nbytes;

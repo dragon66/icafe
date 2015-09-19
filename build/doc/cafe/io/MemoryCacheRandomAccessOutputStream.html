@@ -59,7 +59,7 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#fields_inherited_from_class_cafe.io.RandomAccessOutputStream">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
@@ -115,6 +115,21 @@ extends <a href="../../cafe/io/RandomAccessOutputStream.html" title="class in ca
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="fields_inherited_from_class_cafe.io.RandomAccessOutputStream">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;cafe.io.<a href="../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a></h3>
+<code><a href="../../cafe/io/RandomAccessOutputStream.html#dist">dist</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_summary">
@@ -127,7 +142,7 @@ extends <a href="../../cafe/io/RandomAccessOutputStream.html" title="class in ca
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../cafe/io/MemoryCacheRandomAccessOutputStream.html#MemoryCacheRandomAccessOutputStream(java.io.OutputStream)">MemoryCacheRandomAccessOutputStream</a></strong>(java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../cafe/io/MemoryCacheRandomAccessOutputStream.html#MemoryCacheRandomAccessOutputStream(java.io.OutputStream)">MemoryCacheRandomAccessOutputStream</a></strong>(java.io.OutputStream&nbsp;dist)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -197,7 +212,7 @@ extends <a href="../../cafe/io/RandomAccessOutputStream.html" title="class in ca
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;cafe.io.<a href="../../cafe/io/RandomAccessOutputStream.html" title="class in cafe.io">RandomAccessOutputStream</a></h3>
-<code><a href="../../cafe/io/RandomAccessOutputStream.html#finalize()">finalize</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#getEndian()">getEndian</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#setWriteStrategy(cafe.io.WriteStrategy)">setWriteStrategy</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeBoolean(boolean)">writeBoolean</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeByte(int)">writeByte</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeBytes(java.lang.String)">writeBytes</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeChar(int)">writeChar</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeChars(java.lang.String)">writeChars</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeDouble(double)">writeDouble</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeFloat(float)">writeFloat</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeInt(int)">writeInt</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeLong(long)">writeLong</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeS15Fixed16Number(float)">writeS15Fixed16Number</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeShort(int)">writeShort</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeU16Fixed16Number(float)">writeU16Fixed16Number</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeU8Fixed8Number(float)">writeU8Fixed8Number</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeUTF(java.lang.String)">writeUTF</a></code></li>
+<code><a href="../../cafe/io/RandomAccessOutputStream.html#closeAll()">closeAll</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#finalize()">finalize</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#getEndian()">getEndian</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#setWriteStrategy(cafe.io.WriteStrategy)">setWriteStrategy</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeBoolean(boolean)">writeBoolean</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeByte(int)">writeByte</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeBytes(java.lang.String)">writeBytes</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeChar(int)">writeChar</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeChars(java.lang.String)">writeChars</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeDouble(double)">writeDouble</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeFloat(float)">writeFloat</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeInt(int)">writeInt</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeLong(long)">writeLong</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeS15Fixed16Number(float)">writeS15Fixed16Number</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeShort(int)">writeShort</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeU16Fixed16Number(float)">writeU16Fixed16Number</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeU8Fixed8Number(float)">writeU8Fixed8Number</a>, <a href="../../cafe/io/RandomAccessOutputStream.html#writeUTF(java.lang.String)">writeUTF</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.io.OutputStream">
@@ -240,7 +255,7 @@ extends <a href="../../cafe/io/RandomAccessOutputStream.html" title="class in ca
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MemoryCacheRandomAccessOutputStream</h4>
-<pre>public&nbsp;MemoryCacheRandomAccessOutputStream(java.io.OutputStream&nbsp;os)</pre>
+<pre>public&nbsp;MemoryCacheRandomAccessOutputStream(java.io.OutputStream&nbsp;dist)</pre>
 </li>
 </ul>
 </li>
@@ -457,7 +472,7 @@ extends <a href="../../cafe/io/RandomAccessOutputStream.html" title="class in ca
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#fields_inherited_from_class_cafe.io.RandomAccessOutputStream">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>

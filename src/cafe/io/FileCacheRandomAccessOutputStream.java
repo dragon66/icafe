@@ -26,9 +26,6 @@ import java.io.RandomAccessFile;
 
 public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream {
 
-	/** The destination stream. */
-	private OutputStream out;
-
 	/** The cache File. */
     private File cacheFile;
 
@@ -46,15 +43,15 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
     
     private long flushPos = 0L;
     
-    public FileCacheRandomAccessOutputStream(OutputStream out) throws IOException {
-    	this.out = out;
+    public FileCacheRandomAccessOutputStream(OutputStream dist) throws IOException {
+    	super(dist);
         this.cacheFile = File.createTempFile("cafe-FCRAOS-", ".tmp");
         cacheFile.deleteOnExit();
         this.cache = new RandomAccessFile(cacheFile, "rw");
     }
     
-    public FileCacheRandomAccessOutputStream(OutputStream out, int bufLen) throws IOException {
-    	this.out = out;
+    public FileCacheRandomAccessOutputStream(OutputStream dist, int bufLen) throws IOException {
+    	super(dist);
     	this.bufLen = bufLen;
         this.cacheFile = File.createTempFile("cafe-FCRAOS-", ".tmp");
         cacheFile.deleteOnExit();
@@ -157,7 +154,7 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
         while (len > 0) {
     	   byte[] buf = new byte[bufLen];
            int nbytes = cache.read(buf);
-           out.write(buf, 0, nbytes);
+           dist.write(buf, 0, nbytes);
            len -= nbytes;
            flushPos += nbytes;
         }

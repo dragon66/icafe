@@ -27,10 +27,7 @@ import java.io.RandomAccessFile;
  */ 
 public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
 
-	 /** The source stream. */
-    private InputStream stream;
-
-    /** The cache File. */
+	/** The cache File. */
     private File cacheFile;
 
     /** The cache as a RandomAcessFile. */
@@ -63,8 +60,8 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
        this(stream, 4096); // 4k default buffer length
     }
     
-    public FileCacheRandomAccessInputStream(InputStream stream, int bufLen) throws IOException {
-    	this.stream = stream;
+    public FileCacheRandomAccessInputStream(InputStream src, int bufLen) throws IOException {
+    	super(src);
         this.bufLen = bufLen;
         buf = new byte[bufLen];
     	this.cacheFile = File.createTempFile("cafe-FCRAIS-", ".tmp");
@@ -93,7 +90,7 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
         while (len > 0) {
             // Copy a buffer's worth of data from the source to the cache
             // bufLen will always fit into an int so this is safe
-            int nbytes = stream.read(buf, 0, (int)Math.min(len, bufLen));
+            int nbytes = src.read(buf, 0, (int)Math.min(len, bufLen));
             if (nbytes == -1) {
                 foundEOF = true;
                 return length;

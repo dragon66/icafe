@@ -59,13 +59,13 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -125,6 +125,27 @@ implements java.io.DataOutput</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.io.OutputStream</code></td>
+<td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#dist">dist</a></strong></code>
+<div class="block">The destination stream.</div>
+</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_summary">
@@ -134,10 +155,12 @@ implements java.io.DataOutput</pre>
 <table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
-<th class="colOne" scope="col">Constructor and Description</th>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#RandomAccessOutputStream()">RandomAccessOutputStream</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#RandomAccessOutputStream(java.io.OutputStream)">RandomAccessOutputStream</a></strong>(java.io.OutputStream&nbsp;dist)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -159,113 +182,119 @@ implements java.io.DataOutput</pre>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#close()">close</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#closeAll()">closeAll</a></strong>()</code>
+<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#disposeBefore(long)">disposeBefore</a></strong>(long&nbsp;pos)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#finalize()">finalize</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>short</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#getEndian()">getEndian</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#getFlushPos()">getFlushPos</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#getLength()">getLength</a></strong>()</code>
 <div class="block">Returns the total length of data that has been cached,
  regardless of whether any early blocks have been disposed.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#getStreamPointer()">getStreamPointer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#reset()">reset</a></strong>()</code>
 <div class="block">Reset this stream to be used again</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#seek(long)">seek</a></strong>(long&nbsp;pos)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#setWriteStrategy(cafe.io.WriteStrategy)">setWriteStrategy</a></strong>(<a href="../../cafe/io/WriteStrategy.html" title="interface in cafe.io">WriteStrategy</a>&nbsp;strategy)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#write(byte[],%20int,%20int)">write</a></strong>(byte[]&nbsp;b,
      int&nbsp;off,
      int&nbsp;len)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#write(int)">write</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeBoolean(boolean)">writeBoolean</a></strong>(boolean&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeByte(int)">writeByte</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeBytes(java.lang.String)">writeBytes</a></strong>(java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeChar(int)">writeChar</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeChars(java.lang.String)">writeChars</a></strong>(java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeDouble(double)">writeDouble</a></strong>(double&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeFloat(float)">writeFloat</a></strong>(float&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeInt(int)">writeInt</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeLong(long)">writeLong</a></strong>(long&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeS15Fixed16Number(float)">writeS15Fixed16Number</a></strong>(float&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeShort(int)">writeShort</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeToStream(long)">writeToStream</a></strong>(long&nbsp;len)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeU16Fixed16Number(float)">writeU16Fixed16Number</a></strong>(float&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeU8Fixed8Number(float)">writeU8Fixed8Number</a></strong>(float&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../cafe/io/RandomAccessOutputStream.html#writeUTF(java.lang.String)">writeUTF</a></strong>(java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
@@ -299,19 +328,37 @@ implements java.io.DataOutput</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="dist">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>dist</h4>
+<pre>protected&nbsp;java.io.OutputStream dist</pre>
+<div class="block">The destination stream.</div>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="RandomAccessOutputStream()">
+<a name="RandomAccessOutputStream(java.io.OutputStream)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>RandomAccessOutputStream</h4>
-<pre>public&nbsp;RandomAccessOutputStream()</pre>
+<pre>protected&nbsp;RandomAccessOutputStream(java.io.OutputStream&nbsp;dist)</pre>
 </li>
 </ul>
 </li>
@@ -338,6 +385,19 @@ implements java.io.DataOutput</pre>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>close</code>&nbsp;in class&nbsp;<code>java.io.OutputStream</code></dd>
 <dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="closeAll()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>closeAll</h4>
+<pre>public&nbsp;void&nbsp;closeAll()
+              throws java.io.IOException</pre>
+<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
+<dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
@@ -736,13 +796,13 @@ implements java.io.DataOutput</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>

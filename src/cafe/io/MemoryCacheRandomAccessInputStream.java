@@ -36,14 +36,13 @@ public class MemoryCacheRandomAccessInputStream extends RandomAccessInputStream 
     private static final int BUFFER_SIZE = 1 << BUFFER_SHIFT;
     private static final int BUFFER_MASK = BUFFER_SIZE - 1;
 
-    private InputStream src;
     private long pointer;
     private List<byte[]> cache;
     private int length;
     private boolean foundEOS;
 	    
-	public MemoryCacheRandomAccessInputStream(InputStream is) {
-		src = is;
+	public MemoryCacheRandomAccessInputStream(InputStream src) {
+		super(src);
 		pointer = 0L;
 		cache = new ArrayList<byte[]>(10);
 		length = 0;

@@ -36,6 +36,22 @@ import java.io.InputStream;
 public abstract class RandomAccessInputStream extends InputStream implements DataInput {	
     
     private ReadStrategy strategy = ReadStrategyMM.getInstance();
+
+	 /** The source stream. */
+    protected InputStream src;
+    
+    protected RandomAccessInputStream(InputStream src) {
+    	this.src = src;
+    }
+    
+    /**
+     * Closes the RandomAccessInputStream and it's underlying stream
+     * @throws IOException
+     */
+    public void closeAll() throws IOException {
+    	close();
+    	src.close();
+    }
     
     protected void finalize() throws Throwable {
 		super.finalize();
@@ -146,29 +162,27 @@ public abstract class RandomAccessInputStream extends InputStream implements Dat
 		return readInt()&0xffffffffL;
 	}
 
-		public final int readUnsignedShort() throws IOException {
-			return readShort()&0xffff;
-		}
+	public final int readUnsignedShort() throws IOException {
+		return readShort()&0xffff;
+	}
 
 	/**
- *  Due to the current implementation, writeUTF and readUTF are the
- *  only methods which are machine or byte sequence independent as
- *  they are actually both Motorola byte sequence under the hood.
- *  
- *  Whereas the following static method is byte sequence dependent
- *  as it calls readUnsignedShort of RandomAccessInputStream.
- *  
- *  <code>DataInputStream.readUTF(this)</code>;
- */
-public final String readUTF() throws IOException {
-	return new DataInputStream(this).readUTF();	
-}
- 
+	 *  Due to the current implementation, writeUTF and readUTF are the
+	 *  only methods which are machine or byte sequence independent as
+	 *  they are actually both Motorola byte sequence under the hood.
+	 *  
+	 *  Whereas the following static method is byte sequence dependent
+	 *  as it calls readUnsignedShort of RandomAccessInputStream.
+	 *  
+	 *  <code>DataInputStream.readUTF(this)</code>;
+	 */
+	public final String readUTF() throws IOException {
+		return new DataInputStream(this).readUTF();	
+	} 
 	
 	public abstract  void seek(long loc) throws IOException;
 	
-	public void setReadStrategy(ReadStrategy strategy) 
-	{
+	public void setReadStrategy(ReadStrategy strategy) {
 		this.strategy = strategy;
 	}	
 	
