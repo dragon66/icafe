@@ -2851,7 +2851,8 @@ public class TIFFTweaker {
 		if(!StringUtils.isNullOrEmpty(outputFilePrefix)) fileNamePrefix = outputFilePrefix + "_" + fileNamePrefix;
 		
 		for(int i = 0; i < list.size(); i++) {
-			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOutputStream(fileNamePrefix + i + ".tif"));
+			FileOutputStream fout = new FileOutputStream(fileNamePrefix + i + ".tif");
+			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(fout);
 			// Write TIFF header
 			int writeOffset = writeHeader(endian, rout);
 			// Write page data
@@ -2864,7 +2865,8 @@ public class TIFFTweaker {
 			list.get(i).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{1}));
 			writeOffset = list.get(i).write(rout, writeOffset);
 			writeToStream(rout, firstIFDOffset);
-			rout.close();		
+			rout.close();
+			fout.close();
 		}
 	}
 	
