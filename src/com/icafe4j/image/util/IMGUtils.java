@@ -300,9 +300,6 @@ public class IMGUtils {
 				}
 				// Apply ordered dither
 				int intensity = (gray[index]&0xff);
-				if (intensity > 255) intensity = 255;
-				else if (intensity < 0) intensity = 0;
-				
 				// Find the nearest color index	- black or white
 				if(intensity <=  threshold[row%level][col%level]) {
 					gray[index] = 1;

@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    20Sep2015  Added LZW and DEFLATE compression for BW images
  * WY    21Jun2015  Removed copyright notice from generated TIFF images
  * WY    11Jun2015  Fixed the regression bug with CMYK profile path
  * WY    11Jun2015  Updated to use generic Updatable<T> interface
@@ -498,6 +499,10 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 				ccittCompress(ArrayUtils.packByteArray(pixels, 0, 1, pixels.length), imageWidth, imageHeight, encoder);
 				tiffField = new LongField(TiffTag.T4_OPTIONS.getValue(), new int[] {1});
 				break;
+			case LZW:
+			case DEFLATE:
+				compressSample(ArrayUtils.packByteArray(pixels, imageWidth, 0, 1, pixels.length), imageWidth, imageHeight, compression, 1024);
+				break;
 			case PACKBITS:
 			default:
 				compression = Compression.PACKBITS;
@@ -521,15 +526,15 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		}
 		
 		switch(compression) {
-		case LZW:
-		case DEFLATE:			
-			break;
-		case PACKBITS:
-		default:
-			// Most TIFF readers don't support PACKBITS with predictor and one or the other combination with 
-			// PLANARY_CONFIGURATION, so we'd rather play it safe to disable predictor for PACKBITS compression 
-			applyPredictor = false;
-			break;		
+			case LZW:
+			case DEFLATE:			
+				break;
+			case PACKBITS:
+			default:
+				// Most TIFF readers don't support PACKBITS with predictor and one or the other combination with 
+				// PLANARY_CONFIGURATION, so we'd rather play it safe to disable predictor for PACKBITS compression 
+				applyPredictor = false;
+				break;		
 		}
 		
 		boolean noAlpha = !hasAlpha;
