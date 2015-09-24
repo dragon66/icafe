@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ====================================================
+ * WY    24Sep2015  Revised to take care of transparent color
  * WY    12Sep2015  Initial creation
  */
 
@@ -57,16 +58,17 @@ public class WuQuant {
 		int vol;
 	};
 	
-	int	size; /*image size*/
-	int	lut_size; /*color look-up table size*/
-	int qadd[];
-	int pixels[];
+	private int	size; /*image size*/
+	private int	lut_size; /*color look-up table size*/
+	private int qadd[];
+	private int pixels[];
+	private int transparent_color = -1;// Transparent color 
 	
-    float m2[][][] = new float[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
-    long wt[][][] = new long[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
-    long mr[][][] = new long[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
-    long mg[][][] = new long[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
-    long mb[][][] = new long[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
+    private float m2[][][] = new float[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
+    private long wt[][][] = new long[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
+    private long mr[][][] = new long[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
+    private long mg[][][] = new long[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
+    private long mb[][][] = new long[QUANT_SIZE][QUANT_SIZE][QUANT_SIZE];
        
     public WuQuant(int[] pixels, int lut_size) {
     	this.pixels = pixels;
@@ -94,6 +96,8 @@ public class WuQuant {
        cube[0].r1 = cube[0].g1 = cube[0].b1 = QUANT_SIZE - 1;
        next = 0;
        
+       if(transparent_color >= 0) lut_size--;
+       
        for(i = 1; i < lut_size; ++i){
     	   if (Cut(cube[next], cube[i])) {
     		   /* volume test ensures we won't try to cut one-cell box */
@@ -109,7 +113,7 @@ public class WuQuant {
     			   temp = vv[k]; next = k;
     		   }
     	   if (temp <= 0.0f) {
-    		   k = i+1;
+    		   k = i + 1;
     		   break;
     	   }
        }
@@ -121,24 +125,33 @@ public class WuQuant {
     		   lut_r = (int)(Vol(cube[k], mr) / weight);
     		   lut_g = (int)(Vol(cube[k], mg) / weight);
     		   lut_b = (int)(Vol(cube[k], mb) / weight);
-    		   lut[k] = (255<<24) | (lut_r  << 16) | (lut_g << 8) | lut_b;
+    		   lut[k] = (255 << 24) | (lut_r  << 16) | (lut_g << 8) | lut_b;
     	   }
     	   else	{
-      		   lut[k] = 0;		
+      		   lut[k] = 0;
     	   }
        }
 
-       for(i = 0; i < size; ++i) newPixels[i] = (byte)tag[qadd[i]];
+       for(i = 0; i < size; ++i) {
+    	   if((pixels[i] >>> 24) < 0x80)
+    		   newPixels[i] = (byte)lut_size;
+    	   else
+    		   newPixels[i] = (byte)tag[qadd[i]];
+       }
        
        int bitsPerPixel = 0;
        while ((1<<bitsPerPixel) < lut_size)  bitsPerPixel++;
        colorInfo[0] = bitsPerPixel;
-       colorInfo[1] = -1;
+       colorInfo[1] = -1;       
+       
+       if(transparent_color >= 0) {
+     	  lut[lut_size] = transparent_color; // Set the transparent color
+     	  colorInfo[1] = lut_size;
+       }
        
        return lut_size;
     }
     
-    // TODO: figure out a way to deal with transparency
     public int quantize(final int[] lut, int[] colorInfo) {
        Box cube[] = new Box[MAXCOLOR];
        int lut_r, lut_g, lut_b;
@@ -157,6 +170,8 @@ public class WuQuant {
        cube[0].r1 = cube[0].g1 = cube[0].b1 = QUANT_SIZE - 1;
        next = 0;
        
+       if(transparent_color >= 0) lut_size--;
+       
        for(i = 1; i < lut_size; ++i){
     	   if (Cut(cube[next], cube[i])) {
     		   /* volume test ensures we won't try to cut one-cell box */
@@ -172,7 +187,7 @@ public class WuQuant {
     			   temp = vv[k]; next = k;
     		   }
     	   if (temp <= 0.0f) {
-    		   k = i+1;
+    		   k = i + 1;
     		   break;
     	   }
        }
@@ -183,17 +198,22 @@ public class WuQuant {
     		   lut_r = (int)(Vol(cube[k], mr) / weight);
     		   lut_g = (int)(Vol(cube[k], mg) / weight);
     		   lut_b = (int)(Vol(cube[k], mb) / weight);
-    		   lut[k] = (255<<24) | (lut_r  << 16) | (lut_g << 8) | lut_b;
+    		   lut[k] = (255 << 24) | (lut_r  << 16) | (lut_g << 8) | lut_b;
     	   }
     	   else	{
       		   lut[k] = 0;		
     	   }
        }
-
+       
        int bitsPerPixel = 0;
        while ((1<<bitsPerPixel) < lut_size)  bitsPerPixel++;
        colorInfo[0] = bitsPerPixel;
        colorInfo[1] = -1;
+       
+       if(transparent_color >= 0) {
+      	  lut[lut_size] = transparent_color; // Set the transparent color
+      	  colorInfo[1] = lut_size;
+       }
        
        return lut_size;
     }
@@ -210,9 +230,13 @@ public class WuQuant {
 		for(i = 0; i < 256; ++i) table[i]= i*i;
 		
 		qadd = new int[size];
-		// TODO: figure out a way to deal with transparent color
+	
 		for(i = 0; i < size; ++i) {
 			int rgb = pixels[i];
+			if((rgb >>> 24) < 0x80) { // Transparent
+				if (transparent_color < 0)	// Find the transparent color	
+					transparent_color = rgb;
+			}
 			r = ((rgb >> 16)& 0xff);
 			g = ((rgb >> 8 )& 0xff);
 			b = ( rgb       & 0xff);

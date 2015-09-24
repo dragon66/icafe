@@ -533,7 +533,7 @@ public class GIFWriter extends ImageWriter {
 		buf[6] = transparent_color;
 		buf[7] = 0x00;
 		
-		if(transparent_color >= 0) // Add transparency indicator
+		if((transparent_color&0xff) >= 0) // Add transparency indicator
 			buf[3] |= 0x01;
 		
 		os.write(buf, 0, 8);
@@ -578,9 +578,9 @@ public class GIFWriter extends ImageWriter {
 		// Global flags
         descriptor[4] = (byte)(flags&0xff);
 		// Background color
-        descriptor[5] = (byte)(bgcolor&0xff);
+        descriptor[5] = bgcolor;
 		// AspectRatio
-	    descriptor[6] = (byte)(aspectRatio&0xff);
+	    descriptor[6] = aspectRatio;
 	    
 	    os.write(descriptor);
 	}

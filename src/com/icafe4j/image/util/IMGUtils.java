@@ -1120,7 +1120,7 @@ public class IMGUtils {
         // values
 		for (int i = 0; i < rgbTriplets.length; i++)
 		{
-			if((rgbTriplets[i] >>> 24) < 0x80 )// Transparent
+			if((rgbTriplets[i] >>> 24) < 0x80) // Transparent
 			{
 				if (transparent_color < 0)	// Find the transparent color	
 					transparent_color = rgbTriplets[i];			
@@ -1137,7 +1137,7 @@ public class IMGUtils {
         {
 			if (colorFreq[i] != 0)
 			{
-				colorFreq[colorCount]=colorFreq[i];
+				colorFreq[colorCount] = colorFreq[i];
 				indexColor[colorCount++] = i;
 			}
         }
@@ -1250,7 +1250,7 @@ public class IMGUtils {
 			
 		    // Write the color index of different pixels to a new data array
 			newPixels[i] = (byte)colorIndex[colorFreq[index]];
-			if((rgbTriplets[i] >>> 24) < 0x80 )//Transparent
+			if((rgbTriplets[i] >>> 24) < 0x80)//Transparent
 			{
 				newPixels[i] = (byte)transparent_index;	
 			}

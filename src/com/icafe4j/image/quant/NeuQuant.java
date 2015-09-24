@@ -1,3 +1,22 @@
+/**
+ * Copyright (c) 2014-2015 by Wen Yu.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Any modifications to this file must keep this entire header intact.
+ *
+ * Change History - most recent changes go on top of previous changes
+ *
+ * NeuQuant.java
+ *
+ * Who   Date       Description
+ * ====  =========  ====================================================
+ * WY    24Sep2015  Revised to take care of transparent color
+ * WY    13Sep2015  Initial creation
+ */
+
 package com.icafe4j.image.quant;
 
 import java.awt.Image;
@@ -71,7 +90,7 @@ public class NeuQuant {
 
     private int[] pixels = null;
     private int [][] colormap = new int [netsize] [4]; // the color map
-    
+	private int transparent_color = -1;// Transparent color 
 
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(NeuQuant.class);
@@ -188,11 +207,16 @@ public class NeuQuant {
         learn ();
         fix ();
         inxbuild ();
+        
         for(int i = 0; i < pixels.length; i++) {
-    	    int r   = (pixels[i] >> 16) & 0xff;
-    	    int g = (pixels[i] >>  8) & 0xff;
-    	    int b  = (pixels[i]      ) & 0xff;
-    	    newPixels[i] = (byte)inxsearch(b, g, r);
+        	int rgb = pixels[i];
+		    int r   = (rgb >> 16) & 0xff;
+    	    int g = (rgb >>  8) & 0xff;
+    	    int b = (rgb      ) & 0xff;
+    		if((rgb >>> 24) < 0x80) // Transparent
+    			newPixels[i] = (byte)(netsize - 1);
+    		else
+    			newPixels[i] = (byte)inxsearch(b, g, r);
         }
         for(int i = 0; i < netsize; i++) {
         	int b = colormap[i][0];
@@ -204,9 +228,14 @@ public class NeuQuant {
         int bitsPerPixel = 0;
         while ((1<<bitsPerPixel) < netsize)  bitsPerPixel++;
         colorInfo[0] = bitsPerPixel;
-        colorInfo[1] = -1;
+        colorInfo[1] = - 1;
         
-        return netsize;
+        if(transparent_color >= 0) {
+        	colorMap[netsize - 1] = transparent_color;
+        	colorInfo[1] = netsize - 1;
+        }
+             
+        return (transparent_color >= 0)?netsize - 1 : netsize;
     }
     
     public int quantize (final int[] colorMap, int[] colorInfo) {
@@ -225,7 +254,12 @@ public class NeuQuant {
         colorInfo[0] = bitsPerPixel;
         colorInfo[1] = -1;
         
-        return netsize;
+        if(transparent_color >= 0) {
+        	colorMap[netsize - 1] = transparent_color;
+        	colorInfo[1] = netsize - 1;
+        }
+        
+        return (transparent_color >= 0)?netsize - 1 : netsize;
     }
 
     private void altersingle(double alpha, int i, double b, double g, double r) {
@@ -333,6 +367,10 @@ public class NeuQuant {
     	i = 0;
     	while (i < samplepixels) {
     	    int p = pixels [pos];
+    	    if((p >>> 24) < 0x80) { // Transparent
+				if (transparent_color < 0)	// Find the transparent color	
+					transparent_color = p;
+			}
 	        double r   = (p >> 16) & 0xff;
 	        double g = (p >>  8) & 0xff;
 	        double b  = (p      ) & 0xff;

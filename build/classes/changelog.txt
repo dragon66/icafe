@@ -1,6 +1,7 @@
 ***************************
-Last modified on 09/20/2015
+Last modified on 09/24/2015
 ***************************
+24Sep2015  Added transparency support to WuQuant and NeuQuant
 20Sep2015  Added LZW and DEFLATE compression for TIFF BW images
 20Sep2015  !Changed package name to start with com.icafe4j
 19Sep2015  Added closeAll() to random access stream
