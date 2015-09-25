@@ -107,9 +107,9 @@ Then you can use the SNAPSHOT version of ICAFE in your pom.xml:
 <dependency>
   <groupId>com.github.dragon66</groupId>
   <artifactId>icafe</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
 </dependency>
-``` 
+```
 
 Suggestions? custom requirements? [Open] an issue or send email to me directly: yuwen_66@yahoo.com
 
