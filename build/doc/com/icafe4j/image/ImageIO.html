@@ -140,8 +140,8 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/image/ImageIO.html#getReader(java.io.PushbackInputStream)">getReader</a></strong>(java.io.PushbackInputStream&nbsp;pushBackInputStream)</code>
-<div class="block">Creates an ImageReader for the image specified by the PushbackInputStream.</div>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/image/ImageIO.html#getReader(com.icafe4j.io.PeekHeadInputStream)">getReader</a></strong>(<a href="../../../com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a>&nbsp;peekHeadInputStream)</code>
+<div class="block">Creates an ImageReader for the image specified by the PeekHeadInputStream.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -230,26 +230,26 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd>a ImageReader for image type imgType or null if not found.</dd></dl>
 </li>
 </ul>
-<a name="getReader(java.io.PushbackInputStream)">
+<a name="getReader(com.icafe4j.io.PeekHeadInputStream)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getReader</h4>
-<pre>public static&nbsp;<a href="../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a>&nbsp;getReader(java.io.PushbackInputStream&nbsp;pushBackInputStream)</pre>
-<div class="block">Creates an ImageReader for the image specified by the PushbackInputStream.
- The PushbackInputStream will be used to figure out image type and create
- corresponding ImageReader. The same PushbackInputStream is supposed to be
+<pre>public static&nbsp;<a href="../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a>&nbsp;getReader(<a href="../../../com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a>&nbsp;peekHeadInputStream)</pre>
+<div class="block">Creates an ImageReader for the image specified by the PeekHeadInputStream.
+ The PeekHeadInputStream will be used to figure out image type and create
+ corresponding ImageReader. The same PeekHeadInputStream is supposed to be
  used by the ImageReader to read the image.
  <p>
- Note: The reason we are using a PushbackInputStream is that image type
+ Note: The reason we are using a PeekHeadInputStream is that image type
  probing will eat some bytes of the input stream. After the image type
- probing, we will have to push back the bytes previous read. We could
+ probing, we will have to be able to access the bytes previous read. We could
  have used a RandomAccessInputStream interface, but not all image types
  require random access while reading. In those cases, using a RandomAccessInputStream
  will degrade performance as well as require more memory. This is especially
  true when file cache based RandomAccessInputStream implementation is used.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>pushBackInputStream</code> - A PushbackInputStream wrapper for the image input stream</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>peekHeadInputStream</code> - A PeekHeadInputStream wrapper for the image input stream</dd>
 <dt><span class="strong">Returns:</span></dt><dd>An ImageReader instance for the input image or null if none exists</dd></dl>
 </li>
 </ul>

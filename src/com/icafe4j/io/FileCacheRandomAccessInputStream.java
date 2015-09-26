@@ -112,7 +112,7 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
      *          at which the next read occurs.
      */
     public long getStreamPointer() {
-        return pointer;
+         return pointer;
     }
 
     /**
@@ -126,6 +126,7 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
      *                          <code>0</code> or if an I/O error occurs.
      */
     public void seek(long pos) throws IOException {
+    	ensureOpen();
         if (pos < 0) {
         	throw new IOException("Negtive seek position.");
         }
@@ -133,6 +134,7 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
     }
 
     public int read() throws IOException {
+    	ensureOpen();
         long next = pointer + 1;
         long pos = readUntil(next);
         if (pos >= next) {
@@ -143,6 +145,7 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
     }
 
     public int read(byte[] b, int off, int len) throws IOException {
+    	ensureOpen();
         if (b == null) {
             throw new NullPointerException();
         }
@@ -173,8 +176,10 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
      * @throws IOException if an I/O error occurs.
      */
     public void close() throws IOException {
+    	if(closed) return;
         super.close();
         cache.close();
         cacheFile.delete();
+        closed = true;
     }
 }

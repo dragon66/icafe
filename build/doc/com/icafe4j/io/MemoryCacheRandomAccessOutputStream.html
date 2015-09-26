@@ -126,7 +126,7 @@ extends <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="c
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;com.icafe4j.io.<a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></h3>
-<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#dist">dist</a></code></li>
+<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#closed">closed</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#dist">dist</a></code></li>
 </ul>
 </li>
 </ul>
@@ -212,7 +212,7 @@ extends <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="c
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.icafe4j.io.<a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></h3>
-<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#closeAll()">closeAll</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#finalize()">finalize</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getEndian()">getEndian</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#setWriteStrategy(com.icafe4j.io.WriteStrategy)">setWriteStrategy</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeBoolean(boolean)">writeBoolean</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeByte(int)">writeByte</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeBytes(java.lang.String)">writeBytes</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeChar(int)">writeChar</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeChars(java.lang.String)">writeChars</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeDouble(double)">writeDouble</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeFloat(float)">writeFloat</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeInt(int)">writeInt</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeLong(long)">writeLong</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeS15Fixed16Number(float)">writeS15Fixed16Number</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeShort(int)">writeShort</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeU16Fixed16Number(float)">writeU16Fixed16Number</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeU8Fixed8Number(float)">writeU8Fixed8Number</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeUTF(java.lang.String)">writeUTF</a></code></li>
+<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#closeAll()">closeAll</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#ensureOpen()">ensureOpen</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#finalize()">finalize</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getEndian()">getEndian</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#setWriteStrategy(com.icafe4j.io.WriteStrategy)">setWriteStrategy</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeBoolean(boolean)">writeBoolean</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeByte(int)">writeByte</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeBytes(java.lang.String)">writeBytes</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeChar(int)">writeChar</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeChars(java.lang.String)">writeChars</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeDouble(double)">writeDouble</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeFloat(float)">writeFloat</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeInt(int)">writeInt</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeLong(long)">writeLong</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeS15Fixed16Number(float)">writeS15Fixed16Number</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeShort(int)">writeShort</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeU16Fixed16Number(float)">writeU16Fixed16Number</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeU8Fixed8Number(float)">writeU8Fixed8Number</a>, <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeUTF(java.lang.String)">writeUTF</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.io.OutputStream">
@@ -291,11 +291,13 @@ extends <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="c
 <ul class="blockList">
 <li class="blockList">
 <h4>disposeBefore</h4>
-<pre>public&nbsp;void&nbsp;disposeBefore(long&nbsp;pos)</pre>
+<pre>public&nbsp;void&nbsp;disposeBefore(long&nbsp;pos)
+                   throws java.io.IOException</pre>
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#disposeBefore(long)">disposeBefore</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></code></dd>
-</dl>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="getFlushPos()">

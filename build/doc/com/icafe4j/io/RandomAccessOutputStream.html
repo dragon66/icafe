@@ -138,6 +138,10 @@ implements java.io.DataOutput</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#closed">closed</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.io.OutputStream</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#dist">dist</a></strong></code>
 <div class="block">The destination stream.</div>
@@ -193,108 +197,114 @@ implements java.io.DataOutput</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#finalize()">finalize</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#ensureOpen()">ensureOpen</a></strong>()</code>
+<div class="block">Check to make sure that this stream has not been closed</div>
+</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#finalize()">finalize</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>short</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getEndian()">getEndian</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getFlushPos()">getFlushPos</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getLength()">getLength</a></strong>()</code>
 <div class="block">Returns the total length of data that has been cached,
  regardless of whether any early blocks have been disposed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getStreamPointer()">getStreamPointer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#reset()">reset</a></strong>()</code>
 <div class="block">Reset this stream to be used again</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#seek(long)">seek</a></strong>(long&nbsp;pos)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#setWriteStrategy(com.icafe4j.io.WriteStrategy)">setWriteStrategy</a></strong>(<a href="../../../com/icafe4j/io/WriteStrategy.html" title="interface in com.icafe4j.io">WriteStrategy</a>&nbsp;strategy)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#write(byte[],%20int,%20int)">write</a></strong>(byte[]&nbsp;b,
      int&nbsp;off,
      int&nbsp;len)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#write(int)">write</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeBoolean(boolean)">writeBoolean</a></strong>(boolean&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeByte(int)">writeByte</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeBytes(java.lang.String)">writeBytes</a></strong>(java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeChar(int)">writeChar</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeChars(java.lang.String)">writeChars</a></strong>(java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeDouble(double)">writeDouble</a></strong>(double&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeFloat(float)">writeFloat</a></strong>(float&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeInt(int)">writeInt</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeLong(long)">writeLong</a></strong>(long&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeS15Fixed16Number(float)">writeS15Fixed16Number</a></strong>(float&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeShort(int)">writeShort</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeToStream(long)">writeToStream</a></strong>(long&nbsp;len)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeU16Fixed16Number(float)">writeU16Fixed16Number</a></strong>(float&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeU8Fixed8Number(float)">writeU8Fixed8Number</a></strong>(float&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeUTF(java.lang.String)">writeUTF</a></strong>(java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
@@ -337,11 +347,20 @@ implements java.io.DataOutput</pre>
 <a name="dist">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>dist</h4>
 <pre>protected&nbsp;java.io.OutputStream dist</pre>
 <div class="block">The destination stream.</div>
+</li>
+</ul>
+<a name="closed">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>closed</h4>
+<pre>protected&nbsp;boolean closed</pre>
 </li>
 </ul>
 </li>
@@ -401,13 +420,29 @@ implements java.io.DataOutput</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
+<a name="ensureOpen()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureOpen</h4>
+<pre>protected&nbsp;void&nbsp;ensureOpen()
+                   throws java.io.IOException</pre>
+<div class="block">Check to make sure that this stream has not been closed</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
 <a name="disposeBefore(long)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>disposeBefore</h4>
-<pre>public abstract&nbsp;void&nbsp;disposeBefore(long&nbsp;pos)</pre>
+<pre>public abstract&nbsp;void&nbsp;disposeBefore(long&nbsp;pos)
+                            throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="finalize()">
@@ -453,6 +488,8 @@ implements java.io.DataOutput</pre>
 <div class="block">Returns the total length of data that has been cached,
  regardless of whether any early blocks have been disposed.
  This value will only ever increase.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="getStreamPointer()">
@@ -462,7 +499,9 @@ implements java.io.DataOutput</pre>
 <li class="blockList">
 <h4>getStreamPointer</h4>
 <pre>public abstract&nbsp;long&nbsp;getStreamPointer()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the current stream position</dd></dl>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the current stream position</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="reset()">

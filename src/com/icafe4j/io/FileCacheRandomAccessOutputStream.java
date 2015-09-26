@@ -65,9 +65,11 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
      * @throws IOException if an I/O error occurs.
      */
     public void close() throws IOException {
+    	if(closed) return;
         super.close();
         cache.close();
         cacheFile.delete();
+        closed = true;
     }
     
 	@Override
@@ -95,6 +97,7 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
 
 	@Override
 	 public void seek(long pos) throws IOException {
+		ensureOpen();
         if (pos < 0) {
         	throw new IOException("Negtive seek position.");
         }
@@ -102,7 +105,8 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
     }
 
 	@Override
-	public void write(byte[] b, int off, int len) throws IOException {			
+	public void write(byte[] b, int off, int len) throws IOException {
+		ensureOpen();
 		if (b == null) {
 			throw new NullPointerException("b == null!");
 		}
@@ -125,6 +129,7 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
 	
 	@Override
 	public void write(int value) throws IOException {
+		ensureOpen();
 		if (pointer < 0)
 	    	throw new IndexOutOfBoundsException("pointer < 0");
 		if (pointer >= length) {
@@ -137,6 +142,7 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
 
 	@Override
 	public void writeToStream(long len) throws IOException {
+		ensureOpen();
 		if (len == 0) {
             return;
         }

@@ -50,8 +50,11 @@ public class MemoryCacheRandomAccessInputStream extends RandomAccessInputStream 
 	}
 		
 	public void close() throws IOException {
+		if(closed) return;
 		super.close();
 		cache.clear();
+		cache = null;
+		closed = true;
 	}
 		
 	public long getStreamPointer() {
@@ -59,6 +62,7 @@ public class MemoryCacheRandomAccessInputStream extends RandomAccessInputStream 
 	}
 		
 	public int read() throws IOException {
+		ensureOpen();
 		long l = pointer + 1L;
 		long pos = readUntil(l);
 		if(pos >= l) {
@@ -70,6 +74,7 @@ public class MemoryCacheRandomAccessInputStream extends RandomAccessInputStream 
 	}
 
 	public int read(byte[] bytes, int off, int len) throws IOException {
+		ensureOpen();
 		if(bytes == null)
 			throw new NullPointerException();
 		if(off<0 || len<0 || off+len>bytes.length)
@@ -119,6 +124,7 @@ public class MemoryCacheRandomAccessInputStream extends RandomAccessInputStream 
 	}
 
 	public void seek(long loc) throws IOException {
+		ensureOpen();
 		if (loc<0L)
 			throw new IOException("Negtive seek position.");
 			

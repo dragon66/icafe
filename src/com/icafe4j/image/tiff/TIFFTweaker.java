@@ -954,6 +954,28 @@ public class TIFFTweaker {
 		return counts;
 	}
 	
+	public static void insertComment(String comment, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		insertComment(comment, 0, rin, rout);
+	}
+		
+	public static void insertComment(String comment, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		int offset = copyHeader(rin, rout);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		workingPage.addField(new ASCIIField(TiffTag.IMAGE_DESCRIPTION.getValue(), comment));
+		
+		offset = copyPages(ifds, offset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();	
+
+		writeToStream(rout, firstIFDOffset);	
+	}
+	
 	public static void insertExif(RandomAccessInputStream rin, RandomAccessOutputStream rout, Exif exif, boolean update) throws IOException {
 		insertExif(rin, rout, exif, 0, update);
 	}

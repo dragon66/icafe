@@ -137,9 +137,17 @@ public class TestMetadata extends TestBase {
 		fout.close();
 		
 		fin = new FileInputStream("images/table.jpg");
-		JPEGTweaker.extractDepthMap(fin, "table");
+		JPEGTweaker.extractDepthMap(fin, "table");		
 		
 		fin.close();
+		
+		fin = new FileInputStream("images/butterfly.png");
+		fout = new FileOutputStream("comment-inserted.png");
+		
+		Metadata.insertComment(fin, fout, "This is a comment");
+		
+		fin.close();
+		fout.close();
 	}
 	
 	private static List<IPTCDataSet> createIPTCDataSet() {

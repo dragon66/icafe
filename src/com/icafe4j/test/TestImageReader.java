@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.PushbackInputStream;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -26,28 +24,26 @@ import com.icafe4j.image.quant.QuantMethod;
 import com.icafe4j.image.reader.ImageReader;
 import com.icafe4j.image.tiff.TiffFieldEnum.Compression;
 import com.icafe4j.image.tiff.TiffFieldEnum.PhotoMetric;
+import com.icafe4j.io.PeekHeadInputStream;
 
 /**
  * Temporary class for testing image readers
  */
 public class TestImageReader extends TestBase {
 
-	 public static void main(String args[]) throws Exception
-	 {
+	 public static void main(String args[]) throws Exception {
 		 new TestImageReader().test(args);
 	 }
 	 
-	 public void test(String ... args) throws Exception
-	 {
+	 public void test(String ... args) throws Exception {
 		 long t1 = System.currentTimeMillis();
 		 
 		 FileInputStream fin = new FileInputStream(new File(args[0]));
-		 PushbackInputStream pushBackStream = new PushbackInputStream(fin, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
-		 ImageReader reader = ImageIO.getReader(pushBackStream);
-		 BufferedImage img = reader.read(pushBackStream);
-		 
-		 pushBackStream.close();
-		 
+		 PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(fin, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		 ImageReader reader = ImageIO.getReader(peekHeadInputStream);
+		 BufferedImage img = reader.read(peekHeadInputStream);		 
+		 peekHeadInputStream.closeAll();
+	
 		 if(img == null) {
 			 logger.error("Failed reading image!");
 			 return;

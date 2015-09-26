@@ -54,7 +54,6 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -70,6 +69,7 @@ import com.icafe4j.image.quant.WuQuant;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.image.writer.JPEGWriter;
 import com.icafe4j.io.IOUtils;
+import com.icafe4j.io.PeekHeadInputStream;
 import com.icafe4j.io.RandomAccessInputStream;
 import com.icafe4j.util.IntHashtable;
 
@@ -1044,12 +1044,10 @@ public class IMGUtils {
 		return imageType;
 	}
 	
-	public static ImageType guessImageType(PushbackInputStream is) throws IOException {
+	public static ImageType guessImageType(PeekHeadInputStream is) throws IOException {
 		// Read the first ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes
-		byte[] magicNumber = new byte[ImageIO.IMAGE_MAGIC_NUMBER_LEN];
-		is.read(magicNumber);
+		byte[] magicNumber = is.peek(ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		ImageType imageType = guessImageType(magicNumber);
-		is.unread(magicNumber);// reset stream pointer
 		
 		return imageType;
 	}

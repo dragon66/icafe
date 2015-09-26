@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    26Sep2015  Added insertComment(InputStream, OutputStream, String)
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    02Jul2015  Added support for APP14 segment reading
  * WY    02Jul2015  Added support for APP12 segment reading
@@ -489,6 +490,54 @@ public class JPEGTweaker {
 		if(buf.length > 0)
 			profile = new ICCProfile(buf);
 		return profile;
+	}
+	
+	public static void insertComment(InputStream is, OutputStream os, String comment) throws IOException {
+		boolean finished = false;
+		short marker;
+		Marker emarker;
+				
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+	
+		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.SOS) {
+				// Write comment
+		    	writeComment(comment, os);
+				// Copy the rest of the data
+				IOUtils.writeShortMM(os, marker);
+				copyToEnd(is, os);
+				// No more marker to read, we are done.
+				finished = true;  
+			}  else { // Read markers
+				emarker = Marker.fromShort(marker);
+			
+				switch (emarker) {
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+					case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
+						IOUtils.writeShortMM(os, marker);
+						marker = IOUtils.readShortMM(is);
+						break;
+					case PADDING:
+						IOUtils.writeShortMM(os, marker);
+						int nextByte = 0;
+						while ((nextByte = IOUtils.read(is)) == 0xff) {
+							IOUtils.write(os, nextByte);
+						}
+						marker = (short) ((0xff << 8) | nextByte);
+						break;
+				    default:
+						marker = copySegment(marker, is, os);
+				}
+			}
+	    }
 	}
 	
 	/**
@@ -1877,7 +1926,20 @@ public class JPEGTweaker {
 		}
 
 		return marker;
-	}	
+	}
+	
+	private static void writeComment(String comment, OutputStream os) throws IOException	{
+		byte[] data = comment.getBytes();
+		int len = data.length + 2;
+		byte[] COM = new byte[len + 2];
+		// Comment marker: 0xfffe
+		COM[0] = (byte)0xff;
+		COM[1] = (byte)0xfe;
+		COM[2] = (byte)((len>>8)&0xff);
+		COM[3] = (byte)(len&0xff);
+		System.arraycopy(data, 0, COM, 4, len-2);
+		os.write(COM, 0, len + 2);
+	}
 	
 	/**
 	 * Write ICC_Profile as one or more APP2 segments

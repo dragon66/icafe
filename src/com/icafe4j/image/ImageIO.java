@@ -27,11 +27,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PushbackInputStream;
-
 import com.icafe4j.image.reader.ImageReader;
 import com.icafe4j.image.util.IMGUtils;
 import com.icafe4j.image.writer.ImageWriter;
+import com.icafe4j.io.PeekHeadInputStream;
 import com.icafe4j.io.RandomAccessInputStream;
 
 public final class ImageIO {
@@ -45,33 +44,32 @@ public final class ImageIO {
 	 * @param imgType image type enum defined by {@link ImageType}
 	 * @return a ImageReader for image type imgType or null if not found. 
 	 */
-	public static ImageReader getReader(ImageType imgType)
-	{
+	public static ImageReader getReader(ImageType imgType) {
 		return imgType.getReader();
 	}
 	
 	/**
-	 * Creates an ImageReader for the image specified by the PushbackInputStream.
-	 * The PushbackInputStream will be used to figure out image type and create
-	 * corresponding ImageReader. The same PushbackInputStream is supposed to be
+	 * Creates an ImageReader for the image specified by the PeekHeadInputStream.
+	 * The PeekHeadInputStream will be used to figure out image type and create
+	 * corresponding ImageReader. The same PeekHeadInputStream is supposed to be
 	 * used by the ImageReader to read the image.
 	 * <p>
-	 * Note: The reason we are using a PushbackInputStream is that image type
+	 * Note: The reason we are using a PeekHeadInputStream is that image type
 	 * probing will eat some bytes of the input stream. After the image type
-	 * probing, we will have to push back the bytes previous read. We could
+	 * probing, we will have to be able to access the bytes previous read. We could
 	 * have used a RandomAccessInputStream interface, but not all image types
 	 * require random access while reading. In those cases, using a RandomAccessInputStream
 	 * will degrade performance as well as require more memory. This is especially
 	 * true when file cache based RandomAccessInputStream implementation is used.  
 	 *  
-	 * @param pushBackInputStream A PushbackInputStream wrapper for the image input stream
+	 * @param peekHeadInputStream A PeekHeadInputStream wrapper for the image input stream
 	 * @return An ImageReader instance for the input image or null if none exists
 	 */	
-	public static ImageReader getReader(PushbackInputStream pushBackInputStream) {
+	public static ImageReader getReader(PeekHeadInputStream peekHeadInputStream) {
 		ImageType imageType = ImageType.UNKNOWN;
 		
 		try {
-			imageType = IMGUtils.guessImageType(pushBackInputStream);
+			imageType = IMGUtils.guessImageType(peekHeadInputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -116,20 +114,21 @@ public final class ImageIO {
 	 */
 	public static BufferedImage read(InputStream is) throws Exception {
 		ImageType imageType = null;
+		boolean closeStream = false;
 		// 4 byte as image magic number
 		if(is instanceof RandomAccessInputStream) {
 			imageType = IMGUtils.guessImageType((RandomAccessInputStream)is);
 		} else {
-			is = new PushbackInputStream(is, IMAGE_MAGIC_NUMBER_LEN); 
-			imageType = IMGUtils.guessImageType((PushbackInputStream)is);
+			is = new PeekHeadInputStream(is, IMAGE_MAGIC_NUMBER_LEN); 
+			imageType = IMGUtils.guessImageType((PeekHeadInputStream)is);
+			closeStream = true;
 		}		
 		BufferedImage bi = null;		
 		if(imageType != ImageType.UNKNOWN) {
 			bi = getReader(imageType).read(is);
 		}
-		// We don't want to close the stream after successful reading in case it will be used elsewhere
-		if(bi == null)
-			is.close();		
+		// Close the PeekHeadInputStream we created internally
+		if(closeStream) is.close();		
 		
 		return bi;
 	}

@@ -39,6 +39,7 @@ public abstract class RandomAccessInputStream extends InputStream implements Dat
 
 	 /** The source stream. */
     protected InputStream src;
+    protected boolean closed;
     
     protected RandomAccessInputStream(InputStream src) {
     	this.src = src;
@@ -51,6 +52,16 @@ public abstract class RandomAccessInputStream extends InputStream implements Dat
     public void closeAll() throws IOException {
     	close();
     	src.close();
+    	src = null;
+    }
+    
+   
+    /**
+     * Check to make sure that this stream has not been closed
+     */
+    protected  void ensureOpen() throws IOException {
+    	if (closed)
+    		throw new IOException("Stream closed");
     }
     
     protected void finalize() throws Throwable {
@@ -180,7 +191,7 @@ public abstract class RandomAccessInputStream extends InputStream implements Dat
 		return new DataInputStream(this).readUTF();	
 	} 
 	
-	public abstract  void seek(long loc) throws IOException;
+	public abstract void seek(long loc) throws IOException;
 	
 	public void setReadStrategy(ReadStrategy strategy) {
 		this.strategy = strategy;

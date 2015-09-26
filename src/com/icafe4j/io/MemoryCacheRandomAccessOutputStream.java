@@ -42,11 +42,14 @@ public class MemoryCacheRandomAccessOutputStream extends RandomAccessOutputStrea
 	}
 	
 	public void close() throws IOException {
+		if(closed) return;
 		super.close();
  		cache.clear();
+ 		closed = true;
     }	
 
-	public void disposeBefore(long pos) {
+	public void disposeBefore(long pos) throws IOException {
+		ensureOpen();
 	    long index = pos >> BUFFER_SHIFT;
 	    
 	    if (index < cacheStart) {
@@ -107,6 +110,7 @@ public class MemoryCacheRandomAccessOutputStream extends RandomAccessOutputStrea
 	}
 	
 	public void seek(long pos) throws IOException {
+		ensureOpen();
         if (pos < 0L)
         	throw new IOException("Negative seek position.");
 		
@@ -114,6 +118,7 @@ public class MemoryCacheRandomAccessOutputStream extends RandomAccessOutputStrea
     }
 	
 	public void write(byte[] b, int off, int len) throws IOException {
+		ensureOpen();
         if (b == null) {
             throw new NullPointerException("b == null!");
         }
@@ -144,6 +149,7 @@ public class MemoryCacheRandomAccessOutputStream extends RandomAccessOutputStrea
 	
 	@Override
 	public void write(int value) throws IOException {
+		ensureOpen();
 	    if (pointer < 0)
 	    	throw new ArrayIndexOutOfBoundsException("pointer < 0");
 		// Ensure there is space for the incoming data
@@ -157,8 +163,8 @@ public class MemoryCacheRandomAccessOutputStream extends RandomAccessOutputStrea
         buf[offset] = (byte)value;
 	}
 
-	public void writeToStream(long len) throws IOException 
-	{   
+	public void writeToStream(long len) throws IOException {
+		ensureOpen();
 		if (len == 0) {
             return;
         }

@@ -568,7 +568,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/io/MemoryCacheRandomAccessOutputStream.html#close()">close()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/MemoryCacheRandomAccessOutputStream.html" title="class in com.icafe4j.io">MemoryCacheRandomAccessOutputStream</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/PeekHeadInputStream.html#close()">close()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/io/RandomAccessOutputStream.html#close()">close()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/PeekHeadInputStream.html#closeAll()">closeAll()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/io/RandomAccessInputStream.html#closeAll()">closeAll()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></dt>
 <dd>
@@ -578,6 +582,10 @@
 <dd>
 <div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
 </dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/RandomAccessInputStream.html#closed">closed</a></span> - Variable in class com.icafe4j.io.<a href="./com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/RandomAccessOutputStream.html#closed">closed</a></span> - Variable in class com.icafe4j.io.<a href="./com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="./com/icafe4j/image/color/CMYKColorSpace.html" title="class in com.icafe4j.image.color"><span class="strong">CMYKColorSpace</span></a> - Class in <a href="./com/icafe4j/image/color/package-summary.html">com.icafe4j.image.color</a></dt>
 <dd>
 <div class="block">CMYK color space to work with CMYK image without embedded ICC_Profile.</div>
@@ -1182,6 +1190,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/image/meta/Metadata.html#ensureDataRead()">ensureDataRead()</a></span> - Method in class com.icafe4j.image.meta.<a href="./com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/RandomAccessInputStream.html#ensureOpen()">ensureOpen()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></dt>
+<dd>
+<div class="block">Check to make sure that this stream has not been closed</div>
+</dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/RandomAccessOutputStream.html#ensureOpen()">ensureOpen()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></dt>
+<dd>
+<div class="block">Check to make sure that this stream has not been closed</div>
+</dd>
 <dt><span class="strong"><a href="./com/icafe4j/util/LRUCache.html#entrySet()">entrySet()</a></span> - Method in class com.icafe4j.util.<a href="./com/icafe4j/util/LRUCache.html" title="class in com.icafe4j.util">LRUCache</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/util/SoftHashMap.html#entrySet()">entrySet()</a></span> - Method in class com.icafe4j.util.<a href="./com/icafe4j/util/SoftHashMap.html" title="class in com.icafe4j.util">SoftHashMap</a></dt>
@@ -2447,9 +2463,9 @@
 <dd>
 <div class="block">ImageReader factory</div>
 </dd>
-<dt><span class="strong"><a href="./com/icafe4j/image/ImageIO.html#getReader(java.io.PushbackInputStream)">getReader(PushbackInputStream)</a></span> - Static method in class com.icafe4j.image.<a href="./com/icafe4j/image/ImageIO.html" title="class in com.icafe4j.image">ImageIO</a></dt>
+<dt><span class="strong"><a href="./com/icafe4j/image/ImageIO.html#getReader(com.icafe4j.io.PeekHeadInputStream)">getReader(PeekHeadInputStream)</a></span> - Static method in class com.icafe4j.image.<a href="./com/icafe4j/image/ImageIO.html" title="class in com.icafe4j.image">ImageIO</a></dt>
 <dd>
-<div class="block">Creates an ImageReader for the image specified by the PushbackInputStream.</div>
+<div class="block">Creates an ImageReader for the image specified by the PeekHeadInputStream.</div>
 </dd>
 <dt><span class="strong"><a href="./com/icafe4j/image/ImageType.html#getReader()">getReader()</a></span> - Method in enum com.icafe4j.image.<a href="./com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</a></dt>
 <dd>&nbsp;</dd>
@@ -2770,7 +2786,7 @@
 </dd>
 <dt><span class="strong"><a href="./com/icafe4j/image/util/IMGUtils.html#guessImageType(byte[])">guessImageType(byte[])</a></span> - Static method in class com.icafe4j.image.util.<a href="./com/icafe4j/image/util/IMGUtils.html" title="class in com.icafe4j.image.util">IMGUtils</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="strong"><a href="./com/icafe4j/image/util/IMGUtils.html#guessImageType(java.io.PushbackInputStream)">guessImageType(PushbackInputStream)</a></span> - Static method in class com.icafe4j.image.util.<a href="./com/icafe4j/image/util/IMGUtils.html" title="class in com.icafe4j.image.util">IMGUtils</a></dt>
+<dt><span class="strong"><a href="./com/icafe4j/image/util/IMGUtils.html#guessImageType(com.icafe4j.io.PeekHeadInputStream)">guessImageType(PeekHeadInputStream)</a></span> - Static method in class com.icafe4j.image.util.<a href="./com/icafe4j/image/util/IMGUtils.html" title="class in com.icafe4j.image.util">IMGUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/image/util/IMGUtils.html#guessImageType(com.icafe4j.io.RandomAccessInputStream)">guessImageType(RandomAccessInputStream)</a></span> - Static method in class com.icafe4j.image.util.<a href="./com/icafe4j/image/util/IMGUtils.html" title="class in com.icafe4j.image.util">IMGUtils</a></dt>
 <dd>&nbsp;</dd>
@@ -3049,6 +3065,16 @@
 <dt><span class="strong"><a href="./com/icafe4j/image/png/PNGTweaker.html#insertChunks(java.util.List,%20java.io.InputStream,%20java.io.OutputStream)">insertChunks(List&lt;Chunk&gt;, InputStream, OutputStream)</a></span> - Static method in class com.icafe4j.image.png.<a href="./com/icafe4j/image/png/PNGTweaker.html" title="class in com.icafe4j.image.png">PNGTweaker</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/image/gif/GIFTweaker.html#insertComment(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertComment(InputStream, OutputStream, String)</a></span> - Static method in class com.icafe4j.image.gif.<a href="./com/icafe4j/image/gif/GIFTweaker.html" title="class in com.icafe4j.image.gif">GIFTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/image/jpeg/JPEGTweaker.html#insertComment(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertComment(InputStream, OutputStream, String)</a></span> - Static method in class com.icafe4j.image.jpeg.<a href="./com/icafe4j/image/jpeg/JPEGTweaker.html" title="class in com.icafe4j.image.jpeg">JPEGTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/image/meta/Metadata.html#insertComment(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertComment(InputStream, OutputStream, String)</a></span> - Static method in class com.icafe4j.image.meta.<a href="./com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/image/png/PNGTweaker.html#insertComment(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertComment(InputStream, OutputStream, String)</a></span> - Static method in class com.icafe4j.image.png.<a href="./com/icafe4j/image/png/PNGTweaker.html" title="class in com.icafe4j.image.png">PNGTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/image/tiff/TIFFTweaker.html#insertComment(java.lang.String,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream)">insertComment(String, RandomAccessInputStream, RandomAccessOutputStream)</a></span> - Static method in class com.icafe4j.image.tiff.<a href="./com/icafe4j/image/tiff/TIFFTweaker.html" title="class in com.icafe4j.image.tiff">TIFFTweaker</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/image/tiff/TIFFTweaker.html#insertComment(java.lang.String,%20int,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream)">insertComment(String, int, RandomAccessInputStream, RandomAccessOutputStream)</a></span> - Static method in class com.icafe4j.image.tiff.<a href="./com/icafe4j/image/tiff/TIFFTweaker.html" title="class in com.icafe4j.image.tiff">TIFFTweaker</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/image/jpeg/JPEGTweaker.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.exif.Exif,%20boolean)">insertExif(InputStream, OutputStream, Exif, boolean)</a></span> - Static method in class com.icafe4j.image.jpeg.<a href="./com/icafe4j/image/jpeg/JPEGTweaker.html" title="class in com.icafe4j.image.jpeg">JPEGTweaker</a></dt>
 <dd>&nbsp;</dd>
@@ -3954,6 +3980,8 @@
 </dd>
 <dt><span class="strong"><a href="./com/icafe4j/image/reader/PCXReader.html#PCXReader()">PCXReader()</a></span> - Constructor for class com.icafe4j.image.reader.<a href="./com/icafe4j/image/reader/PCXReader.html" title="class in com.icafe4j.image.reader">PCXReader</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/PeekHeadInputStream.html#peek(int)">peek(int)</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/util/DoublyLinkedListQueue.html#peek()">peek()</a></span> - Method in class com.icafe4j.util.<a href="./com/icafe4j/util/DoublyLinkedListQueue.html" title="class in com.icafe4j.util">DoublyLinkedListQueue</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/util/LinkedListQueue.html#peek()">peek()</a></span> - Method in class com.icafe4j.util.<a href="./com/icafe4j/util/LinkedListQueue.html" title="class in com.icafe4j.util">LinkedListQueue</a></dt>
@@ -3963,6 +3991,13 @@
 <dt><span class="strong"><a href="./com/icafe4j/util/DoublyLinkedList.html#peekHead()">peekHead()</a></span> - Method in class com.icafe4j.util.<a href="./com/icafe4j/util/DoublyLinkedList.html" title="class in com.icafe4j.util">DoublyLinkedList</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/util/SinglyLinkedList.html#peekHead()">peekHead()</a></span> - Method in class com.icafe4j.util.<a href="./com/icafe4j/util/SinglyLinkedList.html" title="class in com.icafe4j.util">SinglyLinkedList</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="./com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io"><span class="strong">PeekHeadInputStream</span></a> - Class in <a href="./com/icafe4j/io/package-summary.html">com.icafe4j.io</a></dt>
+<dd>
+<div class="block">Lightweight stream wrapper which allows to peek a
+ fixed length of bytes from the current stream head</div>
+</dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/PeekHeadInputStream.html#PeekHeadInputStream(java.io.InputStream,%20int)">PeekHeadInputStream(InputStream, int)</a></span> - Constructor for class com.icafe4j.io.<a href="./com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/util/DoublyLinkedList.html#peekTail()">peekTail()</a></span> - Method in class com.icafe4j.util.<a href="./com/icafe4j/util/DoublyLinkedList.html" title="class in com.icafe4j.util">DoublyLinkedList</a></dt>
 <dd>&nbsp;</dd>
@@ -4321,6 +4356,10 @@
 <div class="block">Reads up to <code>len</code> bytes of data from the input stream into
  an array of bytes.</div>
 </dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/PeekHeadInputStream.html#read()">read()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="./com/icafe4j/io/PeekHeadInputStream.html#read(byte[],%20int,%20int)">read(byte[], int, int)</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/io/RandomAccessInputStream.html#read()">read()</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="./com/icafe4j/io/RandomAccessInputStream.html#read(byte[],%20int,%20int)">read(byte[], int, int)</a></span> - Method in class com.icafe4j.io.<a href="./com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></dt>

@@ -1,6 +1,8 @@
 ***************************
-Last modified on 09/24/2015
+Last modified on 09/26/2015
 ***************************
+26Sep2015  Added insertComment() to Metadata
+26Sep2015  Revised IO classes and added PeekHeadInputStream
 24Sep2015  Added transparency support to WuQuant and NeuQuant
 20Sep2015  Added LZW and DEFLATE compression for TIFF BW images
 20Sep2015  !Changed package name to start with com.icafe4j

@@ -211,6 +211,19 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#insertComment(java.lang.String,%20int,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream)">insertComment</a></strong>(java.lang.String&nbsp;comment,
+             int&nbsp;pageNumber,
+             <a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
+             <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#insertComment(java.lang.String,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream)">insertComment</a></strong>(java.lang.String&nbsp;comment,
+             <a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
+             <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#insertExif(com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream,%20com.icafe4j.image.meta.exif.Exif,%20boolean)">insertExif</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
           <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
           <a href="../../../../com/icafe4j/image/meta/exif/Exif.html" title="class in com.icafe4j.image.meta.exif">Exif</a>&nbsp;exif,
@@ -766,6 +779,35 @@ extends java.lang.Object</pre>
 <h4>getUncompressedStripByteCounts</h4>
 <pre>public static&nbsp;int[]&nbsp;getUncompressedStripByteCounts(<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&nbsp;ifd,
                                    int&nbsp;strips)</pre>
+</li>
+</ul>
+<a name="insertComment(java.lang.String, com.icafe4j.io.RandomAccessInputStream, com.icafe4j.io.RandomAccessOutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertComment</h4>
+<pre>public static&nbsp;void&nbsp;insertComment(java.lang.String&nbsp;comment,
+                 <a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
+                 <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout)
+                          throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertComment(java.lang.String, int, com.icafe4j.io.RandomAccessInputStream, com.icafe4j.io.RandomAccessOutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertComment</h4>
+<pre>public static&nbsp;void&nbsp;insertComment(java.lang.String&nbsp;comment,
+                 int&nbsp;pageNumber,
+                 <a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
+                 <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout)
+                          throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="insertExif(com.icafe4j.io.RandomAccessInputStream, com.icafe4j.io.RandomAccessOutputStream, com.icafe4j.image.meta.exif.Exif, boolean)">
