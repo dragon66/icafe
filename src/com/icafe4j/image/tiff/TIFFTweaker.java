@@ -1505,10 +1505,6 @@ public class TIFFTweaker {
 		rin1.close();
 		rin2.close();		
 		rout.close();
-		// We still need to explicitly close the internal streams 
-		fin1.close();
-		fin2.close();
-		fout.close();
 	}
 	
 	/**
@@ -1861,7 +1857,6 @@ public class TIFFTweaker {
 			int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, image1, merged);
 			// Release resources
 			image1.close();
-			fis1.close();
 			for(int i = 1; i < images.length; i++) {
 				List<IFD> ifds2 = new ArrayList<IFD>();
 				FileInputStream fis2 = new FileInputStream(images[i]);
@@ -1878,7 +1873,6 @@ public class TIFFTweaker {
 				ifds1.addAll(ifds2);
 				// Release resources
 				image2.close();
-				fis2.close();
 			}
 			int maxPageNumber = ifds1.size();
 			// Reset pageNumber and total pages
@@ -1918,7 +1912,6 @@ public class TIFFTweaker {
 			int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, image1, merged);
 			// Release resources
 			image1.close();
-			fis1.close();
 			short writeEndian = merged.getEndian();
 			for(int i = 1; i < images.length; i++) {
 				List<IFD> ifds2 = new ArrayList<IFD>();
@@ -2099,7 +2092,6 @@ public class TIFFTweaker {
 				ifds1.addAll(ifds2);
 				// Release resources
 				image2.close();
-				fis2.close();
 			}
 			int maxPageNumber = ifds1.size();
 			// Reset pageNumber and total pages
@@ -2874,8 +2866,7 @@ public class TIFFTweaker {
 		if(!StringUtils.isNullOrEmpty(outputFilePrefix)) fileNamePrefix = outputFilePrefix + "_" + fileNamePrefix;
 		
 		for(int i = 0; i < list.size(); i++) {
-			FileOutputStream fout = new FileOutputStream(fileNamePrefix + i + ".tif");
-			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(fout);
+			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOutputStream(fileNamePrefix + i + ".tif"));
 			// Write TIFF header
 			int writeOffset = writeHeader(endian, rout);
 			// Write page data
@@ -2889,7 +2880,6 @@ public class TIFFTweaker {
 			writeOffset = list.get(i).write(rout, writeOffset);
 			writeToStream(rout, firstIFDOffset);
 			rout.close();
-			fout.close();
 		}
 	}
 	

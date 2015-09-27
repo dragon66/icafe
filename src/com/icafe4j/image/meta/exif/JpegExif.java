@@ -109,6 +109,6 @@ public class JpegExif extends Exif {
 		// Dump randOS to normal output stream and we are done!
 		randOS.seek(0);
 		randOS.writeToStream(length);
-		randOS.close();
+		randOS.shallowClose();
 	}
 }

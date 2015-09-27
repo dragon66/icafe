@@ -40,7 +40,5 @@ public class TestTIFFImage extends TestBase {
 		tiffImage.write(rout);
 		rin.close(); // Release resources
 		rout.close(); // Release resources
-		fin.close(); // We need to close the stream explicitly since neither input 
-		fout.close(); // nor output random stream closes the underlying stream
 	}
 }

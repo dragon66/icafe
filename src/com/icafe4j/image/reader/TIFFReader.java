@@ -143,7 +143,7 @@ public class TIFFReader extends ImageReader {
 				frames.add(frame);
 		}		
 		
-		randIS.close();
+		randIS.shallowClose();
 		if(frames.size() > 0)
 			return frames.get(0);
 		return null;

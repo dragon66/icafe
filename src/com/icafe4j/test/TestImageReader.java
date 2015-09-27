@@ -42,7 +42,7 @@ public class TestImageReader extends TestBase {
 		 PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(fin, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
 		 ImageReader reader = ImageIO.getReader(peekHeadInputStream);
 		 BufferedImage img = reader.read(peekHeadInputStream);		 
-		 peekHeadInputStream.closeAll();
+		 peekHeadInputStream.close();
 	
 		 if(img == null) {
 			 logger.error("Failed reading image!");

@@ -187,56 +187,56 @@ implements java.io.DataOutput</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#closeAll()">closeAll</a></strong>()</code>
-<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#disposeBefore(long)">disposeBefore</a></strong>(long&nbsp;pos)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#ensureOpen()">ensureOpen</a></strong>()</code>
 <div class="block">Check to make sure that this stream has not been closed</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#finalize()">finalize</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>short</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getEndian()">getEndian</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getFlushPos()">getFlushPos</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getLength()">getLength</a></strong>()</code>
 <div class="block">Returns the total length of data that has been cached,
  regardless of whether any early blocks have been disposed.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#getStreamPointer()">getStreamPointer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#reset()">reset</a></strong>()</code>
 <div class="block">Reset this stream to be used again</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#seek(long)">seek</a></strong>(long&nbsp;pos)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#setWriteStrategy(com.icafe4j.io.WriteStrategy)">setWriteStrategy</a></strong>(<a href="../../../com/icafe4j/io/WriteStrategy.html" title="interface in com.icafe4j.io">WriteStrategy</a>&nbsp;strategy)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>abstract void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#shallowClose()">shallowClose</a></strong>()</code>
+<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
@@ -407,14 +407,14 @@ implements java.io.DataOutput</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="closeAll()">
+<a name="shallowClose()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>closeAll</h4>
-<pre>public abstract&nbsp;void&nbsp;closeAll()
-                       throws java.io.IOException</pre>
+<h4>shallowClose</h4>
+<pre>public abstract&nbsp;void&nbsp;shallowClose()
+                           throws java.io.IOException</pre>
 <div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>

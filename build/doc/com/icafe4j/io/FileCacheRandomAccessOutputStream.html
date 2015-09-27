@@ -172,38 +172,38 @@ extends <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="c
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/FileCacheRandomAccessOutputStream.html#closeAll()">closeAll</a></strong>()</code>
-<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/FileCacheRandomAccessOutputStream.html#disposeBefore(long)">disposeBefore</a></strong>(long&nbsp;pos)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/FileCacheRandomAccessOutputStream.html#getFlushPos()">getFlushPos</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/FileCacheRandomAccessOutputStream.html#getLength()">getLength</a></strong>()</code>
 <div class="block">Returns the total length of data that has been cached,
  regardless of whether any early blocks have been disposed.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/FileCacheRandomAccessOutputStream.html#getStreamPointer()">getStreamPointer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/FileCacheRandomAccessOutputStream.html#reset()">reset</a></strong>()</code>
 <div class="block">Reset this stream to be used again</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/FileCacheRandomAccessOutputStream.html#seek(long)">seek</a></strong>(long&nbsp;pos)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/FileCacheRandomAccessOutputStream.html#shallowClose()">shallowClose</a></strong>()</code>
+<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -314,6 +314,23 @@ extends <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="c
 <dd><code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#close()">close</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
+</li>
+</ul>
+<a name="shallowClose()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>shallowClose</h4>
+<pre>public&nbsp;void&nbsp;shallowClose()
+                  throws java.io.IOException</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#shallowClose()">RandomAccessOutputStream</a></code></strong></div>
+<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#shallowClose()">shallowClose</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 <a name="disposeBefore(long)">
@@ -441,7 +458,7 @@ extends <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="c
 <a name="writeToStream(long)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>writeToStream</h4>
 <pre>public&nbsp;void&nbsp;writeToStream(long&nbsp;len)
@@ -449,23 +466,6 @@ extends <a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="c
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#writeToStream(long)">writeToStream</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></code></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="closeAll()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>closeAll</h4>
-<pre>public&nbsp;void&nbsp;closeAll()
-              throws java.io.IOException</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#closeAll()">RandomAccessOutputStream</a></code></strong></div>
-<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#closeAll()">closeAll</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>

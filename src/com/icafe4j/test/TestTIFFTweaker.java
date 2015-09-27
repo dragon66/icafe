@@ -176,7 +176,6 @@ public class TestTIFFTweaker extends TestBase {
 		}
 		
 		rin.close();
-		fin.close();
 	}
 	
 	// This method is for testing only

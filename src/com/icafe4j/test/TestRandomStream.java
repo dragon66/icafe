@@ -56,6 +56,5 @@ public class TestRandomStream extends TestBase {
 		logger.info("{}", randin.readU16Fixed16Number());
 		logger.info("{}", randin.readU8Fixed8Number());
 		randin.close();
-		fin.close();
 	}
 }

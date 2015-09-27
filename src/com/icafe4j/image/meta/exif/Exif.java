@@ -210,7 +210,7 @@ public abstract class Exif extends Metadata {
 		    		}
 		    	}
 		    }
-		    exifIn.close();		
+		    exifIn.shallowClose();		
 		    isDataRead = true;
 		}
 	}

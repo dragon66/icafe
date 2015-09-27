@@ -95,7 +95,7 @@ public abstract class Metadata implements MetadataReader {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				TIFFTweaker.extractThumbnail(randIS, pathToThumbnail);
-				randIS.close();
+				randIS.shallowClose();
 				break;
 			case PNG:
 				LOGGER.info("PNG image format does not contain any thumbnail");
@@ -110,7 +110,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("Thumbnail extracting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public static void extractThumbnails(String image, String pathToThumbnail) throws IOException {
@@ -130,8 +130,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
 				TIFFTweaker.insertComment(comment, randIS, randOS);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case PNG:
 				PNGTweaker.insertComment(peekHeadInputStream, os, comment);
@@ -148,7 +148,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("comment data inserting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public static void insertExif(InputStream is, OutputStream os, Exif exif) throws IOException {
@@ -175,8 +175,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
 				TIFFTweaker.insertExif(randIS, randOS, exif, update);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case GIF:
 			case PCX:
@@ -189,7 +189,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("EXIF data inserting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public static void insertICCProfile(InputStream is, OutputStream out, ICC_Profile icc_profile) throws IOException {
@@ -209,8 +209,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
 				TIFFTweaker.insertICCProfile(icc_profile, 0, randIS, randOS);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case GIF:
 			case PCX:
@@ -222,7 +222,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("ICCProfile data inserting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 
 	public static void insertIPTC(InputStream is, OutputStream out, Collection<IPTCDataSet> iptcs) throws IOException {
@@ -242,8 +242,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
 				TIFFTweaker.insertIPTC(randIS, randOS, iptcs, update);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case PNG:
 			case GIF:
@@ -256,7 +256,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("IPTC data inserting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public static void insertIRB(InputStream is, OutputStream out, Collection<_8BIM> bims) throws IOException {
@@ -276,8 +276,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
 				TIFFTweaker.insertIRB(randIS, randOS, bims, update);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case PNG:
 			case GIF:
@@ -290,7 +290,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("IRB data inserting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public static void insertIRBThumbnail(InputStream is, OutputStream out, BufferedImage thumbnail) throws IOException {
@@ -306,8 +306,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
 				TIFFTweaker.insertThumbnail(randIS, randOS, thumbnail);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case PNG:
 			case GIF:
@@ -320,7 +320,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("IRB thumbnail inserting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public static void insertXMP(InputStream is, OutputStream out, XMP xmp) throws IOException {
@@ -336,8 +336,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
 				TIFFTweaker.insertXMP(xmp, randIS, randOS);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case PNG:
 				PNGTweaker.insertXMP(peekHeadInputStream, out, xmp);
@@ -354,7 +354,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("XMP inserting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public static void insertXMP(InputStream is, OutputStream out, String xmp) throws IOException {
@@ -370,8 +370,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(out);
 				TIFFTweaker.insertXMP(xmp, randIS, randOS);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case PNG:
 				PNGTweaker.insertXMP(peekHeadInputStream, out, xmp);
@@ -388,7 +388,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("XMP inserting is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
@@ -420,7 +420,7 @@ public abstract class Metadata implements MetadataReader {
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				metadataMap = TIFFTweaker.readMetadata(randIS);
-				randIS.close();
+				randIS.shallowClose();
 				break;
 			case PNG:
 				metadataMap = PNGTweaker.readMetadata(peekHeadInputStream);
@@ -436,7 +436,7 @@ public abstract class Metadata implements MetadataReader {
 				throw new IllegalArgumentException("Metadata reading is not supported for " + imageType + " image");
 				
 		}	
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 		
 		return metadataMap;
 	}
@@ -465,8 +465,8 @@ public abstract class Metadata implements MetadataReader {
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
 				TIFFTweaker.removeMetadata(randIS, randOS, metadataTypes);
-				randIS.close();
-				randOS.close();
+				randIS.shallowClose();
+				randOS.shallowClose();
 				break;
 			case PCX:
 			case TGA:
@@ -477,7 +477,7 @@ public abstract class Metadata implements MetadataReader {
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("Metadata removing is not supported for " + imageType + " image");				
 		}
-		peekHeadInputStream.close();
+		peekHeadInputStream.shallowClose();
 	}
 	
 	public Metadata(MetadataType type, byte[] data) {

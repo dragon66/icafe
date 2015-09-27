@@ -128,7 +128,7 @@ public final class ImageIO {
 			bi = getReader(imageType).read(is);
 		}
 		// Close the PeekHeadInputStream we created internally
-		if(closeStream) is.close();		
+		if(closeStream) ((PeekHeadInputStream)is).shallowClose();		
 		
 		return bi;
 	}

@@ -687,7 +687,7 @@ public class JPEGTweaker {
 	    }
 		// Close the input stream in case it's an instance of RandomAccessInputStream
 		if(is instanceof RandomAccessInputStream)
-			is.close();
+			((RandomAccessInputStream)is).shallowClose();
 	}
 	
 	/**

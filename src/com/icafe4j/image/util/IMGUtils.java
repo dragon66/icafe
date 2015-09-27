@@ -963,7 +963,7 @@ public class IMGUtils {
      *    {@code targetWidth} or {@code targetHeight} is
      *    smaller than the original dimensions, and generally only when
      *    the {@code BILINEAR} hint is specified)
-     * @return a scaled version of the original {@codey BufferedImage}
+     * @return a scaled version of the original {@code BufferedImage}
      */
 	 // From https://today.java.net/article/2007/03/30/perils-imagegetscaledinstance
     public static BufferedImage getScaledInstance(BufferedImage img,

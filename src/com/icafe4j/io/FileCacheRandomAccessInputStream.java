@@ -179,17 +179,16 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
     	if(closed) return;
         cache.close();
         cacheFile.delete();
+        src.close();
         src = null;
         closed = true;
     }
-
-	@Override
-	public void closeAll() throws IOException {
-		if(closed) return;
+    
+    public void shallowClose() throws IOException {
+    	if(closed) return;
         cache.close();
         cacheFile.delete();
-        src.close();
         src = null;
-        closed = true;		
-	}
+        closed = true;
+    }
 }

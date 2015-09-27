@@ -57,14 +57,14 @@ public class PeekHeadInputStream extends InputStream {
 		}
 	}
 	
-	public void close() throws IOException {
+	public void shallowClose() throws IOException {
 		if(closed) return;
 		buffer = null;
 		src = null;
 		closed = true;
 	}
 	
-	public void closeAll() throws IOException {
+	public void close() throws IOException {
 		if(closed) return;
 		buffer = null;
 		src.close();
