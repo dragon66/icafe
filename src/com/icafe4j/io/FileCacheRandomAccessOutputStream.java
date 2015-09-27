@@ -69,6 +69,7 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
         super.close();
         cache.close();
         cacheFile.delete();
+        dist = null;
         closed = true;
     }
     
@@ -165,4 +166,15 @@ public class FileCacheRandomAccessOutputStream extends RandomAccessOutputStream 
            flushPos += nbytes;
         }
     }
+
+	@Override
+	public void closeAll() throws IOException {
+		if(closed) return;
+        super.close();
+        cache.close();
+        cacheFile.delete();
+        dist.close();
+        dist = null;
+        closed = true;		
+	}
 }

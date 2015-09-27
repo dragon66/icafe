@@ -60,11 +60,7 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
      * Closes the RandomAccessInputStream and it's underlying stream
      * @throws IOException
      */
-    public void closeAll() throws IOException {
-    	close();
-    	dist.close();
-    	dist = null;
-    }
+    public abstract void closeAll() throws IOException;
     
     /**
      * Check to make sure that this stream has not been closed

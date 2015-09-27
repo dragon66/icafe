@@ -178,20 +178,26 @@ extends <a href="../../../com/icafe4j/io/RandomAccessInputStream.html" title="cl
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/MemoryCacheRandomAccessInputStream.html#close()">close</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/MemoryCacheRandomAccessInputStream.html#closeAll()">closeAll</a></strong>()</code>
+<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/MemoryCacheRandomAccessInputStream.html#getStreamPointer()">getStreamPointer</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/MemoryCacheRandomAccessInputStream.html#read()">read</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/MemoryCacheRandomAccessInputStream.html#read(byte[],%20int,%20int)">read</a></strong>(byte[]&nbsp;bytes,
     int&nbsp;off,
     int&nbsp;len)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/MemoryCacheRandomAccessInputStream.html#seek(long)">seek</a></strong>(long&nbsp;loc)</code>&nbsp;</td>
 </tr>
@@ -201,7 +207,7 @@ extends <a href="../../../com/icafe4j/io/RandomAccessInputStream.html" title="cl
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.icafe4j.io.<a href="../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></h3>
-<code><a href="../../../com/icafe4j/io/RandomAccessInputStream.html#closeAll()">closeAll</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#ensureOpen()">ensureOpen</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#finalize()">finalize</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#getEndian()">getEndian</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readBoolean()">readBoolean</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readByte()">readByte</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readChar()">readChar</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readDouble()">readDouble</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readFloat()">readFloat</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readFully(byte[])">readFully</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readFully(byte[],%20int,%20int)">readFully</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readInt()">readInt</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readLine()">readLine</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readLong()">readLong</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readS15Fixed16Number()">readS15Fixed16Number</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readShort()">readShort</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readU16Fixed16Number()">readU16Fixed16Number</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readU8Fixed8Number()">readU8Fixed8Number</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readUnsignedByte()">readUnsignedByte</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readUnsignedInt()">readUnsignedInt</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readUnsignedShort()">readUnsignedShort</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readUTF()">readUTF</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#setReadStrategy(com.icafe4j.io.ReadStrategy)">setReadStrategy</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#skipBytes(int)">skipBytes</a></code></li>
+<code><a href="../../../com/icafe4j/io/RandomAccessInputStream.html#ensureOpen()">ensureOpen</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#finalize()">finalize</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#getEndian()">getEndian</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readBoolean()">readBoolean</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readByte()">readByte</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readChar()">readChar</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readDouble()">readDouble</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readFloat()">readFloat</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readFully(byte[])">readFully</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readFully(byte[],%20int,%20int)">readFully</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readInt()">readInt</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readLine()">readLine</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readLong()">readLong</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readS15Fixed16Number()">readS15Fixed16Number</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readShort()">readShort</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readU16Fixed16Number()">readU16Fixed16Number</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readU8Fixed8Number()">readU8Fixed8Number</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readUnsignedByte()">readUnsignedByte</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readUnsignedInt()">readUnsignedInt</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readUnsignedShort()">readUnsignedShort</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#readUTF()">readUTF</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#setReadStrategy(com.icafe4j.io.ReadStrategy)">setReadStrategy</a>, <a href="../../../com/icafe4j/io/RandomAccessInputStream.html#skipBytes(int)">skipBytes</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.io.InputStream">
@@ -315,7 +321,7 @@ extends <a href="../../../com/icafe4j/io/RandomAccessInputStream.html" title="cl
 <a name="seek(long)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>seek</h4>
 <pre>public&nbsp;void&nbsp;seek(long&nbsp;loc)
@@ -323,6 +329,23 @@ extends <a href="../../../com/icafe4j/io/RandomAccessInputStream.html" title="cl
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../com/icafe4j/io/RandomAccessInputStream.html#seek(long)">seek</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></code></dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="closeAll()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>closeAll</h4>
+<pre>public&nbsp;void&nbsp;closeAll()
+              throws java.io.IOException</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessInputStream.html#closeAll()">RandomAccessInputStream</a></code></strong></div>
+<div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../com/icafe4j/io/RandomAccessInputStream.html#closeAll()">closeAll</a></code>&nbsp;in class&nbsp;<code><a href="../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></code></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>

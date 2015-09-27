@@ -49,12 +49,7 @@ public abstract class RandomAccessInputStream extends InputStream implements Dat
      * Closes the RandomAccessInputStream and it's underlying stream
      * @throws IOException
      */
-    public void closeAll() throws IOException {
-    	close();
-    	src.close();
-    	src = null;
-    }
-    
+    public abstract void closeAll() throws IOException;    
    
     /**
      * Check to make sure that this stream has not been closed

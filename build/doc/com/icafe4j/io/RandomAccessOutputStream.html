@@ -186,7 +186,7 @@ implements java.io.DataOutput</pre>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#close()">close</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
+<td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/io/RandomAccessOutputStream.html#closeAll()">closeAll</a></strong>()</code>
 <div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
 </td>
@@ -413,8 +413,8 @@ implements java.io.DataOutput</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>closeAll</h4>
-<pre>public&nbsp;void&nbsp;closeAll()
-              throws java.io.IOException</pre>
+<pre>public abstract&nbsp;void&nbsp;closeAll()
+                       throws java.io.IOException</pre>
 <div class="block">Closes the RandomAccessInputStream and it's underlying stream</div>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
