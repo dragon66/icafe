@@ -12,7 +12,8 @@
  * JPEGTweaker.java
  *
  * Who   Date       Description
- * ====  =======    ============================================================
+ * ====  =======    =======================================================
+ * WY    28Sep2015  Fixed "unsupportedOperationException" with insertExif()
  * WY    26Sep2015  Added insertComment(InputStream, OutputStream, String)
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    02Jul2015  Added support for APP14 segment reading
@@ -613,11 +614,11 @@ public class JPEGTweaker {
 			    		gpsSubIFD.addFields(oldGpsSubIFD.getFields());
 					}
 		    	}
-		    	if(imageIFD != null) {
-		    		if(newImageIFD != null)
-		    			imageIFD.addFields(newImageIFD.getFields());
-		    	} else
-		    		imageIFD = newImageIFD;
+		    	if(newImageIFD != null) {
+		    		if(imageIFD == null)
+		    			imageIFD = new IFD();
+		    		imageIFD.addFields(newImageIFD.getFields());
+		    	}	    	
 		    	if(exifSubIFD != null) {
 		    		if(newExifSubIFD != null)
 		    			exifSubIFD.addFields(newExifSubIFD.getFields());
