@@ -218,11 +218,35 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;<br>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#insertionsort(T[])">insertionsort</a></strong>(T[]&nbsp;array)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;<br>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#insertionsort(T[],%20int,%20int)">insertionsort</a></strong>(T[]&nbsp;array,
              int&nbsp;start,
              int&nbsp;end)</code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#mergesort(int[])">mergesort</a></strong>(int[]&nbsp;array)</code>&nbsp;</td>
+</tr>
 <tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#mergesort(int[],%20int,%20int)">mergesort</a></strong>(int[]&nbsp;array,
+         int&nbsp;left,
+         int&nbsp;right)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;<br>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#mergesort(T[])">mergesort</a></strong>(T[]&nbsp;array)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;<br>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#mergesort(T[],%20int,%20int)">mergesort</a></strong>(T[]&nbsp;array,
+         int&nbsp;left,
+         int&nbsp;right)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#packByteArray(byte[],%20int,%20int,%20int)">packByteArray</a></strong>(byte[]&nbsp;input,
              int&nbsp;start,
@@ -231,7 +255,7 @@ extends java.lang.Object</pre>
 <div class="block">Packs all or part of the input byte array which uses "bits" bits to use all 8 bits.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#packByteArray(byte[],%20int,%20int,%20int,%20int)">packByteArray</a></strong>(byte[]&nbsp;input,
              int&nbsp;stride,
@@ -241,15 +265,19 @@ extends java.lang.Object</pre>
 <div class="block">Packs all or part of the input byte array which uses "bits" bits to use all 8 bits.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#quicksort(int[])">quicksort</a></strong>(int[]&nbsp;array)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#quicksort(int[],%20int,%20int)">quicksort</a></strong>(int[]&nbsp;array,
          int&nbsp;start,
          int&nbsp;end)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;<br>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#quicksort(T[])">quicksort</a></strong>(T[]&nbsp;array)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;<br>void</code></td>
@@ -287,115 +315,119 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;<br>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#shellsort(T[])">shellsort</a></strong>(T[]&nbsp;array)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static &lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;<br>void</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#shellsort(T[],%20int,%20int)">shellsort</a></strong>(T[]&nbsp;array,
          int&nbsp;start,
          int&nbsp;end)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#subArray(byte[],%20int,%20int)">subArray</a></strong>(byte[]&nbsp;src,
         int&nbsp;offset,
         int&nbsp;len)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static float[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#to16BitFloatArray(byte[],%20boolean)">to16BitFloatArray</a></strong>(byte[]&nbsp;data,
                  boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static float[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#to24BitFloatArray(byte[],%20boolean)">to24BitFloatArray</a></strong>(byte[]&nbsp;data,
                  boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#to32BitsLongArray(byte[],%20boolean)">to32BitsLongArray</a></strong>(byte[]&nbsp;data,
                  boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toByteArray(int)">toByteArray</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toByteArray(int[],%20boolean)">toByteArray</a></strong>(int[]&nbsp;data,
            boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toByteArray(long[],%20boolean)">toByteArray</a></strong>(long[]&nbsp;data,
            boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toByteArray(short)">toByteArray</a></strong>(short&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toByteArray(short[],%20boolean)">toByteArray</a></strong>(short[]&nbsp;data,
            boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toByteArrayMM(int)">toByteArrayMM</a></strong>(int&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static byte[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toByteArrayMM(short)">toByteArrayMM</a></strong>(short&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toDoubleArray(byte[],%20boolean)">toDoubleArray</a></strong>(byte[]&nbsp;data,
              boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toDoubleArray(byte[],%20int,%20int,%20boolean)">toDoubleArray</a></strong>(byte[]&nbsp;data,
              int&nbsp;offset,
              int&nbsp;len,
              boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static float</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toFloat(int)">toFloat</a></strong>(int&nbsp;lbits)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static float[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toFloatArray(byte[],%20boolean)">toFloatArray</a></strong>(byte[]&nbsp;data,
             boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static float[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toFloatArray(byte[],%20int,%20int,%20boolean)">toFloatArray</a></strong>(byte[]&nbsp;data,
             int&nbsp;offset,
             int&nbsp;len,
             boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toIntArray(byte[],%20boolean)">toIntArray</a></strong>(byte[]&nbsp;data,
           boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toIntArray(byte[],%20int,%20int,%20boolean)">toIntArray</a></strong>(byte[]&nbsp;data,
           int&nbsp;offset,
           int&nbsp;len,
           boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static long[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toLongArray(byte[],%20boolean)">toLongArray</a></strong>(byte[]&nbsp;data,
            boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static long[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toLongArray(byte[],%20int,%20int,%20boolean)">toLongArray</a></strong>(byte[]&nbsp;data,
            int&nbsp;offset,
            int&nbsp;len,
            boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.lang.Object</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toNBits(int,%20byte[],%20int,%20boolean)">toNBits</a></strong>(int&nbsp;nBits,
        byte[]&nbsp;input,
@@ -405,32 +437,32 @@ extends java.lang.Object</pre>
  can hold the nBits data.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toPrimitive(java.lang.Double[])">toPrimitive</a></strong>(java.lang.Double[]&nbsp;doubles)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static float[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toPrimitive(java.lang.Float[])">toPrimitive</a></strong>(java.lang.Float[]&nbsp;floats)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toPrimitive(java.lang.Integer[])">toPrimitive</a></strong>(java.lang.Integer[]&nbsp;integers)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static long[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toPrimitive(java.lang.Long[])">toPrimitive</a></strong>(java.lang.Long[]&nbsp;longs)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static short[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toPrimitive(java.lang.Short[])">toPrimitive</a></strong>(java.lang.Short[]&nbsp;shorts)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static short[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toShortArray(byte[],%20boolean)">toShortArray</a></strong>(byte[]&nbsp;data,
             boolean&nbsp;bigEndian)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static short[]</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/util/ArrayUtils.html#toShortArray(byte[],%20int,%20int,%20boolean)">toShortArray</a></strong>(byte[]&nbsp;data,
             int&nbsp;offset,
@@ -666,6 +698,17 @@ public static&nbsp;&lt;T&gt;&nbsp;T[]&nbsp;concat(java.lang.Class&lt;T&gt;&nbsp;
                  int&nbsp;end)</pre>
 </li>
 </ul>
+<a name="insertionsort(java.lang.Comparable[])">
+<!--   -->
+</a><a name="insertionsort(T[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertionsort</h4>
+<pre>public static&nbsp;&lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;void&nbsp;insertionsort(T[]&nbsp;array)</pre>
+</li>
+</ul>
 <a name="insertionsort(java.lang.Comparable[],int,int)">
 <!--   -->
 </a><a name="insertionsort(T[], int, int)">
@@ -677,6 +720,50 @@ public static&nbsp;&lt;T&gt;&nbsp;T[]&nbsp;concat(java.lang.Class&lt;T&gt;&nbsp;
 <pre>public static&nbsp;&lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;void&nbsp;insertionsort(T[]&nbsp;array,
                                                              int&nbsp;start,
                                                              int&nbsp;end)</pre>
+</li>
+</ul>
+<a name="mergesort(int[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mergesort</h4>
+<pre>public static&nbsp;void&nbsp;mergesort(int[]&nbsp;array)</pre>
+</li>
+</ul>
+<a name="mergesort(int[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mergesort</h4>
+<pre>public static&nbsp;void&nbsp;mergesort(int[]&nbsp;array,
+             int&nbsp;left,
+             int&nbsp;right)</pre>
+</li>
+</ul>
+<a name="mergesort(java.lang.Comparable[])">
+<!--   -->
+</a><a name="mergesort(T[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mergesort</h4>
+<pre>public static&nbsp;&lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;void&nbsp;mergesort(T[]&nbsp;array)</pre>
+</li>
+</ul>
+<a name="mergesort(java.lang.Comparable[],int,int)">
+<!--   -->
+</a><a name="mergesort(T[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mergesort</h4>
+<pre>public static&nbsp;&lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;void&nbsp;mergesort(T[]&nbsp;array,
+                                                         int&nbsp;left,
+                                                         int&nbsp;right)</pre>
 </li>
 </ul>
 <a name="packByteArray(byte[], int, int, int)">
@@ -732,6 +819,17 @@ public static&nbsp;&lt;T&gt;&nbsp;T[]&nbsp;concat(java.lang.Class&lt;T&gt;&nbsp;
 <pre>public static&nbsp;void&nbsp;quicksort(int[]&nbsp;array,
              int&nbsp;start,
              int&nbsp;end)</pre>
+</li>
+</ul>
+<a name="quicksort(java.lang.Comparable[])">
+<!--   -->
+</a><a name="quicksort(T[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>quicksort</h4>
+<pre>public static&nbsp;&lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;void&nbsp;quicksort(T[]&nbsp;array)</pre>
 </li>
 </ul>
 <a name="quicksort(java.lang.Comparable[],int,int)">
@@ -806,6 +904,17 @@ public static&nbsp;&lt;T&gt;&nbsp;T[]&nbsp;concat(java.lang.Class&lt;T&gt;&nbsp;
 <pre>public static&nbsp;void&nbsp;shellsort(int[]&nbsp;array,
              int&nbsp;start,
              int&nbsp;end)</pre>
+</li>
+</ul>
+<a name="shellsort(java.lang.Comparable[])">
+<!--   -->
+</a><a name="shellsort(T[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>shellsort</h4>
+<pre>public static&nbsp;&lt;T extends java.lang.Comparable&lt;? super T&gt;&gt;&nbsp;void&nbsp;shellsort(T[]&nbsp;array)</pre>
 </li>
 </ul>
 <a name="shellsort(java.lang.Comparable[],int,int)">
