@@ -1,7 +1,6 @@
 ***************************
-Last modified on 09/30/2015
+Last modified on 09/27/2015
 ***************************
-30Sep2015  Added mergesort() to ArrayUtils
 27Sep2015  Added shallowClose() to stream classes
 26Sep2015  Added insertComment() to Metadata
 26Sep2015  Revised IO classes and added PeekHeadInputStream

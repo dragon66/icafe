@@ -41,14 +41,14 @@ public class TestArrayUtils extends TestBase {
 		int j=0;
 		Integer[] array = new Integer[NUMS];
 		
-        for( int i = GAP; i != 0; i = ( i + GAP ) % NUMS ) {
-            array[++j] = i;
+        for( int i = GAP; i != 0; i = ( i + GAP ) % NUMS ){
+            array[++j] = new Integer( i );
         }
         
         logger.info("{}", Arrays.deepToString(array));
         
-        ArrayUtils.mergesort(array, 1, array.length - 1);
-        
+        ArrayUtils.shellsort(array, 1, array.length-1);
+
         logger.info("{}", Arrays.deepToString(array));
         
         logger.info("--Packing byte array--");
@@ -57,10 +57,12 @@ public class TestArrayUtils extends TestBase {
  	}
 }
 
-class A {
+class A 
+{
 	public String toString() {return "A";}
 }
 
-class B extends A {
+class B extends A 
+{
 	public String toString(){return "B";}
 }
