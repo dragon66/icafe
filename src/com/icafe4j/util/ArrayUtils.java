@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ======================================================================
+ * WY    30Sep2015  Added mergesort()
  * WY    08Sep2015  Changed Shell sort to use Knuth's sequence
  * WY    14Jun2015  Bug fix for toNBits() to use long data type internally 
  * WY    04Jun2015  Rewrote all concatenation related methods
@@ -133,7 +134,7 @@ public class ArrayUtils
 	        n--;
 	        doMore = false;  // assume this is our last pass over the array
 	    
-	        for (int i=0; i<n; i++) {
+	        for (int i=0; i < n; i++) {
 	            if (array[i] > array[i+1]) {
 	                // exchange elements
 	                int temp = array[i];
@@ -153,7 +154,7 @@ public class ArrayUtils
 	        n--;
 	        doMore = false;  // assume this is our last pass over the array
 	    
-	        for (int i=0; i<n; i++) {
+	        for (int i = 0; i < n; i++) {
 	            if (array[i].compareTo(array[i+1]) > 0) {
 	                // exchange elements
 	                T temp = array[i];
@@ -469,17 +470,16 @@ public class ArrayUtils
   	}
 	 
 	// Insertion sort
-    public static void insertionsort(int[] array)
-    {
-	   insertionsort(array, 0, array.length-1);
+    public static void insertionsort(int[] array) {
+	   insertionsort(array, 0, array.length - 1);
     }
 
-	public static void insertionsort(int[] array, int start, int end)
-    {
+	public static void insertionsort(int[] array, int start, int end) {
 	   int j;
 
-	   for (int i = start+1; i < end+1; i++)
+	   for (int i = start + 1; i < end + 1; i++)
 	   {
+		   
 		   int temp = array[i];
 		   for ( j = i; j > start && temp <= array[j-1]; j-- )
 		       array[j] = array[j-1];
@@ -489,11 +489,15 @@ public class ArrayUtils
     }
 	
 	// Insertion sort
-    public static <T extends Comparable<? super T>> void insertionsort(T[] array, int start, int end)
-    {
+    public static <T extends Comparable<? super T>> void insertionsort(T[] array) {
+    	insertionsort(array, 0, array.length - 1);
+    }
+    
+	// Insertion sort
+    public static <T extends Comparable<? super T>> void insertionsort(T[] array, int start, int end) {
 	   int j;
 
-	   for (int i = start+1; i < end+1; i++)
+	   for (int i = start + 1; i < end + 1; i++)
 	   {
 		   T temp = array[i];
 		   for ( j = i; j > start && temp.compareTo(array[j-1]) <= 0; j-- )
@@ -502,7 +506,107 @@ public class ArrayUtils
 		   array[j] = temp;
 	   }
     }
-	
+    
+    // Merge sort
+    public static void mergesort(int[] array) { 
+	   mergesort(array, new int[array.length], 0, array.length - 1);
+    }
+    
+    public static void mergesort(int[] array, int left, int right) {
+    	if(left < 0 || right > array.length - 1) throw new IllegalArgumentException("Array index out of bounds");
+        mergesort(array, new int[array.length], left, right);
+    }
+    
+    private static void mergesort(int[] array, int[] temp, int left, int right) {
+    	// check the base case
+        if (left < right) {
+          // Get the index of the element which is in the middle
+          int middle = left + (right - left) / 2;
+          // Sort the left side of the array
+          mergesort(array, temp, left, middle);
+          // Sort the right side of the array
+          mergesort(array, temp, middle + 1, right);
+          // Merge the left and the right
+          merge(array, temp, left, middle, right);
+        }
+    }
+    
+    public static <T extends Comparable<? super T>> void mergesort(T[] array) {
+    	mergesort(array, 0, array.length - 1);
+    }
+    
+    public static <T extends Comparable<? super T>> void mergesort(T[] array, int left, int right) {
+     	if(left < 0 || right > array.length - 1) throw new IllegalArgumentException("Array index out of bounds");
+        @SuppressWarnings("unchecked")
+		T[] temp = (T[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+    	mergesort(array, temp, left, right);
+    }
+    
+    // Merge sort
+    private static <T extends Comparable<? super T>> void mergesort(T[] array, T[] temp, int left, int right) {
+    	// check the base case
+        if (left < right) {
+          // Get the index of the element which is in the middle
+          int middle = left + (right - left) / 2;
+          // Sort the left side of the array
+          mergesort(array, temp, left, middle);
+          // Sort the right side of the array
+          mergesort(array, temp, middle + 1, right);
+          // Merge the left and the right
+          merge(array, temp, left, middle, right);
+        }
+    }   
+    
+    private static <T extends Comparable<? super T>> void merge(T[] array, T[] temp, int left, int middle, int right) {
+    	// Copy both parts into the temporary array
+        for (int i = left; i <= right; i++) {
+          temp[i] = array[i];
+        }
+        int i = left;
+        int j = middle + 1;
+        int k = left;
+        while (i <= middle && j <= right) {
+            if (temp[i].compareTo(temp[j]) <= 0) {
+                array[k] = temp[i];
+                i++;
+            } else {
+                array[k] = temp[j];
+                j++;
+            }
+            k++;
+        }
+        while (i <= middle) {
+            array[k] = temp[i];
+            k++;
+            i++;
+        }        
+    }
+    
+    private static void merge(int[] array, int[] temp, int left, int middle, int right) {
+    	// Copy both parts into the temporary array
+        for (int i = left; i <= right; i++) {
+          temp[i] = array[i];
+        }
+        int i = left;
+        int j = middle + 1;
+        int k = left;
+        while (i <= middle && j <= right) {
+            if (temp[i] <= temp[j]) {
+                array[k] = temp[i];
+                i++;
+            } else {
+                array[k] = temp[j];
+                j++;
+            }
+            k++;
+        }
+        while (i <= middle) {
+            array[k] = temp[i];
+            k++;
+            i++;
+        }        
+    }
+    
 	/**
 	 * Packs all or part of the input byte array which uses "bits" bits to use all 8 bits.
 	 * 
@@ -637,6 +741,11 @@ public class ArrayUtils
     }
     
     // Quick sort
+    public static <T extends Comparable<? super T>> void quicksort (T[] array) {
+    	quicksort(array, 0, array.length);
+    }
+    
+    // Quick sort
     public static <T extends Comparable<? super T>> void quicksort (T[] array, int low, int high) {
     	int i = low, j = high;
 		// Get the pivot element from the middle of the list
@@ -767,6 +876,11 @@ public class ArrayUtils
     		gap /= 3;
     	}
 	}
+    
+    // Shell sort
+    public static <T extends Comparable<? super T>> void shellsort(T[] array) {
+    	shellsort(array, 0, array.length);
+    }
    	
     // Shell sort
     public static <T extends Comparable<? super T>> void shellsort(T[] array, int start, int end) {
