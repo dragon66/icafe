@@ -742,7 +742,7 @@ public class ArrayUtils
     
     // Quick sort
     public static <T extends Comparable<? super T>> void quicksort (T[] array) {
-    	quicksort(array, 0, array.length);
+    	quicksort(array, 0, array.length - 1);
     }
     
     // Quick sort
@@ -850,11 +850,11 @@ public class ArrayUtils
    	
     // Shell sort
     public static void shellsort(int[] array) {
-    	shellsort(array, 0, array.length-1);
+    	shellsort(array, 0, array.length - 1);
     }
    	
     public static void shellsort(int[] array, int start, int end) {
-    	if(start < 0 || end < 0 || start > end) throw new IllegalArgumentException("Invalid array index");
+    	if(start < 0 || end < 0 || start > end || end > array.length -1) throw new IllegalArgumentException("Array index out of bounds");
     	int gap = 1;
     	int len = end - start + 1;
  	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
@@ -879,12 +879,12 @@ public class ArrayUtils
     
     // Shell sort
     public static <T extends Comparable<? super T>> void shellsort(T[] array) {
-    	shellsort(array, 0, array.length);
+    	shellsort(array, 0, array.length - 1);
     }
    	
     // Shell sort
     public static <T extends Comparable<? super T>> void shellsort(T[] array, int start, int end) {
-    	if(start < 0 || end < 0 || start > end) throw new IllegalArgumentException("Invalid array index");
+    	if(start < 0 || end < 0 || start > end || end > array.length - 1) throw new IllegalArgumentException("Array index out of bounds");
 	   	int gap = 1;
 	   	int len = end - start + 1;
   	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
