@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ==========================================================
+ * WY    05Oct2015  Revised writeFrame() to crop images outside logical screen
  * WY    18Aug2015  Added support to use ImageParam to control dither
  * WY    17Aug2015  Revised to write animated GIF frame by frame
  * WY    17Nov2014  Revised writeGraphicControlBlock() to take more parameters
@@ -404,14 +405,18 @@ public class GIFWriter extends ImageWriter {
     	BufferedImage image = frame.getFrame();
     	int imageWidth = image.getWidth();
 		int imageHeight = image.getHeight();
+		int frameLeft = frame.getLeftPosition();
+		int frameTop = frame.getTopPosition();
 		// Determine the logical screen dimension
 		if(firstFrame) {
 			if(logicalScreenWidth <= 0)
 				logicalScreenWidth = imageWidth;
 			if(logicalScreenHeight <= 0)
 				logicalScreenHeight = imageHeight;
-		}			
-		int[] pixels = IMGUtils.getRGB(image);//image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+		}
+		if((frameLeft + imageWidth) > logicalScreenWidth) imageWidth = logicalScreenWidth - frameLeft;
+		if((frameTop + imageHeight) > logicalScreenHeight) imageHeight = logicalScreenHeight - frameTop;
+		int[] pixels = IMGUtils.getRGB(image.getSubimage(0, 0, imageWidth, imageHeight));
 		// Handle transparency color if explicitly set
     	if(frame.getTransparencyFlag() == GIFFrame.TRANSPARENCY_INDEX_SET && frame.getTransparentColor() != -1) {
 			int transColor = (frame.getTransparentColor() & 0x00ffffff);				
@@ -440,7 +445,9 @@ public class GIFWriter extends ImageWriter {
 				logicalScreenHeight = imageHeight;
 		}
 		if(delay <= 0) delay = 100;
-		int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
+		if(imageWidth > logicalScreenWidth) imageWidth = logicalScreenWidth;
+		if(imageHeight > logicalScreenHeight) imageHeight = logicalScreenHeight;
+		int[] pixels = IMGUtils.getRGB(frame.getSubimage(0, 0, imageWidth, imageHeight));
 		writeFrame(pixels, imageWidth, imageHeight, 0, 0, delay, os);
     }
 

@@ -1,6 +1,8 @@
 ***************************
-Last modified on 09/30/2015
+Last modified on 10/05/2015
 ***************************
+05Oct2015  Revised GIFWriter writeFrame() to crop images outside
+           logical screen boundary
 30Sep2015  Added mergesort() to ArrayUtils
 27Sep2015  Added shallowClose() to stream classes
 26Sep2015  Added insertComment() to Metadata
