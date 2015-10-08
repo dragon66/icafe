@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==========================================================
+ * WY    08Oct2015  Added getGIFFrames()
  * WY    16Feb2015  Removed unnecessary variables - flags and flags2 
  * WY    02Jan2015  Added getFrames() and getFrameCount() for animated GIF 
  * WY    18Nov2014  Fixed getFrameAsBufferedImageEx() bug with disposal method 
@@ -36,12 +37,14 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.compression.lzw.LZWTreeDecoder;
+import com.icafe4j.image.gif.GIFFrame;
 import com.icafe4j.io.IOUtils;
 
 /** 
@@ -55,19 +58,27 @@ import com.icafe4j.io.IOUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.1 03/16/2012
  */
-public class GIFReader extends ImageReader {	   
+public class GIFReader extends ImageReader {
+	// Global fields
 	private GifHeader gifHeader;
-	private int disposalMethod = -1;
-	private boolean transparent;
-	private int transparent_color = -1;
-	private int colorsUsed;
-	private int image_x;
-	private int image_y;
 	private int logicalScreenWidth;
 	private int logicalScreenHeight;
 	private Color backgroundColor = new Color(255, 255, 255);
 	private int[] globalColorPalette;
-	private List<BufferedImage> frames; // To keep track of all the frames
+	// Graphic control extension specific fields
+	private int disposalMethod = GIFFrame.DISPOSAL_UNSPECIFIED;
+	private int userInputFlag = GIFFrame.USER_INPUT_NONE;
+	private int transparencyFlag = GIFFrame.TRANSPARENCY_INDEX_NONE;
+	private int transparent_color = GIFFrame.TRANSPARENCY_COLOR_NONE;
+	private int delay;
+	// Frame specific fields
+	private int colorsUsed;
+	private int image_x;
+	private int image_y;
+
+	// To keep track of all the frames
+	private List<GIFFrame> gifFrames;
+	private List<BufferedImage> frames;
 	
 	// BufferedImage with the width and height of the logical screen to draw frames upon
 	private BufferedImage baseImage;
@@ -233,21 +244,29 @@ public class GIFReader extends ImageReader {
 	/**
 	 * Get the total number of frames read by this GIFReader.
 	 *  
-	 * @return number of frames read by this GIFReader or -1 if not read yet
+	 * @return number of frames read by this GIFReader or 0 if not read yet
 	 */
 	public int getFrameCount() {
 		if(frames != null) // We have already read the image
 			return frames.size();
-		return -1; // We haven't read the image yet
+		return super.getFrameCount(); // We haven't read the image yet
 	}
 	
 	/**
 	 * Get the total frames read by this GIFRreader.
 	 * 
-	 * @return a list of the total frames read by this GIFRreader or null if not read yet
+	 * @return a list of the total frames read by this GIFRreader or empty list if not read yet
 	 */
 	public List<BufferedImage> getFrames() {
-		return frames;
+		if(frames != null)
+			return Collections.unmodifiableList(frames);
+		return Collections.emptyList();
+	}
+	
+	public List<GIFFrame> getGIFFrames() {
+		if(gifFrames != null)
+			return Collections.unmodifiableList(gifFrames);
+		return Collections.emptyList();			
 	}
 
 	public int getImageX() {
@@ -269,11 +288,11 @@ public class GIFReader extends ImageReader {
 	public int getTransparentColor() {
 		if(transparent_color >= 0)
 			return rgbColorPalette[transparent_color]&0xffffff; // We only need RGB, no alpha
-		return -1;
+		return GIFFrame.TRANSPARENCY_COLOR_NONE;
 	}
     
 	public boolean isTransparent() {
-		return transparent;
+		return transparencyFlag == GIFFrame.TRANSPARENCY_INDEX_SET;
 	}
     
 	private byte[] readFrame(InputStream is) throws Exception {
@@ -281,11 +300,8 @@ public class GIFReader extends ImageReader {
 		if(gifHeader == null) {
 			if(!readGlobalScopeData(is)) return null;
 		}
-		// Need to reset some of the fields
-		disposalMethod = -1;
-		transparent = false;
-		transparent_color = -1;
-		// End of fields reset
+		
+		resetFrameParameters();
 	   
 		int image_separator = 0;
 	
@@ -302,29 +318,29 @@ public class GIFReader extends ImageReader {
 				int func = is.read();
 				int len = is.read();
 	
-				if (func == 0xf9) // Graphic Control Label - identifies the current block as a Graphic Control Extension
-				{
+				if (func == 0xf9) { // Graphic Control Label - identifies the current block as a Graphic Control Extension
 					int packedFields = is.read();
 					// Determine the disposal method
 					disposalMethod = ((packedFields&0x1c)>>2);
+					LOGGER.info("Disposal method: {}", (disposalMethod == 0)?"UNSPECIFIED":
+						(disposalMethod == 1)?"LEAVE_AS_IS":(disposalMethod == 2)?"RESTORE_TO_BACKGROUND":
+							(disposalMethod == 3)?"RESTORE_TO_PREVIOUS":"TO_BE_DEFINED");
+					userInputFlag =  ((packedFields&0x10)>>1);
+					LOGGER.info("User input flag: {}", (userInputFlag == 0)?"INPUT_NONE":"INPUT_SET");
 					// Check for transparent color flag
-					if((packedFields&0x01) == 0x01)
-					{
-						IOUtils.skipFully(is, 2);
-						transparent = true;
+					if((packedFields&0x01) == 0x01){
+						transparencyFlag = GIFFrame.TRANSPARENCY_INDEX_SET;
 						LOGGER.info("transparent gif...");					 
-						transparent_color = is.read();
-						len = is.read();// len=0, block terminator!
-					} else {
-						IOUtils.skipFully(is, 3);
-						len = is.read();// len=0, block terminator!
 					}
+					delay = IOUtils.readUnsignedShort(is);
+					LOGGER.info("Delay: {} miliseconds", delay*10);
+					transparent_color = is.read();
+					len = is.read();// len=0, block terminator!					
 				}
 				// GIF87a specification mentions the repetition of multiple length
 				// blocks while GIF89a gives no specific description. For safety, here
 				// a while loop is used to check for block terminator!
-				while(len != 0) 
-				{
+				while(len != 0) {
 					IOUtils.skipFully(is, len);
 					len = is.read();// len=0, block terminator!
 				} 
@@ -335,8 +351,7 @@ public class GIFReader extends ImageReader {
 		   
 		boolean hasLocalColorMap = false;
 	
-		if((flags2&0x80) == 0x80)
-		{
+		if((flags2&0x80) == 0x80) {
 			hasLocalColorMap = true;
 			// A local color map is present
 			LOGGER.info("local color map is present");
@@ -351,11 +366,10 @@ public class GIFReader extends ImageReader {
 		   
 		if(!hasLocalColorMap) rgbColorPalette = globalColorPalette;
 		   
-		if (transparent && transparent_color < colorsUsed)
+		if (isTransparent() && transparent_color < colorsUsed)
 			rgbColorPalette[transparent_color] &= 0x00ffffff;
 			
-		if((flags2&0x40) == 0x40) 
-		{
+		if((flags2&0x40) == 0x40) {
 			LOGGER.info("Interlaced gif image!"); 
 			return decodeLZWInterLaced(is);
 		}
@@ -386,16 +400,14 @@ public class GIFReader extends ImageReader {
 		String signature = new String(gifHeader.signature) + new String(gifHeader.version);
 		LOGGER.info(signature);
 			
-		if ((!signature.equalsIgnoreCase("GIF87a")) && (!signature.equalsIgnoreCase("GIF89a")))
-		{
+		if ((!signature.equalsIgnoreCase("GIF87a")) && (!signature.equalsIgnoreCase("GIF89a")))	{
 			LOGGER.warn("Only GIF87a and GIF89a is supported by this decoder!");
 			return false;
 		}
 	      
 		byte flags = gifHeader.flags;
 					
-		if((flags&0x80) == 0x80) // A global color map is present 
-		{
+		if((flags&0x80) == 0x80) { // A global color map is present 
 			LOGGER.info("a global color map is present!");
 			bitsPerPixel = (flags&0x07)+1;
 			colorsUsed = (1<<bitsPerPixel);
@@ -408,19 +420,21 @@ public class GIFReader extends ImageReader {
 	
 			readGlobalPalette(is, colorsUsed);
 			int bgcolor = gifHeader.bgcolor&0xff;
-			if(bgcolor >= 0 && bgcolor < colorsUsed)
+			if(bgcolor < colorsUsed)
 			   backgroundColor = new Color(globalColorPalette[bgcolor]);
-		   	}
+	   	}
 		   
-		   	return true;
+	   	return true;
 	}
     
 	public BufferedImage read(InputStream is) throws Exception {
 		frames = new ArrayList<BufferedImage>();
+		gifFrames = new ArrayList<GIFFrame>();
 		BufferedImage bi = null;
 		
 		while((bi = getFrameAsBufferedImage(is)) != null) {
-			frames.add(bi);
+			gifFrames.add(new GIFFrame(bi, image_x, image_y, delay, disposalMethod, userInputFlag, transparencyFlag, transparent_color));
+			frames.add(bi);			
 		}
 		
 		return frames.get(0);
@@ -450,6 +464,20 @@ public class GIFReader extends ImageReader {
 			
 		for(int i = 0; i < num_of_color; i++)
 			rgbColorPalette[i] = ((255<<24)|((brgb[index1++]&0xff)<<16)|((brgb[index1++]&0xff)<<8)|(brgb[index1++]&0xff));
+	}
+	
+	private void resetFrameParameters() {
+		// Need to reset some of the fields
+		disposalMethod = GIFFrame.DISPOSAL_UNSPECIFIED;
+		userInputFlag = GIFFrame.USER_INPUT_NONE;
+		transparencyFlag = GIFFrame.TRANSPARENCY_INDEX_NONE;
+		transparent_color = GIFFrame.TRANSPARENCY_COLOR_NONE;
+		delay = 0;
+		image_x = 0;
+		image_y = 0;
+		width = 0;
+		height = 0;
+		// End of fields reset
 	}
 	
 	private static class GifHeader {

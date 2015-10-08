@@ -193,30 +193,34 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/icafe4j/image/gif/GIFFrame.html" title="class in com.icafe4j.image.gif">GIFFrame</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getGIFFrames()">getGIFFrames</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getImageX()">getImageX</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getImageY()">getImageY</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getLogicalScreenHeight()">getLogicalScreenHeight</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getLogicalScreenWidth()">getLogicalScreenWidth</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getTransparentColor()">getTransparentColor</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#isTransparent()">isTransparent</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#read(java.io.InputStream)">read</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
@@ -353,7 +357,7 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="../../../../com/icafe4j/image/reader/ImageReader.html#getFrameCount()">getFrameCount</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>number of frames read by this GIFReader or -1 if not read yet</dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>number of frames read by this GIFReader or 0 if not read yet</dd></dl>
 </li>
 </ul>
 <a name="getFrames()">
@@ -367,7 +371,16 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="../../../../com/icafe4j/image/reader/ImageReader.html#getFrames()">getFrames</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>a list of the total frames read by this GIFRreader or null if not read yet</dd></dl>
+<dt><span class="strong">Returns:</span></dt><dd>a list of the total frames read by this GIFRreader or empty list if not read yet</dd></dl>
+</li>
+</ul>
+<a name="getGIFFrames()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getGIFFrames</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../com/icafe4j/image/gif/GIFFrame.html" title="class in com.icafe4j.image.gif">GIFFrame</a>&gt;&nbsp;getGIFFrames()</pre>
 </li>
 </ul>
 <a name="getImageX()">

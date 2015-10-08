@@ -394,7 +394,7 @@ public class GIFTweaker {
 				while(len != 0) {
 					IOUtils.skipFully(is, len);
 					len = is.read();// len=0, block terminator!
-				} 
+				}
 			}
 		} while(image_separator != 0x2c); // ","
 		

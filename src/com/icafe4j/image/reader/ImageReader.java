@@ -33,19 +33,18 @@ import com.icafe4j.image.ImageParam;
  * @author Wen Yu, yuwen_66@yahoo.com 
  * @version 1.1 11/08/2012   
  */
-public abstract class ImageReader
-{
+public abstract class ImageReader {
 	// Define common variables 
     protected int width;
 	protected int height;
-	protected int bitsPerPixel = 0;
-	protected int bytesPerScanLine = 0;
-    protected int rgbColorPalette[] = null;
+	protected int bitsPerPixel;
+	protected int bytesPerScanLine;
+    protected int rgbColorPalette[];
        
     protected ImageParam param = ImageParam.DEFAULT_IMAGE_PARAM;
     
     public int getFrameCount() {
-    	return -1;
+    	return 0;
     }
     
     // Return empty list instead of null

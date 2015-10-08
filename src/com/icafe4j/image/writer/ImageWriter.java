@@ -26,8 +26,7 @@ import com.icafe4j.image.util.IMGUtils;
  * @author Wen Yu, yuwen_66@yahoo.com  
  * @version 1.2 08/01/2013
  */
-public abstract class ImageWriter
-{	
+public abstract class ImageWriter {
 	private ImageParam imageParam = ImageParam.DEFAULT_IMAGE_PARAM;
 	
 	protected ImageWriter() {}
@@ -36,8 +35,7 @@ public abstract class ImageWriter
 		this.imageParam = param;
 	}
 	
-	private int[] getPixels(Image img, int imageWidth, int imageHeight) throws Exception
-	{	
+	private int[] getPixels(Image img, int imageWidth, int imageHeight) throws Exception {	
 		int[] pixels = null;
 		
 		if(img instanceof BufferedImage) {
@@ -80,8 +78,7 @@ public abstract class ImageWriter
 		this.imageParam = imageParam;
 	}
 	
-	public void write(Image img, OutputStream os) throws Exception
-	{
+	public void write(Image img, OutputStream os) throws Exception {
 		int imageWidth = img.getWidth(null);
 		int imageHeight = img.getHeight(null);
 		
