@@ -12,7 +12,8 @@
  * GIFReader.java
  *
  * Who   Date       Description
- * ====  =========  ==========================================================
+ * ====  =========  =========================================================
+ * WY    08Oct2015  Removed frame specific methods
  * WY    08Oct2015  Added getGIFFrames()
  * WY    16Feb2015  Removed unnecessary variables - flags and flags2 
  * WY    02Jan2015  Added getFrames() and getFrameCount() for animated GIF 
@@ -61,20 +62,20 @@ import com.icafe4j.io.IOUtils;
 public class GIFReader extends ImageReader {
 	// Global fields
 	private GifHeader gifHeader;
-	private int logicalScreenWidth;
-	private int logicalScreenHeight;
+	protected int logicalScreenWidth;
+	protected int logicalScreenHeight;
 	private Color backgroundColor = new Color(255, 255, 255);
 	private int[] globalColorPalette;
 	// Graphic control extension specific fields
-	private int disposalMethod = GIFFrame.DISPOSAL_UNSPECIFIED;
-	private int userInputFlag = GIFFrame.USER_INPUT_NONE;
-	private int transparencyFlag = GIFFrame.TRANSPARENCY_INDEX_NONE;
-	private int transparent_color = GIFFrame.TRANSPARENCY_COLOR_NONE;
-	private int delay;
+	protected int disposalMethod = GIFFrame.DISPOSAL_UNSPECIFIED;
+	protected int userInputFlag = GIFFrame.USER_INPUT_NONE;
+	protected int transparencyFlag = GIFFrame.TRANSPARENCY_INDEX_NONE;
+	protected int transparent_color = GIFFrame.TRANSPARENCY_COLOR_NONE;
+	protected int delay;
 	// Frame specific fields
-	private int colorsUsed;
-	private int image_x;
-	private int image_y;
+	protected int colorsUsed;
+	protected int image_x;
+	protected int image_y;
 
 	// To keep track of all the frames
 	private List<GIFFrame> gifFrames;
@@ -86,8 +87,7 @@ public class GIFReader extends ImageReader {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(GIFReader.class);
 	
-	private byte[] decodeLZW(InputStream is) throws Exception
-	{
+	private byte[] decodeLZW(InputStream is) throws Exception {
 		int dimension = width*height;		
 		byte[] temp_ = new byte[dimension];
 
@@ -98,8 +98,7 @@ public class GIFReader extends ImageReader {
 		return temp_;
 	}
    
-	private byte[] decodeLZWInterLaced(InputStream is) throws Exception
-	{
+	private byte[] decodeLZWInterLaced(InputStream is) throws Exception	{
 		int index = 0;
 		int index2 = 0;
 		int passParam[] = {0,8,4,8,2,4,1,2};
@@ -141,10 +140,6 @@ public class GIFReader extends ImageReader {
 		return backgroundColor;
 	}
    
-	public int getDisposalMethod() {
-		return disposalMethod;
-	}
-   
 	/**
 	 * Gets the current frame as a BufferedImage. The frames created this may assume
 	 * different sizes and are intended to be located at different positions in the
@@ -170,7 +165,7 @@ public class GIFReader extends ImageReader {
 	 * @return a BufferedImage for the image or current frame in case of animated GIF
 	 * @throws Exception
 	 */
-	public BufferedImage getFrameAsBufferedImage(InputStream is) throws Exception {
+	protected BufferedImage getFrameAsBufferedImage(InputStream is) throws Exception {
 		// Read frame into a byte array
 		byte[] pixels = readFrame(is);
 		if(pixels == null) return null;
@@ -201,7 +196,7 @@ public class GIFReader extends ImageReader {
 	 * @return java BufferedImage or null if there is no more frames
 	 * @throws Exception
 	 */
-	public BufferedImage getFrameAsBufferedImageEx(InputStream is) throws Exception {
+	protected BufferedImage getFrameAsBufferedImageEx(InputStream is) throws Exception {
 		// This single call will trigger the reading of the global scope data
 		BufferedImage bi = getFrameAsBufferedImage(is);
 		if(bi == null) return null;
@@ -252,6 +247,13 @@ public class GIFReader extends ImageReader {
 		return super.getFrameCount(); // We haven't read the image yet
 	}
 	
+	public BufferedImage getFrame(int i) {
+		if(frames == null) return null;
+		if(i < 0 || i >= frames.size())
+			throw new IndexOutOfBoundsException("Index: " + i);
+		return frames.get(i);
+	}
+	
 	/**
 	 * Get the total frames read by this GIFRreader.
 	 * 
@@ -263,20 +265,19 @@ public class GIFReader extends ImageReader {
 		return Collections.emptyList();
 	}
 	
+	public GIFFrame getGIFFrame(int i) {
+		if(gifFrames == null) return null;
+		if(i < 0 || i >= gifFrames.size())
+			throw new IndexOutOfBoundsException("Index: " + i);
+		return gifFrames.get(i);
+	}
+	
 	public List<GIFFrame> getGIFFrames() {
 		if(gifFrames != null)
 			return Collections.unmodifiableList(gifFrames);
 		return Collections.emptyList();			
 	}
 
-	public int getImageX() {
-		return image_x;
-	}
-
-	public int getImageY() {
-		return image_y;
-	}
-    
 	public int getLogicalScreenHeight() {
 		return logicalScreenHeight;
 	}
@@ -284,17 +285,17 @@ public class GIFReader extends ImageReader {
 	public int getLogicalScreenWidth() {
 		return logicalScreenWidth;
 	}
-   
+	
 	public int getTransparentColor() {
 		if(transparent_color >= 0)
 			return rgbColorPalette[transparent_color]&0xffffff; // We only need RGB, no alpha
 		return GIFFrame.TRANSPARENCY_COLOR_NONE;
 	}
-    
+	
 	public boolean isTransparent() {
 		return transparencyFlag == GIFFrame.TRANSPARENCY_INDEX_SET;
 	}
-    
+   
 	private byte[] readFrame(InputStream is) throws Exception {
 		// One time read of global scope data
 		if(gifHeader == null) {
@@ -366,7 +367,7 @@ public class GIFReader extends ImageReader {
 		   
 		if(!hasLocalColorMap) rgbColorPalette = globalColorPalette;
 		   
-		if (isTransparent() && transparent_color < colorsUsed)
+		if (transparencyFlag == GIFFrame.TRANSPARENCY_INDEX_SET && transparent_color < colorsUsed)
 			rgbColorPalette[transparent_color] &= 0x00ffffff;
 			
 		if((flags2&0x40) == 0x40) {

@@ -61,7 +61,6 @@ import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.adobe.XMP;
 import com.icafe4j.image.meta.image.Comment;
-import com.icafe4j.image.reader.GIFReader;
 import com.icafe4j.image.writer.GIFWriter;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.io.IOUtils;
@@ -522,11 +521,11 @@ public class GIFTweaker {
 	@Deprecated
 	public static void splitFrames2(InputStream animatedGIF, ImageWriter writer, String outputFilePrefix) throws Exception {
 		// Create a GIFReader to read GIF frames	
-		GIFReader reader = new GIFReader();
+		FrameReader reader = new FrameReader();
 		// Create a GIFWriter or other writers to write the frames
 		ImageType imageType = writer.getImageType();
-		// This single call will trigger the reading of the global scope data		
-		BufferedImage bi = reader.getFrameAsBufferedImage(animatedGIF);
+		// This single call will trigger the reading of the global scope data
+		GIFFrame frame = reader.getGIFFrame(animatedGIF);
 		// After reading the global scope data, we can retrieve values such logical screen width and height etc.
 		int logicalScreenWidth = reader.getLogicalScreenWidth();
 		int logicalScreenHeight = reader.getLogicalScreenHeight();
@@ -542,19 +541,19 @@ public class GIFTweaker {
 		int frameCount = 0;		
 		String baseFileName = StringUtils.isNullOrEmpty(outputFilePrefix)?"frame_":outputFilePrefix + "_frame_";
 		
-		while(bi != null) {
-			int image_x = reader.getImageX();
-			int image_y = reader.getImageY();
+		while(frame != null) {
+			int image_x = frame.getLeftPosition();
+			int image_y = frame.getTopPosition();
 			/* Backup the area to be override by this frame */
-			int imageWidth = bi.getWidth();
-			int imageHeight = bi.getHeight();
+			int imageWidth = frame.getFrameWidth();
+			int imageHeight = frame.getFrameHeight();
 			Rectangle area = new Rectangle(image_x, image_y, imageWidth, imageHeight);
 			// Create a backup bufferedImage
 			BufferedImage backup = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
 			backup.setData(baseImage.getData(area));
 			/* End of backup */
 			// Draw this frame to the base
-			g.drawImage(bi, image_x, image_y, null);
+			g.drawImage(frame.getFrame(), image_x, image_y, null);
 			// Write the base to file
 			String outFileName = baseFileName + frameCount++;
 			FileOutputStream os = new FileOutputStream(outFileName + "." + imageType.getExtension());			
@@ -563,9 +562,9 @@ public class GIFTweaker {
 			// Assume no transparency
 			//builder.transparent(false);
 			// Check about disposal method to take action accordingly
-			if(reader.getDisposalMethod() == 1 || reader.getDisposalMethod() == 0) // Leave in place or unspecified
+			if(frame.getDisposalMethod() == 1 || frame.getDisposalMethod() == 0) // Leave in place or unspecified
 				; // No action needed
-			else if(reader.getDisposalMethod() == 2) { // Restore to background
+			else if(frame.getDisposalMethod() == 2) { // Restore to background
 				Composite oldComposite = g.getComposite();
 				g.setComposite(AlphaComposite.Clear);
 				g.fillRect(image_x, image_y, imageWidth, imageHeight);
@@ -573,7 +572,7 @@ public class GIFTweaker {
 				//g.setColor(reader.getBackgroundColor());
 				//g.fillRect(0, 0, logicalScreenWidth, logicalScreenHeight);
 				//builder.transparent(true);
-			} else if(reader.getDisposalMethod() == 3) { // Restore to previous
+			} else if(frame.getDisposalMethod() == 3) { // Restore to previous
 				Composite oldComposite = g.getComposite();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage(backup, image_x, image_y, null);
@@ -586,7 +585,7 @@ public class GIFTweaker {
 				//builder.transparent(true);
 			}
 			// Read another frame if we have more
-			bi = reader.getFrameAsBufferedImage(animatedGIF);
+			frame = reader.getGIFFrame(animatedGIF);
 		}
 	}
 	
@@ -612,20 +611,20 @@ public class GIFTweaker {
 	 */
 	public static void splitAnimatedGIF(InputStream animatedGIF, ImageWriter writer, String outputFilePrefix) throws Exception {
 		// Create a GIFReader to read GIF frames	
-		GIFReader reader = new GIFReader();
+		FrameReader reader = new FrameReader();
 		// Create a GIFWriter or other writers to write the frames
 		ImageType imageType = writer.getImageType();
-		BufferedImage bi = reader.getFrameAsBufferedImageEx(animatedGIF);
-	
+		GIFFrame frame = reader.getGIFFrame(animatedGIF);
+		
 		int frameCount = 0;		
 		String baseFileName = StringUtils.isNullOrEmpty(outputFilePrefix)?"frame_":outputFilePrefix + "_frame_";
 		
-		while(bi != null) {
+		while(frame != null) {
 			// Write the frame to file
 			String outFileName = baseFileName + frameCount++;
 			FileOutputStream os = new FileOutputStream(outFileName + "." + imageType.getExtension());			
-			writer.write(bi, os);
-			bi = reader.getFrameAsBufferedImageEx(animatedGIF);
+			writer.write(frame.getFrame(), os);
+			frame = reader.getGIFFrame(animatedGIF);
 		}
 	}
 	

@@ -59,13 +59,13 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#fields_inherited_from_class_com.icafe4j.image.reader.ImageReader">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
@@ -96,6 +96,10 @@
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../../../com/icafe4j/image/gif/FrameReader.html" title="class in com.icafe4j.image.gif">FrameReader</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="strong">GIFReader</span>
@@ -122,6 +126,53 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <!--   -->
 </a>
 <h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#colorsUsed">colorsUsed</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#delay">delay</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#disposalMethod">disposalMethod</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#image_x">image_x</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#image_y">image_y</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#logicalScreenHeight">logicalScreenHeight</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#logicalScreenWidth">logicalScreenWidth</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#transparencyFlag">transparencyFlag</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#transparent_color">transparent_color</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#userInputFlag">userInputFlag</a></strong></code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="fields_inherited_from_class_com.icafe4j.image.reader.ImageReader">
 <!--   -->
@@ -165,17 +216,17 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getBackgroundColor()">getBackgroundColor</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getDisposalMethod()">getDisposalMethod</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getFrame(int)">getFrame</a></strong>(int&nbsp;i)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
+<td class="colFirst"><code>protected java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getFrameAsBufferedImage(java.io.InputStream)">getFrameAsBufferedImage</a></strong>(java.io.InputStream&nbsp;is)</code>
 <div class="block">Gets the current frame as a BufferedImage.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
+<td class="colFirst"><code>protected java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getFrameAsBufferedImageEx(java.io.InputStream)">getFrameAsBufferedImageEx</a></strong>(java.io.InputStream&nbsp;is)</code>
 <div class="block">Gets the current frame as a BufferedImage the same size as the logical screen.</div>
 </td>
@@ -193,34 +244,30 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../com/icafe4j/image/gif/GIFFrame.html" title="class in com.icafe4j.image.gif">GIFFrame</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getGIFFrame(int)">getGIFFrame</a></strong>(int&nbsp;i)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/icafe4j/image/gif/GIFFrame.html" title="class in com.icafe4j.image.gif">GIFFrame</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getGIFFrames()">getGIFFrames</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getImageX()">getImageX</a></strong>()</code>&nbsp;</td>
-</tr>
 <tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getImageY()">getImageY</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getLogicalScreenHeight()">getLogicalScreenHeight</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getLogicalScreenWidth()">getLogicalScreenWidth</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#getTransparentColor()">getTransparentColor</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#isTransparent()">isTransparent</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/reader/GIFReader.html#read(java.io.InputStream)">read</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
@@ -247,6 +294,104 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="logicalScreenWidth">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>logicalScreenWidth</h4>
+<pre>protected&nbsp;int logicalScreenWidth</pre>
+</li>
+</ul>
+<a name="logicalScreenHeight">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>logicalScreenHeight</h4>
+<pre>protected&nbsp;int logicalScreenHeight</pre>
+</li>
+</ul>
+<a name="disposalMethod">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>disposalMethod</h4>
+<pre>protected&nbsp;int disposalMethod</pre>
+</li>
+</ul>
+<a name="userInputFlag">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>userInputFlag</h4>
+<pre>protected&nbsp;int userInputFlag</pre>
+</li>
+</ul>
+<a name="transparencyFlag">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>transparencyFlag</h4>
+<pre>protected&nbsp;int transparencyFlag</pre>
+</li>
+</ul>
+<a name="transparent_color">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>transparent_color</h4>
+<pre>protected&nbsp;int transparent_color</pre>
+</li>
+</ul>
+<a name="delay">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>delay</h4>
+<pre>protected&nbsp;int delay</pre>
+</li>
+</ul>
+<a name="colorsUsed">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>colorsUsed</h4>
+<pre>protected&nbsp;int colorsUsed</pre>
+</li>
+</ul>
+<a name="image_x">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>image_x</h4>
+<pre>protected&nbsp;int image_x</pre>
+</li>
+</ul>
+<a name="image_y">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>image_y</h4>
+<pre>protected&nbsp;int image_y</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_detail">
@@ -279,23 +424,14 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <pre>public&nbsp;java.awt.Color&nbsp;getBackgroundColor()</pre>
 </li>
 </ul>
-<a name="getDisposalMethod()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getDisposalMethod</h4>
-<pre>public&nbsp;int&nbsp;getDisposalMethod()</pre>
-</li>
-</ul>
 <a name="getFrameAsBufferedImage(java.io.InputStream)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getFrameAsBufferedImage</h4>
-<pre>public&nbsp;java.awt.image.BufferedImage&nbsp;getFrameAsBufferedImage(java.io.InputStream&nbsp;is)
-                                                     throws java.lang.Exception</pre>
+<pre>protected&nbsp;java.awt.image.BufferedImage&nbsp;getFrameAsBufferedImage(java.io.InputStream&nbsp;is)
+                                                        throws java.lang.Exception</pre>
 <div class="block">Gets the current frame as a BufferedImage. The frames created this may assume
  different sizes and are intended to be located at different positions in the
  case of an animated GIF. Therefore, the frames may only occupy part of the
@@ -326,8 +462,8 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <ul class="blockList">
 <li class="blockList">
 <h4>getFrameAsBufferedImageEx</h4>
-<pre>public&nbsp;java.awt.image.BufferedImage&nbsp;getFrameAsBufferedImageEx(java.io.InputStream&nbsp;is)
-                                                       throws java.lang.Exception</pre>
+<pre>protected&nbsp;java.awt.image.BufferedImage&nbsp;getFrameAsBufferedImageEx(java.io.InputStream&nbsp;is)
+                                                          throws java.lang.Exception</pre>
 <div class="block">Gets the current frame as a BufferedImage the same size as the logical screen.
  Graphic Control Extension and Image Descriptor parameters are taken into account
  When creating the frame. The resulting frame is actually a "composite" one or a
@@ -360,6 +496,15 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <dt><span class="strong">Returns:</span></dt><dd>number of frames read by this GIFReader or 0 if not read yet</dd></dl>
 </li>
 </ul>
+<a name="getFrame(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFrame</h4>
+<pre>public&nbsp;java.awt.image.BufferedImage&nbsp;getFrame(int&nbsp;i)</pre>
+</li>
+</ul>
 <a name="getFrames()">
 <!--   -->
 </a>
@@ -374,6 +519,15 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <dt><span class="strong">Returns:</span></dt><dd>a list of the total frames read by this GIFRreader or empty list if not read yet</dd></dl>
 </li>
 </ul>
+<a name="getGIFFrame(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getGIFFrame</h4>
+<pre>public&nbsp;<a href="../../../../com/icafe4j/image/gif/GIFFrame.html" title="class in com.icafe4j.image.gif">GIFFrame</a>&nbsp;getGIFFrame(int&nbsp;i)</pre>
+</li>
+</ul>
 <a name="getGIFFrames()">
 <!--   -->
 </a>
@@ -381,24 +535,6 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <li class="blockList">
 <h4>getGIFFrames</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../com/icafe4j/image/gif/GIFFrame.html" title="class in com.icafe4j.image.gif">GIFFrame</a>&gt;&nbsp;getGIFFrames()</pre>
-</li>
-</ul>
-<a name="getImageX()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getImageX</h4>
-<pre>public&nbsp;int&nbsp;getImageX()</pre>
-</li>
-</ul>
-<a name="getImageY()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getImageY</h4>
-<pre>public&nbsp;int&nbsp;getImageY()</pre>
 </li>
 </ul>
 <a name="getLogicalScreenHeight()">
@@ -503,13 +639,13 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#fields_inherited_from_class_com.icafe4j.image.reader.ImageReader">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_detail">Method</a></li>
 </ul>
