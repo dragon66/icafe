@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ====================================================
+ * WY    09Oct2015  Fixed regression bug with splitAnimatedGIF()
  * WY    16Sep2015  Added insertComment() to insert comment extension
  * WY    17Aug2015  Revised to write animated GIF frame by frame
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP) 
@@ -614,7 +615,7 @@ public class GIFTweaker {
 		FrameReader reader = new FrameReader();
 		// Create a GIFWriter or other writers to write the frames
 		ImageType imageType = writer.getImageType();
-		GIFFrame frame = reader.getGIFFrame(animatedGIF);
+		GIFFrame frame = reader.getGIFFrameEx(animatedGIF);
 		
 		int frameCount = 0;		
 		String baseFileName = StringUtils.isNullOrEmpty(outputFilePrefix)?"frame_":outputFilePrefix + "_frame_";
@@ -624,7 +625,7 @@ public class GIFTweaker {
 			String outFileName = baseFileName + frameCount++;
 			FileOutputStream os = new FileOutputStream(outFileName + "." + imageType.getExtension());			
 			writer.write(frame.getFrame(), os);
-			frame = reader.getGIFFrame(animatedGIF);
+			frame = reader.getGIFFrameEx(animatedGIF);
 		}
 	}
 	

@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/08/2015
+Last modified on 10/09/2015
 ***************************
+09Oct2015  Fixed regression bug with GIFTweaker splitAnimatedGIF()
 08Oct2015  Added getGIFFrames() to GIFReader
 05Oct2015  Revised GIFWriter writeFrame() to crop images outside logical screen
 30Sep2015  Added mergesort() to ArrayUtils
