@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ==========================================================
+ * WY    14Oct2015  Bug fix for transparent frame
  * WY    05Oct2015  Revised writeFrame() to crop images outside logical screen
  * WY    18Aug2015  Added support to use ImageParam to control dither
  * WY    17Aug2015  Revised to write animated GIF frame by frame
@@ -504,7 +505,7 @@ public class GIFWriter extends ImageWriter {
 	    }		
 		
       	// Output the graphic control block
-	    writeGraphicControlBlock(os, delay, (byte)transparent_color, disposalMethod, userInputFlag);
+	    writeGraphicControlBlock(os, delay, transparent_color, disposalMethod, userInputFlag);
         // Output image descriptor
         if(firstFrame) {
         	writeImageDescriptor(os, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, -1);
@@ -521,11 +522,11 @@ public class GIFWriter extends ImageWriter {
 	}
 	
 	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition, int delay, OutputStream os) throws Exception	{	
-    	writeFrame(pixels, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, delay, GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND, GIFFrame.USER_INPUT_NONE, os);
+    	writeFrame(pixels, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, delay, GIFFrame.DISPOSAL_LEAVE_AS_IS, GIFFrame.USER_INPUT_NONE, os);
     }
 	
 	// Unit of delay is supposed to be in millisecond
-    private void writeGraphicControlBlock(OutputStream os, int delay, byte transparent_color, int disposalMethod, int userInputFlag) throws Exception {
+    private void writeGraphicControlBlock(OutputStream os, int delay, int transparent_color, int disposalMethod, int userInputFlag) throws Exception {
     	// Scale delay
     	delay = Math.round(delay/10.0f);
     	
@@ -537,10 +538,10 @@ public class GIFWriter extends ImageWriter {
 		buf[3] |= (((disposalMethod&0x07) << 2)|((userInputFlag&0x01) << 1));
 		buf[4] = (byte)(delay&0xff);// Delay time
 		buf[5] = (byte)((delay>>8)&0xff);
-		buf[6] = transparent_color;
+		buf[6] = (byte)transparent_color;
 		buf[7] = 0x00;
 		
-		if((transparent_color&0xff) >= 0) // Add transparency indicator
+		if(transparent_color >= 0) // Add transparency indicator
 			buf[3] |= 0x01;
 		
 		os.write(buf, 0, 8);

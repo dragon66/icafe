@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =========================================================
+ * WY    14Oct2015  Fixed bug with transparent color
  * WY    08Oct2015  Removed frame specific methods
  * WY    08Oct2015  Added getGIFFrames()
  * WY    16Feb2015  Removed unnecessary variables - flags and flags2 
@@ -328,14 +329,16 @@ public class GIFReader extends ImageReader {
 							(disposalMethod == 3)?"RESTORE_TO_PREVIOUS":"TO_BE_DEFINED");
 					userInputFlag =  ((packedFields&0x10)>>1);
 					LOGGER.info("User input flag: {}", (userInputFlag == 0)?"INPUT_NONE":"INPUT_SET");
+					delay = IOUtils.readUnsignedShort(is);
+					LOGGER.info("Delay: {} miliseconds", delay*10);
+					// Read transparent color index
+					int transparent_color_index = is.read();
 					// Check for transparent color flag
 					if((packedFields&0x01) == 0x01){
 						transparencyFlag = GIFFrame.TRANSPARENCY_INDEX_SET;
-						LOGGER.info("transparent gif...");					 
-					}
-					delay = IOUtils.readUnsignedShort(is);
-					LOGGER.info("Delay: {} miliseconds", delay*10);
-					transparent_color = is.read();
+						LOGGER.info("transparent gif...");
+						transparent_color = transparent_color_index;
+					}					
 					len = is.read();// len=0, block terminator!					
 				}
 				// GIF87a specification mentions the repetition of multiple length
