@@ -112,8 +112,7 @@ public class TIFFReader extends ImageReader {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(TIFFReader.class);		
 		 
-	public BufferedImage read(InputStream is) throws Exception
-	{
+	public BufferedImage read(InputStream is) throws Exception {
 		randIS = new FileCacheRandomAccessInputStream(is, bufLen);
 		if(!readHeader(randIS)) return null;
 		 
@@ -1345,8 +1344,7 @@ public class TIFFReader extends ImageReader {
 		// Read TIFF identifier
 		short tiff_id = randIS.readShort();
 		  
-		if(tiff_id!=0x2a)//"*" 42 decimal
-		{
+		if(tiff_id!=0x2a) { //"*" 42 decimal
 			LOGGER.error("Error: invalid tiff identifier");
 			return false;
 		}
@@ -1354,8 +1352,7 @@ public class TIFFReader extends ImageReader {
 		return true;
 	}
 	 
-	private int readIFD(int id, int offset) throws IOException 
-	{
+	private int readIFD(int id, int offset) throws IOException {
 		IFD tiffIFD = new IFD();
 		LOGGER.info("IFD {} offset: byte {}", id, offset);
 		randIS.seek(offset);
@@ -1363,8 +1360,7 @@ public class TIFFReader extends ImageReader {
 		LOGGER.info("Total number of fields for IFD {}: {}", id, no_of_fields);
 		offset += 2;
 		
-		for (int i = 0;i < no_of_fields; i++)
-		{
+		for (int i = 0;i < no_of_fields; i++) {
 			LOGGER.info("TiffField {} =>", i);
 			randIS.seek(offset);
 			short tag = randIS.readShort();
@@ -1384,8 +1380,7 @@ public class TIFFReader extends ImageReader {
 			LOGGER.info("TiffField length: {}", field_length);
 			offset += 4;
 			////// Try to read actual data.
-			switch (ftype)
-			{
+			switch (ftype) {
 				case BYTE:
 				case UNDEFINED:
 					byte[] data = new byte[field_length];
@@ -1407,8 +1402,7 @@ public class TIFFReader extends ImageReader {
 					if(field_length <= 4) {
 						randIS.seek(offset);
 						randIS.readFully(data, 0, field_length);
-					}						
-					else {
+					} else {
 						randIS.seek(offset);
 						randIS.seek(randIS.readInt());
 						randIS.readFully(data, 0, field_length);
@@ -1469,7 +1463,7 @@ public class TIFFReader extends ImageReader {
 					randIS.seek(offset);
 					int toOffset = randIS.readInt();
 					offset += 4;					
-					for (int j=0;j<len; j+=2){
+					for (int j=0;j<len; j+=2) {
 						randIS.seek(toOffset);
 						ldata[j] = randIS.readInt();
 						toOffset += 4;
@@ -1490,7 +1484,7 @@ public class TIFFReader extends ImageReader {
 						randIS.seek(offset);
 						toOffset = randIS.readInt();
 						offset += 4;
-						for (int j=0;j<field_length; j++){
+						for (int j=0;j<field_length; j++) {
 							randIS.seek(toOffset);
 							fdata[j] = randIS.readFloat();
 							toOffset += 4;
@@ -1504,7 +1498,7 @@ public class TIFFReader extends ImageReader {
 					randIS.seek(offset);
 					toOffset = randIS.readInt();
 					offset += 4;
-					for (int j=0;j<field_length; j++){
+					for (int j=0;j<field_length; j++) {
 						randIS.seek(toOffset);
 						ddata[j] = randIS.readDouble();
 						toOffset += 8;

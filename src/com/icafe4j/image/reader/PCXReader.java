@@ -39,8 +39,7 @@ import com.icafe4j.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 04/03/2007
  */
-public class PCXReader extends ImageReader
-{
+public class PCXReader extends ImageReader {
     short bytesPerLine = 0;
 	byte NPlanes = 0;
 	PcxHeader pcxHeader;
@@ -48,8 +47,7 @@ public class PCXReader extends ImageReader
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(PCXReader.class);
 
-   	public BufferedImage read(InputStream is) throws Exception
-    {
+   	public BufferedImage read(InputStream is) throws Exception {
 		pcxHeader = new PcxHeader();
       	pcxHeader.readHeader(is);
 		width = pcxHeader.xmax-pcxHeader.xmin+1;
@@ -60,20 +58,13 @@ public class PCXReader extends ImageReader
 
 		bitsPerPixel = pcxHeader.bits_per_pixel*pcxHeader.color_plane;
 
-		if((pcxHeader.bits_per_pixel == 8) && (pcxHeader.color_plane == 1))
-		{
+		if((pcxHeader.bits_per_pixel == 8) && (pcxHeader.color_plane == 1)) {
 		   return read256ColorPcx(is);
-		}
-		else if((pcxHeader.bits_per_pixel == 8) && (pcxHeader.color_plane == 3))
-		{
+		} else if ((pcxHeader.bits_per_pixel == 8) && (pcxHeader.color_plane == 3)) {
     	    return readTrueColorPcx(is);
-		}
-		else 
-	    {
-			if (NPlanes == 1) // One plane 1, 2, 4 bits
-			{
-				switch (bitsPerPixel)
-				{
+		} else {
+			if (NPlanes == 1) { // One plane 1, 2, 4 bits
+				switch (bitsPerPixel) {
 				  case 4: 
 					  LOGGER.info("16 color pcx image, 4 bits per pixel, 1 color plane!");
 				      break;
@@ -89,8 +80,7 @@ public class PCXReader extends ImageReader
 				}
 				return readOnePlaneEgaPcx(is);
 			} else if(pcxHeader.bits_per_pixel == 1) {// One bit N planes
-				switch (NPlanes)
-				{
+				switch (NPlanes) {
 				  case 4: 
 					  LOGGER.info("16 color image, 1 bit per plane, 4 planes!");
 				      break;
@@ -103,8 +93,7 @@ public class PCXReader extends ImageReader
 				  default: 
 				}
 				return readOneBitEgaPcx(is);
-			} else
-			{   // Hope this will never happen
+			} else { // Hope this will never happen
                 LOGGER.error("unimplemented for this format!");
 			}
 		}
@@ -112,31 +101,26 @@ public class PCXReader extends ImageReader
 		return null;
     }	
        
-    private void readPalette(byte[] buf) throws Exception
-    {
+    private void readPalette(byte[] buf) throws Exception {
 		int index = 0, nindex = 0;
 		
-		for(int i = 0; i < buf.length; i += 3)
-		{
+		for(int i = 0; i < buf.length; i += 3) {
 			rgbColorPalette[index++] = ((0xff<<24)|((buf[nindex++]&0xff)<<16)|((buf[nindex++]&0xff)<<8)|(buf[nindex++]&0xff));
 		}
     }
     
     @SuppressWarnings("unused")
-	private void readPalette(InputStream is, int color_tb_bytes) throws Exception
-    {
+	private void readPalette(InputStream is, int color_tb_bytes) throws Exception {
 		int index = 0, nindex = 0;
 		byte buf[] = new byte[color_tb_bytes];
 		is.read(buf,0,color_tb_bytes);
 
-		for(int i = 0; i < color_tb_bytes; i += 3)
-		{
+		for(int i = 0; i < color_tb_bytes; i += 3) {
 			rgbColorPalette[index++] = ((0xff<<24)|((buf[nindex++]&0xff)<<16)|((buf[nindex++]&0xff)<<8)|(buf[nindex++]&0xff));
 		}
     }
    
-    private BufferedImage readTrueColorPcx(InputStream is) throws Exception
-    {
+    private BufferedImage readTrueColorPcx(InputStream is) throws Exception {
       	byte brgb[] = IOUtils.readFully(is, 4096);
     	byte pixels[] = new byte[bytesPerLine*NPlanes*height];
 
@@ -166,29 +150,22 @@ public class PCXReader extends ImageReader
     	int totalBytes = NPlanes * bytesPerLine;
     	
     	image:// Label to break
-    	for(int i = 0; i < height; i++, counter = 0)
-    	{    	
-			do{
+    	for(int i = 0; i < height; i++, counter = 0) {    	
+			do {
 				bt = (brgb[nindex++]&0xff);
-				if((bt&0xC0) == 0xC0)
-				{
+				if((bt&0xC0) == 0xC0) {
 					num_of_rep = bt&0x3F;
 					bt1 = (brgb[nindex++]&0xff);
-					for(int k = 0; k < num_of_rep && counter < totalBytes; k++, counter++)
-					{
+					for(int k = 0; k < num_of_rep && counter < totalBytes; k++, counter++) {
 						pixels[index++] = (byte)bt1; 
 					}
-					if (nindex >= buf_len)
-					{
+					if (nindex >= buf_len) {
 						break image;
 					}
-				}
-				else
-				{
+				} else {
 					pixels[index++] = (byte)bt;
 					counter++;
-					if (nindex >= buf_len)
-					{
+					if (nindex >= buf_len) {
 						break image;
 					}
 				}
@@ -196,8 +173,7 @@ public class PCXReader extends ImageReader
     	}
     }
    	
-	private BufferedImage read256ColorPcx(InputStream is) throws Exception
-	{
+	private BufferedImage read256ColorPcx(InputStream is) throws Exception {
 		int totalBytes = bytesPerLine*NPlanes;
         byte pixels[] = new byte[totalBytes*height];		
 	
@@ -250,8 +226,7 @@ public class PCXReader extends ImageReader
 		return new BufferedImage(cm, raster, false, null);
 	}
 
-	private BufferedImage readOneBitEgaPcx(InputStream is) throws Exception
-	{
+	private BufferedImage readOneBitEgaPcx(InputStream is) throws Exception {
 	    int index = 0, counter = 0, abyte = 0, nindex = 0;
 	    int bt = 0, bt1 = 0; 
 	    int totalBytes = 0, num_of_rep = 0;
@@ -269,30 +244,23 @@ public class PCXReader extends ImageReader
         BytePacker bytePacker = new BytePacker(bitsPerPixel, width, width*height);
 
    		image:
-		for(int i = 0; i < height; i++, index = 0)
-		{	
-			do{
+		for(int i = 0; i < height; i++, index = 0) {	
+			do {
 				bt = brgb[nindex++]&0xff;
-				if((bt&0xC0) == 0xC0)
-				{
+				if((bt&0xC0) == 0xC0) {
 					num_of_rep = bt&0x3F;
 					bt1 = brgb[nindex++]&0xff;
 				  
-					for(int k = 0; k < num_of_rep && index < totalBytes; k++)
-					{
+					for(int k = 0; k < num_of_rep && index < totalBytes; k++) {
 						buf[index++] = bt1;
 					}
-					if (nindex >= buf_len)
-					{
+					if (nindex >= buf_len) {
 						break image;
 					}
-				}
-				else  
-				{
+				} else {
 					buf[index++] = bt;
 
-					if (nindex >= buf_len)
-					{
+					if (nindex >= buf_len) {
 						break image;
 					}
 				}
@@ -345,8 +313,7 @@ public class PCXReader extends ImageReader
 	}
 	
 	@SuppressWarnings("unused")
-    private static class PcxHeader
-    {
+    private static class PcxHeader {
 		byte  manufacturer;
 		/**
 		 ************************************************************************************************
@@ -376,8 +343,7 @@ public class PCXReader extends ImageReader
 		short palette_type;
 		byte  filler[] = new byte[58];
 
-	    void readHeader(InputStream is) throws Exception
-	    {
+	    void readHeader(InputStream is) throws Exception {
 		   int nindex = 0;
 	       byte buf[] = new byte[128];
 
@@ -395,8 +361,7 @@ public class PCXReader extends ImageReader
 		   hres = (short)((buf[nindex++]&0xff)|((buf[nindex++]&0xff)<<8));
 		   vres = (short)((buf[nindex++]&0xff)|((buf[nindex++]&0xff)<<8));
   
-		   for(int i = 0; i < 16; i++)
-		   {
+		   for(int i = 0; i < 16; i++) {
 		      colorPalette[i] = ((0xff<<24)|((buf[nindex++]&0xff)<<16)|((buf[nindex++]&0xff)<<8)|(buf[nindex++]&0xff));
 		   }
     	
@@ -406,8 +371,7 @@ public class PCXReader extends ImageReader
 		   bytes_per_line = (short)((buf[nindex++]&0xff)|((buf[nindex++]&0xff)<<8));
 		   palette_type = (short)((buf[nindex++]&0xff)|((buf[nindex++]&0xff)<<8));
 
-		   for(int i = 0; i < 58; i++)
-		   {
+		   for(int i = 0; i < 58; i++) {
 		      filler[i] = buf[nindex++];
 		   }
 	    }

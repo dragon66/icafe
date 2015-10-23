@@ -46,8 +46,7 @@ import com.icafe4j.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.1 03/28/2008
  */
-public class BMPReader extends ImageReader
-{
+public class BMPReader extends ImageReader {
 	private static final int END_OF_LINE = 0;
 	private static final int END_OF_BITMAP = 1;
 	private static final int DELTA = 2;
@@ -61,8 +60,7 @@ public class BMPReader extends ImageReader
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(BMPReader.class);
    
-    public BufferedImage read(InputStream is) throws Exception
-    {
+    public BufferedImage read(InputStream is) throws Exception {
         bitmapHeader = new BitmapHeader();
 		bitmapHeader.readHeader(is);
 		width = bitmapHeader.imageWidth;
@@ -80,18 +78,14 @@ public class BMPReader extends ImageReader
 
         int bitPerWidth = width*bitsPerPixel;
 
-	   	if(bitPerWidth%32 == 0)// To make sure scan lines are padded out to even 4-byte boundaries.
-        {
-	   		bytePerScanLine = (bitPerWidth>>>3);
-		}
-		else
-	    {
+	   	if(bitPerWidth%32 == 0) { // To make sure scan lines are padded out to even 4-byte boundaries.
+ 	   		bytePerScanLine = (bitPerWidth>>>3);
+		} else {
 			bytePerScanLine = (bitPerWidth>>>3)+(4-(bitPerWidth>>>3)%4);
 			// A different method to do the same thing as above!
 			//bytePerScanLine = (((bitPerWidth+31) & ~31 ) >> 3);
 		}
-		switch (bitmapHeader.bitCount)
-		{
+		switch (bitmapHeader.bitCount) {
 			case 1:
 				return readIndexColorBitmap(is);
 			case 4:
@@ -100,11 +94,9 @@ public class BMPReader extends ImageReader
 					return readCompressedIndexColorBitmap(is);
 		        return readIndexColorBitmap(is);				
 			case 16:
-			{
 				LOGGER.error("16 bit BMP, decoding not implemented!");
 		   		//read16bitTrueColorBitmap(is);
                 return null;
-			}
 			case 24:
 				return read24bitTrueColorBitmap(is);
    			case 32:
@@ -115,8 +107,7 @@ public class BMPReader extends ImageReader
 		}
     }
     
-	private void readPalette(InputStream is) throws Exception
-    {
+	private void readPalette(InputStream is) throws Exception {
 		int index = 0, nindex = 0;
 		int numOfColors = (bitmapHeader.colorsUsed == 0)?(1<<bitsPerPixel):bitmapHeader.colorsUsed;
 		byte brgb[] = new byte[numOfColors*4];
@@ -124,8 +115,7 @@ public class BMPReader extends ImageReader
      
 		IOUtils.readFully(is, brgb, 0, numOfColors*4);
 
-        for(int i = 0; i < numOfColors; i++)
-		{
+        for(int i = 0; i < numOfColors; i++) {
 			rgbColorPalette[index++] = ((0xff<<24)|(brgb[nindex]&0xff)|((brgb[nindex+1]&0xff)<<8)|((brgb[nindex+2]&0xff)<<16));
 			nindex += 4;
 		}
@@ -133,8 +123,7 @@ public class BMPReader extends ImageReader
 		IOUtils.skipFully(is, bitmapHeader.dataOffSet - numOfColors*4 - 54);
     }
 
-    private BufferedImage read24bitTrueColorBitmap(InputStream is) throws Exception
-    {
+    private BufferedImage read24bitTrueColorBitmap(InputStream is) throws Exception {
     	LOGGER.info("24 bits bitmap color image!");
         int npad = bytePerScanLine - 3*width;
 		if(npad == 4) npad = 0;
@@ -184,22 +173,18 @@ public class BMPReader extends ImageReader
         IOUtils.skipFully(is, bitmapHeader.dataOffSet - 54);
         
         if(alignment == BMPOptions.ALIGN_BOTTOM_UP) {
-        	for(int i = 1, index = 0; i <= height; i++)
-        	{
+        	for(int i = 1, index = 0; i <= height; i++)	{
 	 			IOUtils.readFully(is, brgb, 0, bytePerScanLine);
 	 			index = width*(height-i);
-	 			for(int j = 0, nindex = 0; j < width; j++)
-	 			{
+	 			for(int j = 0, nindex = 0; j < width; j++) {
 	 				pix[index++] = ((brgb[nindex++]&0xff)|((brgb[nindex++]&0xff)<<8)|((brgb[nindex++]&0xff)<<16)|(0xff<<24));
 	 				nindex++;
 	 			}
         	}
 		} else {
-			for(int i = 0, index = 0; i < height; i++)
-        	{
+			for(int i = 0, index = 0; i < height; i++) {
 	 			IOUtils.readFully(is, brgb, 0, bytePerScanLine);
-	 			for(int j = 0, nindex = 0; j < width; j++)
-	 			{
+	 			for(int j = 0, nindex = 0; j < width; j++) {
 	 				pix[index++] = ((brgb[nindex++]&0xff)|((brgb[nindex++]&0xff)<<8)|((brgb[nindex++]&0xff)<<16)|(0xff<<24));
 	 				nindex++;
 	 			}
@@ -217,8 +202,7 @@ public class BMPReader extends ImageReader
     }
     
     @SuppressWarnings("unused")
-	private BufferedImage read32bitTrueColorBitmap2(InputStream is) throws Exception
-    {
+	private BufferedImage read32bitTrueColorBitmap2(InputStream is) throws Exception {
     	LOGGER.info("32 bits bitmap color image!");
        
         IOUtils.skipFully(is, bitmapHeader.dataOffSet - 54);
@@ -346,8 +330,7 @@ public class BMPReader extends ImageReader
 		return new BufferedImage(cm, raster, false, null);		
     }
 
-    private byte[] read256ColorCompressedBitmap(InputStream is) throws Exception
-    {
+    private byte[] read256ColorCompressedBitmap(InputStream is) throws Exception {
     	LOGGER.info("256 color bitmap color image!");
  		LOGGER.info("compressed format!");
     	
@@ -368,8 +351,7 @@ public class BMPReader extends ImageReader
  		index = width*vert+horz;
 
  		do {
- 			if (nindex >= readSize)
- 			{
+ 			if (nindex >= readSize)	{
  				//if ((is.read(brgb,0,bufferSize)) == -1) break;
  				readSize = is.read(brgb, 0, bufferSize);
  				nindex = 0;
@@ -377,51 +359,42 @@ public class BMPReader extends ImageReader
  				   	
  			len = brgb[nindex++]&0xff;
  					
- 			if (nindex >= readSize)
- 			{
+ 			if (nindex >= readSize) {
  				readSize = is.read(brgb, 0, bufferSize);
  				nindex = 0;
  			}
- 			if(len == 0)
- 			{
+ 			
+ 			if(len == 0) {
  				esc = (brgb[nindex++]&0xff);
- 				if (nindex >= readSize)
- 				{
+ 				if (nindex >= readSize) {
  					readSize = is.read(brgb, 0, bufferSize);
  					nindex = 0;
  				}
- 				if(esc > 2)
- 				{
+ 				if(esc > 2) {
  					count = 0;
- 					for(int k = 1; k <= esc; k++)
- 					{
+ 					for(int k = 1; k <= esc; k++) {
  						pixels[index++] = brgb[nindex++];
- 						if (nindex >= readSize)
- 						{
+ 						if (nindex >= readSize) {
  							readSize = is.read(brgb, 0, bufferSize);
  							nindex = 0;
  						}
  						count++;
  						horz++;
- 						if (horz >= width)
- 						{
+ 						if (horz >= width) {
  							break;
  						}
  					}
  					if((count%2) != 0) nindex++;// Each absolute run must be aligned on a word boundary!
  				}
- 				if (esc == DELTA)
- 				{
+ 				if (esc == DELTA) {
  					LOGGER.info("found delta");
  					horz_offset = brgb[nindex++]&0xff;
- 					if (nindex >= readSize)
- 					{
+ 					if (nindex >= readSize) {
  						readSize = is.read(brgb, 0, bufferSize);
  						nindex = 0;
  					}
  					vert_offset = brgb[nindex++]&0xff;
- 					if (nindex >= readSize)
- 					{
+ 					if (nindex >= readSize) {
  						readSize = is.read(brgb, 0, bufferSize);
  						nindex = 0;
  					}
@@ -429,29 +402,23 @@ public class BMPReader extends ImageReader
  					vert -= vert_offset;// This is to be verified!
  					index = width*vert+horz;
  				}
- 				if(esc == END_OF_LINE) 
- 				{
+ 				if(esc == END_OF_LINE) {
  					vert--;
  					horz = 0;
  					index = width*vert+horz;
  				}
  				if(esc == END_OF_BITMAP) done_with_bitmap = true;
- 			}
- 			else  
- 			{
+ 			} else {
  				byte b = brgb[nindex++];
  				
- 				if (nindex >= readSize)
- 				{
+ 				if (nindex >= readSize) {
  					readSize = is.read(brgb, 0, bufferSize);
  					nindex = 0;
  				} 						
- 				for(int l = 0; l < len; l++)
- 				{
+ 				for(int l = 0; l < len; l++) {
  					pixels[index++] = b;
  					horz++;
- 					if (horz >= width)
- 					{
+ 					if (horz >= width) {
  						break;
  					}
  				}
@@ -464,8 +431,7 @@ public class BMPReader extends ImageReader
 		return pixels;
 	}
     
-    private byte[] read16ColorCompressedBitmap(InputStream is) throws Exception
-    {
+    private byte[] read16ColorCompressedBitmap(InputStream is) throws Exception {
     	LOGGER.info("16 color bitmap color image!");
     	LOGGER.info("compressed format!");
     	
@@ -486,42 +452,35 @@ public class BMPReader extends ImageReader
 		index = width*vert+horz;
 		  
 		do {
-			if (nindex >= readSize)
-			{
+			if (nindex >= readSize) {
 				readSize = is.read(brgb, 0, bufferSize);
 				nindex = 0;
 			}
 
 			len = brgb[nindex++]&0xff;
                    
-			if (nindex >= readSize)
-			{
+			if (nindex >= readSize) {
 				readSize = is.read(brgb, 0, bufferSize);
 				nindex = 0;
 			}
-			if(len == 0)
-			{
+			if(len == 0) {
 				esc = brgb[nindex++]&0xff;
-				if (nindex >= readSize)
-				{
+				if (nindex >= readSize) {
 					readSize = is.read(brgb, 0, bufferSize);
 					nindex = 0;
 				}
 
 				if(esc == END_OF_BITMAP) done_with_bitmap = true;
 				
-				if (esc == DELTA)
-				{
+				if (esc == DELTA) {
 					LOGGER.info("found delta");
 					horz_offset = brgb[nindex++]&0xff;
-					if (nindex >= readSize)
-					{
+					if (nindex >= readSize) {
 						readSize = is.read(brgb, 0, bufferSize);
 						nindex = 0;
 					}
 					vert_offset = brgb[nindex++]&0xff;
-					if (nindex >= readSize)
-					{
+					if (nindex >= readSize) {
 						readSize = is.read(brgb, 0, bufferSize);
 						nindex = 0;
 					}
@@ -530,20 +489,17 @@ public class BMPReader extends ImageReader
 					index = width*vert+horz;
 				}
 
-				if(esc == END_OF_LINE) 
-				{
+				if(esc == END_OF_LINE) {
 					vert--;
 					horz = 0;
 					index = width*vert+horz;
 				}
 										        
-				if(esc>2)
-				{
+				if(esc>2) {
 					count = 0;
-					do{
+					do {
 						int b = brgb[nindex++]&0xff;
-						if (nindex >= readSize)
-						{
+						if (nindex >= readSize) {
 							readSize = is.read(brgb, 0, bufferSize);
 							nindex = 0;
 						}
@@ -555,20 +511,17 @@ public class BMPReader extends ImageReader
 						// Be careful in this case if it runs out of the line bound, 
 						// don't update horz and vert variables at this time,just break 
 						// and wait until the end_of_line flag to show up.
-						if (horz >= width)
-						{
+						if (horz >= width) {
 							break;   
 						}        
 						
-						if (counter<esc)
-						{
+						if (counter < esc) {
 							pixels[index++] = (byte)(b&0x0F);
 							counter++;
 							horz++;
 						}
 
-						if (horz >= width)
-						{
+						if (horz >= width) {
 							break;
 						}
 						
@@ -576,12 +529,9 @@ public class BMPReader extends ImageReader
 					counter = 0;
 					if((count%2) != 0) nindex += 1;
 				}
-			}
-			else  
-			{
+			} else {
 				int b = brgb[nindex++]&0xff;
-				if (nindex >= readSize)
-				{
+				if (nindex >= readSize) {
 					readSize = is.read(brgb, 0, bufferSize);
 					nindex = 0;
 				}
@@ -590,19 +540,16 @@ public class BMPReader extends ImageReader
 					counter++;
 					horz++;
 					
-					if (horz >= width)
-					{
+					if (horz >= width) {
 						break;
 					}
 
-					if (counter < len)
-					{
+					if (counter < len) {
 						pixels[index++] = (byte)(b&0x0F);
 						counter++;
 						horz++;
 						
-						if (horz >= width)
-						{
+						if (horz >= width) {
 							break;
 						}
 					}
@@ -618,8 +565,7 @@ public class BMPReader extends ImageReader
 	}
  	 
 	 @SuppressWarnings("unused")
-     private static class BitmapHeader
-     {
+     private static class BitmapHeader {
 		// Bitmap file header, 14 bytes
 		short signiture;// Always "BM"
 		int   fileSize; // Total size of file in bytes
@@ -668,8 +614,7 @@ public class BMPReader extends ImageReader
 		int colorsUsed;		
 		int colorsImportant; // Number of important colors (0 = all) 
     
-	    void readHeader(InputStream is) throws Exception
-	    {
+	    void readHeader(InputStream is) throws Exception {
 	    	int nindex = 0;
 	    	byte bhdr[] = new byte[54];
 				  

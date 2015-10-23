@@ -56,8 +56,7 @@ import com.icafe4j.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com 
  * @version 1.1 03/02/2012
  */
-public class PNGReader extends ImageReader
-{  
+public class PNGReader extends ImageReader {  
      /* PNG signature constant */
      public static final long SIGNATURE = 0x89504E470D0A1A0AL;
      
@@ -81,12 +80,10 @@ public class PNGReader extends ImageReader
 	// Obtain a logger instance
 	 private static final Logger LOGGER = LoggerFactory.getLogger(PNGReader.class);
 			
-	 private static void apply_defilter(InputStream bis, byte[] pixBytes, int height, int bytesPerPixel, int bytesPerScanLine) throws Exception
-	 {		 
+	 private static void apply_defilter(InputStream bis, byte[] pixBytes, int height, int bytesPerPixel, int bytesPerScanLine) throws Exception {		 
 		 int filter_type = Filter.NONE;
 
-		 for (int j = 0, offset = 0; j < height; j++, offset += bytesPerScanLine)
-		 {
+		 for (int j = 0, offset = 0; j < height; j++, offset += bytesPerScanLine) {
               filter_type = bis.read();
               IOUtils.readFully(bis, pixBytes, offset, bytesPerScanLine);
               // Do the filter
@@ -148,8 +145,7 @@ public class PNGReader extends ImageReader
 		 palette[alpha[1]&0xff] = (palette[alpha[1]&0xff]&0x00FFFFFF);	
 	 }
 
-	 private void adjust_PLTE()
-	 {
+	 private void adjust_PLTE() {
 		 LOGGER.info("Transparent indexed color image!");
 		 int len = Math.min(alpha.length, rgbColorPalette.length);
 		 for(int i = 0; i < len; i++)
@@ -158,8 +154,7 @@ public class PNGReader extends ImageReader
 	 
 	 // Calculate variable values for different interlaced PNG passes
 	 private boolean calculatePassVariables(int pass) {
-		 switch(pass)
-		 {
+		 switch(pass) {
 			 case 1:
 				 block_width = (width/8)+((width%8)==0?0:1);
 			     block_height = (height/8)+((height%8)==0?0:1);				     
@@ -226,8 +221,7 @@ public class PNGReader extends ImageReader
 	 }
 	 
 	 // Gamma correct for byte type image data
-	 private void correctGamma(byte[] image, int width, int height)
-	 {
+	 private void correctGamma(byte[] image, int width, int height) {
 		 int p_index = 0;
 		 for (int i = 0; i < height; i++)
 			 for (int j = 0; j < width; j++, p_index += 2)
@@ -246,13 +240,10 @@ public class PNGReader extends ImageReader
 
 	 // Gamma correction for int type image data
 	 @SuppressWarnings("unused")
-	private void correctGamma(int[] image, int width, int height)
-	 {
+	private void correctGamma(int[] image, int width, int height) {
 		 int p_index = 0;
-		 for (int i = 0; i < height; i++)
-		 {
-			 for (int j = 0; j < width; j++, p_index++)
-			 {
+		 for (int i = 0; i < height; i++) {
+			 for (int j = 0; j < width; j++, p_index++) {
 				 byte red = gammaTable[((image[p_index]&0xff0000)>>16)];
 				 byte green = gammaTable[((image[p_index]&0x00ff00)>>8)];
 				 byte blue = gammaTable[(image[p_index]&0x0000ff)];
@@ -262,13 +253,10 @@ public class PNGReader extends ImageReader
 	 }
 	 
 	 // Gamma correction for component type image data
-	 private void correctGamma(byte[] image, int width, int height, boolean hasAlpha)
-	 {
+	 private void correctGamma(byte[] image, int width, int height, boolean hasAlpha) {
 		 int index = 0;
-		 for (int i = 0; i < height; i++)
-		 {
-			 for (int j = 0; j < width; j++, index += 3)
-			 {
+		 for (int i = 0; i < height; i++) {
+			 for (int j = 0; j < width; j++, index += 3) {
 				 image[index] = gammaTable[image[index]&0xff];
 				 image[index + 1] = gammaTable[image[index + 1]&0xff];
 				 image[index + 2] = gammaTable[image[index + 2]&0xff];
@@ -278,14 +266,11 @@ public class PNGReader extends ImageReader
 	 }
 
 	 // Gamma correction for short type image data
-	 private void correctGamma(short[] image, int width, int height, int rgbStride, int alphaStride)
-	 {
+	 private void correctGamma(short[] image, int width, int height, int rgbStride, int alphaStride) {
 		 int p_index = 0;
 		
-		 for (int i = 0; i < height; i++)
-		 {
-			 for (int j = 0; j < width; j++, p_index += alphaStride)
-			 {
+		 for (int i = 0; i < height; i++) {
+			 for (int j = 0; j < width; j++, p_index += alphaStride) {
 				 for(int k = 0; k < rgbStride; k++, p_index++)
 					 image[p_index] = gammaUShortTable[image[p_index]&0xffff];
 			 }
@@ -293,8 +278,7 @@ public class PNGReader extends ImageReader
 	 }
 
 	 // Byte type image data gamma correction table
-	 private void createGammaTable(float gamma, float displayExponent)
-     {
+	 private void createGammaTable(float gamma, float displayExponent) {
 		 int size =  1 << 8;
 		 gammaTable = new byte[size];
 		 double decodingExponent = 1d / ((double)gamma * (double)displayExponent);
@@ -303,8 +287,7 @@ public class PNGReader extends ImageReader
      }
 	 
 	 // Short type image data gamma correction table
-	 private void createUShortGammaTable(float gamma, float displayExponent)
-     {
+	 private void createUShortGammaTable(float gamma, float displayExponent) {
 		 int size =  1 << 16;
 		 gammaUShortTable = new short[size];
 		 double decodingExponent = 1d / ((double)gamma * (double)displayExponent);
@@ -316,8 +299,7 @@ public class PNGReader extends ImageReader
 		 int bytesPerPixel = 0;
 		 byte[] pixBytes;
 			 
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 		    case 8:
 				if (fullAlpha)
 			    	bytesPerPixel = 4;
@@ -364,8 +346,7 @@ public class PNGReader extends ImageReader
 		 // Wrap an InflaterInputStream with a bufferedInputStream to speed up reading
 		 BufferedInputStream bis = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compr_data)));
 		 // Decoding the image pass by pass. There are 7 passes for ADAM7 interlacing method. 
-		 for (int pass = 1; pass < 8; pass++)
-		 {
+		 for (int pass = 1; pass < 8; pass++) {
 			 if(!calculatePassVariables(pass)) continue;
 			 
 			 bytesPerScanLine = bytesPerPixel*block_width;
@@ -439,8 +420,7 @@ public class PNGReader extends ImageReader
 		 return ArrayUtils.toShortArray(pixBytes, true);
 	 }
  	 
- 	 private short[] generate16BitRGBInterlacedPixels(byte[] compr_data, boolean fullAlpha) throws Exception
-	 {
+ 	 private short[] generate16BitRGBInterlacedPixels(byte[] compr_data, boolean fullAlpha) throws Exception {
  		 int bytesPerPixel = 0;
 		 int p_index = 0;		 
 		 byte[] pix_interlaced;
@@ -470,8 +450,7 @@ public class PNGReader extends ImageReader
 		 // Wrap an InflaterInputStream with a bufferedInputStream to speed up reading
 	  	 BufferedInputStream bis = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compr_data)));
 		 // Decoding the image pass by pass. There are 7 passes for ADAM7 interlacing method. 
-		 for (int pass = 1; pass < 8; pass++)
-		 {
+		 for (int pass = 1; pass < 8; pass++) {
 			 if(!calculatePassVariables(pass)) continue;
 			 
 			 bytesPerScanLine = bytesPerPixel*block_width;
@@ -573,8 +552,7 @@ public class PNGReader extends ImageReader
 		 return spixels;		 
 	 }
  	
-	 private byte[] generate8BitRGBInterlacedPixels(byte[] compr_data, boolean fullAlpha) throws Exception
-	 {
+	 private byte[] generate8BitRGBInterlacedPixels(byte[] compr_data, boolean fullAlpha) throws Exception {
  		 int bytesPerPixel = 0;
 		 int p_index = 0;
 		 byte[] pix_interlaced;
@@ -590,8 +568,7 @@ public class PNGReader extends ImageReader
 		 // Wrap an InflaterInputStream with a bufferedInputStream to speed up reading
 	  	 BufferedInputStream bis = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compr_data)));
 		 // Decoding the image pass by pass. There are 7 passes for ADAM7 interlacing method. 
-		 for (int pass = 1; pass < 8; pass++)
-		 {
+		 for (int pass = 1; pass < 8; pass++) {
 			 if(!calculatePassVariables(pass)) continue;
 			 
 			 bytesPerScanLine = bytesPerPixel*block_width;
@@ -634,8 +611,7 @@ public class PNGReader extends ImageReader
 		 return bpixels;
 	 }
 
-	 private byte[] generate8BitRGBPixels(byte[] compr_data, boolean fullAlpha) throws Exception
-	 {				 
+	 private byte[] generate8BitRGBPixels(byte[] compr_data, boolean fullAlpha) throws Exception {				 
  		 byte[] pixBytes = deflateRGBPixels(compr_data, fullAlpha);
  		 
  		 if(alpha == null)
@@ -667,8 +643,7 @@ public class PNGReader extends ImageReader
 		 //
 		 int i = 0, safeEnd = block_width - padding;		 
 			
-		 switch (bitsPerPixel)
-		 {		 	
+		 switch (bitsPerPixel) {		 	
 		 	case 8:
 		 		for(int j = 0, k = 0; j < block_height; j++) {
 		 			for (int l = 0; l < block_width; l++, p_index += x_inc) {
@@ -735,11 +710,9 @@ public class PNGReader extends ImageReader
 	 private void generateIndexedInterlacedPixels(byte[] pixels, byte[] pix_interlaced, int block_width, int block_height, int padding, int p_index, int x_start, int y_start, int x_inc, int y_inc) {
 		 //
 		 int i = 0, safeEnd = block_width - padding;
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 		 	case 8:
-		 		for (int j = 0, k = 0; j < block_height; j++)
-		 		{				 
+		 		for (int j = 0, k = 0; j < block_height; j++) {				 
 		 			for (int l = 0; l < block_width; l++, k++, p_index += x_inc) {
 		 				pixels[p_index] =  pix_interlaced[k];
 		 			}
@@ -748,8 +721,7 @@ public class PNGReader extends ImageReader
 		 		break;
 		 	case 4:
 		 		for(int j = 0; j < block_height; j++) {
-		 			for (int k = 0; k< safeEnd; k+=2)
-			 		{
+		 			for (int k = 0; k< safeEnd; k+=2) {
 			 			pixels[p_index] = (byte)(pix_interlaced[i]>>>4);
 			 			p_index += x_inc;
 			 			pixels[p_index] = pix_interlaced[i++];
@@ -764,8 +736,7 @@ public class PNGReader extends ImageReader
 		 		break;
 		 	case 2:
 		 		for(int j = 0; j < block_height; j++) {
-		 			for (int k = 0; k< safeEnd; k+=4, i++)
-			 		{	
+		 			for (int k = 0; k< safeEnd; k+=4, i++) {	
 		 				for(int l = 6; l >= 0; l-=2) {
 		 					pixels[p_index] = (byte)((pix_interlaced[i]>>>l)&0x03);
 			 				p_index += x_inc;
@@ -807,8 +778,7 @@ public class PNGReader extends ImageReader
 		 //
 		 int padding = 0;
 		 
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 		 	case 8:
 				bytesPerScanLine = block_width;
 			    break;
@@ -841,8 +811,7 @@ public class PNGReader extends ImageReader
 		 //
 		 int padding = 0;
 		 
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 		    case 8:				
 			    break;
 			case 4:
@@ -868,8 +837,7 @@ public class PNGReader extends ImageReader
  		 int bytesPerPixel = 0;
 		 byte[] pixBytes;
 		 
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 		    case 8:
 				bytesPerPixel = 2;			
 			    break;
@@ -899,8 +867,7 @@ public class PNGReader extends ImageReader
 		 byte[] pix_interlaced;
 		 byte[] pixels;
 				
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 		    case 8:
 				bytesPerPixel = 2;
 			    break;
@@ -917,8 +884,7 @@ public class PNGReader extends ImageReader
 		 // Wrap an InflaterInputStream with a bufferedInputStream to speed up reading
 	  	 BufferedInputStream bis = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compr_data)));
 		 // Decoding the image pass by pass. There are 7 passes for ADAM7 interlacing method. 
-		 for (int pass = 1; pass < 8; pass++)
-		 {				
+		 for (int pass = 1; pass < 8; pass++) {				
 			 if(!calculatePassVariables(pass)) continue;
 			 
 			 bytesPerScanLine = bytesPerPixel*block_width;
@@ -961,8 +927,7 @@ public class PNGReader extends ImageReader
 		 int padding = 0;
 		 byte[] pixBytes;
 			       
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 		    case 8:				
 				rgbColorPalette = EIGHT_BIT_COLOR_PALETTE;
 				bytesPerScanLine = width;
@@ -1003,8 +968,7 @@ public class PNGReader extends ImageReader
 		 byte[] pixels;
 		 int padding = 0;
      
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 		    case 8:
 				bytesPerPixel = 1;
 				rgbColorPalette = EIGHT_BIT_COLOR_PALETTE;
@@ -1030,8 +994,7 @@ public class PNGReader extends ImageReader
 		 // Wrap an InflaterInputStream with a bufferedInputStream to speed up reading
 		 BufferedInputStream bis = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compr_data)));
 		 // Decoding the image pass by pass. There are 7 passes for ADAM7 interlacing method. 
-		 for (int pass = 1; pass < 8; pass++)
-		 {
+		 for (int pass = 1; pass < 8; pass++) {
 			 if(!calculatePassVariables(pass)) continue;
 			 
 			 bytesPerScanLine = getBytesPerScanLine(block_width);
@@ -1050,8 +1013,7 @@ public class PNGReader extends ImageReader
 	 }
 	 
 	 // Image data processing and BufferedImage generating module
-	 private BufferedImage process_IDAT(byte[] compr_data) throws Exception
-	 {	
+	 private BufferedImage process_IDAT(byte[] compr_data) throws Exception {	
 		 byte[] bpixels = null;
 		 short[] spixels = null;
 		 WritableRaster raster = null;
@@ -1061,8 +1023,7 @@ public class PNGReader extends ImageReader
 		 ColorSpace colorSpace = ColorSpace.getInstance(ColorSpace.CS_sRGB);		
 		 if(hasICCP) colorSpace = new ICC_ColorSpace(ICC_Profile.getInstance(icc_profile));
 		 
-		 switch (ColorType.fromInt(color_format))
-		 {
+		 switch (ColorType.fromInt(color_format)) {
 		   case GRAY_SCALE:
 			   //Create a BufferedImage			   			  
 			   if(bitsPerPixel == 16) {
@@ -1254,8 +1215,7 @@ public class PNGReader extends ImageReader
 		 return null;
 	 }
 	 
-	 private byte[] process_IndexedImage(byte[] compr_data) throws Exception
-	 {
+	 private byte[] process_IndexedImage(byte[] compr_data) throws Exception {
 		 bytesPerScanLine = getBytesPerScanLine(width);
 		 // Now inflate the data.        
 		 byte[] pixBytes = new byte[height * bytesPerScanLine];
@@ -1267,14 +1227,12 @@ public class PNGReader extends ImageReader
 		 return pixBytes;
   	 }
 	 
-	 private byte[] process_IndexedInterlacedImage(byte[] compr_data) throws Exception
-	 {
+	 private byte[] process_IndexedInterlacedImage(byte[] compr_data) throws Exception {
 		 int padding = 0;
 		 byte[] pix_interlaced;
 		 byte[] pixels = new byte[width*height];
       
-		 switch (bitsPerPixel)
-		 {
+		 switch (bitsPerPixel) {
 			case 1:
 			case 2:
 			case 4:
@@ -1286,8 +1244,7 @@ public class PNGReader extends ImageReader
 		 // Wrap an InflaterInputStream with a bufferedInputStream to speed up reading
 		 BufferedInputStream bis = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compr_data)));
 		 // Decoding the image pass by pass. There are 7 passes for ADAM7 interlacing method. 
-		 for (int pass = 1; pass < 8; pass++)
-		 {
+		 for (int pass = 1; pass < 8; pass++) {
 			 if(!calculatePassVariables(pass)) continue;
 			 bytesPerScanLine = getBytesPerScanLine(block_width);
 			 padding = getPadding(block_width);			 
@@ -1303,8 +1260,7 @@ public class PNGReader extends ImageReader
 		 return ArrayUtils.packByteArray(pixels, width, 0, bitsPerPixel, pixels.length);	
 	 }		
 	 
-	 public BufferedImage read(InputStream is) throws Exception
-     {
+	 public BufferedImage read(InputStream is) throws Exception {
 		 // Local variables for reading chunks
 		 int data_len = 0;
          int chunk_type = 0;
@@ -1330,8 +1286,7 @@ public class PNGReader extends ImageReader
 		  //long signature = ((IOUtils.readIntMM(is)&0xffffffffffffL)<<32)|IOUtils.readIntMM(is);
           long signature = IOUtils.readLongMM(is);
 		 
-          if (signature != SIGNATURE)
-          {
+          if (signature != SIGNATURE) {
 		      LOGGER.error("--- NOT A PNG IMAGE ---");
 		      return null;
 		  }
@@ -1394,8 +1349,7 @@ public class PNGReader extends ImageReader
 		  LOGGER.info("--- END PNG IMAGE INFO ---");
 		  // End of dumping
 
-		  while (true)
-		  {
+		  while (true) {
 			  data_len = IOUtils.readIntMM(is);
 			  chunk_type = IOUtils.readIntMM(is);
 			  //LOGGER.info("chunk type: 0x{}", Integer.toHexString(chunk_type));
@@ -1405,15 +1359,11 @@ public class PNGReader extends ImageReader
 			
 			  ChunkType chunk = ChunkType.fromInt(chunk_type);
 			
-			  switch (chunk)
-			  {
+			  switch (chunk) {
 			  	case IDAT: 
-			  	{
 			  		read_IDAT(is, data_len, compr_data);
 			  		break;
-			  	}
 			  	case TRNS:
-			  	{
 			  		alpha = new byte[data_len];
 			  		is.read(alpha, 0, data_len);
 			  		IOUtils.readUnsignedIntMM(is);// CRC
@@ -1428,38 +1378,28 @@ public class PNGReader extends ImageReader
 			  				adjust_grayscale_PLTE(SIXTEEN_COLOR_PALETTE);
 			  			else if(bitsPerPixel == 8)
 			  				adjust_grayscale_PLTE(EIGHT_BIT_COLOR_PALETTE);
-			  		}						 
-			  		else if(color_format == 2)
+			  		} else if(color_format == 2)
 			  			LOGGER.info("full color transparent image!");
 			  		break;
-			  	}
 			  	case GAMA:
-			  	{
 			  		read_GAMMA(is, data_len);
 			  		break;
-			  	}
 			  	case SRGB:
-			  	{
 			  		read_SRGB(is, data_len);
 			  		break;
-			  	}
 			  	case PLTE:
-			  	{
 			  		rgbColorPalette = new int[data_len/3];
 			  		read_PLTE(is, data_len);
 			  		break;
-			  	}
 			  	case ICCP:
 			  		hasICCP = true;
 			  		icc_profile = readICCProfile(is, data_len);
 			  		IOUtils.readUnsignedIntMM(is);
 			  		break;
 			  	default:
-			  	{
 			  		is.skip(data_len);
 			  		IOUtils.readUnsignedIntMM(is);// CRC
 			  		break;
-			  	}
 			  }
 		  }
 	  
@@ -1468,8 +1408,7 @@ public class PNGReader extends ImageReader
 		  return process_IDAT(compr_data.toByteArray());
      }
 	 
-	 private void read_GAMMA(InputStream is, int data_len) throws Exception
-	 {
+	 private void read_GAMMA(InputStream is, int data_len) throws Exception {
 		 if(data_len != 4){
 			 LOGGER.error("Invalid Gamma data length: {}", data_len);
 		     return;
@@ -1483,16 +1422,14 @@ public class PNGReader extends ImageReader
 		 IOUtils.readUnsignedIntMM(is);// CRC
 	 }
 	 
-	 private void read_IDAT(InputStream is, int data_len, ByteArrayOutputStream compr_data) throws Exception
-	 {
+	 private void read_IDAT(InputStream is, int data_len, ByteArrayOutputStream compr_data) throws Exception {
  		 byte[] buf = new byte[data_len];
 		 IOUtils.readFully(is,buf,0,data_len);
 		 compr_data.write(buf, 0, data_len);
  		 IOUtils.readUnsignedIntMM(is);// CRC
 	 }
 	 
-	 private boolean read_IHDR(InputStream is) throws Exception
-	 {
+	 private boolean read_IHDR(InputStream is) throws Exception {
 		 /** 
 		  * Header layout
 		  * Width:              4 bytes
@@ -1540,8 +1477,7 @@ public class PNGReader extends ImageReader
 		 return true;
 	 }
 	 
-	 private void read_PLTE(InputStream is, int data_len) throws Exception
-	 {
+	 private void read_PLTE(InputStream is, int data_len) throws Exception {
    		 int table_indx = 0;
 		 byte[] rgb_table = new byte[data_len];
 		 int len = data_len/3;
@@ -1551,8 +1487,7 @@ public class PNGReader extends ImageReader
 		 IOUtils.readUnsignedIntMM(is);// CRC
 	 }
 	 
-	 private void read_SRGB(InputStream is, int data_len) throws Exception
-	 {
+	 private void read_SRGB(InputStream is, int data_len) throws Exception {
 		 if(data_len!=1){
 			 LOGGER.error("Invalid SRGB data length:{}", data_len);
 		     return;

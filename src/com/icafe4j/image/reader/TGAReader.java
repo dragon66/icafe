@@ -37,8 +37,7 @@ public class TGAReader extends ImageReader {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(TGAReader.class);
 	// Wrapper for the TGA header
-	private static class TgaHeader
-	{
+	private static class TgaHeader {
 		byte  id_length;
 		byte  colourmap_type;
 		byte  image_type; 
@@ -52,8 +51,7 @@ public class TGAReader extends ImageReader {
 		byte  bits_per_pixel; 
 		byte  image_descriptor;	
 
-		void readHeader(InputStream is) throws Exception
-		{
+		void readHeader(InputStream is) throws Exception {
 			int nindex = 0;
 			byte header[] = new byte[18]; // For the 18 bit header trunk
 
@@ -88,8 +86,7 @@ public class TGAReader extends ImageReader {
 	
 	private int[] pix;
   
-	public BufferedImage read(InputStream is) throws Exception
-	{
+	public BufferedImage read(InputStream is) throws Exception {
 		tgaHeader = new TgaHeader();
 		tgaHeader.readHeader(is);
     
@@ -105,8 +102,7 @@ public class TGAReader extends ImageReader {
 
  	   	scanMode = ((tgaHeader.image_descriptor&0x30)>>4);
 
- 	   	switch (scanMode)
- 	   	{ 	   	
+ 	   	switch (scanMode) { 	   	
  	   		case SCAN_MODE_BOTTOM_LEFT:
 				l = height-1; m = -1; n = 0; o = 1;
 				break;
@@ -125,8 +121,7 @@ public class TGAReader extends ImageReader {
  	   	LOGGER.info("Image x_origin: {}", tgaHeader.x_origin);
  	   	LOGGER.info("Image y_origin: {}", tgaHeader.y_origin);
 
- 	   	switch (tgaHeader.image_type)
- 	   	{
+ 	   	switch (tgaHeader.image_type) {
 	   		case 0:
 	   			LOGGER.info("There are no data in the image file");
 	   			System.exit(1);
@@ -165,8 +160,7 @@ public class TGAReader extends ImageReader {
  	   	return new BufferedImage(cm, raster, false, null);
 	}
    	
-	private void read_BW_Tga(InputStream is) throws Exception
-	{
+	private void read_BW_Tga(InputStream is) throws Exception {
 		bitsPerPixel = 1;
 		LOGGER.info("Uncompressed Black and White Tga image!");
 
@@ -186,8 +180,7 @@ public class TGAReader extends ImageReader {
 		is.close();
 	}
 
-	private void read_RLE_BW_Tga(InputStream is) throws Exception
-	{
+	private void read_RLE_BW_Tga(InputStream is) throws Exception {
 		bitsPerPixel = 1;
 		LOGGER.info("Black and White Tga RLE image!");
 
@@ -203,35 +196,30 @@ public class TGAReader extends ImageReader {
 			            
 			k = (brgb[nindex++] & 0x7f)+1; 
 						 					       
-			if ((brgb[nindex-1] & 0x80) != 0){
+			if ((brgb[nindex-1] & 0x80) != 0) {
 				for(int q = 0; q < k; q++){
 					pix[width*(l+m*i)+n+o*j] = (0xff<<24)|((brgb[nindex]&0xff))|((brgb[nindex]&0xff)<<8)|((brgb[nindex]&0xff)<<16);
 					j++;
-					if(j%width == 0)
-					{
+					if(j%width == 0) {
 						i++;
 						j = 0;
 					}
 					p++;
-					if (p >= width*height)
-					{
+					if (p >= width*height) {
 						break;
 					}
 				}
 				nindex += 1;
 			} else {
-				for (int q = 0; q < k; q++)
-				{
+				for (int q = 0; q < k; q++) {
 					pix[width*(l+m*i)+n+o*j] = (0xff<<24)|((brgb[nindex]&0xff))|((brgb[nindex]&0xff)<<8)|((brgb[nindex++]&0xff)<<16);
 					j++;
-					if(j%width == 0)
-					{
+					if(j%width == 0) {
 						i++;
 						j = 0;
 					}
 					p++;
-					if (p >= width*height)
-					{
+					if (p >= width*height) {
 						break;
 					}
 				}
@@ -240,15 +228,13 @@ public class TGAReader extends ImageReader {
 		is.close();
 	}
 
-	private void  read_RLE_CMP_Tga(InputStream is) throws Exception
-	{
+	private void  read_RLE_CMP_Tga(InputStream is) throws Exception {
 		LOGGER.info("color mapped Tga RLE image!");
 	   
 		int nindex = 0;
 		int p = 0, k = 0, i = 0, j = 0;
 
-		if (tgaHeader.bits_per_pixel != 8)
-		{
+		if (tgaHeader.bits_per_pixel != 8) {
 			LOGGER.error("Can only handle 8 bit color mapped tga file");
 			return;
 		}
@@ -261,35 +247,30 @@ public class TGAReader extends ImageReader {
 
 			k = (brgb[nindex++] & 0x7f)+1; 
 						 					       
-			if ((brgb[nindex-1] & 0x80) != 0){
+			if ((brgb[nindex-1] & 0x80) != 0) {
 				for(int q = 0; q < k; q++){
 					pix[width*(l+m*i)+n+o*j] = rgbColorPalette[brgb[nindex]&0xff];
 					j++;
-					if(j%width == 0)
-					{
+					if(j%width == 0) {
 						i++;
 						j = 0;
 					}
 					p++;
-					if (p >= width*height)
-					{
+					if (p >= width*height) {
 						break;
 					}
 				}
 				nindex += 1;
 			} else {
-				for (int q = 0; q < k; q++)
-				{
+				for (int q = 0; q < k; q++)	{
 					pix[width*(l+m*i)+n+o*j] = rgbColorPalette[brgb[nindex++]&0xff];
 					j++;
-					if(j%width == 0)
-					{
+					if(j%width == 0) {
 						i++;
 						j = 0;
 					}
 					p++;
-					if (p >= width*height)
-					{
+					if (p >= width*height) {
 						break;
 					}
 				}
@@ -298,8 +279,7 @@ public class TGAReader extends ImageReader {
 		is.close();
 	}
 
-	private void  read_RLE_TrueColor_Tga(InputStream is) throws Exception
-	{
+	private void  read_RLE_TrueColor_Tga(InputStream is) throws Exception {
 		int skipover = 0;
 		int nindex = 0;
 		int p = 0, k = 0, i = 0, j = 0;
@@ -310,42 +290,36 @@ public class TGAReader extends ImageReader {
 	          
 		byte brgb[] = IOUtils.readFully(is, 4096);
 		 
-		if(tgaHeader.bits_per_pixel  == 24) // 24 bit image
-		{
+		if(tgaHeader.bits_per_pixel  == 24) { // 24 bit image
 			LOGGER.info("24 bits Tga RLE image!");
 			 
 			while(p < width*height) { 
 				k = (brgb[nindex++] & 0x7f)+1; 
 						 					       
-				if ((brgb[nindex-1] & 0x80) != 0){
+				if ((brgb[nindex-1] & 0x80) != 0) {
 					for(int q = 0; q < k; q++){
 						pix[width*(l+m*i)+n+o*j] = (0xff<<24)|((brgb[nindex]&0xff))|((brgb[nindex+1]&0xff)<<8)|((brgb[nindex+2]&0xff)<<16);
 						j++;
-						if(j%width == 0)
-						{
+						if(j%width == 0) {
 							i++;
 							j = 0;
 						}
 						p++;
-						if (p >= width*height)
-						{
+						if (p >= width*height) {
 							break;
 						}
 					}
 					nindex += 3;
 				} else {
-					for (int q = 0; q < k; q++)
-					{
+					for (int q = 0; q < k; q++)	{
 						pix[width*(l+m*i)+n+o*j] = (0xff<<24)|((brgb[nindex++]&0xff))|((brgb[nindex++]&0xff)<<8)|((brgb[nindex++]&0xff)<<16);  
 						j++;
-						if(j%width == 0)
-						{
+						if(j%width == 0) {
 							i++;
 							j = 0;
 						}
 						p++;
-						if (p >= width*height)
-						{
+						if (p >= width*height) {
 							break;
 						}
 					}
@@ -357,35 +331,30 @@ public class TGAReader extends ImageReader {
 			while(p < width*height) { 
 				k = (brgb[nindex++] & 0x7f)+1; 
 						 					       
-				if ((brgb[nindex-1] & 0x80) != 0){
+				if ((brgb[nindex-1] & 0x80) != 0) {
 					for(int q = 0; q < k; q++){
 						pix[width*(l+m*i)+n+o*j] = ((brgb[nindex]&0xff))|((brgb[nindex+1]&0xff)<<8)|((brgb[nindex+2]&0xff)<<16)|(((brgb[nindex+3]&0xff)<<24));
 						j++;
-						if(j%width == 0)
-						{
+						if(j%width == 0) {
 							i++;
 							j = 0;
 						}
 						p++;
-						if (p >= width*height)
-						{
+						if (p >= width*height) {
 							break;
 						}
 					}
 					nindex += 4;
 				} else {
-					for (int q = 0; q < k; q++)
-					{
+					for (int q = 0; q < k; q++) {
 						pix[width*(l+m*i)+n+o*j] = ((brgb[nindex++]&0xff))|((brgb[nindex++]&0xff)<<8)|((brgb[nindex++]&0xff)<<16)|(((brgb[nindex++]&0xff)<<24));  
 						j++;
-						if(j%width == 0)
-						{
+						if(j%width == 0) {
 							i++;
 							j = 0;
 						}
 						p++;
-						if (p >= width*height)
-						{
+						if (p >= width*height) {
 							break;
 						}
 					}
@@ -410,29 +379,26 @@ public class TGAReader extends ImageReader {
 			            
 				k = (brgb[nindex++] & 0x7f)+1; 
 						 					       
-				if ((brgb[nindex-1] & 0x80) != 0){
+				if ((brgb[nindex-1] & 0x80) != 0) {
 					r = ((brgb[++nindex] & 0x7c) <<1);
 					g = (((brgb[nindex] & 0x03) << 6) | ((brgb[nindex-1] & 0xe0) >> 2));
 					b = ((brgb[nindex-1] & 0x1f)<<3);
 					a = 0xff;
 					nindex++;
-					for(int q = 0; q < k; q++){
+					for(int q = 0; q < k; q++) {
 						pix[width*(l+m*i)+n+o*j] = ((a<<24)|(r<<16)|(g<<8)|b);
 						j++;
-						if(j%width == 0)
-						{
+						if(j%width == 0) {
 							i++;
 							j = 0;
 						}
 						p++;
-						if (p >= width*height)
-						{
+						if (p >= width*height) {
 							break;
 						}
 					}
 				} else {
-					for (int q = 0; q < k; q++)
-					{
+					for (int q = 0; q < k; q++)	{
 						r = ((brgb[++nindex] & 0x7c) <<1);
 						g = (((brgb[nindex] & 0x03) << 6) | ((brgb[nindex-1] & 0xe0) >> 2));
 						b = ((brgb[nindex-1] & 0x1f)<<3);
@@ -440,14 +406,12 @@ public class TGAReader extends ImageReader {
 						nindex++;
 						pix[width*(l+m*i)+n+o*j] = ((a<<24)|(r<<16)|(g<<8)|b);
 						j++;
-						if(j%width == 0)
-						{
+						if(j%width == 0) {
 							i++;
 							j = 0;
 						}
 						p++;
-						if (p >= width*height)
-						{
+						if (p >= width*height) {
 							break;
 						}
 					}
@@ -457,16 +421,14 @@ public class TGAReader extends ImageReader {
 		is.close();
 	}
 
-	private void  readCMPTga(InputStream is) throws Exception
-	{
+	private void  readCMPTga(InputStream is) throws Exception {
 		LOGGER.info("color mapped Tga uncompressed image!");
 
 		int index = 0;
 
 		readPalette(is);
          
-		if (tgaHeader.bits_per_pixel != 8)
-		{	
+		if (tgaHeader.bits_per_pixel != 8) {	
 			LOGGER.error("Can only handle 8 bit color mapped tga file");
 			return;
 		}
@@ -482,8 +444,7 @@ public class TGAReader extends ImageReader {
 		is.close();
 	}
 
-	private void readPalette(InputStream is) throws Exception
-	{
+	private void readPalette(InputStream is) throws Exception {
 		int index = 0, r = 0, g = 0, b = 0, a = 0;
 		int byte_per_pixel = (tgaHeader.colourmap_entry_size+1)/8;
 		int readbytes = byte_per_pixel*(tgaHeader.colourmap_length-tgaHeader.first_entry_index);
@@ -496,12 +457,10 @@ public class TGAReader extends ImageReader {
 		IOUtils.skipFully(is, tgaHeader.first_entry_index);
 		IOUtils.readFully(is, brgb, 0, readbytes);
 
-		switch (tgaHeader.colourmap_entry_size)
-		{
+		switch (tgaHeader.colourmap_entry_size) {
 			case 15:
 			case 16:
-				for (int i = 0; i < tgaHeader.colourmap_length - tgaHeader.first_entry_index; i++)
-                {
+				for (int i = 0; i < tgaHeader.colourmap_length - tgaHeader.first_entry_index; i++) {
 					r = ((brgb[++index] & 0x7c) <<1);
 		            g = (((brgb[index] & 0x03) << 6) | ((brgb[index-1] & 0xe0) >> 2));
 	                b = ((brgb[index-1] & 0x1f)<<3); 
@@ -522,8 +481,7 @@ public class TGAReader extends ImageReader {
 		}
 	}
 
-	private void readTrueColorTga(InputStream is) throws Exception
-	{
+	private void readTrueColorTga(InputStream is) throws Exception {
 		int skipover = 0;
 		int nindex = 0;
 	
@@ -537,8 +495,7 @@ public class TGAReader extends ImageReader {
 		IOUtils.readFully(is, brgb, 0, bytes2read*width*height);
 	   
 		 
-		if (tgaHeader.bits_per_pixel == 24) // 24 bit image
-		{
+		if (tgaHeader.bits_per_pixel == 24) { // 24 bit image
 			LOGGER.info("24 bits Tga uncompressed image!");
             
 			for(int i = 0; i < height; i++) {

@@ -54,7 +54,7 @@ public abstract class RandomAccessInputStream extends InputStream implements Dat
     /**
      * Check to make sure that this stream has not been closed
      */
-    protected  void ensureOpen() throws IOException {
+    protected void ensureOpen() throws IOException {
     	if (closed)
     		throw new IOException("Stream closed");
     }
