@@ -76,7 +76,6 @@ public class WuQuant {
     	this.lut_size = lut_size;
     }
     
-    // TODO: figure out a way to deal with transparency
     public int quantize(final byte[] newPixels, final int[] lut, int[] colorInfo) {
        Box cube[] = new Box[MAXCOLOR];
        int lut_r, lut_g, lut_b;
