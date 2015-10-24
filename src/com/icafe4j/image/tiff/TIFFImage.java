@@ -89,7 +89,6 @@ public class TIFFImage implements Iterable<IFD> {
 		TIFFTweaker.write(this, out);
 	}
 
-	@Override
 	public Iterator<IFD> iterator() {
 		return ifds.iterator();
 	}

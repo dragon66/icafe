@@ -75,7 +75,6 @@ public class TextualChunks extends Metadata {
 			throw new IllegalStateException("Adding chunks is not allowed");
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			TextReader reader = new TextReader();

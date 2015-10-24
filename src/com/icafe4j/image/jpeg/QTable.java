@@ -36,7 +36,6 @@ public class QTable implements Comparable<QTable> {
 		return table;
 	}
 
-	@Override
 	public int compareTo(QTable that) {
 		return this.index - that.index;
 	}

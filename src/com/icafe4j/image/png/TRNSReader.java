@@ -45,7 +45,6 @@ public class TRNSReader implements Reader {
 		return alpha;
 	}
 
-	@Override
 	public void read() throws IOException {
 		this.alpha = chunk.getData();
 	}

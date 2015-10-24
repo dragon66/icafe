@@ -233,7 +233,6 @@ public class LZWTreeDecoder implements ImageDecoder {
 		setInput(input, 0, input.length);
 	}
 
-	@Override
 	public void setInput(byte[] input, int offset, int len) {
 		if(input[offset] == (byte)0x00 && input[offset+1] == (byte)0x01)  
 			isCodeBigEndian = false;   

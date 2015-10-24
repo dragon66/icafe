@@ -117,7 +117,6 @@ public class TIMEChunk extends Metadata {
 		return year;		
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			TIMEReader reader = new TIMEReader(chunk);

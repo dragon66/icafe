@@ -264,7 +264,6 @@ public class ICCProfile extends Metadata {
 		return (((header.deviceAttributes[0]>>7)&0x01) == 0);
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			this.header = new ICCProfileHeader();

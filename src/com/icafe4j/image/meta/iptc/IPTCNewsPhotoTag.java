@@ -57,7 +57,6 @@ public enum IPTCNewsPhotoTag implements IPTCTag {
 		 this.name = name;
 	 }
 	 
-	 @Override
 	 public boolean allowMultiple() {
 		 return false;
 	 }

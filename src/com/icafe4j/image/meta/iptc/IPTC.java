@@ -132,7 +132,6 @@ public class IPTC extends Metadata {
 		return datasetMap;
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			int i = 0;

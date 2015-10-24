@@ -46,7 +46,6 @@ public class IENDReader implements Reader {
 		}
 	}
 
-	@Override
 	public void read() throws IOException {
 		if(chunk.getData().length != 0) {
 			LOGGER.warn("Warning: IEND data field is not empty!");

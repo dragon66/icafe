@@ -30,7 +30,6 @@ public class Comment extends Metadata {
 		ensureDataRead();
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			try {

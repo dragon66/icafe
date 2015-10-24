@@ -163,7 +163,6 @@ public abstract class Exif extends Metadata {
 		return isThumbnailRequired;
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			RandomAccessInputStream exifIn = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(data));

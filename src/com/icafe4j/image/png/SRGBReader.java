@@ -64,7 +64,6 @@ public class SRGBReader implements Reader {
 		return renderingIntent;
 	}
 
-	@Override
 	public void read() throws IOException {
 		byte[] data = chunk.getData();
 		if(data.length > 0)

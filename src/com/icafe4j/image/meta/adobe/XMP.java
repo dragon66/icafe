@@ -119,7 +119,6 @@ public class XMP extends Metadata {
 		return hasExtendedXmp;
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			if(xmp != null)

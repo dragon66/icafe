@@ -111,7 +111,6 @@ public class FileUtils {
 	    }
 	    final Pattern p = Pattern.compile(regex);
 	    return root.listFiles(new FileFilter(){
-	        @Override
 	        public boolean accept(File file) {
 	            return p.matcher(file.getName()).matches();
 	        }

@@ -47,7 +47,6 @@ public class PLTEReader implements Reader {
 	public byte[] getGreenMap() { return greenMap; }
 	public byte[] getBlueMap() { return blueMap; }
 	
-	@Override
 	public void read() throws IOException {	
 		
 		byte[] colorMap = chunk.getData();

@@ -68,7 +68,6 @@ public class AdobeSegment extends Metadata {
 		return m_DCTEncodeVersion;
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			int expectedLen = 7;

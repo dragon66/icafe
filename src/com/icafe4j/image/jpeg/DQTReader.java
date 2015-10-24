@@ -42,7 +42,6 @@ public class DQTReader implements Reader {
 		return qTables;
 	}
 	
-	@Override
 	public void read() throws IOException {
 		//
 		byte[] data = segment.getData();		

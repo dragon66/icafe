@@ -39,7 +39,6 @@ public enum IPTCObjectDataTag implements IPTCTag {
       	return record;
 	 }
 	 
-	 @Override
 	 public boolean allowMultiple() {
 		 return false;
 	 }

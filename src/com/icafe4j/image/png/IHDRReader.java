@@ -56,7 +56,6 @@ public class IHDRReader implements Reader {
 	public byte getFilterMethod() { return filterMethod; }
 	public byte getInterlaceMethod() { return interlaceMethod; }
 
-	@Override
 	public void read() throws IOException {	
 		//
 		byte[] data = chunk.getData();

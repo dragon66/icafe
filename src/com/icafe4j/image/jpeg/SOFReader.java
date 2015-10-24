@@ -71,7 +71,6 @@ public class SOFReader implements Reader {
 		return components.clone();
 	}
 	
-	@Override
 	public void read() throws IOException {
 		//
 		byte[] data = segment.getData();

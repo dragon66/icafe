@@ -152,7 +152,7 @@ public abstract class Metadata implements MetadataReader {
 	}
 	
 	public static void insertExif(InputStream is, OutputStream os, Exif exif) throws IOException {
-		insertExif(is, os, exif);
+		insertExif(is, os, exif, false);
 	}
 	
 	/**
@@ -506,7 +506,6 @@ public abstract class Metadata implements MetadataReader {
 		return type;
 	}
 	
-	@Override
 	public boolean isDataRead() {
 		return isDataRead;
 	}

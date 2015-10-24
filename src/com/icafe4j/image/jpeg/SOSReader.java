@@ -42,7 +42,6 @@ public class SOSReader implements Reader {
 		read();
 	}
 	
-	@Override
 	public void read() throws IOException {
 		//
 		byte[] data = segment.getData();		

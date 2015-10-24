@@ -64,7 +64,6 @@ public class IDATReader implements Reader {
 		return rawData;
 	}
 
-	@Override
 	public void read() throws IOException {		
 		// Inflate compressed data
 		BufferedInputStream bin = new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(byteOutput.toByteArray())));

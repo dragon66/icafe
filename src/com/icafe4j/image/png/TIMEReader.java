@@ -77,7 +77,6 @@ public class TIMEReader implements Reader {
 	 *  Second: 1 byte (0-60) (yes, 60, for leap seconds; not 61, a common error)
 	 *  </pre>
 	 */   
-	@Override
 	public void read() throws IOException {
 		byte[] data = chunk.getData();
 		

@@ -47,7 +47,6 @@ public class ProfileTagTable {
 			this.data = data;
 		}
 		
-		@Override
 		public int compareTo(TagEntry o) {
 			return (int)((this.profileTag&0xffffffffL) - (o.profileTag&0x0ffffffffL));
 		}

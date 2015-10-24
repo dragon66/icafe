@@ -91,7 +91,6 @@ public class IRB extends Metadata {
 		return thumbnail;
 	}
 	
-	@Override
 	public void read() throws IOException {
 		if(!isDataRead) {
 			int i = 0;
