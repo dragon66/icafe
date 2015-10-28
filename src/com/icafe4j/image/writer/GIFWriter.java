@@ -522,7 +522,7 @@ public class GIFWriter extends ImageWriter {
 	}
 	
 	private void writeFrame(int[] pixels, int imageWidth, int imageHeight, int imageLeftPosition, int imageTopPosition, int delay, OutputStream os) throws Exception	{	
-    	writeFrame(pixels, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, delay, GIFFrame.DISPOSAL_LEAVE_AS_IS, GIFFrame.USER_INPUT_NONE, os);
+    	writeFrame(pixels, imageWidth, imageHeight, imageLeftPosition, imageTopPosition, delay, GIFFrame.DISPOSAL_RESTORE_TO_BACKGROUND, GIFFrame.USER_INPUT_NONE, os);
     }
 	
 	// Unit of delay is supposed to be in millisecond
