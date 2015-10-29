@@ -71,6 +71,9 @@ public class GIFFrame {
 			throw new IllegalArgumentException("Invalid user input flag: " + userInputFlag);
 		if(transparencyFlag < TRANSPARENCY_INDEX_NONE || transparencyFlag > TRANSPARENCY_INDEX_SET)
 			throw new IllegalArgumentException("Invalid transparency flag: " + transparencyFlag);
+		if(leftPosition < 0 || topPosition < 0)
+			throw new IllegalArgumentException("Negative coordinates for frame top-left position");
+		if(delay < 0) delay = 0;
 		this.frame = frame;
 		this.leftPosition = leftPosition;
 		this.topPosition = topPosition;	
