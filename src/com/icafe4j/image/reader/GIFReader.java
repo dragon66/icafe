@@ -488,8 +488,8 @@ public class GIFReader extends ImageReader {
 		private byte  signature[] = new byte[3];
 		private byte  version[] = new byte[3];
 
-		private short screen_width;
-		private short screen_height;
+		private int screen_width;
+		private int screen_height;
 		private byte  flags;
 		private byte  bgcolor;
 		@SuppressWarnings("unused")
@@ -507,8 +507,8 @@ public class GIFReader extends ImageReader {
 			for(int i = 0; i < 3; i++)
 				version[i] = bhdr[nindex++];
 	      
-			screen_width = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
-			screen_height = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
+			screen_width = ((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
+			screen_height = ((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
 			flags = bhdr[nindex++];
 			bgcolor = bhdr[nindex++];
 			aspectRatio = bhdr[nindex++];
