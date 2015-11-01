@@ -51,7 +51,7 @@ public class GIFWriter extends ImageWriter {
 	private int codeIndex;
 	private int clearCode;
 	private int endOfImage;
-	private int bufIndex = 0;	
+	private int bufIndex;	
 	private int empty_bits = 0x08;
 	
 	private int bitsPerPixel = 0x08;
@@ -59,7 +59,7 @@ public class GIFWriter extends ImageWriter {
 	private byte bytes_buf[] = new byte[256];
 	private int[] colorPalette;
  
-	private static int MASK[] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
+	private static final int MASK[] = {0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff};
 	
 	private static Dimension getLogicalScreenSize(BufferedImage[] images) {
 		// Determine the logical screen dimension assuming all the frames have the same
@@ -408,7 +408,6 @@ public class GIFWriter extends ImageWriter {
 		int imageHeight = image.getHeight();
 		int frameLeft = frame.getLeftPosition();
 		int frameTop = frame.getTopPosition();
-		if(frameLeft >= logicalScreenWidth || frameTop >= logicalScreenHeight) return;
 		// Determine the logical screen dimension
 		if(firstFrame) {
 			if(logicalScreenWidth <= 0)
@@ -416,6 +415,7 @@ public class GIFWriter extends ImageWriter {
 			if(logicalScreenHeight <= 0)
 				logicalScreenHeight = imageHeight;
 		}
+		if(frameLeft >= logicalScreenWidth || frameTop >= logicalScreenHeight) return;
 		if((frameLeft + imageWidth) > logicalScreenWidth) imageWidth = logicalScreenWidth - frameLeft;
 		if((frameTop + imageHeight) > logicalScreenHeight) imageHeight = logicalScreenHeight - frameTop;
 		int[] pixels = IMGUtils.getRGB(image.getSubimage(0, 0, imageWidth, imageHeight));
