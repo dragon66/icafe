@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/26/2015
+Last modified on 11/03/2015
 ***************************
+03Nov2015  Bug fix for IMGUtils reduceColors()
 26Oct2015  Added DitherMatrix
 09Oct2015  Fixed regression bug with GIFTweaker splitAnimatedGIF()
 08Oct2015  Added getGIFFrames() to GIFReader

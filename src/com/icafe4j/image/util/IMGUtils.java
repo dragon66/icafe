@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    03Nov2015  Bug fix for reduceColors()
  * WY    16Sep2015  Added getScaledInstance() to IMGUtils
  * WY    15Sep2015  Added parameter to ImageParam to set quantization method
  * WY    10Sep2015  Removed ColorEntry from checkColorDepth()
@@ -1116,10 +1117,8 @@ public class IMGUtils {
         // Get the 4 most significant bits of red, green and blue to
         // form a 12 bits integer and determine the frequencies of different 
         // values
-		for (int i = 0; i < rgbTriplets.length; i++)
-		{
-			if((rgbTriplets[i] >>> 24) < 0x80) // Transparent
-			{
+		for (int i = 0; i < rgbTriplets.length; i++) {
+			if((rgbTriplets[i] >>> 24) < 0x80) { // Transparent
 				if (transparent_color < 0)	// Find the transparent color	
 					transparent_color = rgbTriplets[i];			
 			}
@@ -1131,46 +1130,23 @@ public class IMGUtils {
 		}
         // Throw away the zero items
         colorCount = 0;
-        for (int i = 0; i < 4096; i++ )
-        {
-			if (colorFreq[i] != 0)
-			{
+        for (int i = 0; i < 4096; i++ ) {
+			if (colorFreq[i] != 0) {
 				colorFreq[colorCount] = colorFreq[i];
 				indexColor[colorCount++] = i;
 			}
         }
         // Sort the colors according to their frequencies
-        // Bubble sort
-        /**
-        for (int i=0; i<colorCount-1; i++)
-        {
-			for (int j=i+1; j<colorCount; j++)
-			{
-               if(colorFreq[i]<colorFreq[j])
-               {
-				   temp = colorFreq[i];
-				   colorFreq[i] = colorFreq[j];
-				   colorFreq[j] = temp;
-				   temp = indexColor[i];
-				   indexColor[i] = indexColor[j];
-				   indexColor[j] = temp;
-			   }
-			}
-        }
-	  	*/
-		// Shell sort
+       	// Shell sort
         int gap = 1;
   	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
   	    while(gap < colorCount) gap = 3*gap + 1;
-	    while ( gap > 0 )
-	    {
-		   for (int i = gap; i < colorCount; i++)
-		   {
+	    while ( gap > 0 ) {
+		   for (int i = gap; i < colorCount; i++) {
 			   temp = colorFreq[i];
 			   temp1 = indexColor[i];
 			   int j = i;
-			   while ( j >= gap && temp >= colorFreq[j - gap])
-			   {
+			   while ( j >= gap && temp >= colorFreq[j - gap]) {
 				   colorFreq[j] = colorFreq[j - gap];
 				   indexColor[j] = indexColor[j - gap];
 				   j -= gap;
@@ -1182,8 +1158,7 @@ public class IMGUtils {
 	    }
 	   	colorIndex = new int[no_of_color>=colorCount?no_of_color:colorCount];
 		// Take the first no_of_color items as the palette 
-		for (int i = 0; i < no_of_color; i++)
-		{
+		for (int i = 0; i < no_of_color; i++) {
             clrPalBlue[i]  = ((indexColor[i]&0xf00)>>>4);
 			clrPalGreen[i] =(indexColor[i]&0x0f0);
 			clrPalRed[i]  = ((indexColor[i]&0x00f)<<4);
@@ -1194,10 +1169,8 @@ public class IMGUtils {
 		if(transparent_color >= 0)// There is a transparent color
 			no_of_color--;// The available color is one less
 		// Find the nearest color for the other colors if there are more colors than no_of_color
-        if (colorCount > no_of_color)
-        {
-			for (int i = no_of_color; i < colorCount; i++)
-			{
+        if (colorCount > no_of_color) {
+			for (int i = no_of_color; i < colorCount; i++) {
 				index = 0;
 
 				blue   = ((indexColor[i]&0xf00)>>>4);
@@ -1207,12 +1180,10 @@ public class IMGUtils {
 				err1 =  (red-clrPalRed[0])*(red-clrPalRed[0])+(green-clrPalGreen[0])*(green-clrPalGreen[0])+
 					    (blue-clrPalBlue[0])*(blue-clrPalBlue[0]);
                 
-				for (int j = 1; j < no_of_color; j++)
-				{
+				for (int j = 1; j < no_of_color; j++) {
 					err2 = (red-clrPalRed[j])*(red-clrPalRed[j])+(green-clrPalGreen[j])*(green-clrPalGreen[j])+
 					       (blue-clrPalBlue[j])*(blue-clrPalBlue[j]);
-					if (err2 < err1)
-					{
+					if (err2 < err1) {
 						err1 = err2;
                         index = j;
 					}
@@ -1221,25 +1192,25 @@ public class IMGUtils {
 			}
         }
         // Reduce colors
-		for (int i = 0; i < colorCount; i++ )
-		{
+		for (int i = 0; i < colorCount; i++ ) {
 			// Here and after colorFreq is used to keep the
 			// index of colorIndex array for different colors 
 			colorFreq[indexColor[i]] = i;
 		}
 		if(transparent_color >= 0)// There is a transparent color
 			colorCount++;// Count in the transparent color
+		
 		// Determine the actual bits we need
 		while ((1<<bitsPerPixel) < colorCount)  bitsPerPixel++;
-		
-		if(transparent_color >= 0)// Set the colorPalette for the transparent color
-		{
-			transparent_index = (bitsPerPixel <= colorDepth)?(1<<bitsPerPixel)-1:no_of_color;
+		if(bitsPerPixel > colorDepth) bitsPerPixel = colorDepth;
+	
+		if(transparent_color >= 0) {
+			// Set the colorPalette for the transparent color
+			transparent_index = (1<<bitsPerPixel)-1;
 			colorPalette[transparent_index] = transparent_color;
 		}
 				
-		for (int i = 0; i < rgbTriplets.length; i++)
-		{
+		for (int i = 0; i < rgbTriplets.length; i++) {
 			red = ((rgbTriplets[i]&0xf00000)>>>20);
 			green = ((rgbTriplets[i]&0x00f000)>>>8);
 			blue = ((rgbTriplets[i]&0x0000f0)<<4);
@@ -1248,8 +1219,7 @@ public class IMGUtils {
 			
 		    // Write the color index of different pixels to a new data array
 			newPixels[i] = (byte)colorIndex[colorFreq[index]];
-			if((rgbTriplets[i] >>> 24) < 0x80)//Transparent
-			{
+			if((rgbTriplets[i] >>> 24) < 0x80) { //Transparent
 				newPixels[i] = (byte)transparent_index;	
 			}
 	    }
@@ -1267,7 +1237,7 @@ public class IMGUtils {
 		else if(quantMethod == QuantMethod.NEU_QUANT)
 			new NeuQuant(rgbTriplets).quantize(newPixels, colorPalette, colorInfo);
 		else
-			reduceColors(rgbTriplets, colorDepth, newPixels, colorPalette);
+			colorInfo = reduceColors(rgbTriplets, colorDepth, newPixels, colorPalette);
 		
 		return colorInfo;
 	}
@@ -1350,10 +1320,8 @@ public class IMGUtils {
         // Get the 4 most significant bits of red, green and blue to
         // form a 12 bits integer and determine the frequencies of different 
         // values
-		for (int i = 0; i < rgbTriplet.length; i++)
-		{
-			if((rgbTriplet[i] >>> 24) < 0x80 )// Transparent
-			{
+		for (int i = 0; i < rgbTriplet.length; i++)	{
+			if((rgbTriplet[i] >>> 24) < 0x80 ) { // Transparent
 				if (transparent_color < 0)	// Find the transparent color	
 					transparent_color = rgbTriplet[i];			
 			}
@@ -1365,10 +1333,8 @@ public class IMGUtils {
 		}
         // Throw away the zero items
         colorCount = 0;
-        for (int i = 0; i < 4096; i++ )
-        {
-			if (colorFreq[i] != 0)
-			{
+        for (int i = 0; i < 4096; i++ ) {
+			if (colorFreq[i] != 0) {
 				colorFreq[colorCount]=colorFreq[i];
 				indexColor[colorCount++] = i;
 			}
@@ -1378,15 +1344,12 @@ public class IMGUtils {
   	    int gap = 1;
   	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
   	    while(gap < colorCount) gap = 3*gap + 1;
-	    while ( gap > 0 )
-	    {
-		   for (int i = gap; i < colorCount; i++)
-		   {
+	    while ( gap > 0 ) {
+		   for (int i = gap; i < colorCount; i++) {
 			   temp = colorFreq[i];
 			   temp1 = indexColor[i];
 			   int j = i;
-			   while ( j >= gap && temp >= colorFreq[j - gap])
-			   {
+			   while ( j >= gap && temp >= colorFreq[j - gap]) {
 				   colorFreq[j] = colorFreq[j - gap];
 				   indexColor[j] = indexColor[j - gap];
 				   j -= gap;
@@ -1398,8 +1361,7 @@ public class IMGUtils {
 	    }
 	   	colorIndex = new int[no_of_color];
 		// Take the first no_of_color items as the palette 
-		for (int i = 0; i < no_of_color; i++)
-		{
+		for (int i = 0; i < no_of_color; i++) {
             blue  = ((indexColor[i]&0xf00)>>>4);
 			green = (indexColor[i]&0x0f0);
 			red  =  ((indexColor[i]&0x00f)<<4);
@@ -1407,8 +1369,7 @@ public class IMGUtils {
 			colorPalette[i] = ((0xff << 24)|(red << 16)|(green << 8)|blue);
 			colorIndex[i] = i;
 		}		
-		if(transparent_color >= 0)// There is a transparent color
-	    {
+		if(transparent_color >= 0) { // There is a transparent color
 			no_of_color--;// The available color is one less
 			colorCount++;// Count in the transparent color to determine color depth
 		}
@@ -1417,8 +1378,7 @@ public class IMGUtils {
 		
 		if(bitsPerPixel > colorDepth) bitsPerPixel = colorDepth;
 		
-		if(transparent_color >= 0)// Set the colorPalette for the transparent color
-		{
+		if(transparent_color >= 0) { // Set the colorPalette for the transparent color
 			transparent_index = (1<<bitsPerPixel)-1;
 			colorPalette[transparent_index] = transparent_color;
 			colorCount--;//We need the actual number of color now
