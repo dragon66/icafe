@@ -140,10 +140,6 @@ extends <a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="cla
 <td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#TextualChunks()">TextualChunks</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#TextualChunks(com.icafe4j.image.png.ChunkType,%20java.util.Map)">TextualChunks</a></strong>(<a href="../../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a>&nbsp;chunkType,
-             java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;keyValMap)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#TextualChunks(java.util.Collection)">TextualChunks</a></strong>(java.util.Collection&lt;<a href="../../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)</code>&nbsp;</td>
 </tr>
 </table>
@@ -166,22 +162,20 @@ extends <a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="cla
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#addChunk(com.icafe4j.image.png.Chunk)">addChunk</a></strong>(<a href="../../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&nbsp;chunk)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#getChunks()">getChunks</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#getKeyValMap()">getKeyValMap</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#read()">read</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#showMetadata()">showMetadata</a></strong>()</code>&nbsp;</td>
-</tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#write(java.io.OutputStream)">write</a></strong>(java.io.OutputStream&nbsp;os)</code>
-<div class="block">Writes the metadata out to the output stream</div>
-</td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/png/TextualChunks.html#showMetadata()">showMetadata</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -189,7 +183,7 @@ extends <a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="cla
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.icafe4j.image.meta.<a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a></h3>
-<code><a href="../../../../../com/icafe4j/image/meta/Metadata.html#ensureDataRead()">ensureDataRead</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#extractThumbnails(java.io.File,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#extractThumbnails(java.io.InputStream,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#extractThumbnails(java.lang.String,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#getData()">getData</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#getType()">getType</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertComment(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertComment</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.exif.Exif)">insertExif</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.exif.Exif,%20boolean)">insertExif</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertICCProfile(java.io.InputStream,%20java.io.OutputStream,%20byte[])">insertICCProfile</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertICCProfile(java.io.InputStream,%20java.io.OutputStream,%20java.awt.color.ICC_Profile)">insertICCProfile</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIPTC(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection)">insertIPTC</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIPTC(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIPTC</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection)">insertIRB</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIRB</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIRBThumbnail(java.io.InputStream,%20java.io.OutputStream,%20java.awt.image.BufferedImage)">insertIRBThumbnail</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertXMP</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.adobe.XMP)">insertXMP</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#isDataRead()">isDataRead</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#readMetadata(java.io.File)">readMetadata</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#readMetadata(java.io.InputStream)">readMetadata</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#readMetadata(java.lang.String)">readMetadata</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#removeMetadata(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.MetadataType...)">removeMetadata</a></code></li>
+<code><a href="../../../../../com/icafe4j/image/meta/Metadata.html#ensureDataRead()">ensureDataRead</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#extractThumbnails(java.io.File,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#extractThumbnails(java.io.InputStream,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#extractThumbnails(java.lang.String,%20java.lang.String)">extractThumbnails</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#getData()">getData</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#getType()">getType</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertComment(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertComment</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.exif.Exif)">insertExif</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertExif(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.exif.Exif,%20boolean)">insertExif</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertICCProfile(java.io.InputStream,%20java.io.OutputStream,%20byte[])">insertICCProfile</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertICCProfile(java.io.InputStream,%20java.io.OutputStream,%20java.awt.color.ICC_Profile)">insertICCProfile</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIPTC(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection)">insertIPTC</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIPTC(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIPTC</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection)">insertIRB</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIRB</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertIRBThumbnail(java.io.InputStream,%20java.io.OutputStream,%20java.awt.image.BufferedImage)">insertIRBThumbnail</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertXMP</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.adobe.XMP)">insertXMP</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#isDataRead()">isDataRead</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#readMetadata(java.io.File)">readMetadata</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#readMetadata(java.io.InputStream)">readMetadata</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#readMetadata(java.lang.String)">readMetadata</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#removeMetadata(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.MetadataType...)">removeMetadata</a>, <a href="../../../../../com/icafe4j/image/meta/Metadata.html#write(java.io.OutputStream)">write</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -224,20 +218,10 @@ extends <a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="cla
 <a name="TextualChunks(java.util.Collection)">
 <!--   -->
 </a>
-<ul class="blockList">
-<li class="blockList">
-<h4>TextualChunks</h4>
-<pre>public&nbsp;TextualChunks(java.util.Collection&lt;<a href="../../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)</pre>
-</li>
-</ul>
-<a name="TextualChunks(com.icafe4j.image.png.ChunkType, java.util.Map)">
-<!--   -->
-</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>TextualChunks</h4>
-<pre>public&nbsp;TextualChunks(<a href="../../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a>&nbsp;chunkType,
-             java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;keyValMap)</pre>
+<pre>public&nbsp;TextualChunks(java.util.Collection&lt;<a href="../../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)</pre>
 </li>
 </ul>
 </li>
@@ -248,6 +232,15 @@ extends <a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="cla
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getChunks()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getChunks</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;getChunks()</pre>
+</li>
+</ul>
 <a name="getKeyValMap()">
 <!--   -->
 </a>
@@ -281,7 +274,7 @@ extends <a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="cla
 <a name="showMetadata()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>showMetadata</h4>
 <pre>public&nbsp;void&nbsp;showMetadata()</pre>
@@ -291,24 +284,6 @@ extends <a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="cla
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../com/icafe4j/image/meta/Metadata.html#showMetadata()">showMetadata</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a></code></dd>
 </dl>
-</li>
-</ul>
-<a name="write(java.io.OutputStream)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>write</h4>
-<pre>public&nbsp;void&nbsp;write(java.io.OutputStream&nbsp;os)
-           throws java.io.IOException</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../com/icafe4j/image/meta/Metadata.html#write(java.io.OutputStream)">Metadata</a></code></strong></div>
-<div class="block">Writes the metadata out to the output stream</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../../../com/icafe4j/image/meta/Metadata.html#write(java.io.OutputStream)">write</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a></code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>os</code> - OutputStream to write the metadata to</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
 </li>

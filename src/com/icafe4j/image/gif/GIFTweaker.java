@@ -61,7 +61,7 @@ import com.icafe4j.image.ImageType;
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.adobe.XMP;
-import com.icafe4j.image.meta.image.Comment;
+import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.writer.GIFWriter;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.io.IOUtils;
@@ -95,6 +95,7 @@ public class GIFTweaker {
 		private byte[] globalPalette;
 		private byte[] imageDescriptor;
 		private Map<MetadataType, Metadata> metadataMap;
+		private Comments comments;
 	}
 	
 	private static boolean copyFrame(InputStream is, OutputStream os, DataTransferObject DTO) throws IOException {
@@ -384,8 +385,8 @@ public class GIFTweaker {
 					// Comment block
 					byte[] comment = new byte[len];
 					IOUtils.readFully(is, comment);
-					DTO.metadataMap.put(MetadataType.COMMENT, new Comment(comment));
-					// Comment: new String(comment)
+					if(DTO.comments == null) DTO.comments = new Comments();
+					DTO.comments.addComment(comment);
 					len = is.read();
 				}
 				// GIF87a specification mentions the repetition of multiple length
@@ -450,8 +451,8 @@ public class GIFTweaker {
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		// Created a Map for the Meta data
-		DTO.metadataMap = new HashMap<MetadataType, Metadata>(); 
-				
+		DTO.metadataMap = new HashMap<MetadataType, Metadata>();
+		
 		readHeader(is, DTO);
 		readLSD(is, DTO);
 		
@@ -467,6 +468,9 @@ public class GIFTweaker {
 		while(readFrame(is, DTO)) {
 			;	
 		}
+		
+		if(DTO.comments != null)
+			DTO.metadataMap.put(MetadataType.COMMENT, DTO.comments);		
 		
 		return DTO.metadataMap;		
 	}

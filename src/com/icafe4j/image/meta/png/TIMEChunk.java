@@ -133,7 +133,7 @@ public class TIMEChunk extends Metadata {
 	@Override
 	public void showMetadata() {
 		LOGGER.info("PNG tIME chunk starts =>");
-		LOGGER.info("Time of last modification: {} {} {}, {}:{}:{} UTC", day, (month > 0 && month <= 12)? MONTH[month]:"()", year, hour, minute, second);
+		LOGGER.info("{} {} {}, {}:{}:{} UTC (Time of last modification)", day, (month > 0 && month <= 12)? MONTH[month]:"()", year, hour, minute, second);
 		LOGGER.info("PNG tIME chunk ends <=");
 	}
 	

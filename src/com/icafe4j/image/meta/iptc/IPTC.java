@@ -65,6 +65,7 @@ public class IPTC extends Metadata {
 	
 	public IPTC(byte[] data) {
 		super(MetadataType.IPTC, data);
+		ensureDataRead();
 	}
 	
 	public void addDataSet(IPTCDataSet dataSet) {

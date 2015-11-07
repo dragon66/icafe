@@ -519,6 +519,8 @@ public abstract class Metadata implements MetadataReader {
 	 * @throws IOException
 	 */
 	public void write(OutputStream out) throws IOException {
-		out.write(getData());
+		byte[] data = getData();
+		if(data != null)
+			out.write(data);
 	}	
 }

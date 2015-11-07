@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    04Nov2015  Added chunk type check
  * WY    09Jul2015  Rewrote to work with multiple textual chunks
  * WY    05Jul2015  Added write support
  * WY    05Jul2015  Initial creation
@@ -21,12 +22,14 @@
 package com.icafe4j.image.meta.png;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,32 +38,40 @@ import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.png.Chunk;
 import com.icafe4j.image.png.ChunkType;
-import com.icafe4j.image.png.TextBuilder;
 import com.icafe4j.image.png.TextReader;
 
 public class TextualChunks extends Metadata {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(TextualChunks.class);
-		
-	private ChunkType chunkType;
-	private Collection<Chunk> chunks;
+	
+	/* This queue is used to keep track of the unread chunks
+	 * After it's being read, all of it's elements will be moved
+	 * to chunks list
+	 */
+	private Queue<Chunk> queue;
+	// We keep chunks and keyValMap in sync
+	private List<Chunk> chunks;
 	private Map<String, String> keyValMap;
 	
 	public TextualChunks() {
-		this(null);
-		chunks = new ArrayList<Chunk>();
+		super(MetadataType.PNG_TEXTUAL, null);
+		this.queue = new LinkedList<Chunk>();
+		this.chunks = new ArrayList<Chunk>();
+		this.keyValMap = new HashMap<String, String>();		
 	}
 		
 	public TextualChunks(Collection<Chunk> chunks) {
 		super(MetadataType.PNG_TEXTUAL, null);
-		this.chunks = chunks;
+		validateChunks(chunks);
+		this.queue = new LinkedList<Chunk>(chunks);
+		this.chunks = new ArrayList<Chunk>();
+		this.keyValMap = new HashMap<String, String>();
 	}
 	
-	public TextualChunks(ChunkType chunkType, Map<String, String> keyValMap) {
-		super(MetadataType.PNG_TEXTUAL, null);
-		this.chunkType = chunkType;
-		this.keyValMap = keyValMap;
-		isDataRead = true;
+	public List<Chunk> getChunks() {
+		ArrayList<Chunk> chunkList = new ArrayList<Chunk>(chunks);
+		chunkList.addAll(queue);		
+		return chunkList;
 	}
 	
 	public Map<String, String> getKeyValMap() {
@@ -69,21 +80,19 @@ public class TextualChunks extends Metadata {
 	}
 	
 	public void addChunk(Chunk chunk) {
-		if(chunks != null)
-			chunks.add(chunk);
-		else
-			throw new IllegalStateException("Adding chunks is not allowed");
+		validateChunkType(chunk.getChunkType());
+		queue.offer(chunk);
 	}
 	
 	public void read() throws IOException {
-		if(!isDataRead) {
+		if(queue.size() > 0) {
 			TextReader reader = new TextReader();
-			keyValMap = new HashMap<String, String>();
-			for(Chunk chunk : chunks) {
+			for(Chunk chunk : queue) {
 				reader.setInput(chunk);
-				keyValMap.put(reader.getKeyword(), reader.getText());	
+				keyValMap.put(reader.getKeyword(), reader.getText());
+				chunks.add(chunk);
 			}
-			isDataRead = true;
+			queue.clear();
 		}
 	}
 	
@@ -99,16 +108,15 @@ public class TextualChunks extends Metadata {
 		
 		LOGGER.info("PNG textual chunk ends <=");
 	}
-
-	public void write(OutputStream os) throws IOException {
-		if(chunks != null) {
-			for(Chunk chunk : chunks) chunk.write(os);
-		} else if(keyValMap != null){
-			TextBuilder builder = new TextBuilder(chunkType);
-			for (Map.Entry<String, String> entry : keyValMap.entrySet()) {
-			    Chunk chunk = builder.keyword(entry.getKey()).text(entry.getValue()).build();
-			    chunk.write(os);
-			}
-		}
+	
+	private static void validateChunks(Collection<Chunk> chunks) {
+		for(Chunk chunk : chunks)
+			validateChunkType(chunk.getChunkType());
+	}
+	
+	private static void validateChunkType(ChunkType chunkType) {
+		if((chunkType != ChunkType.TEXT) && (chunkType != ChunkType.ITXT) 
+				&& (chunkType != ChunkType.ZTXT))
+			throw new IllegalArgumentException("Expect Textual chunk!");
 	}
 }

@@ -110,7 +110,7 @@ import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifThumbnail;
 import com.icafe4j.image.meta.exif.JpegExif;
 import com.icafe4j.image.meta.icc.ICCProfile;
-import com.icafe4j.image.meta.image.Comment;
+import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.meta.image.ImageMetadata;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
@@ -1327,6 +1327,7 @@ public class JPEGTweaker {
 		// Used to read multiple segment XMP
 		byte[] extendedXMP = null;
 		String xmpGUID = ""; // 32 byte ASCII hex string
+		Comments comments = null;
 		
 		List<Segment> appnSegments = new ArrayList<Segment>();
 	
@@ -1369,8 +1370,9 @@ public class JPEGTweaker {
 						marker = IOUtils.readShortMM(is);
 						break;
 					case COM:
-						metadataMap.put(MetadataType.COMMENT, new Comment(readSegmentData(is)));
-				    	marker = IOUtils.readShortMM(is);
+						if(comments == null) comments = new Comments();
+						comments.addComment(readSegmentData(is));
+					 	marker = IOUtils.readShortMM(is);
 				    	break;				   				
 					case DHT:
 						readDHT(is, m_acTables, m_dcTables);
@@ -1504,6 +1506,9 @@ public class JPEGTweaker {
 			if(xmp != null)
 				xmp.setExtendedXMPData(extendedXMP);
 		}
+		
+		if(comments != null)
+			metadataMap.put(MetadataType.COMMENT, comments);
 		
 		// Extract thumbnails to ImageMetadata
 		Metadata meta = metadataMap.get(MetadataType.EXIF);
