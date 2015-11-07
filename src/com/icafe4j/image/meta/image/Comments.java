@@ -37,20 +37,17 @@ public class Comments extends Metadata {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Comments.class);
 		
 	private Queue<byte[]> queue;
-	private List<byte[]> rawComments;
 	private List<String> comments;
 	
 	public Comments() {
 		super(MetadataType.COMMENT, null);
 		queue = new LinkedList<byte[]>();
-		rawComments = new ArrayList<byte[]>();
 		comments = new ArrayList<String>();
 	}
 	
 	public Comments(List<String> comments) {
 		super(MetadataType.COMMENT, null);
 		queue = new LinkedList<byte[]>();
-		rawComments = new ArrayList<byte[]>();
 		if(comments == null) throw new IllegalArgumentException("Input is null");
 		this.comments = comments;
 	}
@@ -65,6 +62,11 @@ public class Comments extends Metadata {
 		queue.offer(comment);
 	}
 	
+	public void addComment(String comment) {
+		if(comment == null) throw new IllegalArgumentException("Input is null");
+		comments.add(comment);
+	}
+	
 	public void read() throws IOException {
 		if(queue.size() > 0) {
 			for(byte[] comment : queue) {
@@ -73,7 +75,6 @@ public class Comments extends Metadata {
 				} catch (UnsupportedEncodingException e) {
 					throw new UnsupportedEncodingException("UTF-8");
 				}
-				rawComments.add(comment);
 			}
 			queue.clear();
 		}
