@@ -144,7 +144,7 @@ public class TestMetadata extends TestBase {
 		fin = new FileInputStream("images/butterfly.png");
 		fout = new FileOutputStream("comment-inserted.png");
 		
-		Metadata.insertComment(fin, fout, "This is a comment");
+		Metadata.insertComments(fin, fout, Arrays.asList("Comment1", "Comment2"));
 		
 		fin.close();
 		fout.close();

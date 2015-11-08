@@ -89,7 +89,10 @@ public class TextualChunks extends Metadata {
 			TextReader reader = new TextReader();
 			for(Chunk chunk : queue) {
 				reader.setInput(chunk);
-				keyValMap.put(reader.getKeyword(), reader.getText());
+				String key = reader.getKeyword();
+				String text = reader.getText();
+				String oldText = keyValMap.get(key);
+				keyValMap.put(key, (oldText == null)? text: oldText + "; " + text);
 				chunks.add(chunk);
 			}
 			queue.clear();

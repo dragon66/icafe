@@ -28,7 +28,8 @@ public final class ASCIIField extends TiffField<String> {
 	}
 	
 	public String getDataAsString() {
-		return data.trim();
+		// ASCII field allows for multiple NUL separated strings
+		return data.trim().replace("\0", "; ");
 	}
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {

@@ -179,7 +179,7 @@ public class GIFTweaker {
 		os.close();    	
 	}
 	
-	public static void insertComment(InputStream is, OutputStream os, String comment) throws IOException {
+	public static void insertComments(InputStream is, OutputStream os, List<String> comments) throws IOException {
 		// Read and copy header and LSD
  		// Create a new data transfer object to hold data
  		DataTransferObject DTO = new DataTransferObject();
@@ -193,25 +193,28 @@ public class GIFTweaker {
 			
 			readGlobalPalette(is, colorsUsed, DTO);
 			os.write(DTO.globalPalette);
-		}		 		
-		os.write(EXTENSION_INTRODUCER);
-		os.write(COMMENT_EXTENSION_LABEL);
-		byte[] commentBytes = comment.getBytes();
-		int numBlocks = commentBytes.length/0xff;
-		int leftOver = commentBytes.length % 0xff;
-		int offset = 0;
-		if(numBlocks > 0) {
-			for(int i = 0; i < numBlocks; i++) {
-				os.write(0xff);
-				os.write(commentBytes, offset, 0xff);
-				offset += 0xff;
+		}
+		int numOfComments = comments.size();
+		for(int i = 0; i < numOfComments; i++) {
+			os.write(EXTENSION_INTRODUCER);
+			os.write(COMMENT_EXTENSION_LABEL);
+			byte[] commentBytes = comments.get(i).getBytes();
+			int numBlocks = commentBytes.length/0xff;
+			int leftOver = commentBytes.length % 0xff;
+			int offset = 0;
+			if(numBlocks > 0) {
+				for(int block = 0; block < numBlocks; block++) {
+					os.write(0xff);
+					os.write(commentBytes, offset, 0xff);
+					offset += 0xff;
+				}
 			}
+			if(leftOver > 0) {
+				os.write(leftOver);
+				os.write(commentBytes, offset, leftOver);
+			}
+			os.write(0);			
 		}
-		if(leftOver > 0) {
-			os.write(leftOver);
-			os.write(commentBytes, offset, leftOver);
-		}
-		os.write(0);
 		// Copy the rest of the input stream
  		byte buf[] = new byte[10240]; // 10K
  		int bytesRead = is.read(buf);

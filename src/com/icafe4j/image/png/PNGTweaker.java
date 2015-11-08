@@ -117,12 +117,15 @@ public class PNGTweaker {
         serializeChunks(list, os);
   	}
   	
-  	public static void insertComment(InputStream is, OutputStream os, String comment) throws IOException {
+  	public static void insertComments(InputStream is, OutputStream os, List<String> comments) throws IOException {
   		// Build tEXt chunk
   		TextBuilder txtBuilder = new TextBuilder(ChunkType.TEXT);
-  		txtBuilder.keyword("Comment").text(comment);
-  		
-  		insertChunks(is, os, txtBuilder.build());
+  		int numOfComments = comments.size();
+  		Chunk[] chunks = new Chunk[numOfComments];
+  		for(int i = 0; i < numOfComments; i++) {
+  			chunks[i] = txtBuilder.keyword("Comment").text(comments.get(i)).build();
+  		}
+  		insertChunks(is, os, chunks);
   	}
   	
   	public static void insertICCProfile(String profile_name, byte[] icc_profile, InputStream is, OutputStream os) throws IOException {

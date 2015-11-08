@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Arrays;
 
 import com.icafe4j.image.ImageIO;
 import com.icafe4j.image.ImageParam;
@@ -97,7 +98,7 @@ public class TestGIFTweaker extends TestBase {
 		
 		is = new FileInputStream("images/tmp-00.gif");
 		fout = new FileOutputStream("tmp-00-comment-inserted.gif");
-		GIFTweaker.insertComment(is, fout, "I am a piggy!");
+		GIFTweaker.insertComments(is, fout, Arrays.asList("I am a piggy!", "I can fly!"));
 		
 		is.close();
 		fout.close();

@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -160,6 +161,12 @@ public class TestTIFFTweaker extends TestBase {
 				fout = new FileOutputStream("EXIF.tif");
 				rout = new FileCacheRandomAccessOutputStream(fout);
 				TIFFTweaker.insertExif(rin, rout, populateExif(), true);
+				rout.close();
+				fout.close();
+			} else if(args[1].equalsIgnoreCase("insertcomments")) {
+				fout = new FileOutputStream("comments-inserted.tif");
+				rout = new FileCacheRandomAccessOutputStream(fout);
+				TIFFTweaker.insertComments(Arrays.asList("Comment1", "Comment2"), rin, rout);
 				rout.close();
 				fout.close();
 			} else if(args[1].equalsIgnoreCase("removepage")) {
