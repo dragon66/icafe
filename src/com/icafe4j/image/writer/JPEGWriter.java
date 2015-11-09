@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    08Nov2015  Write Adobe APP14 segment for RGB color space
  * WY    21Jun2015  Removed copyright notice from generated JPEG images
  * WY    13Aug2014  Added support for YCCK JPEG image
  * WY    06Aug2014  Added writeAdobeApp14 to support CMYK image
@@ -205,8 +206,9 @@ public class JPEGWriter extends ImageWriter {
 		writeSOI(os);
 		if(colorSpace == JPEGOptions.COLOR_SPACE_YCbCr)			
 			writeJFIF(os);// JFIF segment
-		if(colorSpace == JPEGOptions.COLOR_SPACE_CMYK || colorSpace == JPEGOptions.COLOR_SPACE_YCCK) {
+		else
 			writeAdobeApp14(os);
+		if(colorSpace == JPEGOptions.COLOR_SPACE_CMYK || colorSpace == JPEGOptions.COLOR_SPACE_YCCK) {
 			if(writeICCProfile)
 				writeICCProfile(os);// Write ICC_Profile as APP2
 		}		
@@ -255,11 +257,13 @@ public class JPEGWriter extends ImageWriter {
 		app14[12] = 0x00;
 		app14[13] = 0x00;
 		app14[14] = 0x00;
+		app14[15] = 0x00;
 		
-		if(colorSpace == JPEGOptions.COLOR_SPACE_YCCK)
+		if(colorSpace == JPEGOptions.COLOR_SPACE_YCbCr)
+			app14[15] = 0x01;
+		else if(colorSpace == JPEGOptions.COLOR_SPACE_YCCK)
 			app14[15] = 0x02;
-		else
-			app14[15] = 0x00;
+		
 		os.write(app14);
 	}
 	
