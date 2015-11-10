@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    09Nov2015  Fixed bug with stripped CMYK decoding
  * WY    13Sep2015  Extract unpackStrip() method
  * WY    08Jan2015  Better exception handling to resume from failed frame decoding 
  * WY    06Jan2015  Enhancement to decode multipage TIFF 
@@ -332,7 +333,6 @@ public class TIFFReader extends ImageReader {
 							int bytes2Read = stripBytes[i];
 							unpackStrip(pixels, offset, stripBytes[i], stripOffsets[i], stripByteCounts[i]);
 							offset += bytes2Read;
-					offset += bytes2Read;
 						}
 						break;
 					case LZW:

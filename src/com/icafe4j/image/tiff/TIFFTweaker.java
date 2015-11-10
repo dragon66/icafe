@@ -881,7 +881,7 @@ public class TIFFTweaker {
 		int[] counts = new int[strips];
 		
 		if(photoMetric != TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {
-			// File the StripByteCounts first
+			// Fill the StripByteCounts first
 			Arrays.fill(counts, bytesPerStrip);
 			// We may need to adjust the last strip in case we are dealing with stripped structure
 			if(tileWidth < 0) { // Stripped structure, last strip/strips may be smaller
