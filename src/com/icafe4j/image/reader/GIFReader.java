@@ -327,7 +327,7 @@ public class GIFReader extends ImageReader {
 					LOGGER.info("Disposal method: {}", (disposalMethod == 0)?"UNSPECIFIED":
 						(disposalMethod == 1)?"LEAVE_AS_IS":(disposalMethod == 2)?"RESTORE_TO_BACKGROUND":
 							(disposalMethod == 3)?"RESTORE_TO_PREVIOUS":"TO_BE_DEFINED");
-					userInputFlag =  ((packedFields&0x10)>>1);
+					userInputFlag =  ((packedFields&0x02)>>1);
 					LOGGER.info("User input flag: {}", (userInputFlag == 0)?"INPUT_NONE":"INPUT_SET");
 					delay = IOUtils.readUnsignedShort(is);
 					LOGGER.info("Delay: {} miliseconds", delay*10);

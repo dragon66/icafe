@@ -38,6 +38,8 @@ public class GIFFrame {
 	public static final int DISPOSAL_LEAVE_AS_IS = 1;
 	public static final int DISPOSAL_RESTORE_TO_BACKGROUND = 2;
 	public static final int DISPOSAL_RESTORE_TO_PREVIOUS = 3;
+	// Values between 4-7 inclusive
+	public static final int DISPOSAL_TO_BE_DEFINED = 7;
 	
 	public static final int USER_INPUT_NONE = 0;
 	public static final int USER_INPUT_EXPECTED = 1;
@@ -65,7 +67,7 @@ public class GIFFrame {
 	
 	public GIFFrame(BufferedImage frame, int leftPosition, int topPosition, int delay, int disposalMethod, int userInputFlag, int transparencyFlag, int transparentColor) {
 		if(frame == null) throw new IllegalArgumentException("Null input image");
-		if(disposalMethod < DISPOSAL_UNSPECIFIED || disposalMethod > DISPOSAL_RESTORE_TO_PREVIOUS)
+		if(disposalMethod < DISPOSAL_UNSPECIFIED || disposalMethod > DISPOSAL_TO_BE_DEFINED)
 			throw new IllegalArgumentException("Invalid disposal method: " + disposalMethod);
 		if(userInputFlag < USER_INPUT_NONE || userInputFlag > USER_INPUT_EXPECTED)
 			throw new IllegalArgumentException("Invalid user input flag: " + userInputFlag);
