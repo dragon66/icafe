@@ -12,7 +12,8 @@
  * PNGReader.java
  *
  * Who   Date       Description
- * ====  =========  ==========================================================
+ * ====  =========  ===================================================
+ * WY    18Nov2015  Bug fix to fully skip the chunk if not interested
  * WY    25Dec2014  Added iCCP chunk support for RGB images 
  */
 
@@ -1397,7 +1398,7 @@ public class PNGReader extends ImageReader {
 			  		IOUtils.readUnsignedIntMM(is);
 			  		break;
 			  	default:
-			  		is.skip(data_len);
+			  		IOUtils.skipFully(is, data_len);
 			  		IOUtils.readUnsignedIntMM(is);// CRC
 			  		break;
 			  }

@@ -1,6 +1,7 @@
 ***************************
-Last modified on 11/07/2015
+Last modified on 11/18/2015
 ***************************
+18Nov2015  Fixed bug with PNGReader skip partial chunk data
 07Nov2015  Added Metadata multiple comments support
 03Nov2015  Bug fix for IMGUtils reduceColors()
 26Oct2015  Added DitherMatrix
