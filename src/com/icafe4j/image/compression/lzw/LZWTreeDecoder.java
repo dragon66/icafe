@@ -28,6 +28,32 @@ import com.icafe4j.io.IOUtils;
  * General purpose LZW decoder to decode LZW encoded GIF or TIFF images.
  * Implemented using tree search as demonstrated by Bob Montgomery in
  * "LZW compression used to encode/decode a GIF file."
+ * <p>
+ * There are some subtle differences between the LZW algorithm used by TIFF and GIF images.
+ * <ul>
+ * <li> Variable Length Codes:
+ * Both TIFF and GIF use a variation of the LZW algorithm that uses variable length codes.
+ * In both cases, the maximum code size is 12 bits. The initial code size, however, is different
+ * between the two formats. TIFF's initial code size is always 9 bits. GIF's initial code size 
+ * is specified on a per-file basis at the beginning of the image descriptor block, 
+ * with a minimum of 3 bits.
+ * <li>
+ * TIFF and GIF each switch to the next code size using slightly different algorithms. 
+ * GIF increments the code size as soon as the LZW string table's length is equal to 2**code-size,
+ * while TIFF increments the code size when the table's length is equal to 2**code-size - 1.
+ * <li>
+ * Packing Bits into Bytes
+ * TIFF and GIF LZW algorithms differ in how they pack the code bits into the byte stream.
+ * The least significant bit in a TIFF code is stored in the most significant bit of the bytestream,
+ * while the least significant bit in a GIF code is stored in the least significant bit of the bytestream.
+ * <li>
+ * Special Codes
+ * TIFF and GIF both add the concept of a 'Clear Code' and a 'End of Information Code' to the LZW algorithm. 
+ * In both cases, the 'Clear Code' is equal to 2**(code-size - 1) and the 'End of Information Code' is equal
+ * to the Clear Code + 1. These 2 codes are reserved in the string table. So in both cases, the LZW string
+ * table is initialized to have a length equal to the End of Information Code + 1.	
+ * </ul>
+ * <p>
  *
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 03/11/2012
@@ -61,7 +87,7 @@ public class LZWTreeDecoder implements ImageDecoder {
 	private InputStream is;
 	private boolean isTIFF;// Taking care of the difference between GIF and TIFF.
 	
-	private boolean isCodeBigEndian = true;
+	private boolean isCodeBigEndian;
 
 	private static final int MASK[] = {0x00,0x001,0x003,0x007,0x00f,0x01f,0x03f,0x07f,0x0ff,0x1ff,0x3ff,0x7ff,0xfff};
 	
@@ -70,46 +96,22 @@ public class LZWTreeDecoder implements ImageDecoder {
 	
 	private static final int MAX_CODE = (1<<12);
 	
-	/**
-	 * There are some subtle differences between the LZW algorithm used by TIFF and GIF images.
-	 *
-	 * Variable Length Codes:
-	 * Both TIFF and GIF use a variation of the LZW algorithm that uses variable length codes.
-	 * In both cases, the maximum code size is 12 bits. The initial code size, however, is different
-	 * between the two formats. TIFF's initial code size is always 9 bits. GIF's initial code size 
-	 * is specified on a per-file basis at the beginning of the image descriptor block, 
-	 * with a minimum of 3 bits.
-	 * <p>
-	 * TIFF and GIF each switch to the next code size using slightly different algorithms. 
-	 * GIF increments the code size as soon as the LZW string table's length is equal to 2**code-size,
-	 * while TIFF increments the code size when the table's length is equal to 2**code-size - 1.
-	 * <p>
-	 * Packing Bits into Bytes
-	 * TIFF and GIF LZW algorithms differ in how they pack the code bits into the byte stream.
-	 * The least significant bit in a TIFF code is stored in the most significant bit of the bytestream,
-	 * while the least significant bit in a GIF code is stored in the least significant bit of the bytestream.
-	 * <p>
-	 * Special Codes
-	 * TIFF and GIF both add the concept of a 'Clear Code' and a 'End of Information Code' to the LZW algorithm. 
-	 * In both cases, the 'Clear Code' is equal to 2**(code-size - 1) and the 'End of Information Code' is equal
-	 * to the Clear Code + 1. These 2 codes are reserved in the string table. So in both cases, the LZW string
-	 * table is initialized to have a length equal to the End of Information Code + 1.	
-	 */
-	public LZWTreeDecoder(InputStream is, int min_code_size, boolean isTIFF) {
+	public LZWTreeDecoder(InputStream is, int min_code_size) {
 		if(min_code_size < 2 || min_code_size > 12)
 			   throw new IllegalArgumentException("invalid min_code_size: " + min_code_size);
 		this.is = is;
-		this.isTIFF = isTIFF;
-	   	this.min_code_size = min_code_size;
+		this.min_code_size = min_code_size;
 	   	clearCode = (1<<min_code_size);
 	   	endOfImage = clearCode+1;
 	   	first_code_index = endOfImage+1;
+	   	isCodeBigEndian = true;
 	   	// Reset string table
 	   	clearStringTable();
 	}
 	
 	public LZWTreeDecoder(int min_code_size, boolean isTIFF) {
-		this(null, min_code_size, isTIFF);
+		this(null, min_code_size);
+		this.isTIFF = isTIFF;
 	}
 	
 	private void clearStringTable() {
@@ -234,8 +236,10 @@ public class LZWTreeDecoder implements ImageDecoder {
 	}
 
 	public void setInput(byte[] input, int offset, int len) {
-		if(input[offset] == (byte)0x00 && input[offset+1] == (byte)0x01)  
-			isCodeBigEndian = false;   
+		if(input[offset] == 0x00 && input[offset+1] == 0x01)  
+			isCodeBigEndian = false;
+		else
+			isCodeBigEndian = true;
 		is = new ByteArrayInputStream(input, offset, len);
 		// Must discard the remaining bits!!!
 		bits_remain = 0;

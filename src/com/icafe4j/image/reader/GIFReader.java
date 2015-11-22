@@ -93,7 +93,7 @@ public class GIFReader extends ImageReader {
 		byte[] temp_ = new byte[dimension];
 
 		int min_code_size = is.read();// The length of the root
-		LZWTreeDecoder decoder = new LZWTreeDecoder(is, min_code_size, false);
+		LZWTreeDecoder decoder = new LZWTreeDecoder(is, min_code_size);
 		decoder.decode(temp_, 0, dimension);
 		
 		return temp_;
@@ -114,7 +114,7 @@ public class GIFReader extends ImageReader {
 		byte[] buf = new byte[dimension];
 		byte[] temp_ = new byte[dimension];
 
-		LZWTreeDecoder decoder = new LZWTreeDecoder(is, min_code_size, false);
+		LZWTreeDecoder decoder = new LZWTreeDecoder(is, min_code_size);
 		decoder.decode(buf, 0, dimension);
    
 		for (int pass=1;pass<5;pass++)
@@ -436,7 +436,7 @@ public class GIFReader extends ImageReader {
 		gifFrames = new ArrayList<GIFFrame>();
 		BufferedImage bi = null;
 		
-		while((bi = getFrameAsBufferedImage(is)) != null) {
+		while((bi = getFrameAsBufferedImageEx(is)) != null) {
 			gifFrames.add(new GIFFrame(bi, image_x, image_y, delay, disposalMethod, userInputFlag, transparencyFlag, transparent_color));
 			frames.add(bi);			
 		}
