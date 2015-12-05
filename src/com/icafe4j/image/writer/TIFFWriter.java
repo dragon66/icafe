@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    05Dec2015  Changed writePage() signature
  * WY    20Sep2015  Added LZW and DEFLATE compression for BW images
  * WY    21Jun2015  Removed copyright notice from generated TIFF images
  * WY    11Jun2015  Fixed the regression bug with CMYK profile path
@@ -26,6 +27,7 @@
 package com.icafe4j.image.writer;
 
 import java.awt.color.ICC_ColorSpace;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -742,17 +744,19 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 	 * Instead of writing a self-contained TIFF image as {@link #write} does,
 	 * this method writes a bare-bone single page as part of a multiple page TIFF.
 	 * 
-	 * @param pixels input image array in ARGB format
+	 * @param frame input BufferedImage
 	 * 
-	 * @param imageWidth image width
-	 * @param imageHeight image height
 	 * @param randomOutStream RandomAccessOutputStream
 	 * @param offset stream offset to write this page
 	 * @return stream offset after writing this page
 	 * @throws Exception
 	 */
-	public int writePage(int[] pixels, int pageNumber, int maxNumber, int imageWidth, int imageHeight,
+	public int writePage(BufferedImage frame, int pageNumber, int maxNumber,
 			RandomAccessOutputStream randomOutStream, int offset) throws Exception {
+		// Grab image pixels in ARGB format
+		int imageWidth = frame.getWidth();
+		int imageHeight = frame.getHeight();
+		int[] pixels = IMGUtils.getRGB(frame);//image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
 		// One page of a multiple page TIFF
 		ifd = new IFD();
 		TiffField<?> tiffField = new LongField(TiffTag.NEW_SUBFILE_TYPE.getValue(), new int[]{2});

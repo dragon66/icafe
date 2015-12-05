@@ -125,7 +125,6 @@ import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
-import com.icafe4j.image.util.IMGUtils;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.image.writer.TIFFWriter;
 import com.icafe4j.io.FileCacheRandomAccessInputStream;
@@ -1249,13 +1248,8 @@ public class TIFFTweaker {
 		if(pageNumber < 0) pageNumber = 0;
 		else if(pageNumber > ifds.size()) pageNumber = ifds.size();		
 		
-		// Grab image pixels in ARGB format
-		int imageWidth = image.getWidth();
-		int imageHeight = image.getHeight();
-		int[] pixels = IMGUtils.getRGB(image);//image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-		
 		try {
-			writeOffset = writer.writePage(pixels, pageNumber, ifds.size(), imageWidth, imageHeight, rout, writeOffset);
+			writeOffset = writer.writePage(image, pageNumber, ifds.size(), rout, writeOffset);
 			ifds.add(pageNumber, writer.getIFD());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1309,17 +1303,11 @@ public class TIFFTweaker {
 		TIFFWriter writer = new TIFFWriter(); 
 		
 		for(int i = 0; i < frames.length; i++) {
-			// Retrieve image dimension
 			BufferedImage frame = frames[i].getFrame();
-			ImageParam param = frames[i].getFrameParam();
-			int imageWidth = frame.getWidth();
-			int imageHeight = frame.getHeight();
-			// Grab image pixels in ARGB format and write image
-			int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-			
+			ImageParam param = frames[i].getFrameParam();			
 			try {
 				writer.setImageParam(param);
-				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
+				writeOffset = writer.writePage(frame, pageNumber++, maxPageNumber, rout, writeOffset);
 				insertedList.add(writer.getIFD());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1415,15 +1403,9 @@ public class TIFFTweaker {
 		TIFFWriter writer = new TIFFWriter(); 
 		
 		for(int i = 0; i < images.length; i++) {
-			// Retrieve image dimension
-			int imageWidth = images[i].getWidth();
-			int imageHeight = images[i].getHeight();
-			// Grab image pixels in ARGB format and write image
-			int[] pixels = IMGUtils.getRGB(images[i]);//images[i].getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-			
 			try {
 				writer.setImageParam(param[i]);
-				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
+				writeOffset = writer.writePage(images[i], pageNumber++, maxPageNumber, rout, writeOffset);
 				insertedList.add(writer.getIFD());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -2946,18 +2928,13 @@ public class TIFFTweaker {
 		int maxPageNumber = frames.length;
 		List<IFD> list = new ArrayList<IFD>(frames.length);
 		TIFFWriter writer = new TIFFWriter();
-		// Grab image pixels in ARGB format and write image
+		// Write image frames
 		for(int i = 0; i < frames.length; i++) {
-			// Retrieve image dimension
 			BufferedImage frame = frames[i].getFrame();
 			ImageParam param = frames[i].getFrameParam();
-			int imageWidth = frame.getWidth();
-			int imageHeight = frame.getHeight();
-			int[] pixels = IMGUtils.getRGB(frame);//frame.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-			
 			try {
 				writer.setImageParam(param);
-				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
+				writeOffset = writer.writePage(frame, pageNumber++, maxPageNumber, rout, writeOffset);
 				list.add(writer.getIFD());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -2994,16 +2971,11 @@ public class TIFFTweaker {
 			param = imageParam;
 		}
 		
-		// Grab image pixels in ARGB format and write image
+		// Write image frames
 		for(int i = 0; i < images.length; i++) {
-			// Retrieve image dimension
-			int imageWidth = images[i].getWidth();
-			int imageHeight = images[i].getHeight();
-			int[] pixels = IMGUtils.getRGB(images[i]);//images[i].getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-			
 			try {
 				writer.setImageParam(param[i]);
-				writeOffset = writer.writePage(pixels, pageNumber++, maxPageNumber, imageWidth, imageHeight, rout, writeOffset);
+				writeOffset = writer.writePage(images[i], pageNumber++, maxPageNumber, rout, writeOffset);
 				list.add(writer.getIFD());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -3020,13 +2992,8 @@ public class TIFFTweaker {
 	}
 	
 	public static int writePage(BufferedImage image, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
-		// Grab image pixels in ARGB format
-		int imageWidth = image.getWidth();
-		int imageHeight = image.getHeight();
-		int[] pixels = IMGUtils.getRGB(image);//image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-		
 		try {
-			writeOffset = writer.writePage(pixels, 0, 0, imageWidth, imageHeight, rout, writeOffset);
+			writeOffset = writer.writePage(image, 0, 0, rout, writeOffset);
 			ifds.add(writer.getIFD());
 		} catch (Exception e) {
 			e.printStackTrace();

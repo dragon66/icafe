@@ -203,11 +203,9 @@ implements <a href="../../../../com/icafe4j/util/Updatable.html" title="interfac
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/writer/TIFFWriter.html#writePage(int[],%20int,%20int,%20int,%20int,%20com.icafe4j.io.RandomAccessOutputStream,%20int)">writePage</a></strong>(int[]&nbsp;pixels,
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/writer/TIFFWriter.html#writePage(java.awt.image.BufferedImage,%20int,%20int,%20com.icafe4j.io.RandomAccessOutputStream,%20int)">writePage</a></strong>(java.awt.image.BufferedImage&nbsp;frame,
          int&nbsp;pageNumber,
          int&nbsp;maxNumber,
-         int&nbsp;imageWidth,
-         int&nbsp;imageHeight,
          <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;randomOutStream,
          int&nbsp;offset)</code>
 <div class="block">Write a single page to TIFF stream.</div>
@@ -370,17 +368,15 @@ implements <a href="../../../../com/icafe4j/util/Updatable.html" title="interfac
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
 </ul>
-<a name="writePage(int[], int, int, int, int, com.icafe4j.io.RandomAccessOutputStream, int)">
+<a name="writePage(java.awt.image.BufferedImage, int, int, com.icafe4j.io.RandomAccessOutputStream, int)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>writePage</h4>
-<pre>public&nbsp;int&nbsp;writePage(int[]&nbsp;pixels,
+<pre>public&nbsp;int&nbsp;writePage(java.awt.image.BufferedImage&nbsp;frame,
             int&nbsp;pageNumber,
             int&nbsp;maxNumber,
-            int&nbsp;imageWidth,
-            int&nbsp;imageHeight,
             <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;randomOutStream,
             int&nbsp;offset)
               throws java.lang.Exception</pre>
@@ -388,7 +384,7 @@ implements <a href="../../../../com/icafe4j/util/Updatable.html" title="interfac
  <p>
  Instead of writing a self-contained TIFF image as <a href="../../../../com/icafe4j/image/writer/TIFFWriter.html#write(int[],%20int,%20int,%20java.io.OutputStream)"><code>write(int[], int, int, java.io.OutputStream)</code></a> does,
  this method writes a bare-bone single page as part of a multiple page TIFF.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>pixels</code> - input image array in ARGB format</dd><dd><code>imageWidth</code> - image width</dd><dd><code>imageHeight</code> - image height</dd><dd><code>randomOutStream</code> - RandomAccessOutputStream</dd><dd><code>offset</code> - stream offset to write this page</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>frame</code> - input BufferedImage</dd><dd><code>randomOutStream</code> - RandomAccessOutputStream</dd><dd><code>offset</code> - stream offset to write this page</dd>
 <dt><span class="strong">Returns:</span></dt><dd>stream offset after writing this page</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
