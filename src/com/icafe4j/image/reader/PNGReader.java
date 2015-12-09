@@ -1041,7 +1041,7 @@ public class PNGReader extends ImageReader {
 				   }
 				   if(alpha != null) { // Deal with single color transparency
 					   db = new DataBufferUShort(spixels, spixels.length);
-					   int[] off = {0, 1};//band offset, we have only one band start at 2
+					   int[] off = {0, 1};//band offset, we have two bands start at 0
 					   raster = Raster.createInterleavedRaster(db, width, height, width*2, 2, off, null);
 					   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_USHORT);
 				   } else {
@@ -1078,7 +1078,7 @@ public class PNGReader extends ImageReader {
 				   spixels = ArrayUtils.toShortArray(bpixels, true);
 				   if(hasGamma && renderingIntent == -1 && !hasICCP) correctGamma(spixels, width, height, 1, 1);
 				   db = new DataBufferUShort(spixels, spixels.length);
-				   int[] off = {0, 1};//band offset, we have only one band start at 0
+				   int[] off = {0, 1};//band offset, we have two bands start at 0
 				   raster = Raster.createInterleavedRaster(db, width, height, width*2, 2, off, null);
 				   cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_USHORT);				   	
 			   } else {
@@ -1176,7 +1176,7 @@ public class PNGReader extends ImageReader {
 				   if(hasGamma && renderingIntent == -1 && !hasICCP)
 						 correctGamma(bpixels, width, height, true); 
 				   //Create a BufferedImage
-				   int[] off = {0, 1, 2, 3}; //band offset, we have 3 bands
+				   int[] off = {0, 1, 2, 3}; //band offset, we have 4 bands
 				   int numOfBands = 4;
 				   boolean hasAlpha = true;
 				   int trans = Transparency.TRANSLUCENT;
