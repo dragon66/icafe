@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/05/2015
+Last modified on 12/31/2015
 ***************************
+31Dec2015  Removed error threshold from IMGUtils.dither_FloydSteinberg()
 05Dec2015  Changed writePage() signature for TIFFWriter
 18Nov2015  Fixed bug with PNGReader skip partial chunk data
 07Nov2015  Added Metadata multiple comments support

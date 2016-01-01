@@ -69,7 +69,7 @@ public class TestImageReader extends TestBase {
 			 }
 		 });
 		  
-		 ImageType imageType = ImageType.TIFF;
+		 ImageType imageType = ImageType.PNG;
 		  
 		 FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
 				
@@ -88,7 +88,7 @@ public class TestImageReader extends TestBase {
 		  		 break;
 		  	case PNG:
 		  		PNGOptions pngOptions = new PNGOptions();
-		  		pngOptions.setApplyAdaptiveFilter(true);
+		  		pngOptions.setApplyAdaptiveFilter(false);
 		  		pngOptions.setCompressionLevel(6);
 		  		pngOptions.setFilterType(Filter.NONE);
 		  		builder.imageOptions(pngOptions);

@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    31Dec2015  Removed error limit from dither_FloydSteinberg
  * WY    03Nov2015  Bug fix for reduceColors()
  * WY    16Sep2015  Added getScaledInstance() to IMGUtils
  * WY    15Sep2015  Added parameter to ImageParam to set quantization method
@@ -452,8 +453,7 @@ public class IMGUtils {
 		                                      int[] colorPalette, int transparent_index)
 	{
 		int index = 0, index1 = 0, err1, err2, err3, red, green, blue;
-		int err_limit = 8;// Error threshold
-        // Define error arrays
+	    // Define error arrays
 		// Errors for the current line
 		int[] tempErr;
 		int[] thisErrR = new int[width + 2];
@@ -464,30 +464,19 @@ public class IMGUtils {
 		int[] nextErrG = new int[width + 2];
 		int[] nextErrB = new int[width + 2];
 
-		java.util.Random random = new java.util.Random();
-
-        for(int i = 0; i < width + 2; i++)
-        {
-            thisErrR[i] = random.nextInt(3) - 1;
-            thisErrG[i] = random.nextInt(3) - 1;
-            thisErrB[i] = random.nextInt(3) - 1;
-        }
-
 		InverseColorMap invMap;
 
 		invMap = new InverseColorMap();
 		invMap.createInverseMap(no_of_color, colorPalette);
 
-		for (int row = 0; row < height; row++)
-		{
-			for (int col = 0; col < width; index1++, col++)
-			{				
-				if((rgbTriplet[index1] >>> 24) < 0x80 )// Transparent, no dither
-		        {
-				     newPixels[index1] = (byte)transparent_index;	
-					 continue;
+		for (int row = 0; row < height; row++) {
+			for (int col = 0; col < width; index1++, col++)	{
+				 // Transparent, no dither
+				if((rgbTriplet[index1] >>> 24) < 0x80 ) {
+					newPixels[index1] = (byte)transparent_index;
+					continue;
 		        }
-				// Diffuse errors
+		
 				red = ((rgbTriplet[index1]&0xff0000)>>>16) + thisErrR[col + 1];
 				if (red > 255) red = 255;
 			    else if (red < 0) red = 0;
@@ -501,36 +490,29 @@ public class IMGUtils {
 			    else if (blue < 0) blue = 0;
 
                 // Find the nearest color index
-			    index = invMap.getNearestColorIndex(red, green, blue);
-				
+			    index = invMap.getNearestColorIndex(red, green, blue);				
 				newPixels[index1] = (byte)index;// The colorPalette index for this pixel
 
 				// Find errors for different channels
 		        err1 = red   - ((colorPalette[index]>>16)&0xff);// Red channel
-				if (err1 > err_limit) err1 = err_limit;
-				else if (err1 < -err_limit)	err1 = -err_limit;
-		        err2 = green - ((colorPalette[index]>>8)&0xff);// Green channel
-				if (err2 > err_limit) err2 = err_limit;
-				else if (err2 < -err_limit)	err2 = -err_limit;
-		        err3 = blue  -  (colorPalette[index]&0xff);// Blue channel
-				if (err3 > err_limit) err3 = err_limit;
-				else if (err3 < -err_limit)	err3 = -err_limit;
-		        // Diffuse error
+				err2 = green - ((colorPalette[index]>>8)&0xff);// Green channel
+			    err3 = blue  -  (colorPalette[index]&0xff);// Blue channel
+			    // Diffuse error
 				// Red
-                thisErrR[col + 2] += ((err1*7)>>4);
-				nextErrR[col    ] += ((err1*3)>>4);
-				nextErrR[col + 1] += ((err1*5)>>4);
-				nextErrR[col + 2] += ((err1)>>4);
+                thisErrR[col + 2] += ((err1*7)/16);
+				nextErrR[col    ] += ((err1*3)/16);
+				nextErrR[col + 1] += ((err1*5)/16);
+				nextErrR[col + 2] += ((err1)/16);
                 // Green
-                thisErrG[col + 2] += ((err2*7)>>4);
-				nextErrG[col    ] += ((err2*3)>>4);
-				nextErrG[col + 1] += ((err2*5)>>4);
-				nextErrG[col + 2] += ((err2)>>4);
+                thisErrG[col + 2] += ((err2*7)/16);
+				nextErrG[col    ] += ((err2*3)/16);
+				nextErrG[col + 1] += ((err2*5)/16);
+				nextErrG[col + 2] += ((err2)/16);
 				// Blue
-				thisErrB[col + 2] += ((err3*7)>>4);
-				nextErrB[col    ] += ((err3*3)>>4);
-				nextErrB[col + 1] += ((err3*5)>>4);
-				nextErrB[col + 2] += ((err3)>>4);
+				thisErrB[col + 2] += ((err3*7)/16);
+				nextErrB[col    ] += ((err3*3)/16);
+				nextErrB[col + 1] += ((err3*5)/16);
+				nextErrB[col + 2] += ((err3)/16);
 		    }
 			// We have finished one row, switch the error arrays
 			tempErr = thisErrR;
@@ -544,10 +526,11 @@ public class IMGUtils {
 	        tempErr = thisErrB;
 			thisErrB = nextErrB;
 			nextErrB = tempErr;
+			
             // Clear the error arrays
 			Arrays.fill(nextErrR, 0);
-			System.arraycopy(nextErrR, 0, nextErrG, 0, width + 2);
-		    System.arraycopy(nextErrR, 0, nextErrB, 0, width + 2);
+			Arrays.fill(nextErrG, 0);
+			Arrays.fill(nextErrB, 0);
 		}
 	}
 	
