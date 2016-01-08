@@ -39,7 +39,6 @@ import com.icafe4j.image.ImageType;
 import com.icafe4j.image.compression.huffman.HuffmanEncoder;
 import com.icafe4j.image.jpeg.HTable;
 import com.icafe4j.image.jpeg.JPEGConsts;
-import com.icafe4j.image.jpeg.JPEGTweaker;
 import com.icafe4j.image.jpeg.Marker;
 import com.icafe4j.image.jpeg.QTable;
 import com.icafe4j.image.jpeg.Segment;
@@ -47,6 +46,7 @@ import com.icafe4j.image.options.ImageOptions;
 import com.icafe4j.image.options.JPEGOptions;
 import com.icafe4j.image.util.DCT;
 import com.icafe4j.image.util.IMGUtils;
+import com.icafe4j.io.IOUtils;
 
 /**
  * JPEG image writer  
@@ -385,7 +385,31 @@ public class JPEGWriter extends ImageWriter {
 	
 	private void writeICCProfile(OutputStream os) throws Exception {
 		ICC_Profile icc_profile = cmykColorSpace.getProfile();
-		JPEGTweaker.writeICCProfile(os, icc_profile.getData()); // delegate to JPEGTweaker
+		writeICCProfile(os, icc_profile.getData());
+	}
+	
+	private static void writeICCProfile(OutputStream os, byte[] data) throws Exception {
+		// ICC_Profile ID
+		final String ICC_PROFILE_ID = "ICC_PROFILE\0";
+		int maxSegmentLen = 65535;
+		int maxICCDataLen = 65519;
+		int numOfSegment = data.length/maxICCDataLen;
+		int leftOver = data.length%maxICCDataLen;
+		int totalSegment = (numOfSegment == 0)? 1: ((leftOver == 0)? numOfSegment: (numOfSegment + 1));
+		for(int i = 0; i < numOfSegment; i++) {
+			IOUtils.writeShortMM(os, Marker.APP2.getValue());
+			IOUtils.writeShortMM(os, maxSegmentLen);
+			IOUtils.write(os, ICC_PROFILE_ID.getBytes());
+			IOUtils.writeShortMM(os, totalSegment|(i+1)<<8);
+			IOUtils.write(os, data, i*maxICCDataLen, maxICCDataLen);
+		}
+		if(leftOver != 0) {
+			IOUtils.writeShortMM(os, Marker.APP2.getValue());
+			IOUtils.writeShortMM(os, leftOver + 16);
+			IOUtils.write(os, ICC_PROFILE_ID.getBytes());
+			IOUtils.writeShortMM(os, totalSegment|totalSegment<<8);
+			IOUtils.write(os, data, data.length - leftOver, leftOver);
+		}
 	}
 	
 	// Write actual image data

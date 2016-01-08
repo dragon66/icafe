@@ -12,6 +12,7 @@ import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
 import com.icafe4j.image.meta.exif.JpegExif;
+import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.tiff.FieldType;
 import com.icafe4j.image.util.IMGUtils;
 
@@ -22,11 +23,12 @@ public class TestJPEGTweaker extends TestBase {
 	
 	public void test(String ... args) throws Exception {
 		FileInputStream fin = new FileInputStream(args[0]);
-		JPEGTweaker.showICCProfile(fin);
+		byte[] iccpBytes = JPEGTweaker.extractICCProfile(fin);
+		ICCProfile.showProfile(iccpBytes);
 		fin.close();
 		fin = new FileInputStream(args[1]);
 		FileOutputStream fout = new FileOutputStream("icc_profile_inserted.jpg");
-		ICC_Profile icc_profile = IMGUtils.getICCProfile("/lib/CMYK Profiles/USWebCoatedSWOP.icc");
+		ICC_Profile icc_profile = IMGUtils.getICCProfile("/resources/CMYK Profiles/USWebCoatedSWOP.icc");
 		JPEGTweaker.insertICCProfile(fin, fout, icc_profile);
 		fin.close();
 		fout.close();

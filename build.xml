@@ -6,7 +6,7 @@
 	<!-- define Maven coordinates -->
 	<property name="groupId" value="com.github.dragon66" />
 	<property name="artifactId" value="icafe" />
-	<property name="version" value="1.0-SNAPSHOT" />
+	<property name="version" value="1.1-SNAPSHOT" />
 	<!-- there server id in the Maven settings.xml -->
   	<property name="ossrh-server-id" value="ossrh" />
 	<property name="ossrh-snapshots-repository-url" 
@@ -34,7 +34,7 @@
 		<copy includeemptydirs="false" todir="build/classes">
             <fileset dir="src">
                 <include name="*"/>
-                <include name="resources/CMYK Profiles/USWebUncoated.icc"/>
+                <include name="resources/CMYK Profiles/USWebCoatedSWOP.icc"/>
             </fileset>
         </copy>
 	</target>
