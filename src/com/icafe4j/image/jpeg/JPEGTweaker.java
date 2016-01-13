@@ -1145,17 +1145,17 @@ public class JPEGTweaker {
 		insertXMP(is, os, xmpBytes, extendedXmpBytes, guid);
 	}
 	
-	private static void printHTables(List<HTable> tables) {
+	private static String hTablesToString(List<HTable> hTables) {
 		final String[] HT_class_table = {"DC Component", "AC Component"};
 		
 		StringBuilder hufTable = new StringBuilder();
 		
 		hufTable.append("Huffman table information =>:\n");
 		
-		for(HTable table : tables )
+		for(HTable table : hTables )
 		{
-			hufTable.append("Class: " + table.getComponentClass() + " (" + HT_class_table[table.getComponentClass()] + ")\n");
-			hufTable.append("Destination ID: " + table.getDestinationID() + "\n");
+			hufTable.append("Class: " + table.getClazz() + " (" + HT_class_table[table.getClazz()] + ")\n");
+			hufTable.append("Huffman table #: " + table.getID() + "\n");
 			
 			byte[] bits = table.getBits();
 			byte[] values = table.getValues();
@@ -1170,10 +1170,7 @@ public class JPEGTweaker {
             hufTable.append("Number of codes: " + count + "\n");
 			
             if (count > 256)
-			{
-				LOGGER.warn("invalid huffman code count! - {}", count);			
-				return;
-			}
+            	throw new RuntimeException("Invalid huffman code count: " + count);			
 	        
             int j = 0;
             
@@ -1188,74 +1185,77 @@ public class JPEGTweaker {
 				hufTable.append("]\n");
 			}
 			
-			hufTable.append("<<End of Huffman table information>>\n");
+			hufTable.append("<= End of Huffman table information>>\n");
 		}
 		
-		LOGGER.debug("\n{}", hufTable);
+		return hufTable.toString();
 	}
 	
-	private static void printQTables(List<QTable> qTables) {
-		StringBuilder qtTable = new StringBuilder();
+	private static String qTablesToString(List<QTable> qTables) {
+		StringBuilder qtTables = new StringBuilder();
 				
-		qtTable.append("Quantization table information =>:\n");
+		qtTables.append("Quantization table information =>:\n");
 		
 		int count = 0;
 		
 		for(QTable table : qTables) {
 			int QT_precision = table.getPrecision();
-			short[] qTable = table.getTable();
-			qtTable.append("precision of QT is " + QT_precision + "\n");
-			qtTable.append("Quantization table #" + table.getIndex() + ":\n");
+			int[] qTable = table.getData();
+			qtTables.append("precision of QT is " + QT_precision + "\n");
+			qtTables.append("Quantization table #" + table.getID() + ":\n");
 			
 		   	if(QT_precision == 0) {
 				for (int j = 0; j < 64; j++)
 			    {
 					if (j != 0 && j%8 == 0) {
-						qtTable.append("\n");
+						qtTables.append("\n");
 					}
-					qtTable.append((qTable[j]&0xff) + " ");			
+					qtTables.append(qTable[j] + " ");			
 			    }
 			} else { // 16 bit big-endian
 								
 				for (int j = 0; j < 64; j++) {
 					if (j != 0 && j%8 == 0) {
-						qtTable.append("\n");
+						qtTables.append("\n");
 					}
-					qtTable.append((qTable[j]&0xffff) + " ");	
+					qtTables.append(qTable[j] + " ");	
 				}				
 			}
 		   	
 		   	count++;
 		
-			qtTable.append("\n");
-			qtTable.append("***************************\n");
+			qtTables.append("\n");
+			qtTables.append("***************************\n");
 		}
 		
-		qtTable.append("Total number of Quantation tables: " + count + "\n");
-		qtTable.append("End of quantization table information\n");
+		qtTables.append("Total number of Quantation tables: " + count + "\n");
+		qtTables.append("End of quantization table information\n");
 		
-		LOGGER.debug("\n{}", qtTable);
+		return qtTables.toString();		
 	}
 	
-	private static void printSOF(SOFReader reader) {
-		LOGGER.debug("SOF informtion =>");
-		LOGGER.debug("Precision: {}", reader.getPrecision());
-		LOGGER.debug("Image height: {}", reader.getFrameHeight());
-		LOGGER.debug("Image width: {}", reader.getFrameWidth());
-		LOGGER.debug("# of Components: {}", reader.getNumOfComponents());
-		LOGGER.debug("(1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)");		
+	private static String sofToString(SOFReader reader) {
+		StringBuilder sof = new StringBuilder();		
+		sof.append("SOF information =>\n");
+		sof.append("Precision: " + reader.getPrecision() + "\n");
+		sof.append("Image height: " + reader.getFrameHeight() +"\n");
+		sof.append("Image width: " + reader.getFrameWidth() + "\n");
+		sof.append("# of Components: " + reader.getNumOfComponents() + "\n");
+		sof.append("(1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK)\n");		
 		    
 		for(Component component : reader.getComponents()) {
-			LOGGER.debug("\n");
-			LOGGER.debug("Component ID: {}", component.getId());
-			LOGGER.debug("Herizontal sampling factor: {}", component.getHSampleFactor());
-			LOGGER.debug("Vertical sampling factor: {}", component.getVSampleFactor());
-			LOGGER.debug("Quantization table #: {}", component.getQTableNumber());
-			LOGGER.debug("DC table number: {}", component.getDCTableNumber());
-			LOGGER.debug("AC table number: {}", component.getACTableNumber());
+			sof.append("\n");
+			sof.append("Component ID: " + component.getId() + "\n");
+			sof.append("Herizontal sampling factor: " + component.getHSampleFactor() + "\n");
+			sof.append("Vertical sampling factor: " + component.getVSampleFactor() + "\n");
+			sof.append("Quantization table #: " + component.getQTableNumber() + "\n");
+			sof.append("DC table number: " + component.getDCTableNumber() + "\n");
+			sof.append("AC table number: " + component.getACTableNumber() + "\n");
 		}
 		
-		LOGGER.debug("End of SOF information");
+		sof.append("<= End of SOF information");
+		
+		return sof.toString();
 	}
 	
 	private static void readAPP13(InputStream is, OutputStream os) throws IOException {
@@ -1399,8 +1399,10 @@ public class JPEGTweaker {
 						readers.add(readSOF(is, emarker));
 						marker = IOUtils.readShortMM(is);
 						break;
-					case SOS:	
-						marker = readSOS(is, readers.get(readers.size() - 1));
+					case SOS:
+						SOFReader reader = readers.get(readers.size() - 1);
+						marker = readSOS(is, reader);
+						LOGGER.debug("\n{}", sofToString(reader));
 						break;
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
@@ -1424,13 +1426,9 @@ public class JPEGTweaker {
 		is.close();
 		
 		// Debugging
-		printQTables(m_qTables);
-		printHTables(m_acTables);	
-		printHTables(m_dcTables);
-		
-		// Debugging
-		for(SOFReader reader : readers)
-			printSOF(reader);
+		LOGGER.debug("\n{}", qTablesToString(m_qTables));
+		LOGGER.debug("\n{}", hTablesToString(m_acTables));	
+		LOGGER.debug("\n{}", hTablesToString(m_dcTables));
 		
 		for(Segment segment : appnSegments) {
 			byte[] data = segment.getData();

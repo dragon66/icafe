@@ -12,27 +12,28 @@ package com.icafe4j.image.jpeg;
 
 public class HTable implements Comparable<HTable> {
 	//
-	public static final int DC_COMPONENT = 0;
-	public static final int AC_COMPONENT = 1;
+	public static final int DC_CLAZZ = 0;
+	public static final int AC_CLAZZ = 1;
 	
-	private int component_class; // DC or AC
-	private int destination_id; // Table #
+	private int clazz; // DC or AC
+	private int id; // Destination ID (0...3)
+	
 	private byte[] bits;
 	private byte[] values;
 	
-	public HTable(int component_class, int destination_id, byte[] bits, byte[] values) {
-		this.component_class = component_class;
-		this.destination_id = destination_id;
+	public HTable(int clazz, int id, byte[] bits, byte[] values) {
+		this.clazz = clazz;
+		this.id = id;
 		this.bits = bits;
 		this.values = values;
 	}
 	
-	public int getComponentClass() {
-		return component_class; 
+	public int getClazz() {
+		return clazz; 
 	}
 	
-	public int getDestinationID() {
-		return destination_id;
+	public int getID() {
+		return id;
 	}
 	
 	public byte[] getBits() {
@@ -44,6 +45,6 @@ public class HTable implements Comparable<HTable> {
 	}
 
 	public int compareTo(HTable that) {
-		return this.destination_id - that.destination_id;
+		return this.id - that.id;
 	}
 }

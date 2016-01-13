@@ -67,7 +67,7 @@ public class JPEGWriter extends ImageWriter {
     private int numOfHTables = 2; // Default number of Huffman tables for each class
     private int[] qTableSelector = new int[] {0, 1, 1, 1}; // q table selectors for different components
     
-    private short[][] quant_table = new short[2][];
+    private int[][] quant_table = new int[2][];
     private byte[][][] huffman_bits = new byte[2][2][]; // AC, DC
     private byte[][][] huffman_values = new byte[2][2][]; // AC, DC
     
@@ -283,8 +283,8 @@ public class JPEGWriter extends ImageWriter {
 	
 	private void writeDHT(HTable table, OutputStream os) throws Exception {
 		// Write a single Huffman table
-		int HT_class = table.getComponentClass();
-		int HT_destination_id = table.getDestinationID();
+		int HT_class = table.getClazz();
+		int HT_destination_id = table.getID();
 		byte[] bits = table.getBits();
 		byte[] values = table.getValues();
 		
@@ -324,8 +324,8 @@ public class JPEGWriter extends ImageWriter {
 	private void writeDQT(QTable table, OutputStream os) throws Exception {
 		// Write a single quantization table
 		int precision = table.getPrecision();
-		int index     = table.getIndex();
-		short[] data    = table.getTable();
+		int index     = table.getID();
+		int[] data    = table.getData();
 		int[] zigzagOrder = JPEGConsts.getZigzagMatrix(); 
 		byte[] dqt;
 		
@@ -448,7 +448,7 @@ public class JPEGWriter extends ImageWriter {
 		for(int i = 0; i < newHeight; i+=8) {
 			for(int j = 0; j < newWidth; j+=8) {
 			   for(int k = 0; k < numOfComponents; k++) {
-				   short[] q = quant_table[qTableSelector[k]];
+				   int[] q = quant_table[qTableSelector[k]];
 				   float[][] block = getDCTBlock(c[k], i, j);
 				   // DCT transform
 				   block = DCT.forwardDCT(block);

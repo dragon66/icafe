@@ -96,10 +96,10 @@ public class DHTReader implements Reader {
 			
 			HTable table = new HTable(HT_class, HT_destination_id, bits, values);
 			
-			if(HT_class == HTable.DC_COMPONENT) {
+			if(HT_class == HTable.DC_CLAZZ) {
 				dcTables.add(table);
 			}
-			else if(HT_class == HTable.AC_COMPONENT) {
+			else if(HT_class == HTable.AC_CLAZZ) {
 				acTables.add(table);
 			}
 			else {

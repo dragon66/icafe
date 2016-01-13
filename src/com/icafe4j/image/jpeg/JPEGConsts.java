@@ -51,7 +51,7 @@ public class JPEGConsts {
     *  This is the default quantization table for luminance
     *  ISO/IEC 10918-1 : 1993(E), Annex, Table K.1
     */
-   private static final short[] QUANT_LUMINANCE = {
+   private static final int[] QUANT_LUMINANCE = {
       16, 11, 10, 16, 24, 40, 51, 61,
       12, 12, 14, 19, 26, 58, 60, 55,
       14, 13, 16, 24, 40, 57, 69, 56,
@@ -66,7 +66,7 @@ public class JPEGConsts {
     *  This is the default quantization table for chrominance
     *  ISO/IEC 10918-1 : 1993(E), Annex, KTable K.2
     */
-   private static final short[] QUANT_CHROMINANCE = {
+   private static final int[] QUANT_CHROMINANCE = {
       17, 18, 24, 47, 99, 99, 99, 99,
       18, 21, 26, 66, 99, 99, 99, 99,
       24, 26, 56, 99, 99, 99, 99, 99,
@@ -157,9 +157,9 @@ public class JPEGConsts {
 	   return DC_LUMINANCE_VALUES.clone();
    }
    
-   public static final short[] getDefaultChrominanceMatrix(int quality) {
+   public static final int[] getDefaultChrominanceMatrix(int quality) {
 	   //
-	   short[] quant_chrominance = QUANT_CHROMINANCE.clone();
+	   int[] quant_chrominance = QUANT_CHROMINANCE.clone();
 	   
 	   if (quality <= 0)
            quality = 1;
@@ -170,20 +170,19 @@ public class JPEGConsts {
 	   else
            quality = 200 - quality * 2;
 	   
-	   for (int j = 0; j < 64; j++)
-       {
+	   for (int j = 0; j < 64; j++) {
                int temp = (quant_chrominance[j] * quality + 50) / 100;
                if ( temp <= 0) temp = 1;
                if (temp >= 255) temp = 255;
-               quant_chrominance[j] = (short)temp;
+               quant_chrominance[j] = temp;
        }
 	   
 	   return quant_chrominance;
    }
    
-   public static final short[] getDefaultLuminanceMatrix(int quality) {
+   public static final int[] getDefaultLuminanceMatrix(int quality) {
 	   //
-	   short[] quant_luminance = QUANT_LUMINANCE.clone();
+	   int[] quant_luminance = QUANT_LUMINANCE.clone();
 	   
 	   if (quality <= 0)
            quality = 1;
@@ -199,7 +198,7 @@ public class JPEGConsts {
                int temp = (quant_luminance[j] * quality + 50) / 100;
                if ( temp <= 0) temp = 1;
                if (temp >= 255) temp = 255;
-               quant_luminance[j] = (short)temp;
+               quant_luminance[j] = temp;
        }
 	   
 	   return quant_luminance;

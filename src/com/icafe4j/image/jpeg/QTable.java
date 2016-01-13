@@ -13,30 +13,30 @@ package com.icafe4j.image.jpeg;
 public class QTable implements Comparable<QTable> {
 	//
 	private int precision;
-	private int index;
-	private short[] table;
+	private int id;
+	private int[] data;
 	
-	public QTable(int precision, int index, short[] table) {
+	public QTable(int precision, int id, int[] data) {
 		if(precision != 0 && precision != 1) 
 			throw new IllegalArgumentException("Invalid precision value: " + precision);
 		this.precision = precision;
-		this.index = index;
-		this.table = table;
+		this.id = id;
+		this.data = data;
 	}
 	
 	public int getPrecision() {
 		return precision; 
 	}
 	
-	public int getIndex() {
-		return index;
+	public int getID() {
+		return id;
 	}
 	
-	public short[] getTable() {
-		return table;
+	public int[] getData() {
+		return data;
 	}
 
 	public int compareTo(QTable that) {
-		return this.index - that.index;
+		return this.id - that.id;
 	}
 }

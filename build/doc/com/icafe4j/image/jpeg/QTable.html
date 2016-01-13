@@ -118,9 +118,9 @@ implements java.lang.Comparable&lt;<a href="../../../../com/icafe4j/image/jpeg/Q
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#QTable(int,%20int,%20short[])">QTable</a></strong>(int&nbsp;precision,
-      int&nbsp;index,
-      short[]&nbsp;table)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#QTable(int,%20int,%20int[])">QTable</a></strong>(int&nbsp;precision,
+      int&nbsp;id,
+      int[]&nbsp;data)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -142,16 +142,16 @@ implements java.lang.Comparable&lt;<a href="../../../../com/icafe4j/image/jpeg/Q
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#compareTo(com.icafe4j.image.jpeg.QTable)">compareTo</a></strong>(<a href="../../../../com/icafe4j/image/jpeg/QTable.html" title="class in com.icafe4j.image.jpeg">QTable</a>&nbsp;that)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#getIndex()">getIndex</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>int[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#getData()">getData</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#getPrecision()">getPrecision</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#getID()">getID</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>short[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#getTable()">getTable</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/QTable.html#getPrecision()">getPrecision</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -175,15 +175,15 @@ implements java.lang.Comparable&lt;<a href="../../../../com/icafe4j/image/jpeg/Q
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="QTable(int, int, short[])">
+<a name="QTable(int, int, int[])">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>QTable</h4>
 <pre>public&nbsp;QTable(int&nbsp;precision,
-      int&nbsp;index,
-      short[]&nbsp;table)</pre>
+      int&nbsp;id,
+      int[]&nbsp;data)</pre>
 </li>
 </ul>
 </li>
@@ -203,22 +203,22 @@ implements java.lang.Comparable&lt;<a href="../../../../com/icafe4j/image/jpeg/Q
 <pre>public&nbsp;int&nbsp;getPrecision()</pre>
 </li>
 </ul>
-<a name="getIndex()">
+<a name="getID()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getIndex</h4>
-<pre>public&nbsp;int&nbsp;getIndex()</pre>
+<h4>getID</h4>
+<pre>public&nbsp;int&nbsp;getID()</pre>
 </li>
 </ul>
-<a name="getTable()">
+<a name="getData()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getTable</h4>
-<pre>public&nbsp;short[]&nbsp;getTable()</pre>
+<h4>getData</h4>
+<pre>public&nbsp;int[]&nbsp;getData()</pre>
 </li>
 </ul>
 <a name="compareTo(com.icafe4j.image.jpeg.QTable)">
