@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    31Jan2016  Removed ditherThreshold related method arguments
  * WY    31Dec2015  Removed error limit from dither_FloydSteinberg
  * WY    03Nov2015  Bug fix for reduceColors()
  * WY    16Sep2015  Added getScaledInstance() to IMGUtils
@@ -322,20 +323,13 @@ public class IMGUtils {
 	 * @param threshold gray-scale threshold to convert to BW image
 	 * @param err_limit limit of the error (range 0-255 inclusive)
 	 */	
-	public static void dither_FloydSteinberg(byte[] gray, byte[] mask, int width, int height, int threshold, int err_limit)	{
+	public static void dither_FloydSteinberg(byte[] gray, byte[] mask, int width, int height, int threshold)	{
 		// Define error arrays
 		// Errors for the current line
 		int[] tempErr;
 		int[] thisErr = new int[width + 2];
 		// Errors for the following line
 		int[] nextErr = new int[width + 2];
-			
-		java.util.Random random = new java.util.Random();
-		
-		for(int i = 0; i < width + 2; i++)
-		{
-			thisErr[i] = random.nextInt(3) - 1;
-		}
 			
 		for (int row = 0, index = 0; row < height; row++)
 		{
@@ -345,7 +339,7 @@ public class IMGUtils {
 					gray[index] = 0; 
 					continue; 
 				}
-				// Diffuse errors
+				
 				int intensity = (gray[index]&0xff) + thisErr[col + 1];
 				if (intensity > 255) intensity = 255;
 				else if (intensity < 0) intensity = 0;
@@ -362,14 +356,11 @@ public class IMGUtils {
 				
 				// Find errors
 				int err = intensity - newIntensity;
-				if (err > err_limit) err = err_limit;
-				else if (err < -err_limit)	err = -err_limit;
-				
 				// Diffuse error
-				thisErr[col + 2] += ((err*7)>>4);
-				nextErr[col    ] += ((err*3)>>4);
-				nextErr[col + 1] += ((err*5)>>4);
-				nextErr[col + 2] += ((err)>>4);
+				thisErr[col + 2] += ((err*7)/16);
+				nextErr[col    ] += ((err*3)/16);
+				nextErr[col + 1] += ((err*5)/16);
+				nextErr[col + 2] += ((err)/16);
 			}			
 			// We have finished one row, switch the error arrays
 			tempErr = thisErr;
@@ -1430,7 +1421,7 @@ public class IMGUtils {
 	 * @param err_limit Floyd-Steinberg error diffusion error limit (range 0-255 inclusive)
 	 * @return byte array for the BW image
 	 */
-	public static byte[] rgb2bilevelDiffusionDither(int[] rgb, int imageWidth, int imageHeight, int err_limit) {
+	public static byte[] rgb2bilevelDiffusionDither(int[] rgb, int imageWidth, int imageHeight) {
 		// RGB to gray-scale
 		byte[] pixels = new byte[rgb.length];
 		byte[] mask = new byte[rgb.length];
@@ -1450,7 +1441,7 @@ public class IMGUtils {
 		// Calculate threshold
 		int threshold = (int)(sum/pixels.length);
 		
-		IMGUtils.dither_FloydSteinberg(pixels, mask, imageWidth, imageHeight, threshold, err_limit);
+		IMGUtils.dither_FloydSteinberg(pixels, mask, imageWidth, imageHeight, threshold);
 		
 		return pixels;
 	}

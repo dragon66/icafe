@@ -88,7 +88,7 @@ public class TestGIFTweaker extends TestBase {
 		  	default:
 		}
 		  
-		writer.setImageParam(builder.applyDither(true).ditherThreshold(18).hasAlpha(true).build());
+		writer.setImageParam(builder.applyDither(true).hasAlpha(true).build());
 		
 		FileInputStream is = new FileInputStream(args[0]);
 		

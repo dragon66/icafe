@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ==================================================
+ * WY    31Jan2016  Removed ditherThreshold parameter
  * WY    03Sep2015  Added support for different dither type
  * WY    30Dec2014  Added new meta data fields hasICCP, containsThumbnail,
  *                  icc_profile, and thumbnails
@@ -46,7 +47,6 @@ public class ImageParam {
     private final boolean isApplyDither;
     private final int[][] ditherMatrix;
     private final DitherMethod ditherMethod;
-    private final int ditherThreshold;
     private final QuantMethod quantMethod;
     private final boolean transparent;
     private final int transparentColor;
@@ -61,7 +61,6 @@ public class ImageParam {
     public static final ImageParam DEFAULT_IMAGE_PARAM = new ImageParamBuilder().build();
     
     private static final DitherMethod DEFAULT_DITHER_METHOD = DitherMethod.FLOYD_STEINBERG;
-	private static final int DEFAULT_DITHER_THRESHOLD = 18;
 	private static final QuantMethod DEFAULT_QUANT_METHOD = QuantMethod.POPULARITY;
 	
     // Default Bayer 8X8 threshold matrix for ordered dither
@@ -87,7 +86,6 @@ public class ImageParam {
 		isApplyDither = builder.applyDither;
 		ditherMatrix = builder.ditherMatrix;
 		ditherMethod = builder.ditherMethod;
-		ditherThreshold = builder.ditherThreshold;
 		quantMethod = builder.quantMethod;
 		transparentColor = builder.transparentColor;
 		transparent = builder.transparent;
@@ -130,10 +128,6 @@ public class ImageParam {
     	return ditherMethod;
     }
     
-	public int getDitherThreshold() {
-    	return ditherThreshold;
-    }
-	
 	public QuantMethod getQuantMethod() {
 		return quantMethod;
 	}
@@ -208,7 +202,6 @@ public class ImageParam {
 	    private QuantMethod quantMethod = DEFAULT_QUANT_METHOD;
 	    // Bayer 8X8 matrix
 	    private int[][] ditherMatrix = DEFAULT_DITHER_MATRIX;
-	    private int ditherThreshold = DEFAULT_DITHER_THRESHOLD;
 	    // Transparency related variables
 	    private boolean transparent = false;
 	    private int transparentColor;
@@ -261,11 +254,6 @@ public class ImageParam {
 	    	return this;
 	    }
 	    
-	    public ImageParamBuilder ditherThreshold(int ditherThreshold) {
-	    	this.ditherThreshold = ditherThreshold;
-	    	return this;
-	    }
-	    
 	    public ImageParamBuilder quantMethod(QuantMethod quantMethod) {
 	    	this.quantMethod = quantMethod;
 	    	return this;
@@ -310,8 +298,7 @@ public class ImageParam {
 	    	this.applyDither = false;
 	      	this.ditherMatrix = DEFAULT_DITHER_MATRIX;
 	      	this.ditherMethod = DEFAULT_DITHER_METHOD;
-	    	this.ditherThreshold = DEFAULT_DITHER_THRESHOLD;
-	    	this.quantMethod = DEFAULT_QUANT_METHOD;
+	       	this.quantMethod = DEFAULT_QUANT_METHOD;
 	      	this.transparent = false;
 	    	this.transparentColor = 0;
 	    	this.hasICCP = false;

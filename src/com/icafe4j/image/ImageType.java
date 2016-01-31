@@ -63,7 +63,7 @@ public enum ImageType {
 		}
 		@Override
 		public ImageReader getReader() { 
-			return new JPEGReader(); 
+			return new JPGReader(); 
 		}
 		@Override
 		public ImageWriter getWriter() { 

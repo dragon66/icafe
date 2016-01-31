@@ -74,17 +74,22 @@ public class SOFReader implements Reader {
 	public void read() throws IOException {
 		//
 		byte[] data = segment.getData();
-		precision = data[0];
+		// This is in bits/sample, usually 8, (12 and 16 not supported by most software). 
+		precision = data[0]; // Usually 8, for baseline JPEG
+		// Image frame width and height
 		frameHeight = IOUtils.readUnsignedShortMM(data, 1);
 		frameWidth = IOUtils.readUnsignedShortMM(data, 3);
-		
+		 // Number of components
+		// Usually 1 = grey scaled, 3 = color YCbCr or YIQ, 4 = color CMYK 
+        // JFIF uses either 1 component (Y, greyscaled) or 3 components (YCbCr, sometimes called YUV, color).
 		numOfComponents = data[5];
 		components = new Component[numOfComponents];
 	
 		int offset = 6;
 		
 		for (int i = 0; i < numOfComponents; i++) {
-			byte componentId = data[offset++];		
+			byte componentId = data[offset++];
+			// Sampling factors (1byte) (bit 0-3 horizontal, 4-7 vertical).
 			byte sampleFactor = data[offset++];
 			byte hSampleFactor = (byte)((sampleFactor>>4)&0x0f);
 			byte vSampleFactor = (byte)((sampleFactor&0x0f));

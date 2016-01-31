@@ -624,7 +624,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 			if(param.isApplyDither()) {
 				byte[] bilevelPixels = null;
 				if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
-					bilevelPixels = IMGUtils.rgb2bilevelDiffusionDither(pixels, imageWidth, imageHeight, param.getDitherThreshold());
+					bilevelPixels = IMGUtils.rgb2bilevelDiffusionDither(pixels, imageWidth, imageHeight);
 				else
 					bilevelPixels = IMGUtils.rgb2bilevelOrderedDither(pixels, imageWidth, imageHeight, param.getDitherMatrix());
 				writeBilevel(bilevelPixels, imageWidth, imageHeight, compression);

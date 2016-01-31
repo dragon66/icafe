@@ -51,7 +51,7 @@ import com.icafe4j.io.IOUtils;
 
 /** 
  * Decodes and shows images in GIF format, supports both Gif87a and Gif89a.
- * The current class doesn't support interlaced or animated GIFs,but can 
+ * The current class doesn't support interlaced or animated GIFs, but can 
  * anyway shows these kinds of images! Supports transparent GIFs!
  *
  * Change log: the LZW decoding part becomes a general purpose class which

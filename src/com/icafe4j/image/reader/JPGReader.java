@@ -1,13 +1,30 @@
 /**
- * Copyright (c) 2014-2015 by Wen Yu.
+ * Copyright (c) 2014-2016 by Wen Yu.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * JPGReader.java
+ *
+ * Who   Date       Description
+ * ====  =========  =================================================
+ * WY    12Jan2016  Cleaned up stale code
  */
-
+/** 
+  * Decodes and shows images in JPEG format.
+  *
+  * Current version is a baseline JFIF compatible one. It supports Adobe
+  * APP14 color transform - YCCK, CMYK, YCCK inverted. Progressive DCT
+  * is not supported!
+  *
+  * @author Wen Yu, yuwen_66@yahoo.com
+  * @version 1.0 04/23/2007
+  */
 package com.icafe4j.image.reader;
 
 import java.awt.image.BufferedImage;
@@ -37,7 +54,7 @@ import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
 import com.icafe4j.util.ArrayUtils;
 
-public class JPEGReader extends ImageReader {
+public class JPGReader extends ImageReader {
 	//"Adobe" no trailing NULL
 	public static final byte[] ADOBE_ID = {0x41, 0x64, 0x6f, 0x62, 0x65};
 	public static final String ICC_PROFILE_ID = "ICC_PROFILE\0";
@@ -50,10 +67,11 @@ public class JPEGReader extends ImageReader {
 	private int quant_tbl[][] = new int[4][];
 	private HuffmanTbl dc_hufftbl[] = new HuffmanTbl[4];
 	private HuffmanTbl ac_hufftbl[] = new HuffmanTbl[4];
+	@SuppressWarnings("unused")
 	private Map<Integer, Component> components = new HashMap<Integer, Component>(4);
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGReader.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JPGReader.class);
 	
 	public BufferedImage read1(InputStream is) throws Exception	{
 		boolean finished = false;

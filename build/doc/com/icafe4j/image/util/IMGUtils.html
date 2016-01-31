@@ -177,12 +177,11 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#dither_FloydSteinberg(byte[],%20byte[],%20int,%20int,%20int,%20int)">dither_FloydSteinberg</a></strong>(byte[]&nbsp;gray,
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#dither_FloydSteinberg(byte[],%20byte[],%20int,%20int,%20int)">dither_FloydSteinberg</a></strong>(byte[]&nbsp;gray,
                      byte[]&nbsp;mask,
                      int&nbsp;width,
                      int&nbsp;height,
-                     int&nbsp;threshold,
-                     int&nbsp;err_limit)</code>
+                     int&nbsp;threshold)</code>
 <div class="block">Dither gray-scale image using Floyd-Steinberg error diffusion</div>
 </td>
 </tr>
@@ -336,10 +335,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2bilevelDiffusionDither(int[],%20int,%20int,%20int)">rgb2bilevelDiffusionDither</a></strong>(int[]&nbsp;rgb,
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2bilevelDiffusionDither(int[],%20int,%20int)">rgb2bilevelDiffusionDither</a></strong>(int[]&nbsp;rgb,
                           int&nbsp;imageWidth,
-                          int&nbsp;imageHeight,
-                          int&nbsp;err_limit)</code>
+                          int&nbsp;imageHeight)</code>
 <div class="block">RGB to bilevel image conversion with Floyd-Steinberg dither</div>
 </td>
 </tr>
@@ -541,7 +539,7 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>gray</code> - input gray-scale image array - also as output BW image array</dd><dd><code>mask</code> - a mask array for transparent pixels - 0 transparent, 1 opaque</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>threshold</code> - Bayer threshold matrix used to convert to BW image</dd></dl>
 </li>
 </ul>
-<a name="dither_FloydSteinberg(byte[], byte[], int, int, int, int)">
+<a name="dither_FloydSteinberg(byte[], byte[], int, int, int)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -551,8 +549,7 @@ extends java.lang.Object</pre>
                          byte[]&nbsp;mask,
                          int&nbsp;width,
                          int&nbsp;height,
-                         int&nbsp;threshold,
-                         int&nbsp;err_limit)</pre>
+                         int&nbsp;threshold)</pre>
 <div class="block">Dither gray-scale image using Floyd-Steinberg error diffusion</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>gray</code> - input gray-scale image array - also as output BW image array</dd><dd><code>mask</code> - a mask array for transparent pixels - 0 transparent, 1 opaque</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>threshold</code> - gray-scale threshold to convert to BW image</dd><dd><code>err_limit</code> - limit of the error (range 0-255 inclusive)</dd></dl>
 </li>
@@ -883,7 +880,7 @@ extends java.lang.Object</pre>
                               int[][]&nbsp;threshold)</pre>
 </li>
 </ul>
-<a name="rgb2bilevelDiffusionDither(int[], int, int, int)">
+<a name="rgb2bilevelDiffusionDither(int[], int, int)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -891,8 +888,7 @@ extends java.lang.Object</pre>
 <h4>rgb2bilevelDiffusionDither</h4>
 <pre>public static&nbsp;byte[]&nbsp;rgb2bilevelDiffusionDither(int[]&nbsp;rgb,
                                 int&nbsp;imageWidth,
-                                int&nbsp;imageHeight,
-                                int&nbsp;err_limit)</pre>
+                                int&nbsp;imageHeight)</pre>
 <div class="block">RGB to bilevel image conversion with Floyd-Steinberg dither</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>rgb</code> - input RGB image array (format: ARGBARGBARGB...)</dd><dd><code>imageWidth</code> - image width</dd><dd><code>imageHeight</code> - image height</dd><dd><code>err_limit</code> - Floyd-Steinberg error diffusion error limit (range 0-255 inclusive)</dd>
 <dt><span class="strong">Returns:</span></dt><dd>byte array for the BW image</dd></dl>
