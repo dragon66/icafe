@@ -551,7 +551,7 @@ extends java.lang.Object</pre>
                          int&nbsp;height,
                          int&nbsp;threshold)</pre>
 <div class="block">Dither gray-scale image using Floyd-Steinberg error diffusion</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gray</code> - input gray-scale image array - also as output BW image array</dd><dd><code>mask</code> - a mask array for transparent pixels - 0 transparent, 1 opaque</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>threshold</code> - gray-scale threshold to convert to BW image</dd><dd><code>err_limit</code> - limit of the error (range 0-255 inclusive)</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gray</code> - input gray-scale image array - also as output BW image array</dd><dd><code>mask</code> - a mask array for transparent pixels - 0 transparent, 1 opaque</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>threshold</code> - gray-scale threshold to convert to BW image</dd></dl>
 </li>
 </ul>
 <a name="dither_Bayer(int[], int, int, byte[], int, int[], int, int[][])">
@@ -890,7 +890,7 @@ extends java.lang.Object</pre>
                                 int&nbsp;imageWidth,
                                 int&nbsp;imageHeight)</pre>
 <div class="block">RGB to bilevel image conversion with Floyd-Steinberg dither</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rgb</code> - input RGB image array (format: ARGBARGBARGB...)</dd><dd><code>imageWidth</code> - image width</dd><dd><code>imageHeight</code> - image height</dd><dd><code>err_limit</code> - Floyd-Steinberg error diffusion error limit (range 0-255 inclusive)</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rgb</code> - input RGB image array (format: ARGBARGBARGB...)</dd><dd><code>imageWidth</code> - image width</dd><dd><code>imageHeight</code> - image height</dd>
 <dt><span class="strong">Returns:</span></dt><dd>byte array for the BW image</dd></dl>
 </li>
 </ul>

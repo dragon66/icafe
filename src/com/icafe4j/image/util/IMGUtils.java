@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2015 by Wen Yu.
+ * Copyright (c) 2014-2016 by Wen Yu.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -321,7 +321,6 @@ public class IMGUtils {
 	 * @param width image width
 	 * @param height image height
 	 * @param threshold gray-scale threshold to convert to BW image
-	 * @param err_limit limit of the error (range 0-255 inclusive)
 	 */	
 	public static void dither_FloydSteinberg(byte[] gray, byte[] mask, int width, int height, int threshold)	{
 		// Define error arrays
@@ -1418,7 +1417,6 @@ public class IMGUtils {
 	 * @param rgb input RGB image array (format: ARGBARGBARGB...)
 	 * @param imageWidth image width
 	 * @param imageHeight image height
-	 * @param err_limit Floyd-Steinberg error diffusion error limit (range 0-255 inclusive)
 	 * @return byte array for the BW image
 	 */
 	public static byte[] rgb2bilevelDiffusionDither(int[] rgb, int imageWidth, int imageHeight) {

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2015 by Wen Yu.
+ * Copyright (c) 2014-2016 by Wen Yu.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    ==================================================
+ * WY    06Feb2016  Added quantQuality parameter
  * WY    31Jan2016  Removed ditherThreshold parameter
  * WY    03Sep2015  Added support for different dither type
  * WY    30Dec2014  Added new meta data fields hasICCP, containsThumbnail,
@@ -27,6 +28,7 @@ import java.awt.image.BufferedImage;
 import com.icafe4j.image.options.ImageOptions;
 import com.icafe4j.image.quant.DitherMethod;
 import com.icafe4j.image.quant.QuantMethod;
+import com.icafe4j.image.quant.QuantQuality;
 import com.icafe4j.util.Builder;
 
 /**
@@ -48,6 +50,7 @@ public class ImageParam {
     private final int[][] ditherMatrix;
     private final DitherMethod ditherMethod;
     private final QuantMethod quantMethod;
+    private final QuantQuality quantQuality;
     private final boolean transparent;
     private final int transparentColor;
     private final boolean hasICCP;
@@ -62,6 +65,7 @@ public class ImageParam {
     
     private static final DitherMethod DEFAULT_DITHER_METHOD = DitherMethod.FLOYD_STEINBERG;
 	private static final QuantMethod DEFAULT_QUANT_METHOD = QuantMethod.POPULARITY;
+	private static final QuantQuality DEFAULT_QUANT_QUALITY = QuantQuality.SPEED_OVER_QUALITY;
 	
     // Default Bayer 8X8 threshold matrix for ordered dither
     private static final int[][] DEFAULT_DITHER_MATRIX = {
@@ -87,6 +91,7 @@ public class ImageParam {
 		ditherMatrix = builder.ditherMatrix;
 		ditherMethod = builder.ditherMethod;
 		quantMethod = builder.quantMethod;
+		quantQuality = builder.quantQuality;
 		transparentColor = builder.transparentColor;
 		transparent = builder.transparent;
 		hasICCP = builder.hasICCP;
@@ -130,6 +135,10 @@ public class ImageParam {
     
 	public QuantMethod getQuantMethod() {
 		return quantMethod;
+	}
+	
+	public QuantQuality getQuantQuality() {
+		return quantQuality;
 	}
     
     public byte[] getICCProfile() {
@@ -200,6 +209,7 @@ public class ImageParam {
 	    private boolean applyDither = false;
 	    private DitherMethod ditherMethod = DEFAULT_DITHER_METHOD;
 	    private QuantMethod quantMethod = DEFAULT_QUANT_METHOD;
+	    private QuantQuality quantQuality = DEFAULT_QUANT_QUALITY;
 	    // Bayer 8X8 matrix
 	    private int[][] ditherMatrix = DEFAULT_DITHER_MATRIX;
 	    // Transparency related variables
@@ -259,6 +269,11 @@ public class ImageParam {
 	    	return this;
 	    }
 	    
+	    public ImageParamBuilder quantQuanlity(QuantQuality quantQuality) {
+	    	this.quantQuality = quantQuality;
+	    	return this;
+	    }
+	    
 	    public ImageParamBuilder hasAlpha(boolean hasAlpha) {
 			this.hasAlpha = hasAlpha;
 			return this;
@@ -299,6 +314,7 @@ public class ImageParam {
 	      	this.ditherMatrix = DEFAULT_DITHER_MATRIX;
 	      	this.ditherMethod = DEFAULT_DITHER_METHOD;
 	       	this.quantMethod = DEFAULT_QUANT_METHOD;
+	       	this.quantQuality = DEFAULT_QUANT_QUALITY;
 	      	this.transparent = false;
 	    	this.transparentColor = 0;
 	    	this.hasICCP = false;
