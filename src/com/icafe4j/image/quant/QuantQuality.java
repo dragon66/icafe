@@ -25,6 +25,7 @@ package com.icafe4j.image.quant;
  * @author Wen Yu, yuwen_66@yahoo.com
  */
 public enum QuantQuality {
-	QUALITY_OVER_SPEED, // Brute force search for pixel <=> LUT mapping
- 	SPEED_OVER_QUALITY; // Inverse color map to speed up pixel <=> LUT mapping	
+	BEST, // Brute force search to map pixel to LUT entry
+ 	MEDIUM, // Inverse color map to speed up pixel to LUT mapping
+	WORST;
 }
