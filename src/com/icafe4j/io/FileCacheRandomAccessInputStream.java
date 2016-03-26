@@ -128,7 +128,7 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
     public void seek(long pos) throws IOException {
     	ensureOpen();
         if (pos < 0) {
-        	throw new IOException("Negtive seek position.");
+        	throw new IOException("Negative seek position.");
         }
         pointer = pos;
     }

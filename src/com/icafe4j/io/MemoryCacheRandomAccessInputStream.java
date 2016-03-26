@@ -135,7 +135,7 @@ public class MemoryCacheRandomAccessInputStream extends RandomAccessInputStream 
 	public void seek(long loc) throws IOException {
 		ensureOpen();
 		if (loc<0L)
-			throw new IOException("Negtive seek position.");
+			throw new IOException("Negative seek position.");
 			
 		pointer = loc;
 	}

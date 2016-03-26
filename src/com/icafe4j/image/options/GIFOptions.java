@@ -11,8 +11,8 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
- * WY    18Aug2015  Moved similar fields and methods to GIFFrame class
- * WY    21Dec2014  Added similar fields and methods to GIFFrame class  
+ * WY    18Aug2015  Removed similar fields and methods as GIFFrame class
+ * WY    21Dec2014  Added similar fields and methods as GIFFrame class  
  */
 
 package com.icafe4j.image.options;

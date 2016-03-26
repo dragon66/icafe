@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    03Jul2015  Removed generic type from ImageOptions
+ * WY    03Jul2015  Removed setNativeMetadata() and getNativeMetadata()
  * WY    09Mar2015  Make ImageOptions generic
  * WY    09Mar2015  Added setNativeMetadata() and getNativeMetadata()
  */
