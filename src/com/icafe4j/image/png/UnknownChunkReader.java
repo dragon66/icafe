@@ -43,7 +43,7 @@ public class UnknownChunkReader implements Reader {
 	}
 	
 	public byte[] getData() {
-		return data;
+		return data.clone();
 	}
 	
 	public void read() throws IOException {       

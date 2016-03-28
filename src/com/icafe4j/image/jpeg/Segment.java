@@ -50,7 +50,7 @@ public class Segment {
 	}
 	
 	public byte[] getData() {
-		return data;
+		return data.clone();
 	}
 	
 	public void write(OutputStream os) throws IOException {

@@ -33,7 +33,7 @@ public class QTable implements Comparable<QTable> {
 	}
 	
 	public int[] getData() {
-		return data;
+		return data.clone();
 	}
 
 	public int compareTo(QTable that) {

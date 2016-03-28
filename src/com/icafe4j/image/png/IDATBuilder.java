@@ -6,6 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * IDATBuilder.java
+ *
+ * Who   Date       Description
+ * ====  =========  =====================================================
+ * WY    27Mar2016  Changed constructor to set new compression level
  */
 
 package com.icafe4j.image.png;
@@ -32,7 +40,7 @@ public class IDATBuilder extends ChunkBuilder implements Builder<Chunk> {
 	
 	public IDATBuilder(int compressionLevel) {
 		this();
-		deflater = new Deflater(compressionLevel);
+		deflater.setLevel(compressionLevel);
 	}
 	
 	public IDATBuilder data(byte[] data, int offset, int length) {

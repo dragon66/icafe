@@ -13,8 +13,9 @@
  *
  * Who   Date       Description
  * ====  =======    =======================================================
+ * WY    27Mar2016  Rewrite writeComment() to leverage COMBuilder
  * WY    28Sep2015  Fixed "unsupportedOperationException" with insertExif()
- * WY    26Sep2015  Added insertComment(InputStream, OutputStream, String)
+ * WY    26Sep2015  Added insertComments(InputStream, OutputStream, List<String>)
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    02Jul2015  Added support for APP14 segment reading
  * WY    02Jul2015  Added support for APP12 segment reading
@@ -682,7 +683,10 @@ public class JPEGTweaker {
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    segments.add(new Segment(emarker, length, buf));
+					    if(emarker == Marker.UNKNOWN)
+					    	segments.add(new UnknownSegment(marker, length, buf));
+					    else
+					    	segments.add(new Segment(emarker, length, buf));
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
@@ -779,7 +783,10 @@ public class JPEGTweaker {
 				    	 length = IOUtils.readUnsignedShortMM(is);					
 				    	 byte[] buf = new byte[length - 2];
 				    	 IOUtils.readFully(is, buf);
-				    	 segments.add(new Segment(emarker, length, buf));
+				    	 if(emarker == Marker.UNKNOWN)
+				    		 segments.add(new UnknownSegment(marker, length, buf));
+				    	 else
+				    		 segments.add(new Segment(emarker, length, buf));
 				    	 marker = IOUtils.readShortMM(is);
 				}
 			}
@@ -903,7 +910,10 @@ public class JPEGTweaker {
 				    	length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    segments.add(new Segment(emarker, length, buf));
+					    if(emarker == Marker.UNKNOWN)
+					    	segments.add(new UnknownSegment(marker, length, buf));
+					    else
+					    	segments.add(new Segment(emarker, length, buf));
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
@@ -993,7 +1003,10 @@ public class JPEGTweaker {
 				    	length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    segments.add(new Segment(emarker, length, buf));
+					    if(emarker == Marker.UNKNOWN)
+					    	segments.add(new UnknownSegment(marker, length, buf));
+					    else
+					    	segments.add(new Segment(emarker, length, buf));
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
@@ -1087,7 +1100,10 @@ public class JPEGTweaker {
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];
 					    IOUtils.readFully(is, buf);
-					    segments.add(new Segment(emarker, length, buf));
+					    if(emarker == Marker.UNKNOWN)
+					    	segments.add(new UnknownSegment(marker, length, buf));
+					    else
+					    	segments.add(new Segment(emarker, length, buf));
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
@@ -1114,6 +1130,7 @@ public class JPEGTweaker {
 	 * @param is InputStream for the image.
 	 * @param os OutputStream for the image.
 	 * @param xmp XML string for the XMP - Assuming in UTF-8 format.
+	 * @param extendedXmp XML string for the extended XMP - Assuming in UTF-8 format
 	 * @throws IOException
 	 */
 	public static void insertXMP(InputStream is, OutputStream os, String xmp, String extendedXmp) throws IOException {
@@ -1121,7 +1138,7 @@ public class JPEGTweaker {
 		// Add PI at the beginning and end of the document, we will support only UTF-8, no BOM
 		Document xmpDoc = XMLUtils.createXML(xmp);
 		XMLUtils.insertLeadingPI(xmpDoc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
-		XMLUtils.insertTrailingPI(xmpDoc, "xpacket", "end='w'");
+		XMLUtils.insertTrailingPI(xmpDoc, "xpacket", "end='r'");
 		Document extendedDoc = null;
 		byte[] extendedXmpBytes = null;
 		String guid = null;
@@ -1937,16 +1954,7 @@ public class JPEGTweaker {
 	}
 	
 	private static void writeComment(String comment, OutputStream os) throws IOException	{
-		byte[] data = comment.getBytes();
-		int len = data.length + 2;
-		byte[] COM = new byte[len + 2];
-		// Comment marker: 0xfffe
-		COM[0] = (byte)0xff;
-		COM[1] = (byte)0xfe;
-		COM[2] = (byte)((len>>8)&0xff);
-		COM[3] = (byte)(len&0xff);
-		System.arraycopy(data, 0, COM, 4, len-2);
-		os.write(COM, 0, len + 2);
+		new COMBuilder().comment(comment).build().write(os);
 	}
 	
 	/**

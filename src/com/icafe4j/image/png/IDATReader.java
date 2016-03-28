@@ -61,7 +61,7 @@ public class IDATReader implements Reader {
 	public byte[] getData() throws IOException {
 		if(rawData == null)
 			read();
-		return rawData;
+		return rawData.clone(); // Defensive copy
 	}
 
 	public void read() throws IOException {		

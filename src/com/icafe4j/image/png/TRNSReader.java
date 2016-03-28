@@ -42,7 +42,7 @@ public class TRNSReader implements Reader {
 	}
 	
 	public byte[] getAlpha() {
-		return alpha;
+		return alpha.clone(); // Defensive copy
 	}
 
 	public void read() throws IOException {
