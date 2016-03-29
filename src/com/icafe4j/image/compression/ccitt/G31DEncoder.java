@@ -6,6 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Any modifications to this file must keep this entire header intact.
+ * 
+ * Change History - most recent changes go on top of previous changes
+ *
+ * G31DEncoder.java
+ *
+ * Who   Date       Description
+ * ====  =========  ============================================================
+ * WY    28Mar2016  Made scanLineWidth protected and removed getScanLineWidth()
  */
 
 package com.icafe4j.image.compression.ccitt;
@@ -37,7 +45,6 @@ public class G31DEncoder implements ImageEncoder {
 	private Updatable<Integer> writer;
 	private boolean extraFlush;
 	private int bufIndex;
-	private int scanLineWidth;
 	
 	private int compressedDataLen = 0;
 	
@@ -201,11 +208,7 @@ public class G31DEncoder implements ImageEncoder {
    		return compressedDataLen;
    	}
    	
-   	protected int getScanLineWidth() {
-   		return scanLineWidth;
-   	}
-	
-	public void initialize() throws Exception {
+ 	public void initialize() throws Exception {
 		empty_bits = 0x08;
 		compressedDataLen = 0;
 	}
@@ -251,5 +254,6 @@ public class G31DEncoder implements ImageEncoder {
    		this.extraFlush = extraFlush;
    	}
    	
+	protected int scanLineWidth;
    	protected int currPos = 7;
 }

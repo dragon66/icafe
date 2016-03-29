@@ -22,10 +22,6 @@ import com.icafe4j.util.Updatable;
  * @version 1.0 12/20/2013
  */
 public class G42DEncoder extends G32DEncoder implements ImageEncoder {
-	// At present, this member variable is only used by encode, we can remove
-	// it in this situation but we are not sure if we need more methods which
-	// might use this value, so we keep it here for now.
-	private int scanLineWidth;
 	
 	public G42DEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable<Integer> writer) {
 		// The K value is not used by G4 encoding, we pass in Integer.MAX_VALUE as a place holder
@@ -39,7 +35,6 @@ public class G42DEncoder extends G32DEncoder implements ImageEncoder {
 	 */
 	@Override public void encode(byte[] pixels, int start, int len) throws Exception {
 		//
-		scanLineWidth = getScanLineWidth();
 		int totalScanLines = len/scanLineWidth;
 		
 		for(int i = 0; i < totalScanLines; i++) {

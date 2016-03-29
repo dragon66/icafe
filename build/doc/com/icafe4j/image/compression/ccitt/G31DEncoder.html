@@ -131,6 +131,10 @@ implements <a href="../../../../../com/icafe4j/image/compression/ImageEncoder.ht
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#currPos">currPos</a></strong></code>&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#scanLineWidth">scanLineWidth</a></strong></code>&nbsp;</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -188,29 +192,25 @@ implements <a href="../../../../../com/icafe4j/image/compression/ImageEncoder.ht
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#getCompressedDataLen()">getCompressedDataLen</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#getScanLineWidth()">getScanLineWidth</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#initialize()">initialize</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#outputRunLengthCode(int,%20int)">outputRunLengthCode</a></strong>(int&nbsp;len,
                    int&nbsp;color)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#outputRunLengthCode2(int,%20int)">outputRunLengthCode2</a></strong>(int&nbsp;len,
                     int&nbsp;color)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#send_code_to_buffer(int,%20int)">send_code_to_buffer</a></strong>(int&nbsp;code,
                    int&nbsp;codeLen)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/compression/ccitt/G31DEncoder.html#setExtraFlush(boolean)">setExtraFlush</a></strong>(boolean&nbsp;extraFlush)</code>&nbsp;</td>
 </tr>
@@ -236,6 +236,15 @@ implements <a href="../../../../../com/icafe4j/image/compression/ImageEncoder.ht
 <!--   -->
 </a>
 <h3>Field Detail</h3>
+<a name="scanLineWidth">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>scanLineWidth</h4>
+<pre>protected&nbsp;int scanLineWidth</pre>
+</li>
+</ul>
 <a name="currPos">
 <!--   -->
 </a>
@@ -359,15 +368,6 @@ implements <a href="../../../../../com/icafe4j/image/compression/ImageEncoder.ht
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../com/icafe4j/image/compression/ImageEncoder.html#getCompressedDataLen()">getCompressedDataLen</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/icafe4j/image/compression/ImageEncoder.html" title="interface in com.icafe4j.image.compression">ImageEncoder</a></code></dd>
 </dl>
-</li>
-</ul>
-<a name="getScanLineWidth()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getScanLineWidth</h4>
-<pre>protected&nbsp;int&nbsp;getScanLineWidth()</pre>
 </li>
 </ul>
 <a name="initialize()">
