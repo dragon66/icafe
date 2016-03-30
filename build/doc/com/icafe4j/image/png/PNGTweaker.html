@@ -120,15 +120,15 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#dump_text_chunks(com.icafe4j.image.png.Chunk[])">dump_text_chunks</a></strong>(<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>[]&nbsp;chunks)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#dumpTextChunks(com.icafe4j.image.png.Chunk[])">dumpTextChunks</a></strong>(<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>[]&nbsp;chunks)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#dump_text_chunks(java.io.InputStream)">dump_text_chunks</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#dumpTextChunks(java.io.InputStream)">dumpTextChunks</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#insertChunk(com.icafe4j.image.png.Chunk,%20java.io.InputStream,%20java.io.OutputStream)">insertChunk</a></strong>(<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&nbsp;customChunk,
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#insertChunk(com.icafe4j.image.png.Chunk,%20java.io.InputStream,%20java.io.OutputStream)">insertChunk</a></strong>(<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&nbsp;chunk,
            java.io.InputStream&nbsp;is,
            java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
 </tr>
@@ -166,6 +166,20 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#insertTextChunk(com.icafe4j.image.png.ChunkType,%20java.lang.String,%20java.lang.String,%20java.io.InputStream,%20java.io.OutputStream)">insertTextChunk</a></strong>(<a href="../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a>&nbsp;type,
+               java.lang.String&nbsp;keyword,
+               java.lang.String&nbsp;text,
+               java.io.InputStream&nbsp;is,
+               java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#insertTextChunks(com.icafe4j.image.meta.png.TextualChunks,%20java.io.InputStream,%20java.io.OutputStream)">insertTextChunks</a></strong>(<a href="../../../../com/icafe4j/image/meta/png/TextualChunks.html" title="class in com.icafe4j.image.meta.png">TextualChunks</a>&nbsp;textualChunks,
+                java.io.InputStream&nbsp;is,
+                java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
          java.io.OutputStream&nbsp;os,
          java.lang.String&nbsp;xmp)</code>&nbsp;</td>
@@ -181,42 +195,42 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#mergeIDATChunks(java.util.List)">mergeIDATChunks</a></strong>(java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#read_ICCP_chunk(java.io.InputStream)">read_ICCP_chunk</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#read_text_chunks(java.io.File)">read_text_chunks</a></strong>(java.io.File&nbsp;file)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#read_text_chunks(java.io.InputStream)">read_text_chunks</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#read_text_chunks(java.lang.String)">read_text_chunks</a></strong>(java.lang.String&nbsp;fileName)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#readChunks(java.io.InputStream)">readChunks</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#readICCProfileChunk(java.io.InputStream)">readICCProfileChunk</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>,<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#readMetadata(java.io.InputStream)">readMetadata</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#readTextChunks(java.io.File)">readTextChunks</a></strong>(java.io.File&nbsp;file)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#readTextChunks(java.io.InputStream)">readTextChunks</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#readTextChunks(java.lang.String)">readTextChunks</a></strong>(java.lang.String&nbsp;fileName)</code>&nbsp;</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#remove_ancillary_chunks(java.io.InputStream,%20java.lang.String...)">remove_ancillary_chunks</a></strong>(java.io.InputStream&nbsp;is,
-                       java.lang.String...&nbsp;chunkNames)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#removeAncillaryChunks(java.io.InputStream,%20java.lang.String...)">removeAncillaryChunks</a></strong>(java.io.InputStream&nbsp;is,
+                     java.lang.String...&nbsp;chunkNames)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#remove_ancillary_chunks(java.util.List)">remove_ancillary_chunks</a></strong>(java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#removeAncillaryChunks(java.util.List)">removeAncillaryChunks</a></strong>(java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#remove_ancillary_chunks(java.lang.String,%20java.lang.String...)">remove_ancillary_chunks</a></strong>(java.lang.String&nbsp;fileOrDirectoryName,
-                       java.lang.String...&nbsp;args)</code>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#removeAncillaryChunks(java.lang.String,%20java.lang.String...)">removeAncillaryChunks</a></strong>(java.lang.String&nbsp;fileOrDirectoryName,
+                     java.lang.String...&nbsp;args)</code>
 <div class="block">Removes ancillary chunks either specified by "args" or predefined by REMOVABLE EnumSet.</div>
 </td>
 </tr>
@@ -228,7 +242,7 @@ extends java.lang.Object</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>static java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/png/PNGTweaker.html#removeChunks(java.util.List,%20java.util.Set)">removeChunks</a></strong>(java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks,
-            java.util.Set&lt;<a href="../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a>&gt;&nbsp;chunkEnumSet)</code>
+            java.util.Set&lt;<a href="../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a>&gt;&nbsp;chunkTypeSet)</code>
 <div class="block">Removes chunks which have the same ChunkType values from the chunkEnumSet.</div>
 </td>
 </tr>
@@ -277,26 +291,26 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="dump_text_chunks(com.icafe4j.image.png.Chunk[])">
+<a name="dumpTextChunks(com.icafe4j.image.png.Chunk[])">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>dump_text_chunks</h4>
-<pre>public static&nbsp;void&nbsp;dump_text_chunks(<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>[]&nbsp;chunks)
-                             throws java.io.IOException</pre>
+<h4>dumpTextChunks</h4>
+<pre>public static&nbsp;void&nbsp;dumpTextChunks(<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>[]&nbsp;chunks)
+                           throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="dump_text_chunks(java.io.InputStream)">
+<a name="dumpTextChunks(java.io.InputStream)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>dump_text_chunks</h4>
-<pre>public static&nbsp;void&nbsp;dump_text_chunks(java.io.InputStream&nbsp;is)
-                             throws java.io.IOException</pre>
+<h4>dumpTextChunks</h4>
+<pre>public static&nbsp;void&nbsp;dumpTextChunks(java.io.InputStream&nbsp;is)
+                           throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
@@ -307,7 +321,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>insertChunk</h4>
-<pre>public static&nbsp;void&nbsp;insertChunk(<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&nbsp;customChunk,
+<pre>public static&nbsp;void&nbsp;insertChunk(<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&nbsp;chunk,
                java.io.InputStream&nbsp;is,
                java.io.OutputStream&nbsp;os)
                         throws java.io.IOException</pre>
@@ -387,6 +401,36 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
+<a name="insertTextChunk(com.icafe4j.image.png.ChunkType, java.lang.String, java.lang.String, java.io.InputStream, java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertTextChunk</h4>
+<pre>public static&nbsp;void&nbsp;insertTextChunk(<a href="../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a>&nbsp;type,
+                   java.lang.String&nbsp;keyword,
+                   java.lang.String&nbsp;text,
+                   java.io.InputStream&nbsp;is,
+                   java.io.OutputStream&nbsp;os)
+                            throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertTextChunks(com.icafe4j.image.meta.png.TextualChunks, java.io.InputStream, java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertTextChunks</h4>
+<pre>public static&nbsp;void&nbsp;insertTextChunks(<a href="../../../../com/icafe4j/image/meta/png/TextualChunks.html" title="class in com.icafe4j.image.meta.png">TextualChunks</a>&nbsp;textualChunks,
+                    java.io.InputStream&nbsp;is,
+                    java.io.OutputStream&nbsp;os)
+                             throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
 <a name="insertXMP(java.io.InputStream, java.io.OutputStream, com.icafe4j.image.meta.adobe.XMP)">
 <!--   -->
 </a>
@@ -424,50 +468,50 @@ extends java.lang.Object</pre>
 <pre>public static&nbsp;java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;mergeIDATChunks(java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)</pre>
 </li>
 </ul>
-<a name="read_ICCP_chunk(java.io.InputStream)">
+<a name="readICCProfileChunk(java.io.InputStream)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>read_ICCP_chunk</h4>
-<pre>public static&nbsp;byte[]&nbsp;read_ICCP_chunk(java.io.InputStream&nbsp;is)
-                              throws java.io.IOException</pre>
+<h4>readICCProfileChunk</h4>
+<pre>public static&nbsp;byte[]&nbsp;readICCProfileChunk(java.io.InputStream&nbsp;is)
+                                  throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="read_text_chunks(java.io.File)">
+<a name="readTextChunks(java.io.File)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>read_text_chunks</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;read_text_chunks(java.io.File&nbsp;file)
-                                         throws java.io.IOException</pre>
+<h4>readTextChunks</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;readTextChunks(java.io.File&nbsp;file)
+                                       throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="read_text_chunks(java.io.InputStream)">
+<a name="readTextChunks(java.io.InputStream)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>read_text_chunks</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;read_text_chunks(java.io.InputStream&nbsp;is)
-                                         throws java.io.IOException</pre>
+<h4>readTextChunks</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;readTextChunks(java.io.InputStream&nbsp;is)
+                                       throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="read_text_chunks(java.lang.String)">
+<a name="readTextChunks(java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>read_text_chunks</h4>
-<pre>public static&nbsp;java.lang.String&nbsp;read_text_chunks(java.lang.String&nbsp;fileName)
-                                         throws java.io.IOException</pre>
+<h4>readTextChunks</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;readTextChunks(java.lang.String&nbsp;fileName)
+                                       throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
@@ -496,15 +540,15 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="remove_ancillary_chunks(java.io.InputStream, java.lang.String...)">
+<a name="removeAncillaryChunks(java.io.InputStream, java.lang.String...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>remove_ancillary_chunks</h4>
-<pre>public static&nbsp;void&nbsp;remove_ancillary_chunks(java.io.InputStream&nbsp;is,
-                           java.lang.String...&nbsp;chunkNames)
-                                    throws java.io.IOException</pre>
+<h4>removeAncillaryChunks</h4>
+<pre>public static&nbsp;void&nbsp;removeAncillaryChunks(java.io.InputStream&nbsp;is,
+                         java.lang.String...&nbsp;chunkNames)
+                                  throws java.io.IOException</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - InputStream of the image</dd><dd><code>chunkNames</code> - Names of the chunks to be removed. Effective names are those defined by Attribute 
                     with Attribute.ANCILLARY. Names are not case-sensitive.</dd>
 <dt><span class="strong">Throws:</span></dt>
@@ -512,29 +556,29 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code></dd><dt><span class="strong">See Also:</span></dt><dd><a href="../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png"><code>ChunkType</code></a></dd></dl>
 </li>
 </ul>
-<a name="remove_ancillary_chunks(java.util.List)">
+<a name="removeAncillaryChunks(java.util.List)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>remove_ancillary_chunks</h4>
-<pre>public static&nbsp;java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;remove_ancillary_chunks(java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)
-                                                     throws java.lang.Exception</pre>
+<h4>removeAncillaryChunks</h4>
+<pre>public static&nbsp;java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;removeAncillaryChunks(java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks)
+                                                   throws java.lang.Exception</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd></dl>
 </li>
 </ul>
-<a name="remove_ancillary_chunks(java.lang.String, java.lang.String...)">
+<a name="removeAncillaryChunks(java.lang.String, java.lang.String...)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>remove_ancillary_chunks</h4>
-<pre>public static&nbsp;void&nbsp;remove_ancillary_chunks(java.lang.String&nbsp;fileOrDirectoryName,
-                           java.lang.String...&nbsp;args)
-                                    throws java.io.IOException</pre>
+<h4>removeAncillaryChunks</h4>
+<pre>public static&nbsp;void&nbsp;removeAncillaryChunks(java.lang.String&nbsp;fileOrDirectoryName,
+                         java.lang.String...&nbsp;args)
+                                  throws java.io.IOException</pre>
 <div class="block">Removes ancillary chunks either specified by "args" or predefined by REMOVABLE EnumSet.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fileOrDirectoryName</code> - file or directory name for the input PNG image(s).</dd><dd><code>args</code> - An array of String specifying the names of the chunks to be removed.</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fileOrDirectoryName</code> - file or directory name for the input PNG image(s).</dd><dd><code>args</code> - an array of String specifying the names of the chunks to be removed.</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
@@ -556,9 +600,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>removeChunks</h4>
 <pre>public static&nbsp;java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;removeChunks(java.util.List&lt;<a href="../../../../com/icafe4j/image/png/Chunk.html" title="class in com.icafe4j.image.png">Chunk</a>&gt;&nbsp;chunks,
-                                 java.util.Set&lt;<a href="../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a>&gt;&nbsp;chunkEnumSet)</pre>
+                                 java.util.Set&lt;<a href="../../../../com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a>&gt;&nbsp;chunkTypeSet)</pre>
 <div class="block">Removes chunks which have the same ChunkType values from the chunkEnumSet.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>chunks</code> - a list of chunks to be checked.</dd><dd><code>chunkEnumSet</code> - a set of ChunkType (better use a HashSet instead of EnumSet for performance).</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>chunks</code> - a list of chunks to be checked.</dd><dd><code>chunkTypeSet</code> - a set of ChunkType (better use a HashSet instead of EnumSet for performance).</dd>
 <dt><span class="strong">Returns:</span></dt><dd>a list of chunks with the specified chunks removed if any.</dd></dl>
 </li>
 </ul>

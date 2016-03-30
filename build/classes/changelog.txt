@@ -1,6 +1,7 @@
 ***************************
-Last modified on 03/28/2016
+Last modified on 03/30/2016
 ***************************
+30Mar2016  Added insertTextChunk() to PNGTweaker
 28Mar2016  Made G31DEncoder field scanLineWidth protected
 28Mar2016  Removed G31DEncoder getScanLineWidth() method
 27Mar2016  Rewrite JPEGTweaker writeComment() to leverage COMBuilder

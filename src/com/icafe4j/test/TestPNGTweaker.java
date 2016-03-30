@@ -21,7 +21,7 @@ public class TestPNGTweaker extends TestBase {
     }
     
 	public void test(String ... args) throws Exception {
-	    String text = PNGTweaker.read_text_chunks(args[0]);
+	    String text = PNGTweaker.readTextChunks(args[0]);
 		logger.info(text);
         logger.info("=================================");        
        
@@ -43,7 +43,7 @@ public class TestPNGTweaker extends TestBase {
         Chunk copyrightChunk = builder.build();
         
         Chunk[] chunks = new Chunk[] {authorChunk, softwareChunk, copyrightChunk};
-        PNGTweaker.dump_text_chunks(chunks);
+        PNGTweaker.dumpTextChunks(chunks);
         
         FileInputStream fi = new FileInputStream(args[0]);
         FileOutputStream fo = new FileOutputStream("NEW.png");
@@ -54,11 +54,11 @@ public class TestPNGTweaker extends TestBase {
         fo.close();
         
         fi = new FileInputStream(args[0]);
-        PNGTweaker.dump_text_chunks(fi);
+        PNGTweaker.dumpTextChunks(fi);
         
         fi.close();
         
-        PNGTweaker.remove_ancillary_chunks(args[0]);
+        PNGTweaker.removeAncillaryChunks(args[0]);
         
         fi = new FileInputStream(args[0]);
         

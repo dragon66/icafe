@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    30Mar2016  Added insertTextChunk()
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    30Mar2015  Added insertICCProfile()
  * WY    27Mar2015  Revised insertXMP() to remove old XMP
@@ -20,8 +21,8 @@
  * WY    11Feb2015  Added code to extract XMP from iTXT chunk
  * WY    20Jan2015  Revised to work with Metadata.showMetadata()
  * WY    13Jan2015  Split remove_ancillary_chunks() arguments
- * WY    22Dec2014  Added read_ICCP_chunk() to read ICC_Profile chunk
- * WY    22Dec2014  dump_text_chunks() now calls read_text_chunks()
+ * WY    22Dec2014  Added readICCProfleChunk() to read ICC_Profile
+ * WY    22Dec2014  dumpTextChunks() now calls readTextChunks()
  */
 
 package com.icafe4j.image.png;
@@ -62,6 +63,7 @@ import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
+
 /**
  * PNG image tweaking tool
  *
@@ -78,25 +80,24 @@ public class PNGTweaker {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(PNGTweaker.class);
 
-   	public static void dump_text_chunks(Chunk[] chunks) throws IOException {
+   	public static void dumpTextChunks(Chunk[] chunks) throws IOException {
    		TextReader reader = new TextReader();
    		for (Chunk chunk : chunks) {
    			if ((chunk.getChunkType() == ChunkType.TEXT) || (chunk.getChunkType() == ChunkType.ITXT) || 
    					(chunk.getChunkType() == ChunkType.ZTXT)) {
    				reader.setInput(chunk);
-	   			LOGGER.info("Keyword: {}", reader.getKeyword());
-	   			LOGGER.info("Text: {}", reader.getText());
+	   			LOGGER.info("{}: {}", reader.getKeyword(), reader.getText());
    			}
    		}   	
    	}
 	
 	// Dump text chunks
-   	public static void dump_text_chunks(InputStream is) throws IOException {
-   		LOGGER.info("\n", read_text_chunks(is));
+   	public static void dumpTextChunks(InputStream is) throws IOException {
+   		LOGGER.info("\n{}", readTextChunks(is));
     }
 
-  	public static void insertChunk(Chunk customChunk, InputStream is, OutputStream os) throws IOException {
-  		insertChunks(is, os, customChunk);
+  	public static void insertChunk(Chunk chunk, InputStream is, OutputStream os) throws IOException {
+  		insertChunks(is, os, chunk);
   	}
   	
   	public static void insertChunks(InputStream is, OutputStream os, Chunk... chunks) throws IOException {
@@ -137,6 +138,18 @@ public class PNGTweaker {
   	
   	public static void insertICCProfile(String profile_name, ICC_Profile icc_profile, InputStream is, OutputStream os) throws IOException {
   		insertICCProfile(profile_name, icc_profile.getData(), is, os);
+  	}
+  	
+  	public static void insertTextChunk(ChunkType type, String keyword, String text, InputStream is, OutputStream os) throws IOException {
+  		if(type == null || keyword == null || text == null)
+  			throw new IllegalArgumentException("Argument(s) are null");
+  		
+  		insertChunk(new TextBuilder(type).keyword(keyword).text(text).build(), is, os);
+  	}
+  	
+  	public static void insertTextChunks(TextualChunks textualChunks, InputStream is, OutputStream os) throws IOException {
+  		if(textualChunks == null) throw new IllegalArgumentException("Argument is null");
+  		insertChunks(textualChunks.getChunks(), is, os);
   	}
   	
   	public static void insertXMP(InputStream is, OutputStream os, XMP xmp) throws IOException {
@@ -196,7 +209,7 @@ public class PNGTweaker {
    		return chunks;
    	}
   	
-   	public static byte[] read_ICCP_chunk(InputStream is) throws IOException {
+   	public static byte[] readICCProfileChunk(InputStream is) throws IOException {
   		//Local variables for reading chunks
         int data_len = 0;
         int chunk_value = 0;
@@ -210,11 +223,11 @@ public class PNGTweaker {
 
         /** Read header */
         /** We are expecting IHDR */
-        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
+        if ((IOUtils.readIntMM(is) != 13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
         	return null;
         }
 
-        buf = new byte[13+4];//13 plus 4 bytes CRC
+        buf = new byte[13 + 4];//13 plus 4 bytes CRC
         IOUtils.read(is, buf, 0, 17);
 
         while (true) {
@@ -235,8 +248,8 @@ public class PNGTweaker {
             		IOUtils.skipFully(is, 4); // Skip CRC
             		return readICCProfile(buf);
             	default:
-            		buf = new byte[data_len+4];
-            		IOUtils.read(is, buf,0, data_len+4);
+            		buf = new byte[data_len + 4];
+            		IOUtils.read(is, buf, 0, data_len + 4);
             		break;
             }
         }
@@ -244,12 +257,12 @@ public class PNGTweaker {
         return null;  		
   	}
   	
-  	public static String read_text_chunks(File file) throws IOException {
-  		return read_text_chunks(new FileInputStream(file));
+  	public static String readTextChunks(File file) throws IOException {
+  		return readTextChunks(new FileInputStream(file));
   	}
   	
   	// Read text chunks to a String
-   	public static String read_text_chunks(InputStream is) throws IOException {
+   	public static String readTextChunks(InputStream is) throws IOException {
    		//Local variables for reading chunks
         int data_len = 0;
         int chunk_value = 0;
@@ -264,18 +277,17 @@ public class PNGTweaker {
 
         /** Read header */
         /** We are expecting IHDR */
-        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
+        if ((IOUtils.readIntMM(is) != 13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
         	return "--- NOT A PNG IMAGE ---";
         }
 
-        buf = new byte[13+4];//13 plus 4 bytes CRC
+        buf = new byte[13 + 4];//13 plus 4 bytes CRC
         IOUtils.read(is, buf, 0, 17);
 
         while (true) {
             data_len = IOUtils.readIntMM(is);
             chunk_value = IOUtils.readIntMM(is);
-            //LOGGER.info("chunk type: 0x{}", Integer.toHexString(chunk_type));
-
+       
             if (chunk_value == ChunkType.IEND.getValue()) {
             	sb.append("End of Image\n");
                 IOUtils.readIntMM(is);//CRC
@@ -286,19 +298,18 @@ public class PNGTweaker {
  			   			 
             switch (chunk) {
             	case ZTXT:
-            	{  
             		sb.append("zTXt chunk:\n");
             		buf = new byte[data_len];
             		IOUtils.read(is, buf);
             		int keyword_len = 0;
-            		while(buf[keyword_len]!=0) keyword_len++;
-            		sb.append(new String(buf,0,keyword_len,"UTF-8"));
+            		while(buf[keyword_len] != 0) keyword_len++;
+            		sb.append(new String(buf, 0, keyword_len, "UTF-8"));
             		sb.append(": ");
-            		InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf,keyword_len+2, data_len-keyword_len-2));
-            		InputStreamReader ir = new InputStreamReader(ii,"UTF-8");
+            		InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, keyword_len + 2, data_len - keyword_len - 2));
+            		InputStreamReader ir = new InputStreamReader(ii, "UTF-8");
             		BufferedReader br = new BufferedReader(ir);                       
             		String read = null;
-            		while((read=br.readLine()) != null) {
+            		while((read = br.readLine()) != null) {
             			sb.append(read);
             			sb.append("\n");
                     }                  
@@ -306,25 +317,20 @@ public class PNGTweaker {
             		br.close();
             		IOUtils.skipFully(is, 4);
             		break;
-            	}
-            	case TEXT:
-            	{
+             	case TEXT:
             		sb.append("tEXt chunk:\n");
             		buf = new byte[data_len];
             		IOUtils.read(is, buf);
-            		int keyword_len = 0;
-            		while(buf[keyword_len]!=0) keyword_len++;
-            		sb.append(new String(buf,0,keyword_len,"UTF-8"));
+            		keyword_len = 0;
+            		while(buf[keyword_len] != 0) keyword_len++;
+            		sb.append(new String(buf, 0, keyword_len, "UTF-8"));
             		sb.append(": ");
-            		sb.append(new String(buf,keyword_len+1,data_len-keyword_len-1,"UTF-8"));
+            		sb.append(new String(buf, keyword_len + 1,data_len - keyword_len - 1, "UTF-8"));
             		sb.append("\n**********************\n");
             		IOUtils.skipFully(is, 4);
             		break;
-            	}
             	case ITXT:
-            	{
-            		// System.setOut(new PrintStream(new File("TextChunk.txt"),"UTF-8"));
-            		/**
+             		/**
             		 * Keyword:             1-79 bytes (character string)
             		 * Null separator:      1 byte
             		 * Compression flag:    1 byte
@@ -338,59 +344,56 @@ public class PNGTweaker {
             		sb.append("iTXt chunk:\n");
             		buf = new byte[data_len];
             		IOUtils.read(is, buf);
-            		int keyword_len = 0;
+            		keyword_len = 0;
             		int trans_keyword_len = 0;
             		int lang_flg_len = 0;
             		boolean compr = false;
-            		while(buf[keyword_len]!=0) keyword_len++;
-            		sb.append(new String(buf,0,keyword_len,"UTF-8"));
-            		if(buf[++keyword_len]==1) compr = true;
+            		while(buf[keyword_len] != 0) keyword_len++;
+            		sb.append(new String(buf, 0, keyword_len, "UTF-8"));
+            		if(buf[++keyword_len] == 1) compr = true;
             		keyword_len++;//Skip the compression method byte.
-            		while(buf[++keyword_len]!=0) lang_flg_len++;
+            		while(buf[++keyword_len] != 0) lang_flg_len++;
             		//////////////////////
             		sb.append("(");
-            		if(lang_flg_len>0)
-            			sb.append(new String(buf,keyword_len-lang_flg_len, lang_flg_len, "UTF-8"));
-            		while(buf[++keyword_len]!=0) trans_keyword_len++;
-            		if(trans_keyword_len>0) {
+            		if(lang_flg_len > 0)
+            			sb.append(new String(buf, keyword_len - lang_flg_len, lang_flg_len, "UTF-8"));
+            		while(buf[++keyword_len] != 0) trans_keyword_len++;
+            		if(trans_keyword_len > 0) {
             			sb.append(" ");
-            			sb.append(new String(buf,keyword_len-trans_keyword_len, trans_keyword_len, "UTF-8"));
+            			sb.append(new String(buf, keyword_len - trans_keyword_len, trans_keyword_len, "UTF-8"));
             		}
             		sb.append("): ");
             		/////////////////////// End of key.
             		if(compr) { //Compressed text
-            			InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf,keyword_len+1, data_len-keyword_len-1));
-            			InputStreamReader ir = new InputStreamReader(ii,"UTF-8");
-            			BufferedReader br = new BufferedReader(ir);                       
-            			String read = null;
-            			while((read=br.readLine()) != null) {
+            			ii = new InflaterInputStream(new ByteArrayInputStream(buf,keyword_len+1, data_len-keyword_len-1));
+            			ir = new InputStreamReader(ii, "UTF-8");
+            			br = new BufferedReader(ir);                       
+            			read = null;
+            			while((read = br.readLine()) != null) {
             				sb.append(read);
             				sb.append("\n");
             			}	
             			br.close();
             		} else {//Uncompressed text
-            			sb.append(new String(buf,keyword_len+1,data_len-keyword_len-1,"UTF-8"));
+            			sb.append(new String(buf, keyword_len + 1,data_len - keyword_len - 1, "UTF-8"));
             			sb.append("\n");
             		}
             		sb.append("**********************\n");
             		IOUtils.skipFully(is, 4);
             		break;
-            	} 	
-            	default:
-            	{
-            		buf = new byte[data_len+4];
-            		IOUtils.read(is, buf,0, data_len+4);
+             	default:
+            		buf = new byte[data_len + 4];
+            		IOUtils.read(is, buf, 0, data_len + 4);
             		break;
-            	}
-            }
+             }
         }
         
         return sb.toString();
     }
   	
-  	public static String read_text_chunks(String fileName) throws IOException {
+  	public static String readTextChunks(String fileName) throws IOException {
    		FileInputStream fi = new FileInputStream(fileName);
-  		String text = read_text_chunks(fi);
+  		String text = readTextChunks(fi);
   		
   		fi.close();
   		
@@ -412,7 +415,7 @@ public class PNGTweaker {
 
         /** Read header */
         /** We are expecting IHDR */
-        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
+        if ((IOUtils.readIntMM(is) != 13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
             throw new RuntimeException("Not a valid IHDR chunk.");
         }     
         
@@ -431,7 +434,7 @@ public class PNGTweaker {
 	       	} 
        		ChunkType chunkType = ChunkType.fromInt(chunk_type);
        		buf = new byte[data_len];
-       		IOUtils.read(is, buf,0, data_len);
+       		IOUtils.read(is, buf, 0, data_len);
               
        		if (chunkType == ChunkType.UNKNOWN)
        			list.add(new UnknownChunk(data_len, chunk_type, buf, IOUtils.readUnsignedIntMM(is)));
@@ -443,9 +446,10 @@ public class PNGTweaker {
   	}
   	
 	private static byte[] readICCProfile(byte[] buf) throws IOException {
+		if(buf == null) throw new IllegalArgumentException("Input array is null");
 		int profileName_len = 0;
 		while(buf[profileName_len] != 0) profileName_len++;
-		String profileName = new String(buf, 0, profileName_len,"UTF-8");
+		String profileName = new String(buf, 0, profileName_len, "UTF-8");
 		
 		InflaterInputStream ii = new InflaterInputStream(new ByteArrayInputStream(buf, profileName_len + 2, buf.length - profileName_len - 2));
 		LOGGER.info("ICCProfile name: {}", profileName);
@@ -502,7 +506,7 @@ public class PNGTweaker {
   	 * @see  com.icafe4j.image.png.ChunkType
   	 * @throws Exception  Any exception related to the IO operations.
   	 */
-  	public static void remove_ancillary_chunks(InputStream is, String...chunkNames) throws IOException {
+  	public static void removeAncillaryChunks(InputStream is, String...chunkNames) throws IOException {
   		File dir = new File(".");
 
 	    if(chunkNames.length>0)	{	
@@ -518,12 +522,12 @@ public class PNGTweaker {
  		 }
 	      
 		 String outFileName = "slim.png";
-         remove_chunks(is, dir, outFileName);
+         removeChunks(is, dir, outFileName);
 		 LOGGER.info(">>{}", outFileName);	
 		 LOGGER.info("************************");
     }
   	
-  	public static List<Chunk> remove_ancillary_chunks(List<Chunk> chunks) throws Exception {
+  	public static List<Chunk> removeAncillaryChunks(List<Chunk> chunks) throws Exception {
   		return removeChunks(chunks, REMOVABLE);
   	}
   	
@@ -531,10 +535,10 @@ public class PNGTweaker {
      * Removes ancillary chunks either specified by "args" or predefined by REMOVABLE EnumSet.
      * 
      * @param fileOrDirectoryName file or directory name for the input PNG image(s).
-   	 * @param args  An array of String specifying the names of the chunks to be removed.
+   	 * @param args an array of String specifying the names of the chunks to be removed.
    	 * @throws IOException
    	 */  	
-  	public static void remove_ancillary_chunks(String fileOrDirectoryName, String ... args) throws IOException {
+  	public static void removeAncillaryChunks(String fileOrDirectoryName, String ... args) throws IOException {
   		File dir = new File(".");
   		File[] files = null;
 
@@ -548,14 +552,12 @@ public class PNGTweaker {
     	}
   	    
   	    if(files == null) {
-  	    	files = dir.listFiles(new FileFilter(){
-				  public boolean accept(File file)
-				  {
-				     if(file.getName().toLowerCase().endsWith("png")){
-                     return true;
+  	    	files = dir.listFiles(new FileFilter() {
+				  public boolean accept(File file) {
+				     if(file.getName().toLowerCase().endsWith("png")) {
+				    	 return true;
 				     }
-				     
-                   return false;
+				     return false;
 				  }
   	    	});
   	    }
@@ -580,14 +582,14 @@ public class PNGTweaker {
 					+"_slim.png";
 		 	LOGGER.info("<<{}", files[i].getName());
 	 		fs = new FileInputStream(files[i]);
-	 		remove_chunks(fs, dir, outFileName);
+	 		removeChunks(fs, dir, outFileName);
  			LOGGER.info(">>{}", outFileName);	
  			LOGGER.info("************************");
  			fs.close();
 	    }
     }
   	
-   	private static void remove_chunks(InputStream is, File outfileDir, String outfileName) throws IOException {
+   	private static void removeChunks(InputStream is, File outfileDir, String outfileName) throws IOException {
   		//Local variables for reading chunks
         int data_len = 0;
         int chunk_value = 0;
@@ -602,26 +604,25 @@ public class PNGTweaker {
 
         /** Read header */
         /** We are expecting IHDR */
-        if ((IOUtils.readIntMM(is)!=13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
+        if ((IOUtils.readIntMM(is) != 13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
             LOGGER.error("--- NOT A PNG IMAGE ---");
             return;
         }
             
-        FileOutputStream fs = new FileOutputStream(new File(outfileDir,outfileName)); 
+        FileOutputStream fs = new FileOutputStream(new File(outfileDir, outfileName)); 
          
         IOUtils.writeLongMM(fs, SIGNATURE);
         IOUtils.writeIntMM(fs, 13);//We expect length to be 13 bytes
         IOUtils.writeIntMM(fs, ChunkType.IHDR.getValue());
 
-        buf = new byte[13+4];//13 plus 4 bytes CRC
+        buf = new byte[13 + 4];//13 plus 4 bytes CRC
         IOUtils.read(is, buf, 0, 17);
         IOUtils.write(fs, buf);
 
         while (true) {
            data_len = IOUtils.readIntMM(is);
            chunk_value = IOUtils.readIntMM(is);
-           //LOGGER.info("chunk type: 0x{}", Integer.toHexString(chunk_type));
-
+ 
            if (chunk_value == ChunkType.IEND.getValue()) {
               LOGGER.info("End of Image");
               IOUtils.writeIntMM(fs, data_len);
@@ -632,10 +633,10 @@ public class PNGTweaker {
            }
            if(REMOVABLE.contains(ChunkType.fromInt(chunk_value))) {
               LOGGER.info("{} Chunk removed!", ChunkType.fromInt(chunk_value));
-              IOUtils.skipFully(is, data_len+4);
+              IOUtils.skipFully(is, data_len + 4);
            } else {
-              buf = new byte[data_len+4];
-              IOUtils.read(is, buf,0, data_len+4);
+              buf = new byte[data_len + 4];
+              IOUtils.read(is, buf, 0, data_len + 4);
               IOUtils.writeIntMM(fs, data_len);
               IOUtils.writeIntMM(fs, chunk_value);
               IOUtils.write(fs, buf);
@@ -665,11 +666,11 @@ public class PNGTweaker {
    	 * Removes chunks which have the same ChunkType values from the chunkEnumSet.
    	 * 
    	 * @param chunks a list of chunks to be checked.
-   	 * @param chunkEnumSet a set of ChunkType (better use a HashSet instead of EnumSet for performance).
+   	 * @param chunkTypeSet a set of ChunkType (better use a HashSet instead of EnumSet for performance).
    	 * @return a list of chunks with the specified chunks removed if any.
    	 */
    	
-   	public static List<Chunk> removeChunks(List<Chunk> chunks, Set<ChunkType> chunkEnumSet) {
+   	public static List<Chunk> removeChunks(List<Chunk> chunks, Set<ChunkType> chunkTypeSet) {
   		
   		Iterator<Chunk> iter = chunks.listIterator();
    	
@@ -677,7 +678,7 @@ public class PNGTweaker {
    			
    			Chunk chunk = iter.next();
    		
-   			if (chunkEnumSet.contains(chunk.getChunkType())) {   				
+   			if (chunkTypeSet.contains(chunk.getChunkType())) {   				
    				iter.remove();
    			}   			
    		}
@@ -712,8 +713,9 @@ public class PNGTweaker {
   	}
   	
   	public static void showICCProfile(InputStream is) throws IOException {
-  		byte[] icc_profile = read_ICCP_chunk(is);
-  		ICCProfile.showProfile(icc_profile);
+  		byte[] icc_profile = readICCProfileChunk(is);
+  		if(icc_profile != null)
+  			ICCProfile.showProfile(icc_profile);
   	}
   	
    	public static List<Chunk> splitIDATChunk(Chunk chunk, int size) {
@@ -722,6 +724,8 @@ public class PNGTweaker {
    			throw new IllegalArgumentException("Not a valid IDAT chunk.");   				
    		} 
    		
+  		if(size <= 0) throw new IllegalArgumentException("Invalid IDAT chunk size: " + size);
+  		
   		List<Chunk> chunks = new ArrayList<Chunk>();
    		byte[] data = chunk.getData();
    		

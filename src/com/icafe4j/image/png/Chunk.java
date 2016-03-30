@@ -98,8 +98,7 @@ public class Chunk implements Comparable<Chunk> {
 		return LangUtils.longToIntHashCode(calculateCRC(this.getChunkType().getValue(), this.getData()));
 	}
 	
-	public static long calculateCRC(int chunkValue, byte[] data)
-	{
+	public static long calculateCRC(int chunkValue, byte[] data) {
 		CRC32 crc32 = new CRC32();
 		 
 		crc32.update(ArrayUtils.toByteArrayMM(chunkValue));
@@ -108,8 +107,7 @@ public class Chunk implements Comparable<Chunk> {
 		return crc32.getValue();
 	}
 	
-	public static long calculateCRC(int chunkValue, byte[] data, int offset, int length)
-	{
+	public static long calculateCRC(int chunkValue, byte[] data, int offset, int length) {
 		CRC32 crc32 = new CRC32();
 		 
 		crc32.update(ArrayUtils.toByteArrayMM(chunkValue));
