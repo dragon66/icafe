@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    30Mar2016  Changed removeAncillaryChunks() method signature
  * WY    30Mar2016  Added insertTextChunk()
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    30Mar2015  Added insertICCProfile()
@@ -218,13 +219,13 @@ public class PNGTweaker {
         long signature = IOUtils.readLongMM(is);
 
         if (signature != SIGNATURE) {
-        	return null;
+        	throw new RuntimeException("Invalid PNG signature");
         }
 
         /** Read header */
         /** We are expecting IHDR */
         if ((IOUtils.readIntMM(is) != 13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
-        	return null;
+        	throw new RuntimeException("Invalid PNG header");
         }
 
         buf = new byte[13 + 4];//13 plus 4 bytes CRC
@@ -272,13 +273,13 @@ public class PNGTweaker {
         long signature = IOUtils.readLongMM(is);
 
         if (signature != SIGNATURE) {
-        	return "--- NOT A PNG IMAGE ---";
+        	throw new RuntimeException("ReadTextChunks: Invalid PNG signature");
         }
 
         /** Read header */
         /** We are expecting IHDR */
         if ((IOUtils.readIntMM(is) != 13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
-        	return "--- NOT A PNG IMAGE ---";
+        	throw new RuntimeException("ReadTextChunks: Invalid PNG header");
         }
 
         buf = new byte[13 + 4];//13 plus 4 bytes CRC
@@ -289,7 +290,6 @@ public class PNGTweaker {
             chunk_value = IOUtils.readIntMM(is);
        
             if (chunk_value == ChunkType.IEND.getValue()) {
-            	sb.append("End of Image\n");
                 IOUtils.readIntMM(is);//CRC
                 break;
             }
@@ -299,6 +299,7 @@ public class PNGTweaker {
             switch (chunk) {
             	case ZTXT:
             		sb.append("zTXt chunk:\n");
+              		sb.append("**********************\n");
             		buf = new byte[data_len];
             		IOUtils.read(is, buf);
             		int keyword_len = 0;
@@ -319,13 +320,14 @@ public class PNGTweaker {
             		break;
              	case TEXT:
             		sb.append("tEXt chunk:\n");
+            		sb.append("**********************\n");
             		buf = new byte[data_len];
             		IOUtils.read(is, buf);
             		keyword_len = 0;
             		while(buf[keyword_len] != 0) keyword_len++;
             		sb.append(new String(buf, 0, keyword_len, "UTF-8"));
             		sb.append(": ");
-            		sb.append(new String(buf, keyword_len + 1,data_len - keyword_len - 1, "UTF-8"));
+            		sb.append(new String(buf, keyword_len + 1, data_len - keyword_len - 1, "UTF-8"));
             		sb.append("\n**********************\n");
             		IOUtils.skipFully(is, 4);
             		break;
@@ -342,6 +344,7 @@ public class PNGTweaker {
             		 * Text:                0 or more bytes
             		 */
             		sb.append("iTXt chunk:\n");
+              		sb.append("**********************\n");
             		buf = new byte[data_len];
             		IOUtils.read(is, buf);
             		keyword_len = 0;
@@ -410,13 +413,13 @@ public class PNGTweaker {
         long signature = IOUtils.readLongMM(is);
 
         if (signature != SIGNATURE) {
-       	 	throw new RuntimeException("--- NOT A PNG IMAGE ---");
+       	 	throw new RuntimeException("Invalid PNG signature");
         }   
 
         /** Read header */
         /** We are expecting IHDR */
         if ((IOUtils.readIntMM(is) != 13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
-            throw new RuntimeException("Not a valid IHDR chunk.");
+            throw new RuntimeException("Invalid PNG header");
         }     
         
         buf = new byte[13];
@@ -501,23 +504,20 @@ public class PNGTweaker {
   	
   	/**
   	 * @param is  InputStream of the image
-  	 * @param chunkNames  Names of the chunks to be removed. Effective names are those defined by Attribute 
-  	 *                    with Attribute.ANCILLARY. Names are not case-sensitive.  
+  	 * @param chunkTypes a set of ChunkType with Attribute.ANCILLARY.
+  	 * 		  Ancillary chunks with ChunkType in the set will be removed. 
   	 * @see  com.icafe4j.image.png.ChunkType
   	 * @throws Exception  Any exception related to the IO operations.
   	 */
-  	public static void removeAncillaryChunks(InputStream is, String...chunkNames) throws IOException {
+  	public static void removeAncillaryChunks(InputStream is, Set<ChunkType> chunkTypes) throws IOException {
   		File dir = new File(".");
 
-	    if(chunkNames.length>0)	{	
+	    if(chunkTypes != null)	{	
    		    REMOVABLE = EnumSet.noneOf(ChunkType.class);
    		     
-   		    String key = "";
-			
-   		    for (int i=0;i<chunkNames.length;i++) {
-   		    	key = chunkNames[i];   		    	
-				if(ChunkType.containsIgnoreCase(key) && ChunkType.fromString(key).getAttribute() == ChunkType.Attribute.ANCILLARY)
-			    	  REMOVABLE.add(ChunkType.fromString(key));
+   		    for (ChunkType type : chunkTypes) {
+   				if(type.getAttribute() == ChunkType.Attribute.ANCILLARY)
+			    	  REMOVABLE.add(type);
 			}   		     
  		 }
 	      
@@ -535,10 +535,11 @@ public class PNGTweaker {
      * Removes ancillary chunks either specified by "args" or predefined by REMOVABLE EnumSet.
      * 
      * @param fileOrDirectoryName file or directory name for the input PNG image(s).
-   	 * @param args an array of String specifying the names of the chunks to be removed.
-   	 * @throws IOException
+     * @param chunkTypes a set of ChunkType with Attribute.ANCILLARY.
+  	 * 		  Ancillary chunks with ChunkType in the set will be removed.
+  	 * @throws IOException
    	 */  	
-  	public static void removeAncillaryChunks(String fileOrDirectoryName, String ... args) throws IOException {
+  	public static void removeAncillaryChunks(String fileOrDirectoryName, Set<ChunkType> chunkTypes) throws IOException {
   		File dir = new File(".");
   		File[] files = null;
 
@@ -562,17 +563,14 @@ public class PNGTweaker {
   	    	});
   	    }
 	   
-  	    if(args != null && args.length > 0) {	
-	       REMOVABLE = EnumSet.noneOf(ChunkType.class);
-   		     
-    	   String key = "";
-			
-	       for (int i = 0; i < args.length; i++) {
-			  key = args[i];				  
-			  if(ChunkType.containsIgnoreCase(key) && ChunkType.fromString(key).getAttribute() == ChunkType.Attribute.ANCILLARY)
-			    	  REMOVABLE.add(ChunkType.fromString(key));
-       		}
-	    }
+  	    if(chunkTypes != null) {	
+ 		    REMOVABLE = EnumSet.noneOf(ChunkType.class);
+ 		     
+ 		    for (ChunkType type : chunkTypes) {
+ 				if(type.getAttribute() == ChunkType.Attribute.ANCILLARY)
+			    	  REMOVABLE.add(type);
+			}   		     
+  	    }
 	      
 	    FileInputStream fs = null;		
 		  
@@ -598,15 +596,13 @@ public class PNGTweaker {
         long signature = IOUtils.readLongMM(is);
 
         if (signature != SIGNATURE) {
-            LOGGER.error("--- NOT A PNG IMAGE ---");
-            return;
+            throw new RuntimeException("Invalid PNG signature");
         }   
 
         /** Read header */
         /** We are expecting IHDR */
         if ((IOUtils.readIntMM(is) != 13)||(IOUtils.readIntMM(is) != ChunkType.IHDR.getValue())) {
-            LOGGER.error("--- NOT A PNG IMAGE ---");
-            return;
+            throw new RuntimeException("Invalid PNG header");
         }
             
         FileOutputStream fs = new FileOutputStream(new File(outfileDir, outfileName)); 
@@ -624,7 +620,6 @@ public class PNGTweaker {
            chunk_value = IOUtils.readIntMM(is);
  
            if (chunk_value == ChunkType.IEND.getValue()) {
-              LOGGER.info("End of Image");
               IOUtils.writeIntMM(fs, data_len);
               IOUtils.writeIntMM(fs, ChunkType.IEND.getValue());
               int crc = IOUtils.readIntMM(is);
