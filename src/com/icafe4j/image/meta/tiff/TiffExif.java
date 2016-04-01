@@ -18,11 +18,12 @@
  * WY    03Feb2015  Initial creation
  */
 
-package com.icafe4j.image.meta.exif;
+package com.icafe4j.image.meta.tiff;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.tiff.IFD;
 
 public class TiffExif extends Exif {

@@ -97,7 +97,7 @@
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../com/icafe4j/image/meta/jpeg/AdobeSegment.html" title="class in com.icafe4j.image.meta.jpeg">AdobeSegment</a>, <a href="../../../../com/icafe4j/image/meta/image/Comments.html" title="class in com.icafe4j.image.meta.image">Comments</a>, <a href="../../../../com/icafe4j/image/meta/adobe/DDB.html" title="class in com.icafe4j.image.meta.adobe">DDB</a>, <a href="../../../../com/icafe4j/image/meta/jpeg/DuckySegment.html" title="class in com.icafe4j.image.meta.jpeg">DuckySegment</a>, <a href="../../../../com/icafe4j/image/meta/exif/Exif.html" title="class in com.icafe4j.image.meta.exif">Exif</a>, <a href="../../../../com/icafe4j/image/meta/icc/ICCProfile.html" title="class in com.icafe4j.image.meta.icc">ICCProfile</a>, <a href="../../../../com/icafe4j/image/meta/image/ImageMetadata.html" title="class in com.icafe4j.image.meta.image">ImageMetadata</a>, <a href="../../../../com/icafe4j/image/meta/iptc/IPTC.html" title="class in com.icafe4j.image.meta.iptc">IPTC</a>, <a href="../../../../com/icafe4j/image/meta/adobe/IRB.html" title="class in com.icafe4j.image.meta.adobe">IRB</a>, <a href="../../../../com/icafe4j/image/meta/jpeg/JFIFSegment.html" title="class in com.icafe4j.image.meta.jpeg">JFIFSegment</a>, <a href="../../../../com/icafe4j/image/meta/png/TextualChunks.html" title="class in com.icafe4j.image.meta.png">TextualChunks</a>, <a href="../../../../com/icafe4j/image/meta/png/TIMEChunk.html" title="class in com.icafe4j.image.meta.png">TIMEChunk</a>, <a href="../../../../com/icafe4j/image/meta/adobe/XMP.html" title="class in com.icafe4j.image.meta.adobe">XMP</a></dd>
+<dd><a href="../../../../com/icafe4j/image/meta/jpeg/AdobeSegment.html" title="class in com.icafe4j.image.meta.jpeg">AdobeSegment</a>, <a href="../../../../com/icafe4j/image/meta/image/Comments.html" title="class in com.icafe4j.image.meta.image">Comments</a>, <a href="../../../../com/icafe4j/image/meta/adobe/DDB.html" title="class in com.icafe4j.image.meta.adobe">DDB</a>, <a href="../../../../com/icafe4j/image/meta/jpeg/DuckySegment.html" title="class in com.icafe4j.image.meta.jpeg">DuckySegment</a>, <a href="../../../../com/icafe4j/image/meta/exif/Exif.html" title="class in com.icafe4j.image.meta.exif">Exif</a>, <a href="../../../../com/icafe4j/image/meta/icc/ICCProfile.html" title="class in com.icafe4j.image.meta.icc">ICCProfile</a>, <a href="../../../../com/icafe4j/image/meta/image/ImageMetadata.html" title="class in com.icafe4j.image.meta.image">ImageMetadata</a>, <a href="../../../../com/icafe4j/image/meta/iptc/IPTC.html" title="class in com.icafe4j.image.meta.iptc">IPTC</a>, <a href="../../../../com/icafe4j/image/meta/adobe/IRB.html" title="class in com.icafe4j.image.meta.adobe">IRB</a>, <a href="../../../../com/icafe4j/image/meta/jpeg/JFIFSegment.html" title="class in com.icafe4j.image.meta.jpeg">JFIFSegment</a>, <a href="../../../../com/icafe4j/image/meta/png/TextualChunks.html" title="class in com.icafe4j.image.meta.png">TextualChunks</a>, <a href="../../../../com/icafe4j/image/meta/png/TIMEChunk.html" title="class in com.icafe4j.image.meta.png">TIMEChunk</a>, <a href="../../../../com/icafe4j/image/meta/xmp/XMP.html" title="class in com.icafe4j.image.meta.xmp">XMP</a></dd>
 </dl>
 <hr>
 <br>
@@ -276,9 +276,9 @@ implements <a href="../../../../com/icafe4j/image/meta/MetadataReader.html" titl
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.adobe.XMP)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/meta/Metadata.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.xmp.XMP)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
          java.io.OutputStream&nbsp;out,
-         <a href="../../../../com/icafe4j/image/meta/adobe/XMP.html" title="class in com.icafe4j.image.meta.adobe">XMP</a>&nbsp;xmp)</code>&nbsp;</td>
+         <a href="../../../../com/icafe4j/image/meta/xmp/XMP.html" title="class in com.icafe4j.image.meta.xmp">XMP</a>&nbsp;xmp)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -596,7 +596,7 @@ implements <a href="../../../../com/icafe4j/image/meta/MetadataReader.html" titl
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
-<a name="insertXMP(java.io.InputStream, java.io.OutputStream, com.icafe4j.image.meta.adobe.XMP)">
+<a name="insertXMP(java.io.InputStream, java.io.OutputStream, com.icafe4j.image.meta.xmp.XMP)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -604,7 +604,7 @@ implements <a href="../../../../com/icafe4j/image/meta/MetadataReader.html" titl
 <h4>insertXMP</h4>
 <pre>public static&nbsp;void&nbsp;insertXMP(java.io.InputStream&nbsp;is,
              java.io.OutputStream&nbsp;out,
-             <a href="../../../../com/icafe4j/image/meta/adobe/XMP.html" title="class in com.icafe4j.image.meta.adobe">XMP</a>&nbsp;xmp)
+             <a href="../../../../com/icafe4j/image/meta/xmp/XMP.html" title="class in com.icafe4j.image.meta.xmp">XMP</a>&nbsp;xmp)
                       throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>

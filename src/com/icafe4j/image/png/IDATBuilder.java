@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================
+ * WY    31Mar2016  Reversed changes to constructor on 27Mar2016
  * WY    27Mar2016  Changed constructor to set new compression level
  */
 
@@ -39,8 +40,8 @@ public class IDATBuilder extends ChunkBuilder implements Builder<Chunk> {
 	}
 	
 	public IDATBuilder(int compressionLevel) {
-		this();
-		deflater.setLevel(compressionLevel);
+		super(ChunkType.IDAT);
+		deflater = new Deflater(compressionLevel);
 	}
 	
 	public IDATBuilder data(byte[] data, int offset, int length) {

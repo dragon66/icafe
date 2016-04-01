@@ -60,8 +60,9 @@ import com.icafe4j.image.ImageParam;
 import com.icafe4j.image.ImageType;
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
-import com.icafe4j.image.meta.adobe.XMP;
+import com.icafe4j.image.meta.gif.GifXMP;
 import com.icafe4j.image.meta.image.Comments;
+import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.image.writer.GIFWriter;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.io.IOUtils;
@@ -380,7 +381,7 @@ public class GIFTweaker {
 						// Remove the magic trailer - 258 bytes minus the block terminator
 						len = xmp.length - 257;
 						if(len > 0) // Put it into the Meta data map
-							DTO.metadataMap.put(MetadataType.XMP, new XMP(ArrayUtils.subArray(xmp, 0, len)));
+							DTO.metadataMap.put(MetadataType.XMP, new GifXMP(ArrayUtils.subArray(xmp, 0, len)));
 						len = 0; // We're already at block terminator
 					} else 
 						len = is.read(); // Block terminator					

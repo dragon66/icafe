@@ -11,8 +11,8 @@ import com.icafe4j.image.jpeg.JPEGTweaker;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
-import com.icafe4j.image.meta.exif.JpegExif;
 import com.icafe4j.image.meta.icc.ICCProfile;
+import com.icafe4j.image.meta.jpeg.JpegExif;
 import com.icafe4j.image.tiff.FieldType;
 import com.icafe4j.image.util.IMGUtils;
 

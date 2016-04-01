@@ -1,7 +1,9 @@
 ***************************
-Last modified on 03/30/2016
+Last modified on 03/31/2016
 ***************************
-30Mar2016  Changed PNGTweaker insertTextChunks method signature
+31Mar2016  Made XMP abstract and put in it's own package
+31Mar2016  Reversed changes on IDATBuilder constructor on 27Mar2016
+30Mar2016  Changed PNGTweaker removeAncillaryChunks() method signature
 30Mar2016  Added insertTextChunk() to PNGTweaker
 28Mar2016  Made G31DEncoder field scanLineWidth protected
 28Mar2016  Removed G31DEncoder getScanLineWidth() method

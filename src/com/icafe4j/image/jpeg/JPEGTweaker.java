@@ -105,11 +105,9 @@ import com.icafe4j.image.meta.adobe.IRB;
 import com.icafe4j.image.meta.adobe.IRBThumbnail;
 import com.icafe4j.image.meta.adobe.ImageResourceID;
 import com.icafe4j.image.meta.adobe.ThumbnailResource;
-import com.icafe4j.image.meta.adobe.XMP;
 import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifThumbnail;
-import com.icafe4j.image.meta.exif.JpegExif;
 import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.meta.image.ImageMetadata;
@@ -118,6 +116,9 @@ import com.icafe4j.image.meta.iptc.IPTCDataSet;
 import com.icafe4j.image.meta.jpeg.AdobeSegment;
 import com.icafe4j.image.meta.jpeg.DuckySegment;
 import com.icafe4j.image.meta.jpeg.JFIFSegment;
+import com.icafe4j.image.meta.jpeg.JpegExif;
+import com.icafe4j.image.meta.jpeg.JpegXMP;
+import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.image.tiff.IFD;
 import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.image.util.IMGUtils;
@@ -1463,7 +1464,7 @@ public class JPEGTweaker {
 				} else if(new String(data, 0, XMP_ID.length()).equals(XMP_ID) ||
 						new String(data, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID)) {
 					// We found XMP, add it to metadata list (We may later revise it if we have ExtendedXMP)
-					XMP xmp = new XMP(ArrayUtils.subArray(data, XMP_ID.length(), length - XMP_ID.length() - 2));
+					XMP xmp = new JpegXMP(ArrayUtils.subArray(data, XMP_ID.length(), length - XMP_ID.length() - 2));
 					metadataMap.put(MetadataType.XMP, xmp);
 					// Retrieve and remove XMP GUID if available
 					xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");

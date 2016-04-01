@@ -19,7 +19,7 @@ import com.icafe4j.image.ImageFrame;
 import com.icafe4j.image.ImageParam;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
-import com.icafe4j.image.meta.exif.TiffExif;
+import com.icafe4j.image.meta.tiff.TiffExif;
 import com.icafe4j.image.options.TIFFOptions;
 import com.icafe4j.image.quant.DitherMethod;
 import com.icafe4j.image.tiff.FieldType;

@@ -56,10 +56,11 @@ import org.w3c.dom.Document;
 
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
-import com.icafe4j.image.meta.adobe.XMP;
 import com.icafe4j.image.meta.icc.ICCProfile;
+import com.icafe4j.image.meta.png.PngXMP;
 import com.icafe4j.image.meta.png.TIMEChunk;
 import com.icafe4j.image.meta.png.TextualChunks;
+import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
@@ -493,7 +494,7 @@ public class PNGTweaker {
 			
 			for (Map.Entry<String, String> entry : keyValMap.entrySet()) {
 				if(entry.getKey().equals("XML:com.adobe.xmp"))
-					metadataMap.put(MetadataType.XMP, new XMP(entry.getValue()));
+					metadataMap.put(MetadataType.XMP, new PngXMP(entry.getValue()));
 			}
 		}
 			

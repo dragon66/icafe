@@ -16,7 +16,7 @@
  * WY    03Feb2015  Initial creation
  */
 
-package com.icafe4j.image.meta.exif;
+package com.icafe4j.image.meta.jpeg;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.icafe4j.image.jpeg.Marker;
+import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.tiff.ASCIIField;
 import com.icafe4j.image.tiff.IFD;
 import com.icafe4j.image.tiff.LongField;

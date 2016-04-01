@@ -95,8 +95,8 @@ public class TestImageReader extends TestBase {
 		  		break;
 		  	case JPG:
 		  		JPEGOptions jpegOptions = new JPEGOptions();
-		  		jpegOptions.setQuality(60);
-		  		jpegOptions.setColorSpace(JPEGOptions.COLOR_SPACE_YCCK);
+		  		jpegOptions.setQuality(90);
+		  		jpegOptions.setColorSpace(JPEGOptions.COLOR_SPACE_YCbCr);
 		  		jpegOptions.setWriteICCProfile(true);
 		  		builder.imageOptions(jpegOptions);
 		  		break;

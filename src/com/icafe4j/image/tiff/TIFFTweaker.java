@@ -114,17 +114,18 @@ import com.icafe4j.image.meta.adobe.IRB;
 import com.icafe4j.image.meta.adobe.IRBThumbnail;
 import com.icafe4j.image.meta.adobe.ImageResourceID;
 import com.icafe4j.image.meta.adobe.ThumbnailResource;
-import com.icafe4j.image.meta.adobe.XMP;
 import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
 import com.icafe4j.image.meta.exif.GPSTag;
 import com.icafe4j.image.meta.exif.InteropTag;
-import com.icafe4j.image.meta.exif.TiffExif;
 import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
+import com.icafe4j.image.meta.tiff.TiffExif;
+import com.icafe4j.image.meta.tiff.TiffXMP;
+import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.image.writer.TIFFWriter;
 import com.icafe4j.io.FileCacheRandomAccessInputStream;
@@ -2526,7 +2527,7 @@ public class TIFFTweaker {
 		}
 		field = currIFD.getField(TiffTag.XMP);
 		if(field != null) { // We have found XMP
-			metadataMap.put(MetadataType.XMP, new XMP((byte[])field.getData()));
+			metadataMap.put(MetadataType.XMP, new TiffXMP((byte[])field.getData()));
 		}
 		field = currIFD.getField(TiffTag.PHOTOSHOP);
 		if(field != null) { // We have found Photoshop IRB

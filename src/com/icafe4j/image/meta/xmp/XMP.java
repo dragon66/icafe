@@ -13,6 +13,8 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    31Mar2016  Moved to new package
+ * WY    31Mar2016  Made XMP abstract and overrode write() method
  * WY    03Jul2015  Added override method getData()
  * WY    05Mar2015  Revised getMergedDocument()
  * WY    27Feb2015  Added support for ExtendedXMP data
@@ -22,9 +24,10 @@
  * WY    19Jan2015  Initial creation
  */
 
-package com.icafe4j.image.meta.adobe;
+package com.icafe4j.image.meta.xmp;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -35,7 +38,7 @@ import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.string.XMLUtils;
 
-public class XMP extends Metadata {
+public abstract class XMP extends Metadata {
 	// Fields
 	private Document xmpDocument;
 	private Document extendedXmpDocument;
@@ -138,5 +141,7 @@ public class XMP extends Metadata {
 	public void showMetadata() {
 		ensureDataRead();
 		XMLUtils.showXML(getMergedDocument());
-	}	
+	}
+	
+	public abstract void write(OutputStream os) throws IOException;
 }
