@@ -1,6 +1,7 @@
 ***************************
-Last modified on 03/31/2016
+Last modified on 04/03/2016
 ***************************
+03Apr2016  Rewrite JPEGTweaker insertXMP() to leverage new JpegXMP write()
 31Mar2016  Made XMP abstract and put in it's own package
 31Mar2016  Reversed changes on IDATBuilder constructor on 27Mar2016
 30Mar2016  Changed PNGTweaker removeAncillaryChunks() method signature

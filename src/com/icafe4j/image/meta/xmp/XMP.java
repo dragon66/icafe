@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    03Apr2016  Added new constructor XMP(String, String)
  * WY    31Mar2016  Moved to new package
  * WY    31Mar2016  Made XMP abstract and overrode write() method
  * WY    03Jul2015  Added override method getData()
@@ -54,8 +55,20 @@ public abstract class XMP extends Metadata {
 	}
 	
 	public XMP(String xmp) {
+		this(xmp, null);
+	}
+	
+	public XMP(String xmp, String extendedXmp) {
 		super(MetadataType.XMP, null);
+		if(xmp == null) throw new IllegalArgumentException("Input XMP string is null");
 		this.xmp = xmp;
+		if(extendedXmp != null) { // We have ExtendedXMP
+			try {
+				setExtendedXMPData(XMLUtils.serializeToByteArray(XMLUtils.createXML(extendedXmp)));
+			} catch (IOException e) {				
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public byte[] getData() {
