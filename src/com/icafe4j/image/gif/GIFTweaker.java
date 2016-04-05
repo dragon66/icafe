@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ====================================================
+ * WY    04Apr2016  Rewrite insertXMPApplicationBlock() to leverage GifXMP
  * WY    09Oct2015  Fixed regression bug with splitAnimatedGIF()
  * WY    16Sep2015  Added insertComment() to insert comment extension
  * WY    17Aug2015  Revised to write animated GIF frame by frame
@@ -51,7 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.w3c.dom.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +67,6 @@ import com.icafe4j.image.writer.GIFWriter;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
-import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
 
 /**
@@ -227,34 +226,7 @@ public class GIFTweaker {
 	}
 	
 	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, XMP xmp) throws IOException {
-		insertXMPApplicationBlock(is, os, xmp.getData());
-	}
-	
-	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, byte[] xmp) throws IOException {
-    	byte[] buf = new byte[14];
- 		buf[0] = EXTENSION_INTRODUCER; // Extension introducer
- 		buf[1] = APPLICATION_EXTENSION_LABEL; // Application extension label
- 		buf[2] = 0x0b; // Block size
- 		buf[3] = 'X'; // Application Identifier (8 bytes)
- 		buf[4] = 'M';
- 		buf[5] = 'P';
- 		buf[6] = ' ';
- 		buf[7] = 'D';
- 		buf[8] = 'a';
- 		buf[9] = 't';
- 		buf[10]= 'a';
- 		buf[11]= 'X';// Application Authentication Code (3 bytes)
- 		buf[12]= 'M';
- 		buf[13]= 'P'; 		
- 		// Create a byte array from 0x01, 0xFF - 0x00, 0x00
- 		byte[] magic_trailer = new byte[258];
- 		
- 		magic_trailer[0] = 0x01;
- 		
- 		for(int i = 255; i >= 0; i--)
- 			magic_trailer[256 - i] = (byte)i;
- 	
- 		// Read and copy header and LSD
+		// Read and copy header and LSD
  		// Create a new data transfer object to hold data
  		DataTransferObject DTO = new DataTransferObject();
  		readHeader(is, DTO);
@@ -269,23 +241,22 @@ public class GIFTweaker {
 			readGlobalPalette(is, colorsUsed, DTO);
 			os.write(DTO.globalPalette);
 		}
+	
+		// Insert XMP
+ 		xmp.write(os);
  		
- 		// Insert XMP here
- 		// Write extension introducer and application identifier
- 		os.write(buf);
- 		// Write the XMP packet
- 		os.write(xmp);
- 		// Write the magic trailer
- 		os.write(magic_trailer);
- 		// End of XMP data 		
  		// Copy the rest of the input stream
- 		buf = new byte[10240]; // 10K
+ 		byte[] buf = new byte[10240]; // 10K
  		int bytesRead = is.read(buf);
  		
  		while(bytesRead != -1) {
  			os.write(buf, 0, bytesRead);
  			bytesRead = is.read(buf);
  		}
+	}
+	
+	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, byte[] xmp) throws IOException {
+		insertXMPApplicationBlock(is, os, new GifXMP(xmp));
     }
 	
 	/**
@@ -305,12 +276,7 @@ public class GIFTweaker {
 	}
 	
 	public static void insertXMPApplicationBlock(InputStream is, OutputStream os, String xmp) throws IOException {
-		Document doc = XMLUtils.createXML(xmp);
-		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
-		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
-		// Serialize doc to byte array
-		byte[] xmpBytes = XMLUtils.serializeToByteArray(doc);
-		insertXMPApplicationBlock(is, os, xmpBytes);
+		insertXMPApplicationBlock(is, os, new GifXMP(xmp));
 	}
 	
 	private static boolean readFrame(InputStream is, DataTransferObject DTO) throws IOException {

@@ -25,6 +25,7 @@ import com.icafe4j.image.meta.exif.ExifTag;
 import com.icafe4j.image.meta.iptc.IPTCApplicationTag;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
 import com.icafe4j.image.meta.jpeg.JpegExif;
+import com.icafe4j.image.meta.jpeg.JpegXMP;
 import com.icafe4j.image.meta.tiff.TiffExif;
 import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.image.tiff.FieldType;
@@ -56,16 +57,17 @@ public class TestMetadata extends TestBase {
 		
 		if(metadataMap.get(MetadataType.XMP) != null) {
 			XMP xmp = (XMP)metadataMap.get(MetadataType.XMP);
-			Document xmpDoc = xmp.getXmpDocument();
 			fin = new FileInputStream("images/1.jpg");
 			fout = new FileOutputStream("1-xmp-inserted.jpg");
+			XMP jpegXmp = null;
 			if(!xmp.hasExtendedXmp())
-				Metadata.insertXMP(fin, fout, xmp);
-				//Metadata.insertXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()));
+				jpegXmp = new JpegXMP(xmp.getData());
 			else {
+				Document xmpDoc = xmp.getXmpDocument();
 				Document extendedXmpDoc = xmp.getExtendedXmpDocument();
-				JPEGTweaker.insertXMP(fin, fout, XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()), XMLUtils.serializeToStringLS(extendedXmpDoc));
+				jpegXmp = new JpegXMP(XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()), XMLUtils.serializeToStringLS(extendedXmpDoc));
 			}
+			Metadata.insertXMP(fin, fout, jpegXmp);			
 			fin.close();
 			fout.close();
 		}

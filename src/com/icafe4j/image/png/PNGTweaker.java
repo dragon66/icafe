@@ -162,7 +162,7 @@ public class PNGTweaker {
   	public static void insertXMP(InputStream is, OutputStream os, String xmp) throws IOException {
   		Document doc = XMLUtils.createXML(xmp);
 		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
-		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
+		XMLUtils.insertTrailingPI(doc, "xpacket", "end='r'");
 		String newXmp = XMLUtils.serializeToString(doc); // DONOT use XMLUtils.serializeToStringLS()
   		insert(is, os, newXmp);
     }

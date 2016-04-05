@@ -1,6 +1,7 @@
 ***************************
-Last modified on 04/03/2016
+Last modified on 04/04/2016
 ***************************
+04Apr2016  Rewrite GIFTweaker insertXMPApplicationBlock() to leverage GifXMP
 03Apr2016  Rewrite JPEGTweaker insertXMP() to leverage new JpegXMP write()
 31Mar2016  Made XMP abstract and put in it's own package
 31Mar2016  Reversed changes on IDATBuilder constructor on 27Mar2016

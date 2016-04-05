@@ -1774,7 +1774,7 @@ public class TIFFTweaker {
 	public static void insertXMP(String xmp, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
 		Document doc = XMLUtils.createXML(xmp);
 		XMLUtils.insertLeadingPI(doc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
-		XMLUtils.insertTrailingPI(doc, "xpacket", "end='w'");
+		XMLUtils.insertTrailingPI(doc, "xpacket", "end='r'");
 		byte[] xmpBytes = XMLUtils.serializeToByteArray(doc);
 		insertXMP(xmpBytes, rin, rout);
 	}

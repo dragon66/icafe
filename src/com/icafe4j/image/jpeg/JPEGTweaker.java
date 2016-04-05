@@ -1430,7 +1430,7 @@ public class JPEGTweaker {
 					// We found XMP, add it to metadata list (We may later revise it if we have ExtendedXMP)
 					XMP xmp = new JpegXMP(ArrayUtils.subArray(data, XMP_ID.length(), length - XMP_ID.length() - 2));
 					metadataMap.put(MetadataType.XMP, xmp);
-					// Retrieve and remove XMP GUID if available
+					// Retrieve XMP GUID if available
 					xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
 				} else if(new String(data, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
 					// We found ExtendedXMP, add the data to ExtendedXMP memory buffer				
