@@ -15,6 +15,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================
+ * WY    09Mar2016  Added new constructor
  * WY    14Apr2015  Fixed a bug with super() call, changed data to null 
  * WY    14Apr2015  Added new constructor
  * WY    13Apr2015  Initial creation
@@ -49,7 +50,7 @@ public class ThumbnailResource extends _8BIM {
 			throw new IllegalArgumentException("Unsupported thumbnail ImageResourceID: " + id);
 		
 		return id;
-	}	
+	}
 	// Fields
 	private int width;
 	private int height;
@@ -72,13 +73,10 @@ public class ThumbnailResource extends _8BIM {
 		this("THUMBNAIL_RESOURCE", thumbnail);
 	}
 		
-	public ThumbnailResource(String name, BufferedImage thumbnail) {
-		super(ImageResourceID.THUMBNAIL_RESOURCE_PS5, name, null);
-		try {
-			this.thumbnail = createThumbnail(thumbnail);
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to create IRBThumbnail from BufferedImage");
-		}
+	public ThumbnailResource(ImageResourceID id, byte[] data) {
+		super(validateID(id), "THUMBNAIL_RESOURCE", data);
+		this.id = id;
+		read();
 	}
 	
 	// id is either ImageResourceID.THUMBNAIL_RESOURCE_PS4 or ImageResourceID.THUMBNAIL_RESOURCE_PS5
@@ -99,11 +97,18 @@ public class ThumbnailResource extends _8BIM {
 		this.numOfPlanes = 1;
 		setThumbnailImage(id, dataType, width, height, totalSize, thumbnailData);
 	}
+	
+	public ThumbnailResource(String name, BufferedImage thumbnail) {
+		super(ImageResourceID.THUMBNAIL_RESOURCE_PS5, name, null);
+		try {
+			this.thumbnail = createThumbnail(thumbnail);
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to create IRBThumbnail from BufferedImage");
+		}
+	}
 		
-	public ThumbnailResource(ImageResourceID id, byte[] data) {
-		super(validateID(id), "THUMBNAIL_RESOURCE", data);
-		this.id = id;
-		read();
+	public ThumbnailResource(ImageResourceID id,Thumbnail thumbnail) {
+		this(id, thumbnail.getDataType(), thumbnail.getWidth(), thumbnail.getHeight(), thumbnail.getCompressedImage());
 	}
 		
 	private IRBThumbnail createThumbnail(BufferedImage thumbnail) throws IOException {
@@ -174,6 +179,26 @@ public class ThumbnailResource extends _8BIM {
 		return width;
 	}
 		
+	private void read() {
+		this.dataType = IOUtils.readIntMM(data, 0); //1 = kJpegRGB. Also supports kRawRGB (0).
+		this.width = IOUtils.readIntMM(data, 4);
+		this.height = IOUtils.readIntMM(data, 8);
+		// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
+		this.paddedRowBytes = IOUtils.readIntMM(data, 12);
+		// Total size = widthbytes * height * planes
+		this.totalSize = IOUtils.readIntMM(data, 16);
+		// Size after compression. Used for consistency check.
+		this.compressedSize = IOUtils.readIntMM(data, 20);
+		this.bitsPerPixel = IOUtils.readShortMM(data, 24); // Bits per pixel. = 24
+		this.numOfPlanes = IOUtils.readShortMM(data, 26); // Number of planes. = 1
+		byte[] thumbnailData = null;
+		if(dataType == Thumbnail.DATA_TYPE_KJpegRGB)
+			thumbnailData = ArrayUtils.subArray(data, 28, compressedSize);
+		else if(dataType == Thumbnail.DATA_TYPE_KRawRGB)
+			thumbnailData = ArrayUtils.subArray(data, 28, totalSize);
+		setThumbnailImage(id, dataType, width, height, totalSize, thumbnailData);
+	}
+	
 	private void setThumbnailImage(ImageResourceID id, int dataType, int width, int height, int totalSize, byte[] thumbnailData) {
 		// JFIF data in RGB format. For resource ID 1033 (0x0409) the data is in BGR format.
 		if(dataType == Thumbnail.DATA_TYPE_KJpegRGB) {
@@ -194,26 +219,6 @@ public class ThumbnailResource extends _8BIM {
 			thumbnail.setImage(new BufferedImage(cm, raster, false, null));
 		} else
 			throw new UnsupportedOperationException("Unsupported IRB thumbnail data type: " + dataType);
-	}
-	
-	private void read() {
-		this.dataType = IOUtils.readIntMM(data, 0); //1 = kJpegRGB. Also supports kRawRGB (0).
-		this.width = IOUtils.readIntMM(data, 4);
-		this.height = IOUtils.readIntMM(data, 8);
-		// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-		this.paddedRowBytes = IOUtils.readIntMM(data, 12);
-		// Total size = widthbytes * height * planes
-		this.totalSize = IOUtils.readIntMM(data, 16);
-		// Size after compression. Used for consistency check.
-		this.compressedSize = IOUtils.readIntMM(data, 20);
-		this.bitsPerPixel = IOUtils.readShortMM(data, 24); // Bits per pixel. = 24
-		this.numOfPlanes = IOUtils.readShortMM(data, 26); // Number of planes. = 1
-		byte[] thumbnailData = null;
-		if(dataType == Thumbnail.DATA_TYPE_KJpegRGB)
-			thumbnailData = ArrayUtils.subArray(data, 28, compressedSize);
-		else if(dataType == Thumbnail.DATA_TYPE_KRawRGB)
-			thumbnailData = ArrayUtils.subArray(data, 28, totalSize);
-		setThumbnailImage(id, dataType, width, height, totalSize, thumbnailData);
 	}
 	
 	public void write(OutputStream os) throws IOException {
