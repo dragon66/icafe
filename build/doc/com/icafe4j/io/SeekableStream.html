@@ -1,115 +1,111 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<!-- NewPage -->
-<html lang="en">
-<head>
-<title>SeekableStream</title>
-<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
-</head>
-<body>
-<script type="text/javascript"><!--
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+SeekableStream
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
     if (location.href.indexOf('is-external=true') == -1) {
         parent.document.title="SeekableStream";
     }
-//-->
-</script>
-<noscript>
-<div>JavaScript is disabled on your browser.</div>
-</noscript>
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
 <!-- ========= START OF TOP NAVBAR ======= -->
-<div class="topNav"><a name="navbar_top">
-<!--   -->
-</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
-<!--   -->
-</a>
-<ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
-<li><a href="package-summary.html">Package</a></li>
-<li class="navBarCell1Rev">Class</li>
-<li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../index-all.html">Index</a></li>
-<li><a href="../../../help-doc.html">Help</a></li>
-</ul>
-</div>
-<div class="subNav">
-<ul class="navList">
-<li><a href="../../../com/icafe4j/io/ReadStrategyMM.html" title="class in com.icafe4j.io"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../com/icafe4j/io/WriteStrategy.html" title="interface in com.icafe4j.io"><span class="strong">Next Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../../index.html?com/icafe4j/io/SeekableStream.html" target="_top">Frames</a></li>
-<li><a href="SeekableStream.html" target="_top">No Frames</a></li>
-</ul>
-<ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
-</ul>
-<div>
-<script type="text/javascript"><!--
-  allClassesLink = document.getElementById("allclasses_navbar_top");
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/icafe4j/io/ReadStrategyMM.html" title="class in com.icafe4j.io"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/icafe4j/io/WriteStrategy.html" title="interface in com.icafe4j.io"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/icafe4j/io/SeekableStream.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SeekableStream.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
   if(window==top) {
-    allClassesLink.style.display = "block";
-  }
-  else {
-    allClassesLink.style.display = "none";
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
-</script>
-</div>
-<div>
-<ul class="subNavList">
-<li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
-</ul>
-<ul class="subNavList">
-<li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
-</ul>
-</div>
-<a name="skip-navbar_top">
-<!--   -->
-</a></div>
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
 <!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
 <!-- ======== START OF CLASS DATA ======== -->
-<div class="header">
-<div class="subTitle">com.icafe4j.io</div>
-<h2 title="Class SeekableStream" class="title">Class SeekableStream</h2>
-</div>
-<div class="contentContainer">
-<ul class="inheritance">
-<li>java.lang.Object</li>
-<li>
-<ul class="inheritance">
-<li>java.io.InputStream</li>
-<li>
-<ul class="inheritance">
-<li>com.icafe4j.io.SeekableStream</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<div class="description">
-<ul class="blockList">
-<li class="blockList">
-<dl>
-<dt>All Implemented Interfaces:</dt>
-<dd>java.io.Closeable, java.io.DataInput, java.lang.AutoCloseable</dd>
-</dl>
-<dl>
-<dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../com/icafe4j/io/FileCacheSeekableStream.html" title="class in com.icafe4j.io">FileCacheSeekableStream</a>, <a href="../../../com/icafe4j/io/ForwardSeekableStream.html" title="class in com.icafe4j.io">ForwardSeekableStream</a>, <a href="../../../com/icafe4j/io/MemoryCacheSeekableStream.html" title="class in com.icafe4j.io">MemoryCacheSeekableStream</a></dd>
-</dl>
-<hr>
-<br>
-<pre>public abstract class <span class="strong">SeekableStream</span>
-extends java.io.InputStream
-implements java.io.DataInput</pre>
-<div class="block">An abstract subclass of <code>java.io.InputStream</code> that allows seeking
+<H2>
+<FONT SIZE="-1">
+com.icafe4j.io</FONT>
+<BR>
+Class SeekableStream</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../resources/inherit.gif" ALT="extended by ">java.io.InputStream
+      <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.icafe4j.io.SeekableStream</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Closeable, java.io.DataInput</DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../com/icafe4j/io/FileCacheSeekableStream.html" title="class in com.icafe4j.io">FileCacheSeekableStream</A>, <A HREF="../../../com/icafe4j/io/ForwardSeekableStream.html" title="class in com.icafe4j.io">ForwardSeekableStream</A>, <A HREF="../../../com/icafe4j/io/MemoryCacheSeekableStream.html" title="class in com.icafe4j.io">MemoryCacheSeekableStream</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>SeekableStream</B><DT>extends java.io.InputStream<DT>implements java.io.DataInput</DL>
+</PRE>
+
+<P>
+An abstract subclass of <code>java.io.InputStream</code> that allows seeking
  within the input, similar to the <code>RandomAccessFile</code> class.
  Additionally, the <code>DataInput</code> interface is supported and extended
  to include support for little-endian representations of fundamental data
@@ -163,406 +159,478 @@ implements java.io.DataInput</pre>
  construct a suitable <code>SeekableStream</code> instance whose data is
  supplied by a given <code>InputStream</code>.  The caller, by means of the
  <code>canSeekBackwards</code> parameter, determines whether support for
- seeking backwards is required.</div>
-</li>
-</ul>
-</div>
-<div class="summary">
-<ul class="blockList">
-<li class="blockList">
+ seeking backwards is required.
+<P>
+
+<P>
+<HR>
+
+<P>
 <!-- =========== FIELD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_summary">
-<!--   -->
-</a>
-<h3>Field Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
-<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Field and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected long</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#markPos">markPos</a></strong></code>
-<div class="block">Marked position</div>
-</td>
-</tr>
-</table>
-</li>
-</ul>
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#markPos">markPos</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marked position</TD>
+</TR>
+</TABLE>
+&nbsp;
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor_summary">
-<!--   -->
-</a>
-<h3>Constructor Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
-<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colOne" scope="col">Constructor and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#SeekableStream()">SeekableStream</a></strong>()</code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#SeekableStream()">SeekableStream</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
 <!-- ========== METHOD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method_summary">
-<!--   -->
-</a>
-<h3>Method Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#canSeekBackwards()">canSeekBackwards</a></strong>()</code>
-<div class="block">Returns <code>true</code> if this object supports calls to 
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#canSeekBackwards()">canSeekBackwards</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns <code>true</code> if this object supports calls to 
  <code>seek(pos)</code> with an offset <code>pos</code> smaller
- than the current offset, as returned by <code>getFilePointer</code>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#finalize()">finalize</a></strong>()</code>
-<div class="block">Releases any system resources associated with this stream
- by calling the <code>close()</code> method.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>abstract long</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#getFilePointer()">getFilePointer</a></strong>()</code>
-<div class="block">Returns the current offset in this stream.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#mark(int)">mark</a></strong>(int&nbsp;readLimit)</code>
-<div class="block">Marks the current file position for later return using
- the <code>reset()</code> method.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#markSupported()">markSupported</a></strong>()</code>
-<div class="block">Returns <code>true</code> if marking is supported.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>abstract int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#read()">read</a></strong>()</code>
-<div class="block">Reads the next byte of data from the input stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>abstract int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#read(byte[],%20int,%20int)">read</a></strong>(byte[]&nbsp;b,
-    int&nbsp;off,
-    int&nbsp;len)</code>
-<div class="block">Reads up to <code>len</code> bytes of data from the input stream into
- an array of bytes.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readBoolean()">readBoolean</a></strong>()</code>
-<div class="block">Reads a <code>boolean</code> from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>byte</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readByte()">readByte</a></strong>()</code>
-<div class="block">Reads a signed eight-bit value from this stream.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>char</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readChar()">readChar</a></strong>()</code>
-<div class="block">Reads a Unicode character from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>char</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readCharLE()">readCharLE</a></strong>()</code>
-<div class="block">Reads a Unicode character from this stream in little-endian order.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readDouble()">readDouble</a></strong>()</code>
-<div class="block">Reads a <code>double</code> from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readDoubleLE()">readDoubleLE</a></strong>()</code>
-<div class="block">Reads a <code>double</code> from this stream in little-endian order.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>float</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readFloat()">readFloat</a></strong>()</code>
-<div class="block">Reads a <code>float</code> from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>float</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readFloatLE()">readFloatLE</a></strong>()</code>
-<div class="block">Reads a <code>float</code> from this stream in little-endian order.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readFully(byte[])">readFully</a></strong>(byte[]&nbsp;b)</code>
-<div class="block">Reads <code>b.length</code> bytes from this stream into the byte 
- array, starting at the current stream pointer.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readFully(byte[],%20int,%20int)">readFully</a></strong>(byte[]&nbsp;b,
-         int&nbsp;off,
-         int&nbsp;len)</code>
-<div class="block">Reads exactly <code>len</code> bytes from this stream into the byte 
- array, starting at the current stream pointer.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readInt()">readInt</a></strong>()</code>
-<div class="block">Reads a signed 32-bit integer from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readIntLE()">readIntLE</a></strong>()</code>
-<div class="block">Reads a signed 32-bit integer from this stream in little-endian order.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readLine()">readLine</a></strong>()</code>
-<div class="block">Reads the next line of text from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readLong()">readLong</a></strong>()</code>
-<div class="block">Reads a signed 64-bit integer from this stream.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readLongLE()">readLongLE</a></strong>()</code>
-<div class="block">Reads a signed 64-bit integer from this stream in little-endian
- order.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>short</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readShort()">readShort</a></strong>()</code>
-<div class="block">Reads a signed 16-bit number from this stream.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>short</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readShortLE()">readShortLE</a></strong>()</code>
-<div class="block">Reads a signed 16-bit number from this stream in little-endian order.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readUnsignedByte()">readUnsignedByte</a></strong>()</code>
-<div class="block">Reads an unsigned eight-bit number from this stream.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readUnsignedInt()">readUnsignedInt</a></strong>()</code>
-<div class="block">Reads an unsigned 32-bit integer from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>long</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readUnsignedIntLE()">readUnsignedIntLE</a></strong>()</code>
-<div class="block">Reads an unsigned 32-bit integer from this stream in little-endian
- order.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readUnsignedShort()">readUnsignedShort</a></strong>()</code>
-<div class="block">Reads an unsigned 16-bit number from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readUnsignedShortLE()">readUnsignedShortLE</a></strong>()</code>
-<div class="block">Reads an unsigned 16-bit number from this stream in little-endian order.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#readUTF()">readUTF</a></strong>()</code>
-<div class="block">Reads in a string from this stream.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#reset()">reset</a></strong>()</code>
-<div class="block">Returns the file position to its position at the time of
+ than the current offset, as returned by <code>getFilePointer</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#finalize()">finalize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Releases any system resources associated with this stream
+ by calling the <code>close()</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#getFilePointer()">getFilePointer</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the current offset in this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#mark(int)">mark</A></B>(int&nbsp;readLimit)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marks the current file position for later return using
+ the <code>reset()</code> method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#markSupported()">markSupported</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns <code>true</code> if marking is supported.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#read()">read</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads the next byte of data from the input stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#read(byte[], int, int)">read</A></B>(byte[]&nbsp;b,
+     int&nbsp;off,
+     int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads up to <code>len</code> bytes of data from the input stream into
+ an array of bytes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readBoolean()">readBoolean</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a <code>boolean</code> from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readByte()">readByte</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a signed eight-bit value from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;char</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readChar()">readChar</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a Unicode character from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;char</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readCharLE()">readCharLE</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a Unicode character from this stream in little-endian order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readDouble()">readDouble</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a <code>double</code> from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readDoubleLE()">readDoubleLE</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a <code>double</code> from this stream in little-endian order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readFloat()">readFloat</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a <code>float</code> from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readFloatLE()">readFloatLE</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a <code>float</code> from this stream in little-endian order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readFully(byte[])">readFully</A></B>(byte[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads <code>b.length</code> bytes from this stream into the byte 
+ array, starting at the current stream pointer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readFully(byte[], int, int)">readFully</A></B>(byte[]&nbsp;b,
+          int&nbsp;off,
+          int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads exactly <code>len</code> bytes from this stream into the byte 
+ array, starting at the current stream pointer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readInt()">readInt</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a signed 32-bit integer from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readIntLE()">readIntLE</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a signed 32-bit integer from this stream in little-endian order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readLine()">readLine</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads the next line of text from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readLong()">readLong</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a signed 64-bit integer from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readLongLE()">readLongLE</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a signed 64-bit integer from this stream in little-endian
+ order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readShort()">readShort</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a signed 16-bit number from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readShortLE()">readShortLE</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a signed 16-bit number from this stream in little-endian order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readUnsignedByte()">readUnsignedByte</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads an unsigned eight-bit number from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readUnsignedInt()">readUnsignedInt</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads an unsigned 32-bit integer from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readUnsignedIntLE()">readUnsignedIntLE</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads an unsigned 32-bit integer from this stream in little-endian
+ order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readUnsignedShort()">readUnsignedShort</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads an unsigned 16-bit number from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readUnsignedShortLE()">readUnsignedShortLE</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads an unsigned 16-bit number from this stream in little-endian order.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#readUTF()">readUTF</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads in a string from this stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#reset()">reset</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the file position to its position at the time of
  the immediately previous call to the <code>mark()</code>
- method.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>abstract void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#seek(long)">seek</a></strong>(long&nbsp;pos)</code>
-<div class="block">Sets the offset, measured from the beginning of this 
- stream, at which the next read occurs.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#skipBytes(int)">skipBytes</a></strong>(int&nbsp;n)</code>
-<div class="block">Attempts to skip over <code>n</code> bytes of input discarding the 
- skipped bytes.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../com/icafe4j/io/SeekableStream.html" title="class in com.icafe4j.io">SeekableStream</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/io/SeekableStream.html#wrapInputStream(java.io.InputStream,%20boolean)">wrapInputStream</a></strong>(java.io.InputStream&nbsp;is,
-               boolean&nbsp;canSeekBackwards)</code>
-<div class="block">Returns a <code>SeekableStream</code> that will read from a 
+ method.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>abstract &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#seek(long)">seek</A></B>(long&nbsp;pos)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the offset, measured from the beginning of this 
+ stream, at which the next read occurs.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#skipBytes(int)">skipBytes</A></B>(int&nbsp;n)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Attempts to skip over <code>n</code> bytes of input discarding the 
+ skipped bytes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../com/icafe4j/io/SeekableStream.html" title="class in com.icafe4j.io">SeekableStream</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/io/SeekableStream.html#wrapInputStream(java.io.InputStream, boolean)">wrapInputStream</A></B>(java.io.InputStream&nbsp;is,
+                boolean&nbsp;canSeekBackwards)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a <code>SeekableStream</code> that will read from a 
  given <code>InputStream</code>, optionally including support
- for seeking backwards.</div>
-</td>
-</tr>
-</table>
-<ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.io.InputStream">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;java.io.InputStream</h3>
-<code>available, close, read, skip</code></li>
-</ul>
-<ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="details">
-<ul class="blockList">
-<li class="blockList">
+ for seeking backwards.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.io.InputStream"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.io.InputStream</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>available, close, read, skip</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
 <!-- ============ FIELD DETAIL =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="field_detail">
-<!--   -->
-</a>
-<h3>Field Detail</h3>
-<a name="markPos">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>markPos</h4>
-<pre>protected&nbsp;long markPos</pre>
-<div class="block">Marked position</div>
-</li>
-</ul>
-</li>
-</ul>
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="markPos"><!-- --></A><H3>
+markPos</H3>
+<PRE>
+protected long <B>markPos</B></PRE>
+<DL>
+<DD>Marked position
+<P>
+<DL>
+</DL>
+</DL>
+
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor_detail">
-<!--   -->
-</a>
-<h3>Constructor Detail</h3>
-<a name="SeekableStream()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>SeekableStream</h4>
-<pre>public&nbsp;SeekableStream()</pre>
-</li>
-</ul>
-</li>
-</ul>
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SeekableStream()"><!-- --></A><H3>
+SeekableStream</H3>
+<PRE>
+public <B>SeekableStream</B>()</PRE>
+<DL>
+</DL>
+
 <!-- ============ METHOD DETAIL ========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method_detail">
-<!--   -->
-</a>
-<h3>Method Detail</h3>
-<a name="wrapInputStream(java.io.InputStream, boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>wrapInputStream</h4>
-<pre>public static&nbsp;<a href="../../../com/icafe4j/io/SeekableStream.html" title="class in com.icafe4j.io">SeekableStream</a>&nbsp;wrapInputStream(java.io.InputStream&nbsp;is,
-                             boolean&nbsp;canSeekBackwards)</pre>
-<div class="block">Returns a <code>SeekableStream</code> that will read from a 
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="wrapInputStream(java.io.InputStream, boolean)"><!-- --></A><H3>
+wrapInputStream</H3>
+<PRE>
+public static <A HREF="../../../com/icafe4j/io/SeekableStream.html" title="class in com.icafe4j.io">SeekableStream</A> <B>wrapInputStream</B>(java.io.InputStream&nbsp;is,
+                                             boolean&nbsp;canSeekBackwards)</PRE>
+<DL>
+<DD>Returns a <code>SeekableStream</code> that will read from a 
  given <code>InputStream</code>, optionally including support
  for seeking backwards.  This is a convenience method that
  avoids the need to instantiate specific subclasses of 
  <code>SeekableStream</code> depending on the current security
- model.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - An <code>InputStream</code>.</dd><dd><code>canSeekBackwards</code> - <code>true</code> if the ability to seek
-        backwards in the output is required.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>An instance of <code>SeekableStream</code>.</dd></dl>
-</li>
-</ul>
-<a name="read()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>read</h4>
-<pre>public abstract&nbsp;int&nbsp;read()
-                  throws java.io.IOException</pre>
-<div class="block">Reads the next byte of data from the input stream. The value byte is
+ model.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>is</CODE> - An <code>InputStream</code>.<DD><CODE>canSeekBackwards</CODE> - <code>true</code> if the ability to seek
+        backwards in the output is required.
+<DT><B>Returns:</B><DD>An instance of <code>SeekableStream</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read()"><!-- --></A><H3>
+read</H3>
+<PRE>
+public abstract int <B>read</B>()
+                  throws java.io.IOException</PRE>
+<DL>
+<DD>Reads the next byte of data from the input stream. The value byte is
  returned as an <code>int</code> in the range <code>0</code> to
  <code>255</code>. If no byte is available because the end of the stream
  has been reached, the value <code>-1</code> is returned. This method
  blocks until input data is available, the end of the stream is detected,
  or an exception is thrown.
 
- <p> A subclass must provide an implementation of this method.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>read</code>&nbsp;in class&nbsp;<code>java.io.InputStream</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next byte of data, or <code>-1</code> if the end of the
-             stream is reached.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="read(byte[], int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>read</h4>
-<pre>public abstract&nbsp;int&nbsp;read(byte[]&nbsp;b,
-       int&nbsp;off,
-       int&nbsp;len)
-                  throws java.io.IOException</pre>
-<div class="block">Reads up to <code>len</code> bytes of data from the input stream into
+ <p> A subclass must provide an implementation of this method.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>read</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next byte of data, or <code>-1</code> if the end of the
+             stream is reached.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(byte[], int, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public abstract int <B>read</B>(byte[]&nbsp;b,
+                         int&nbsp;off,
+                         int&nbsp;len)
+                  throws java.io.IOException</PRE>
+<DL>
+<DD>Reads up to <code>len</code> bytes of data from the input stream into
  an array of bytes.  An attempt is made to read as many as
  <code>len</code> bytes, but a smaller number may be read, possibly
  zero. The number of bytes actually read is returned as an integer.
@@ -600,177 +668,207 @@ implements java.io.DataInput</pre>
  stream, then an <code>IOException</code> is thrown. In particular, an
  <code>IOException</code> is thrown if the input stream has been closed.
 
- <p> A subclass must provide an implementation of this method.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code>read</code>&nbsp;in class&nbsp;<code>java.io.InputStream</code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>b</code> - the buffer into which the data is read.</dd><dd><code>off</code> - the start offset in array <code>b</code>
-                   at which the data is written.</dd><dd><code>len</code> - the maximum number of bytes to read.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the total number of bytes read into the buffer, or
+ <p> A subclass must provide an implementation of this method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>read</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - the buffer into which the data is read.<DD><CODE>off</CODE> - the start offset in array <code>b</code>
+                   at which the data is written.<DD><CODE>len</CODE> - the maximum number of bytes to read.
+<DT><B>Returns:</B><DD>the total number of bytes read into the buffer, or
              <code>-1</code> if there is no more data because the end of
-             the stream has been reached.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="mark(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>mark</h4>
-<pre>public&nbsp;void&nbsp;mark(int&nbsp;readLimit)</pre>
-<div class="block">Marks the current file position for later return using
- the <code>reset()</code> method.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code>mark</code>&nbsp;in class&nbsp;<code>java.io.InputStream</code></dd>
-</dl>
-</li>
-</ul>
-<a name="reset()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>reset</h4>
-<pre>public&nbsp;void&nbsp;reset()
-           throws java.io.IOException</pre>
-<div class="block">Returns the file position to its position at the time of
+             the stream has been reached.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="mark(int)"><!-- --></A><H3>
+mark</H3>
+<PRE>
+public void <B>mark</B>(int&nbsp;readLimit)</PRE>
+<DL>
+<DD>Marks the current file position for later return using
+ the <code>reset()</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>mark</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reset()"><!-- --></A><H3>
+reset</H3>
+<PRE>
+public void <B>reset</B>()
+           throws java.io.IOException</PRE>
+<DL>
+<DD>Returns the file position to its position at the time of
  the immediately previous call to the <code>mark()</code>
- method.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code>reset</code>&nbsp;in class&nbsp;<code>java.io.InputStream</code></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="markSupported()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>markSupported</h4>
-<pre>public&nbsp;boolean&nbsp;markSupported()</pre>
-<div class="block">Returns <code>true</code> if marking is supported.
+ method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>reset</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="markSupported()"><!-- --></A><H3>
+markSupported</H3>
+<PRE>
+public boolean <B>markSupported</B>()</PRE>
+<DL>
+<DD>Returns <code>true</code> if marking is supported.
  Marking is automatically supported for <code>SeekableStream</code>
  subclasses that support seeking backeards.  Subclasses that do
  not support seeking backwards but do support marking must override
- this method.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code>markSupported</code>&nbsp;in class&nbsp;<code>java.io.InputStream</code></dd>
-</dl>
-</li>
-</ul>
-<a name="canSeekBackwards()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>canSeekBackwards</h4>
-<pre>public&nbsp;boolean&nbsp;canSeekBackwards()</pre>
-<div class="block">Returns <code>true</code> if this object supports calls to 
+ this method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>markSupported</CODE> in class <CODE>java.io.InputStream</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="canSeekBackwards()"><!-- --></A><H3>
+canSeekBackwards</H3>
+<PRE>
+public boolean <B>canSeekBackwards</B>()</PRE>
+<DL>
+<DD>Returns <code>true</code> if this object supports calls to 
  <code>seek(pos)</code> with an offset <code>pos</code> smaller
- than the current offset, as returned by <code>getFilePointer</code>.</div>
-</li>
-</ul>
-<a name="getFilePointer()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getFilePointer</h4>
-<pre>public abstract&nbsp;long&nbsp;getFilePointer()
-                             throws java.io.IOException</pre>
-<div class="block">Returns the current offset in this stream.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the offset from the beginning of the stream, in bytes,
-             at which the next read occurs.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="seek(long)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>seek</h4>
-<pre>public abstract&nbsp;void&nbsp;seek(long&nbsp;pos)
-                   throws java.io.IOException</pre>
-<div class="block">Sets the offset, measured from the beginning of this 
+ than the current offset, as returned by <code>getFilePointer</code>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFilePointer()"><!-- --></A><H3>
+getFilePointer</H3>
+<PRE>
+public abstract long <B>getFilePointer</B>()
+                             throws java.io.IOException</PRE>
+<DL>
+<DD>Returns the current offset in this stream.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the offset from the beginning of the stream, in bytes,
+             at which the next read occurs.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="seek(long)"><!-- --></A><H3>
+seek</H3>
+<PRE>
+public abstract void <B>seek</B>(long&nbsp;pos)
+                   throws java.io.IOException</PRE>
+<DL>
+<DD>Sets the offset, measured from the beginning of this 
  stream, at which the next read occurs.
 
  <p> If <code>canSeekBackwards()</code> returns <code>false</code>,
  then setting <code>pos</code> to an offset smaller than
  the current value of <code>getFilePointer()</code> will have
- no effect.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>pos</code> - the offset position, measured in bytes from the 
+ no effect.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pos</CODE> - the offset position, measured in bytes from the 
                    beginning of the stream, at which to set the stream 
-                   pointer.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code> - if <code>pos</code> is less than 
-                          <code>0</code> or if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readFully(byte[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readFully</h4>
-<pre>public final&nbsp;void&nbsp;readFully(byte[]&nbsp;b)
-                     throws java.io.IOException</pre>
-<div class="block">Reads <code>b.length</code> bytes from this stream into the byte 
+                   pointer.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if <code>pos</code> is less than 
+                          <code>0</code> or if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFully(byte[])"><!-- --></A><H3>
+readFully</H3>
+<PRE>
+public final void <B>readFully</B>(byte[]&nbsp;b)
+                     throws java.io.IOException</PRE>
+<DL>
+<DD>Reads <code>b.length</code> bytes from this stream into the byte 
  array, starting at the current stream pointer. This method reads 
  repeatedly from the stream until the requested number of bytes are 
  read. This method blocks until the requested number of bytes are 
- read, the end of the stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readFully</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>b</code> - the buffer into which the data is read.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               all the bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readFully(byte[], int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readFully</h4>
-<pre>public final&nbsp;void&nbsp;readFully(byte[]&nbsp;b,
-             int&nbsp;off,
-             int&nbsp;len)
-                     throws java.io.IOException</pre>
-<div class="block">Reads exactly <code>len</code> bytes from this stream into the byte 
+ read, the end of the stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readFully</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - the buffer into which the data is read.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               all the bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFully(byte[], int, int)"><!-- --></A><H3>
+readFully</H3>
+<PRE>
+public final void <B>readFully</B>(byte[]&nbsp;b,
+                            int&nbsp;off,
+                            int&nbsp;len)
+                     throws java.io.IOException</PRE>
+<DL>
+<DD>Reads exactly <code>len</code> bytes from this stream into the byte 
  array, starting at the current stream pointer. This method reads 
  repeatedly from the stream until the requested number of bytes are 
  read. This method blocks until the requested number of bytes are 
- read, the end of the stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readFully</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>b</code> - the buffer into which the data is read.</dd><dd><code>off</code> - the start offset of the data.</dd><dd><code>len</code> - the number of bytes to read.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               all the bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="skipBytes(int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>skipBytes</h4>
-<pre>public&nbsp;int&nbsp;skipBytes(int&nbsp;n)
-              throws java.io.IOException</pre>
-<div class="block">Attempts to skip over <code>n</code> bytes of input discarding the 
+ read, the end of the stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readFully</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - the buffer into which the data is read.<DD><CODE>off</CODE> - the start offset of the data.<DD><CODE>len</CODE> - the number of bytes to read.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               all the bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="skipBytes(int)"><!-- --></A><H3>
+skipBytes</H3>
+<PRE>
+public int <B>skipBytes</B>(int&nbsp;n)
+              throws java.io.IOException</PRE>
+<DL>
+<DD>Attempts to skip over <code>n</code> bytes of input discarding the 
  skipped bytes. 
  <p>
  
@@ -779,48 +877,53 @@ implements java.io.DataInput</pre>
  stream before <code>n</code> bytes have been skipped is only one 
  possibility. This method never throws an <code>EOFException</code>. 
  The actual number of bytes skipped is returned.  If <code>n</code> 
- is negative, no bytes are skipped.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>skipBytes</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Parameters:</span></dt><dd><code>n</code> - the number of bytes to be skipped.</dd>
-<dt><span class="strong">Returns:</span></dt><dd>the actual number of bytes skipped.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readBoolean()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readBoolean</h4>
-<pre>public final&nbsp;boolean&nbsp;readBoolean()
-                          throws java.io.IOException</pre>
-<div class="block">Reads a <code>boolean</code> from this stream. This method reads a 
+ is negative, no bytes are skipped.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>skipBytes</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>n</CODE> - the number of bytes to be skipped.
+<DT><B>Returns:</B><DD>the actual number of bytes skipped.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readBoolean()"><!-- --></A><H3>
+readBoolean</H3>
+<PRE>
+public final boolean <B>readBoolean</B>()
+                          throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a <code>boolean</code> from this stream. This method reads a 
  single byte from the stream, starting at the current stream pointer. 
  A value of <code>0</code> represents 
  <code>false</code>. Any other value represents <code>true</code>. 
  This method blocks until the byte is read, the end of the stream 
- is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readBoolean</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the <code>boolean</code> value read.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream has reached the end.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readByte()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readByte</h4>
-<pre>public final&nbsp;byte&nbsp;readByte()
-                    throws java.io.IOException</pre>
-<div class="block">Reads a signed eight-bit value from this stream. This method reads a 
+ is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readBoolean</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the <code>boolean</code> value read.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream has reached the end.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readByte()"><!-- --></A><H3>
+readByte</H3>
+<PRE>
+public final byte <B>readByte</B>()
+                    throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a signed eight-bit value from this stream. This method reads a 
  byte from the stream, starting from the current stream pointer. 
  If the byte read is <code>b</code>, where 
  <code>0&nbsp;&lt;=&nbsp;b&nbsp;&lt;=&nbsp;255</code>, 
@@ -830,50 +933,56 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the byte is read, the end of the stream 
- is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readByte</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next byte of this stream as a signed eight-bit
-             <code>byte</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream has reached the end.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readUnsignedByte()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readUnsignedByte</h4>
-<pre>public final&nbsp;int&nbsp;readUnsignedByte()
-                           throws java.io.IOException</pre>
-<div class="block">Reads an unsigned eight-bit number from this stream. This method reads 
+ is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readByte</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next byte of this stream as a signed eight-bit
+             <code>byte</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream has reached the end.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUnsignedByte()"><!-- --></A><H3>
+readUnsignedByte</H3>
+<PRE>
+public final int <B>readUnsignedByte</B>()
+                           throws java.io.IOException</PRE>
+<DL>
+<DD>Reads an unsigned eight-bit number from this stream. This method reads 
  a byte from this stream, starting at the current stream pointer, 
  and returns that byte. 
  <p>
  This method blocks until the byte is read, the end of the stream 
- is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readUnsignedByte</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next byte of this stream, interpreted as an unsigned
-             eight-bit number.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream has reached the end.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readShort()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readShort</h4>
-<pre>public final&nbsp;short&nbsp;readShort()
-                      throws java.io.IOException</pre>
-<div class="block">Reads a signed 16-bit number from this stream.
+ is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readUnsignedByte</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next byte of this stream, interpreted as an unsigned
+             eight-bit number.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream has reached the end.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readShort()"><!-- --></A><H3>
+readShort</H3>
+<PRE>
+public final short <B>readShort</B>()
+                      throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a signed 16-bit number from this stream.
  The method reads two 
  bytes from this stream, starting at the current stream pointer. 
  If the two bytes read, in order, are 
@@ -885,27 +994,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the two bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readShort</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next two bytes of this stream, interpreted as a signed
-             16-bit number.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               two bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readShortLE()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readShortLE</h4>
-<pre>public final&nbsp;short&nbsp;readShortLE()
-                        throws java.io.IOException</pre>
-<div class="block">Reads a signed 16-bit number from this stream in little-endian order.
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readShort</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next two bytes of this stream, interpreted as a signed
+             16-bit number.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               two bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readShortLE()"><!-- --></A><H3>
+readShortLE</H3>
+<PRE>
+public final short <B>readShortLE</B>()
+                        throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a signed 16-bit number from this stream in little-endian order.
  The method reads two 
  bytes from this stream, starting at the current stream pointer. 
  If the two bytes read, in order, are 
@@ -917,24 +1029,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the two bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next two bytes of this stream, interpreted as a signed
-             16-bit number.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               two bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readUnsignedShort()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readUnsignedShort</h4>
-<pre>public final&nbsp;int&nbsp;readUnsignedShort()
-                            throws java.io.IOException</pre>
-<div class="block">Reads an unsigned 16-bit number from this stream. This method reads 
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next two bytes of this stream, interpreted as a signed
+             16-bit number.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               two bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUnsignedShort()"><!-- --></A><H3>
+readUnsignedShort</H3>
+<PRE>
+public final int <B>readUnsignedShort</B>()
+                            throws java.io.IOException</PRE>
+<DL>
+<DD>Reads an unsigned 16-bit number from this stream. This method reads 
  two bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are 
  <code>b1</code> and <code>b2</code>, where 
@@ -945,27 +1063,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the two bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readUnsignedShort</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next two bytes of this stream, interpreted as an
-             unsigned 16-bit integer.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-             two bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readUnsignedShortLE()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readUnsignedShortLE</h4>
-<pre>public final&nbsp;int&nbsp;readUnsignedShortLE()
-                              throws java.io.IOException</pre>
-<div class="block">Reads an unsigned 16-bit number from this stream in little-endian order.
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readUnsignedShort</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next two bytes of this stream, interpreted as an
+             unsigned 16-bit integer.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+             two bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUnsignedShortLE()"><!-- --></A><H3>
+readUnsignedShortLE</H3>
+<PRE>
+public final int <B>readUnsignedShortLE</B>()
+                              throws java.io.IOException</PRE>
+<DL>
+<DD>Reads an unsigned 16-bit number from this stream in little-endian order.
  This method reads 
  two bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are 
@@ -977,24 +1098,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the two bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next two bytes of this stream, interpreted as an
-             unsigned 16-bit integer.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               two bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readChar()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readChar</h4>
-<pre>public final&nbsp;char&nbsp;readChar()
-                    throws java.io.IOException</pre>
-<div class="block">Reads a Unicode character from this stream. This method reads two
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next two bytes of this stream, interpreted as an
+             unsigned 16-bit integer.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               two bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readChar()"><!-- --></A><H3>
+readChar</H3>
+<PRE>
+public final char <B>readChar</B>()
+                    throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a Unicode character from this stream. This method reads two
  bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are 
  <code>b1</code> and <code>b2</code>, where 
@@ -1005,26 +1132,29 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the two bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readChar</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next two bytes of this stream as a Unicode character.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               two bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readCharLE()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readCharLE</h4>
-<pre>public final&nbsp;char&nbsp;readCharLE()
-                      throws java.io.IOException</pre>
-<div class="block">Reads a Unicode character from this stream in little-endian order.
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readChar</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next two bytes of this stream as a Unicode character.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               two bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readCharLE()"><!-- --></A><H3>
+readCharLE</H3>
+<PRE>
+public final char <B>readCharLE</B>()
+                      throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a Unicode character from this stream in little-endian order.
  This method reads two
  bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are 
@@ -1036,23 +1166,29 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the two bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next two bytes of this stream as a Unicode character.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               two bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readInt()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readInt</h4>
-<pre>public final&nbsp;int&nbsp;readInt()
-                  throws java.io.IOException</pre>
-<div class="block">Reads a signed 32-bit integer from this stream. This method reads 4 
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next two bytes of this stream as a Unicode character.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               two bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readInt()"><!-- --></A><H3>
+readInt</H3>
+<PRE>
+public final int <B>readInt</B>()
+                  throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a signed 32-bit integer from this stream. This method reads 4 
  bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are <code>b1</code>,
  <code>b2</code>, <code>b3</code>, and <code>b4</code>, where 
@@ -1063,27 +1199,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the four bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readInt</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next four bytes of this stream, interpreted as an
-             <code>int</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               four bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readIntLE()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readIntLE</h4>
-<pre>public final&nbsp;int&nbsp;readIntLE()
-                    throws java.io.IOException</pre>
-<div class="block">Reads a signed 32-bit integer from this stream in little-endian order.
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readInt</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next four bytes of this stream, interpreted as an
+             <code>int</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               four bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readIntLE()"><!-- --></A><H3>
+readIntLE</H3>
+<PRE>
+public final int <B>readIntLE</B>()
+                    throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a signed 32-bit integer from this stream in little-endian order.
  This method reads 4 
  bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are <code>b1</code>,
@@ -1095,24 +1234,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the four bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next four bytes of this stream, interpreted as an
-             <code>int</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               four bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readUnsignedInt()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readUnsignedInt</h4>
-<pre>public final&nbsp;long&nbsp;readUnsignedInt()
-                           throws java.io.IOException</pre>
-<div class="block">Reads an unsigned 32-bit integer from this stream. This method reads 4 
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next four bytes of this stream, interpreted as an
+             <code>int</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               four bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUnsignedInt()"><!-- --></A><H3>
+readUnsignedInt</H3>
+<PRE>
+public final long <B>readUnsignedInt</B>()
+                           throws java.io.IOException</PRE>
+<DL>
+<DD>Reads an unsigned 32-bit integer from this stream. This method reads 4 
  bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are <code>b1</code>,
  <code>b2</code>, <code>b3</code>, and <code>b4</code>, where 
@@ -1123,24 +1268,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the four bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next four bytes of this stream, interpreted as a
-             <code>long</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               four bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readUnsignedIntLE()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readUnsignedIntLE</h4>
-<pre>public final&nbsp;long&nbsp;readUnsignedIntLE()
-                             throws java.io.IOException</pre>
-<div class="block">Reads an unsigned 32-bit integer from this stream in little-endian
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next four bytes of this stream, interpreted as a
+             <code>long</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               four bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUnsignedIntLE()"><!-- --></A><H3>
+readUnsignedIntLE</H3>
+<PRE>
+public final long <B>readUnsignedIntLE</B>()
+                             throws java.io.IOException</PRE>
+<DL>
+<DD>Reads an unsigned 32-bit integer from this stream in little-endian
  order.  This method reads 4 
  bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are <code>b1</code>,
@@ -1152,24 +1303,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the four bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next four bytes of this stream, interpreted as a
-             <code>long</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               four bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readLong()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readLong</h4>
-<pre>public final&nbsp;long&nbsp;readLong()
-                    throws java.io.IOException</pre>
-<div class="block">Reads a signed 64-bit integer from this stream. This method reads eight
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next four bytes of this stream, interpreted as a
+             <code>long</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               four bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readLong()"><!-- --></A><H3>
+readLong</H3>
+<PRE>
+public final long <B>readLong</B>()
+                    throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a signed 64-bit integer from this stream. This method reads eight
  bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are 
  <code>b1</code>, <code>b2</code>, <code>b3</code>, 
@@ -1188,27 +1345,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the eight bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readLong</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next eight bytes of this stream, interpreted as a
-             <code>long</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               eight bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readLongLE()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readLongLE</h4>
-<pre>public final&nbsp;long&nbsp;readLongLE()
-                      throws java.io.IOException</pre>
-<div class="block">Reads a signed 64-bit integer from this stream in little-endian
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readLong</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next eight bytes of this stream, interpreted as a
+             <code>long</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               eight bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readLongLE()"><!-- --></A><H3>
+readLongLE</H3>
+<PRE>
+public final long <B>readLongLE</B>()
+                      throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a signed 64-bit integer from this stream in little-endian
  order. This method reads eight
  bytes from the stream, starting at the current stream pointer. 
  If the bytes read, in order, are 
@@ -1228,24 +1388,30 @@ implements java.io.DataInput</pre>
  </pre></blockquote>
  <p>
  This method blocks until the eight bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next eight bytes of this stream, interpreted as a
-             <code>long</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-               eight bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readFloat()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readFloat</h4>
-<pre>public final&nbsp;float&nbsp;readFloat()
-                      throws java.io.IOException</pre>
-<div class="block">Reads a <code>float</code> from this stream. This method reads an 
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next eight bytes of this stream, interpreted as a
+             <code>long</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+               eight bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFloat()"><!-- --></A><H3>
+readFloat</H3>
+<PRE>
+public final float <B>readFloat</B>()
+                      throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a <code>float</code> from this stream. This method reads an 
  <code>int</code> value, starting at the current stream pointer, 
  as if by the <code>readInt</code> method 
  and then converts that <code>int</code> to a <code>float</code> 
@@ -1253,27 +1419,30 @@ implements java.io.DataInput</pre>
  <code>Float</code>. 
  <p>
  This method blocks until the four bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readFloat</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next four bytes of this stream, interpreted as a
-             <code>float</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-             four bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readFloatLE()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readFloatLE</h4>
-<pre>public final&nbsp;float&nbsp;readFloatLE()
-                        throws java.io.IOException</pre>
-<div class="block">Reads a <code>float</code> from this stream in little-endian order.
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readFloat</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next four bytes of this stream, interpreted as a
+             <code>float</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+             four bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFloatLE()"><!-- --></A><H3>
+readFloatLE</H3>
+<PRE>
+public final float <B>readFloatLE</B>()
+                        throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a <code>float</code> from this stream in little-endian order.
  This method reads an 
  <code>int</code> value, starting at the current stream pointer, 
  as if by the <code>readInt</code> method 
@@ -1282,24 +1451,30 @@ implements java.io.DataInput</pre>
  <code>Float</code>. 
  <p>
  This method blocks until the four bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next four bytes of this stream, interpreted as a
-             <code>float</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-             four bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readDouble()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readDouble</h4>
-<pre>public final&nbsp;double&nbsp;readDouble()
-                        throws java.io.IOException</pre>
-<div class="block">Reads a <code>double</code> from this stream. This method reads a 
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next four bytes of this stream, interpreted as a
+             <code>float</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+             four bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readDouble()"><!-- --></A><H3>
+readDouble</H3>
+<PRE>
+public final double <B>readDouble</B>()
+                        throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a <code>double</code> from this stream. This method reads a 
  <code>long</code> value, starting at the current stream pointer, 
  as if by the <code>readLong</code> method 
  and then converts that <code>long</code> to a <code>double</code> 
@@ -1307,27 +1482,30 @@ implements java.io.DataInput</pre>
  class <code>Double</code>.
  <p>
  This method blocks until the eight bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readDouble</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next eight bytes of this stream, interpreted as a
-             <code>double</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-             eight bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readDoubleLE()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readDoubleLE</h4>
-<pre>public final&nbsp;double&nbsp;readDoubleLE()
-                          throws java.io.IOException</pre>
-<div class="block">Reads a <code>double</code> from this stream in little-endian order.
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readDouble</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next eight bytes of this stream, interpreted as a
+             <code>double</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+             eight bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readDoubleLE()"><!-- --></A><H3>
+readDoubleLE</H3>
+<PRE>
+public final double <B>readDoubleLE</B>()
+                          throws java.io.IOException</PRE>
+<DL>
+<DD>Reads a <code>double</code> from this stream in little-endian order.
  This method reads a 
  <code>long</code> value, starting at the current stream pointer, 
  as if by the <code>readLong</code> method 
@@ -1336,24 +1514,30 @@ implements java.io.DataInput</pre>
  class <code>Double</code>.
  <p>
  This method blocks until the eight bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the next eight bytes of this stream, interpreted as a
-             <code>double</code>.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before reading
-             eight bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readLine()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readLine</h4>
-<pre>public final&nbsp;java.lang.String&nbsp;readLine()
-                                throws java.io.IOException</pre>
-<div class="block">Reads the next line of text from this stream.  This method successively
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next eight bytes of this stream, interpreted as a
+             <code>double</code>.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before reading
+             eight bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readLine()"><!-- --></A><H3>
+readLine</H3>
+<PRE>
+public final java.lang.String <B>readLine</B>()
+                                throws java.io.IOException</PRE>
+<DL>
+<DD>Reads the next line of text from this stream.  This method successively
  reads bytes from the stream, starting at the current stream pointer, 
  until it reaches a line terminator or the end
  of the stream.  Each byte is converted into a character by taking the
@@ -1369,25 +1553,28 @@ implements java.io.DataInput</pre>
 
  <p> This method blocks until a newline character is read, a carriage
  return and the byte following it are read (to see if it is a newline),
- the end of the stream is reached, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readLine</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>the next line of text from this stream, or null if end
-             of stream is encountered before even one byte is read.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd></dl>
-</li>
-</ul>
-<a name="readUTF()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>readUTF</h4>
-<pre>public final&nbsp;java.lang.String&nbsp;readUTF()
-                               throws java.io.IOException</pre>
-<div class="block">Reads in a string from this stream. The string has been encoded 
+ the end of the stream is reached, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readLine</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the next line of text from this stream, or null if end
+             of stream is encountered before even one byte is read.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUTF()"><!-- --></A><H3>
+readUTF</H3>
+<PRE>
+public final java.lang.String <B>readUTF</B>()
+                               throws java.io.IOException</PRE>
+<DL>
+<DD>Reads in a string from this stream. The string has been encoded 
  using a modified UTF-8 format. 
  <p>
  The first two bytes are read, starting from the current stream
@@ -1399,101 +1586,102 @@ implements java.io.DataInput</pre>
  and are converted into characters. 
  <p>
  This method blocks until all the bytes are read, the end of the 
- stream is detected, or an exception is thrown.</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>readUTF</code>&nbsp;in interface&nbsp;<code>java.io.DataInput</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd>a Unicode string.</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.EOFException</code> - if this stream reaches the end before
-               reading all the bytes.</dd>
-<dd><code>java.io.IOException</code> - if an I/O error occurs.</dd>
-<dd><code>java.io.UTFDataFormatException</code> - if the bytes do not represent 
-               valid UTF-8 encoding of a Unicode string.</dd></dl>
-</li>
-</ul>
-<a name="finalize()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>finalize</h4>
-<pre>protected&nbsp;void&nbsp;finalize()
-                 throws java.lang.Throwable</pre>
-<div class="block">Releases any system resources associated with this stream
- by calling the <code>close()</code> method.</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code>finalize</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.lang.Throwable</code></dd></dl>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+ stream is detected, or an exception is thrown.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>readUTF</CODE> in interface <CODE>java.io.DataInput</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a Unicode string.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.EOFException</CODE> - if this stream reaches the end before
+               reading all the bytes.
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs.
+<DD><CODE>java.io.UTFDataFormatException</CODE> - if the bytes do not represent 
+               valid UTF-8 encoding of a Unicode string.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="finalize()"><!-- --></A><H3>
+finalize</H3>
+<PRE>
+protected void <B>finalize</B>()
+                 throws java.lang.Throwable</PRE>
+<DL>
+<DD>Releases any system resources associated with this stream
+ by calling the <code>close()</code> method.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>finalize</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.Throwable</CODE></DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
-<div class="bottomNav"><a name="navbar_bottom">
-<!--   -->
-</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
-<!--   -->
-</a>
-<ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
-<li><a href="package-summary.html">Package</a></li>
-<li class="navBarCell1Rev">Class</li>
-<li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../index-all.html">Index</a></li>
-<li><a href="../../../help-doc.html">Help</a></li>
-</ul>
-</div>
-<div class="subNav">
-<ul class="navList">
-<li><a href="../../../com/icafe4j/io/ReadStrategyMM.html" title="class in com.icafe4j.io"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../com/icafe4j/io/WriteStrategy.html" title="interface in com.icafe4j.io"><span class="strong">Next Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../../index.html?com/icafe4j/io/SeekableStream.html" target="_top">Frames</a></li>
-<li><a href="SeekableStream.html" target="_top">No Frames</a></li>
-</ul>
-<ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
-</ul>
-<div>
-<script type="text/javascript"><!--
-  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/icafe4j/io/ReadStrategyMM.html" title="class in com.icafe4j.io"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/icafe4j/io/WriteStrategy.html" title="interface in com.icafe4j.io"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/icafe4j/io/SeekableStream.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SeekableStream.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
   if(window==top) {
-    allClassesLink.style.display = "block";
-  }
-  else {
-    allClassesLink.style.display = "none";
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
-</script>
-</div>
-<div>
-<ul class="subNavList">
-<li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
-</ul>
-<ul class="subNavList">
-<li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
-</ul>
-</div>
-<a name="skip-navbar_bottom">
-<!--   -->
-</a></div>
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-</body>
-</html>
+
+<HR>
+
+</BODY>
+</HTML>

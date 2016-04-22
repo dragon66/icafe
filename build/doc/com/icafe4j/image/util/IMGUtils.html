@@ -1,651 +1,817 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<!-- NewPage -->
-<html lang="en">
-<head>
-<title>IMGUtils</title>
-<link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
-</head>
-<body>
-<script type="text/javascript"><!--
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+IMGUtils
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
     if (location.href.indexOf('is-external=true') == -1) {
         parent.document.title="IMGUtils";
     }
-//-->
-</script>
-<noscript>
-<div>JavaScript is disabled on your browser.</div>
-</noscript>
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
 <!-- ========= START OF TOP NAVBAR ======= -->
-<div class="topNav"><a name="navbar_top">
-<!--   -->
-</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
-<!--   -->
-</a>
-<ul class="navList" title="Navigation">
-<li><a href="../../../../overview-summary.html">Overview</a></li>
-<li><a href="package-summary.html">Package</a></li>
-<li class="navBarCell1Rev">Class</li>
-<li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../../index-all.html">Index</a></li>
-<li><a href="../../../../help-doc.html">Help</a></li>
-</ul>
-</div>
-<div class="subNav">
-<ul class="navList">
-<li><a href="../../../../com/icafe4j/image/util/DCT.html" title="class in com.icafe4j.image.util"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../com/icafe4j/image/util/InverseColorMap.html" title="class in com.icafe4j.image.util"><span class="strong">Next Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../../../index.html?com/icafe4j/image/util/IMGUtils.html" target="_top">Frames</a></li>
-<li><a href="IMGUtils.html" target="_top">No Frames</a></li>
-</ul>
-<ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
-</ul>
-<div>
-<script type="text/javascript"><!--
-  allClassesLink = document.getElementById("allclasses_navbar_top");
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../com/icafe4j/image/util/DCT.html" title="class in com.icafe4j.image.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../com/icafe4j/image/util/InverseColorMap.html" title="class in com.icafe4j.image.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?com/icafe4j/image/util/IMGUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="IMGUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
   if(window==top) {
-    allClassesLink.style.display = "block";
-  }
-  else {
-    allClassesLink.style.display = "none";
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
-</script>
-</div>
-<div>
-<ul class="subNavList">
-<li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
-</ul>
-<ul class="subNavList">
-<li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
-</ul>
-</div>
-<a name="skip-navbar_top">
-<!--   -->
-</a></div>
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
 <!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
 <!-- ======== START OF CLASS DATA ======== -->
-<div class="header">
-<div class="subTitle">com.icafe4j.image.util</div>
-<h2 title="Class IMGUtils" class="title">Class IMGUtils</h2>
-</div>
-<div class="contentContainer">
-<ul class="inheritance">
-<li>java.lang.Object</li>
-<li>
-<ul class="inheritance">
-<li>com.icafe4j.image.util.IMGUtils</li>
-</ul>
-</li>
-</ul>
-<div class="description">
-<ul class="blockList">
-<li class="blockList">
-<hr>
-<br>
-<pre>public class <span class="strong">IMGUtils</span>
-extends java.lang.Object</pre>
-<div class="block">This utility class contains static methods 
+<H2>
+<FONT SIZE="-1">
+com.icafe4j.image.util</FONT>
+<BR>
+Class IMGUtils</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>com.icafe4j.image.util.IMGUtils</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>IMGUtils</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+This utility class contains static methods 
  to help with image manipulation and IO. 
  <p>
- Changed checkColorDepth method to remove potential problems with alpha.</div>
-<dl><dt><span class="strong">Version:</span></dt>
-  <dd>1.1.2 04/02/2012</dd>
-<dt><span class="strong">Author:</span></dt>
-  <dd>Wen Yu, yuwen_66@yahoo.com</dd></dl>
-</li>
-</ul>
-</div>
-<div class="summary">
-<ul class="blockList">
-<li class="blockList">
+ Changed checkColorDepth method to remove potential problems with alpha.
+<P>
+
+<P>
+<DL>
+<DT><B>Version:</B></DT>
+  <DD>1.1.2 04/02/2012</DD>
+<DT><B>Author:</B></DT>
+  <DD>Wen Yu, yuwen_66@yahoo.com</DD>
+</DL>
+<HR>
+
+<P>
+
 <!-- ========== METHOD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method_summary">
-<!--   -->
-</a>
-<h3>Method Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#checkColorDepth(int[],%20byte[],%20int[])">checkColorDepth</a></strong>(int[]&nbsp;rgbTriplets,
-               byte[]&nbsp;newPixels,
-               int[]&nbsp;colorPalette)</code>
-<div class="block">Check the color depth of the image and if the color depth is within 8 bits, (i.e.,
- a indexed color image), a color map and an index array for the image are also created.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#correctGamma(int[],%20byte[])">correctGamma</a></strong>(int[]&nbsp;rgbColorPalette,
-            byte[]&nbsp;gammaTable)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#createGammaTable(float,%20float)">createGammaTable</a></strong>(float&nbsp;gamma,
-                float&nbsp;displayExponent)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.awt.image.BufferedImage</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#createThumbnail(java.io.InputStream)">createThumbnail</a></strong>(java.io.InputStream&nbsp;is)</code>
-<div class="block">Creates a thumbnail from image input stream</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#createThumbnail8BIM(java.awt.image.BufferedImage)">createThumbnail8BIM</a></strong>(java.awt.image.BufferedImage&nbsp;thumbnail)</code>
-<div class="block">Wraps a BufferedImage inside a Photoshop _8BIM</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#dither_Bayer(byte[],%20byte[],%20int,%20int,%20int[][])">dither_Bayer</a></strong>(byte[]&nbsp;gray,
-            byte[]&nbsp;mask,
-            int&nbsp;width,
-            int&nbsp;height,
-            int[][]&nbsp;threshold)</code>
-<div class="block">Dither gray-scale image using Bayer threshold matrix</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#dither_Bayer(int[],%20int,%20int,%20byte[],%20int,%20int[],%20int,%20int[][])">dither_Bayer</a></strong>(int[]&nbsp;rgbTriplet,
-            int&nbsp;width,
-            int&nbsp;height,
-            byte[]&nbsp;newPixels,
-            int&nbsp;no_of_color,
-            int[]&nbsp;colorPalette,
-            int&nbsp;transparent_index,
-            int[][]&nbsp;threshold)</code>
-<div class="block">Dither color image using Bayer threshold matrix.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#dither_FloydSteinberg(byte[],%20byte[],%20int,%20int,%20int)">dither_FloydSteinberg</a></strong>(byte[]&nbsp;gray,
-                     byte[]&nbsp;mask,
-                     int&nbsp;width,
-                     int&nbsp;height,
-                     int&nbsp;threshold)</code>
-<div class="block">Dither gray-scale image using Floyd-Steinberg error diffusion</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#dither_FloydSteinberg(int[],%20int,%20int,%20byte[],%20int,%20int[],%20int)">dither_FloydSteinberg</a></strong>(int[]&nbsp;rgbTriplet,
-                     int&nbsp;width,
-                     int&nbsp;height,
-                     byte[]&nbsp;newPixels,
-                     int&nbsp;no_of_color,
-                     int[]&nbsp;colorPalette,
-                     int&nbsp;transparent_index)</code>
-<div class="block">Floyd-Steinberg dithering, based on PPMQuant.c by Jef Poskanzer <jef@acme.com>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#easyRGB2CMYK(int[],%20boolean)">easyRGB2CMYK</a></strong>(int[]&nbsp;rgb,
-            boolean&nbsp;hasAlpha)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.awt.image.BufferedImage</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#filterImage(java.awt.image.BufferedImageOp,%20java.awt.image.BufferedImage,%20java.awt.image.BufferedImage)">filterImage</a></strong>(java.awt.image.BufferedImageOp&nbsp;bufferedImageOp,
-           java.awt.image.BufferedImage&nbsp;srcImg,
-           java.awt.image.BufferedImage&nbsp;dstImg)</code>
-<div class="block">Entry point for image filtering operation.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#getBitDepth(byte[],%20boolean)">getBitDepth</a></strong>(byte[]&nbsp;input,
-           boolean&nbsp;hasAlpha)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.awt.color.ICC_ColorSpace</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#getICCColorSpace(java.lang.String)">getICCColorSpace</a></strong>(java.lang.String&nbsp;pathToICCProfile)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.awt.color.ICC_Profile</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#getICCProfile(java.lang.String)">getICCProfile</a></strong>(java.lang.String&nbsp;pathToICCProfile)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#getRGB(java.awt.image.BufferedImage)">getRGB</a></strong>(java.awt.image.BufferedImage&nbsp;image)</code>
-<div class="block">Retrieves RGB values from Raster.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#getRGB2(java.awt.image.BufferedImage)">getRGB2</a></strong>(java.awt.image.BufferedImage&nbsp;image)</code>
-<div class="block">Retrieves RGB values from DataBuffer.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.awt.image.BufferedImage</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#getScaledInstance(java.awt.image.BufferedImage,%20int,%20int,%20java.lang.Object,%20boolean)">getScaledInstance</a></strong>(java.awt.image.BufferedImage&nbsp;img,
-                 int&nbsp;targetWidth,
-                 int&nbsp;targetHeight,
-                 java.lang.Object&nbsp;hint,
-                 boolean&nbsp;higherQuality)</code>
-<div class="block">Convenience method that returns a scaled instance of the
- provided <code>BufferedImage</code>.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#guessImageType(byte[])">guessImageType</a></strong>(byte[]&nbsp;magicNumber)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#guessImageType(com.icafe4j.io.PeekHeadInputStream)">guessImageType</a></strong>(<a href="../../../../com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a>&nbsp;is)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#guessImageType(com.icafe4j.io.RandomAccessInputStream)">guessImageType</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;is)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.awt.image.WritableRaster</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#iccp2rgbRaster(java.awt.image.WritableRaster,%20java.awt.image.ColorModel)">iccp2rgbRaster</a></strong>(java.awt.image.WritableRaster&nbsp;raster,
-              java.awt.image.ColorModel&nbsp;cm)</code>
-<div class="block">Convert ICC_ColorSpace raster to RGB raster w/o alpha</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#invertBits(byte[])">invertBits</a></strong>(byte[]&nbsp;input)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColors(com.icafe4j.image.quant.QuantMethod,%20int[],%20int,%20byte[],%20int[])">reduceColors</a></strong>(<a href="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</a>&nbsp;quantMethod,
-            int[]&nbsp;rgbTriplets,
-            int&nbsp;colorDepth,
-            byte[]&nbsp;newPixels,
-            int[]&nbsp;colorPalette)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColorsDiffusionDither(int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither</a></strong>(int[]&nbsp;rgbTriplets,
-                           int&nbsp;width,
-                           int&nbsp;height,
-                           int&nbsp;colorDepth,
-                           byte[]&nbsp;newPixels,
-                           int[]&nbsp;colorPalette)</code>
-<div class="block">Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
- followed by Floyd-Steinberg error diffusion dithering.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColorsDiffusionDither(com.icafe4j.image.quant.QuantMethod,%20int[],%20int,%20int,%20int,%20byte[],%20int[])">reduceColorsDiffusionDither</a></strong>(<a href="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</a>&nbsp;quantMethod,
-                           int[]&nbsp;rgbTriplets,
-                           int&nbsp;width,
-                           int&nbsp;height,
-                           int&nbsp;colorDepth,
-                           byte[]&nbsp;newPixels,
-                           int[]&nbsp;colorPalette)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColorsOrderedDither(int[],%20int,%20int,%20int,%20byte[],%20int[],%20int[][])">reduceColorsOrderedDither</a></strong>(int[]&nbsp;rgbTriplet,
-                         int&nbsp;width,
-                         int&nbsp;height,
-                         int&nbsp;colorDepth,
-                         byte[]&nbsp;newPixels,
-                         int[]&nbsp;colorPalette,
-                         int[][]&nbsp;threshold)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColorsOrderedDither(com.icafe4j.image.quant.QuantMethod,%20int[],%20int,%20int,%20int,%20byte[],%20int[],%20int[][])">reduceColorsOrderedDither</a></strong>(<a href="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</a>&nbsp;quantMethod,
-                         int[]&nbsp;rgbTriplets,
-                         int&nbsp;width,
-                         int&nbsp;height,
-                         int&nbsp;colorDepth,
-                         byte[]&nbsp;newPixels,
-                         int[]&nbsp;colorPalette,
-                         int[][]&nbsp;threshold)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2bilevel(int[])">rgb2bilevel</a></strong>(int[]&nbsp;rgb)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2bilevelDiffusionDither(int[],%20int,%20int)">rgb2bilevelDiffusionDither</a></strong>(int[]&nbsp;rgb,
-                          int&nbsp;imageWidth,
-                          int&nbsp;imageHeight)</code>
-<div class="block">RGB to bilevel image conversion with Floyd-Steinberg dither</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2bilevelOrderedDither(int[],%20int,%20int,%20int[][])">rgb2bilevelOrderedDither</a></strong>(int[]&nbsp;rgb,
-                        int&nbsp;imageWidth,
-                        int&nbsp;imageHeight,
-                        int[][]&nbsp;threshold)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2CMYK_Inverted(java.awt.color.ICC_ColorSpace,%20int[],%20float[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2CMYK_Inverted</a></strong>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
-                 int[]&nbsp;rgb,
-                 float[][]&nbsp;C,
-                 float[][]&nbsp;M,
-                 float[][]&nbsp;Y,
-                 float[][]&nbsp;K,
-                 int&nbsp;imageWidth,
-                 int&nbsp;imageHeight)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2CMYK(java.awt.color.ICC_ColorSpace,%20int[],%20float[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2CMYK</a></strong>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
-        int[]&nbsp;rgb,
-        float[][]&nbsp;C,
-        float[][]&nbsp;M,
-        float[][]&nbsp;Y,
-        float[][]&nbsp;K,
-        int&nbsp;imageWidth,
-        int&nbsp;imageHeight)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2CMYK(java.awt.color.ICC_ColorSpace,%20int[],%20int,%20int,%20boolean)">RGB2CMYK</a></strong>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
-        int[]&nbsp;rgb,
-        int&nbsp;imageWidth,
-        int&nbsp;imageHeight,
-        boolean&nbsp;hasAlpha)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2grayscale(int[])">rgb2grayscale</a></strong>(int[]&nbsp;rgb)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static float[][]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2grayscale(int[],%20int,%20int)">rgb2grayscale</a></strong>(int[]&nbsp;rgb,
-             int&nbsp;imageWidth,
-             int&nbsp;imageHeight)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2grayscaleA(int[])">rgb2grayscaleA</a></strong>(int[]&nbsp;rgb)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCbCr(int[])">RGB2YCbCr</a></strong>(int[]&nbsp;rgb)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCbCr(int[][],%20int[][],%20int[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2YCbCr</a></strong>(int[][]&nbsp;red,
-         int[][]&nbsp;green,
-         int[][]&nbsp;blue,
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#checkColorDepth(int[], byte[], int[])">checkColorDepth</A></B>(int[]&nbsp;rgbTriplets,
+                byte[]&nbsp;newPixels,
+                int[]&nbsp;colorPalette)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check the color depth of the image and if the color depth is within 8 bits, (i.e.,
+ a indexed color image), a color map and an index array for the image are also created.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#correctGamma(int[], byte[])">correctGamma</A></B>(int[]&nbsp;rgbColorPalette,
+             byte[]&nbsp;gammaTable)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#createGammaTable(float, float)">createGammaTable</A></B>(float&nbsp;gamma,
+                 float&nbsp;displayExponent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.image.BufferedImage</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#createThumbnail(java.io.InputStream)">createThumbnail</A></B>(java.io.InputStream&nbsp;is)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a thumbnail from image input stream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#createThumbnail8BIM(java.awt.image.BufferedImage)">createThumbnail8BIM</A></B>(java.awt.image.BufferedImage&nbsp;thumbnail)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wraps a BufferedImage inside a Photoshop _8BIM</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#dither_Bayer(byte[], byte[], int, int, int[][])">dither_Bayer</A></B>(byte[]&nbsp;gray,
+             byte[]&nbsp;mask,
+             int&nbsp;width,
+             int&nbsp;height,
+             int[][]&nbsp;threshold)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dither gray-scale image using Bayer threshold matrix</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#dither_Bayer(int[], int, int, byte[], int, int[], int, int[][])">dither_Bayer</A></B>(int[]&nbsp;rgbTriplet,
+             int&nbsp;width,
+             int&nbsp;height,
+             byte[]&nbsp;newPixels,
+             int&nbsp;no_of_color,
+             int[]&nbsp;colorPalette,
+             int&nbsp;transparent_index,
+             int[][]&nbsp;threshold)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dither color image using Bayer threshold matrix.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#dither_FloydSteinberg(byte[], byte[], int, int, int)">dither_FloydSteinberg</A></B>(byte[]&nbsp;gray,
+                      byte[]&nbsp;mask,
+                      int&nbsp;width,
+                      int&nbsp;height,
+                      int&nbsp;threshold)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dither gray-scale image using Floyd-Steinberg error diffusion</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#dither_FloydSteinberg(int[], int, int, byte[], int, int[], int)">dither_FloydSteinberg</A></B>(int[]&nbsp;rgbTriplet,
+                      int&nbsp;width,
+                      int&nbsp;height,
+                      byte[]&nbsp;newPixels,
+                      int&nbsp;no_of_color,
+                      int[]&nbsp;colorPalette,
+                      int&nbsp;transparent_index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Floyd-Steinberg dithering, based on PPMQuant.c by Jef Poskanzer <jef@acme.com>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#easyRGB2CMYK(int[], boolean)">easyRGB2CMYK</A></B>(int[]&nbsp;rgb,
+             boolean&nbsp;hasAlpha)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.image.BufferedImage</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#filterImage(java.awt.image.BufferedImageOp, java.awt.image.BufferedImage, java.awt.image.BufferedImage)">filterImage</A></B>(java.awt.image.BufferedImageOp&nbsp;bufferedImageOp,
+            java.awt.image.BufferedImage&nbsp;srcImg,
+            java.awt.image.BufferedImage&nbsp;dstImg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Entry point for image filtering operation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#getBitDepth(byte[], boolean)">getBitDepth</A></B>(byte[]&nbsp;input,
+            boolean&nbsp;hasAlpha)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.color.ICC_ColorSpace</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#getICCColorSpace(java.lang.String)">getICCColorSpace</A></B>(java.lang.String&nbsp;pathToICCProfile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.color.ICC_Profile</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#getICCProfile(java.lang.String)">getICCProfile</A></B>(java.lang.String&nbsp;pathToICCProfile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#getRGB(java.awt.image.BufferedImage)">getRGB</A></B>(java.awt.image.BufferedImage&nbsp;image)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves RGB values from Raster.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#getRGB2(java.awt.image.BufferedImage)">getRGB2</A></B>(java.awt.image.BufferedImage&nbsp;image)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves RGB values from DataBuffer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.image.BufferedImage</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#getScaledInstance(java.awt.image.BufferedImage, int, int, java.lang.Object, boolean)">getScaledInstance</A></B>(java.awt.image.BufferedImage&nbsp;img,
+                  int&nbsp;targetWidth,
+                  int&nbsp;targetHeight,
+                  java.lang.Object&nbsp;hint,
+                  boolean&nbsp;higherQuality)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method that returns a scaled instance of the
+ provided <code>BufferedImage</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#guessImageType(byte[])">guessImageType</A></B>(byte[]&nbsp;magicNumber)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#guessImageType(com.icafe4j.io.PeekHeadInputStream)">guessImageType</A></B>(<A HREF="../../../../com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</A>&nbsp;is)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#guessImageType(com.icafe4j.io.RandomAccessInputStream)">guessImageType</A></B>(<A HREF="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</A>&nbsp;is)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.awt.image.WritableRaster</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#iccp2rgbRaster(java.awt.image.WritableRaster, java.awt.image.ColorModel)">iccp2rgbRaster</A></B>(java.awt.image.WritableRaster&nbsp;raster,
+               java.awt.image.ColorModel&nbsp;cm)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert ICC_ColorSpace raster to RGB raster w/o alpha</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#invertBits(byte[])">invertBits</A></B>(byte[]&nbsp;input)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColors(com.icafe4j.image.quant.QuantMethod, int[], int, byte[], int[])">reduceColors</A></B>(<A HREF="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</A>&nbsp;quantMethod,
+             int[]&nbsp;rgbTriplets,
+             int&nbsp;colorDepth,
+             byte[]&nbsp;newPixels,
+             int[]&nbsp;colorPalette)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColorsDiffusionDither(int[], int, int, int, byte[], int[])">reduceColorsDiffusionDither</A></B>(int[]&nbsp;rgbTriplets,
+                            int&nbsp;width,
+                            int&nbsp;height,
+                            int&nbsp;colorDepth,
+                            byte[]&nbsp;newPixels,
+                            int[]&nbsp;colorPalette)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
+ followed by Floyd-Steinberg error diffusion dithering.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColorsDiffusionDither(com.icafe4j.image.quant.QuantMethod, int[], int, int, int, byte[], int[])">reduceColorsDiffusionDither</A></B>(<A HREF="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</A>&nbsp;quantMethod,
+                            int[]&nbsp;rgbTriplets,
+                            int&nbsp;width,
+                            int&nbsp;height,
+                            int&nbsp;colorDepth,
+                            byte[]&nbsp;newPixels,
+                            int[]&nbsp;colorPalette)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColorsOrderedDither(int[], int, int, int, byte[], int[], int[][])">reduceColorsOrderedDither</A></B>(int[]&nbsp;rgbTriplet,
+                          int&nbsp;width,
+                          int&nbsp;height,
+                          int&nbsp;colorDepth,
+                          byte[]&nbsp;newPixels,
+                          int[]&nbsp;colorPalette,
+                          int[][]&nbsp;threshold)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#reduceColorsOrderedDither(com.icafe4j.image.quant.QuantMethod, int[], int, int, int, byte[], int[], int[][])">reduceColorsOrderedDither</A></B>(<A HREF="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</A>&nbsp;quantMethod,
+                          int[]&nbsp;rgbTriplets,
+                          int&nbsp;width,
+                          int&nbsp;height,
+                          int&nbsp;colorDepth,
+                          byte[]&nbsp;newPixels,
+                          int[]&nbsp;colorPalette,
+                          int[][]&nbsp;threshold)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2bilevel(int[])">rgb2bilevel</A></B>(int[]&nbsp;rgb)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2bilevelDiffusionDither(int[], int, int)">rgb2bilevelDiffusionDither</A></B>(int[]&nbsp;rgb,
+                           int&nbsp;imageWidth,
+                           int&nbsp;imageHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RGB to bilevel image conversion with Floyd-Steinberg dither</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2bilevelOrderedDither(int[], int, int, int[][])">rgb2bilevelOrderedDither</A></B>(int[]&nbsp;rgb,
+                         int&nbsp;imageWidth,
+                         int&nbsp;imageHeight,
+                         int[][]&nbsp;threshold)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2CMYK_Inverted(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)">RGB2CMYK_Inverted</A></B>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
+                  int[]&nbsp;rgb,
+                  float[][]&nbsp;C,
+                  float[][]&nbsp;M,
+                  float[][]&nbsp;Y,
+                  float[][]&nbsp;K,
+                  int&nbsp;imageWidth,
+                  int&nbsp;imageHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2CMYK(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)">RGB2CMYK</A></B>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
+         int[]&nbsp;rgb,
+         float[][]&nbsp;C,
+         float[][]&nbsp;M,
          float[][]&nbsp;Y,
-         float[][]&nbsp;Cb,
-         float[][]&nbsp;Cr,
+         float[][]&nbsp;K,
          int&nbsp;imageWidth,
-         int&nbsp;imageHeight)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCbCr(int[],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2YCbCr</a></strong>(int[]&nbsp;rgb,
-         float[][]&nbsp;Y,
-         float[][]&nbsp;Cb,
-         float[][]&nbsp;Cr,
+         int&nbsp;imageHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2CMYK(java.awt.color.ICC_ColorSpace, int[], int, int, boolean)">RGB2CMYK</A></B>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
+         int[]&nbsp;rgb,
          int&nbsp;imageWidth,
-         int&nbsp;imageHeight)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static byte[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCbCrA(int[])">RGB2YCbCrA</a></strong>(int[]&nbsp;rgba)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCCK_Inverted(java.awt.color.ICC_ColorSpace,%20int[],%20float[][],%20float[][],%20float[][],%20float[][],%20int,%20int)">RGB2YCCK_Inverted</a></strong>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
-                 int[]&nbsp;rgb,
-                 float[][]&nbsp;Y,
-                 float[][]&nbsp;Cb,
-                 float[][]&nbsp;Cr,
-                 float[][]&nbsp;K,
-                 int&nbsp;imageWidth,
-                 int&nbsp;imageHeight)</code>&nbsp;</td>
-</tr>
-</table>
-<ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="details">
-<ul class="blockList">
-<li class="blockList">
+         int&nbsp;imageHeight,
+         boolean&nbsp;hasAlpha)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2grayscale(int[])">rgb2grayscale</A></B>(int[]&nbsp;rgb)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float[][]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2grayscale(int[], int, int)">rgb2grayscale</A></B>(int[]&nbsp;rgb,
+              int&nbsp;imageWidth,
+              int&nbsp;imageHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#rgb2grayscaleA(int[])">rgb2grayscaleA</A></B>(int[]&nbsp;rgb)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCbCr(int[])">RGB2YCbCr</A></B>(int[]&nbsp;rgb)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCbCr(int[][], int[][], int[][], float[][], float[][], float[][], int, int)">RGB2YCbCr</A></B>(int[][]&nbsp;red,
+          int[][]&nbsp;green,
+          int[][]&nbsp;blue,
+          float[][]&nbsp;Y,
+          float[][]&nbsp;Cb,
+          float[][]&nbsp;Cr,
+          int&nbsp;imageWidth,
+          int&nbsp;imageHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCbCr(int[], float[][], float[][], float[][], int, int)">RGB2YCbCr</A></B>(int[]&nbsp;rgb,
+          float[][]&nbsp;Y,
+          float[][]&nbsp;Cb,
+          float[][]&nbsp;Cr,
+          int&nbsp;imageWidth,
+          int&nbsp;imageHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCbCrA(int[])">RGB2YCbCrA</A></B>(int[]&nbsp;rgba)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../com/icafe4j/image/util/IMGUtils.html#RGB2YCCK_Inverted(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)">RGB2YCCK_Inverted</A></B>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
+                  int[]&nbsp;rgb,
+                  float[][]&nbsp;Y,
+                  float[][]&nbsp;Cb,
+                  float[][]&nbsp;Cr,
+                  float[][]&nbsp;K,
+                  int&nbsp;imageWidth,
+                  int&nbsp;imageHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
 <!-- ============ METHOD DETAIL ========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method_detail">
-<!--   -->
-</a>
-<h3>Method Detail</h3>
-<a name="checkColorDepth(int[], byte[], int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>checkColorDepth</h4>
-<pre>public static&nbsp;int[]&nbsp;checkColorDepth(int[]&nbsp;rgbTriplets,
-                    byte[]&nbsp;newPixels,
-                    int[]&nbsp;colorPalette)</pre>
-<div class="block">Check the color depth of the image and if the color depth is within 8 bits, (i.e.,
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="checkColorDepth(int[], byte[], int[])"><!-- --></A><H3>
+checkColorDepth</H3>
+<PRE>
+public static int[] <B>checkColorDepth</B>(int[]&nbsp;rgbTriplets,
+                                    byte[]&nbsp;newPixels,
+                                    int[]&nbsp;colorPalette)</PRE>
+<DL>
+<DD>Check the color depth of the image and if the color depth is within 8 bits, (i.e.,
  a indexed color image), a color map and an index array for the image are also created.
  If the color depth is bigger than 8, only the returned color depth is relevant. 
  <p>
  This method is not yet completely finished. The colorPalette is currently not ordered.
  A sorting method could be used to find the most used color from the colorFreq array, 
  but more tricks will have to be done in order to re-map the newPixels array to the
- ordered colorPalette.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rgbTriplets</code> - an int array of RGB triplets for the image</dd><dd><code>newPixels</code> - a byte array to hold the color map indexes for the image</dd><dd><code>colorPalette</code> - the color map for the image</dd>
-<dt><span class="strong">Returns:</span></dt><dd>an int array holding the color depth and the transparent color index if any</dd></dl>
-</li>
-</ul>
-<a name="createGammaTable(float, float)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createGammaTable</h4>
-<pre>public static&nbsp;byte[]&nbsp;createGammaTable(float&nbsp;gamma,
-                      float&nbsp;displayExponent)</pre>
-</li>
-</ul>
-<a name="correctGamma(int[], byte[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>correctGamma</h4>
-<pre>public static&nbsp;void&nbsp;correctGamma(int[]&nbsp;rgbColorPalette,
-                byte[]&nbsp;gammaTable)</pre>
-</li>
-</ul>
-<a name="createThumbnail(java.io.InputStream)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createThumbnail</h4>
-<pre>public static&nbsp;java.awt.image.BufferedImage&nbsp;createThumbnail(java.io.InputStream&nbsp;is)
-                                                    throws java.io.IOException</pre>
-<div class="block">Creates a thumbnail from image input stream</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - InputStream for the image</dd>
-<dt><span class="strong">Returns:</span></dt><dd>thumbnail as a BufferedImage</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="createThumbnail8BIM(java.awt.image.BufferedImage)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createThumbnail8BIM</h4>
-<pre>public static&nbsp;<a href="../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</a>&nbsp;createThumbnail8BIM(java.awt.image.BufferedImage&nbsp;thumbnail)
-                                 throws java.io.IOException</pre>
-<div class="block">Wraps a BufferedImage inside a Photoshop _8BIM</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>thumbnail</code> - input thumbnail image</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a Photoshop _8BIM</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="dither_Bayer(byte[], byte[], int, int, int[][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>dither_Bayer</h4>
-<pre>public static&nbsp;void&nbsp;dither_Bayer(byte[]&nbsp;gray,
-                byte[]&nbsp;mask,
-                int&nbsp;width,
-                int&nbsp;height,
-                int[][]&nbsp;threshold)</pre>
-<div class="block">Dither gray-scale image using Bayer threshold matrix</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gray</code> - input gray-scale image array - also as output BW image array</dd><dd><code>mask</code> - a mask array for transparent pixels - 0 transparent, 1 opaque</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>threshold</code> - Bayer threshold matrix used to convert to BW image</dd></dl>
-</li>
-</ul>
-<a name="dither_FloydSteinberg(byte[], byte[], int, int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>dither_FloydSteinberg</h4>
-<pre>public static&nbsp;void&nbsp;dither_FloydSteinberg(byte[]&nbsp;gray,
-                         byte[]&nbsp;mask,
-                         int&nbsp;width,
-                         int&nbsp;height,
-                         int&nbsp;threshold)</pre>
-<div class="block">Dither gray-scale image using Floyd-Steinberg error diffusion</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gray</code> - input gray-scale image array - also as output BW image array</dd><dd><code>mask</code> - a mask array for transparent pixels - 0 transparent, 1 opaque</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>threshold</code> - gray-scale threshold to convert to BW image</dd></dl>
-</li>
-</ul>
-<a name="dither_Bayer(int[], int, int, byte[], int, int[], int, int[][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>dither_Bayer</h4>
-<pre>public static&nbsp;void&nbsp;dither_Bayer(int[]&nbsp;rgbTriplet,
-                int&nbsp;width,
-                int&nbsp;height,
-                byte[]&nbsp;newPixels,
-                int&nbsp;no_of_color,
-                int[]&nbsp;colorPalette,
-                int&nbsp;transparent_index,
-                int[][]&nbsp;threshold)</pre>
-<div class="block">Dither color image using Bayer threshold matrix. This method sometimes makes the
- images look too bright. Gamma correction usually can compensate for this problem.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rgbTriplet</code> - input pixels in ARGB format</dd><dd><code>width</code> - image width</dd><dd><code>height</code> - image height</dd><dd><code>newPixels</code> - pixel array after dither</dd><dd><code>no_of_color</code> - actual number of colors used by the color palette</dd><dd><code>colorPalette</code> - color palette</dd><dd><code>transparent_index</code> - transparent color index for the color palette</dd><dd><code>threshold</code> - Bayer threshold matrix</dd></dl>
-</li>
-</ul>
-<a name="dither_FloydSteinberg(int[], int, int, byte[], int, int[], int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>dither_FloydSteinberg</h4>
-<pre>public static&nbsp;void&nbsp;dither_FloydSteinberg(int[]&nbsp;rgbTriplet,
-                         int&nbsp;width,
-                         int&nbsp;height,
-                         byte[]&nbsp;newPixels,
-                         int&nbsp;no_of_color,
-                         int[]&nbsp;colorPalette,
-                         int&nbsp;transparent_index)</pre>
-<div class="block">Floyd-Steinberg dithering, based on PPMQuant.c by Jef Poskanzer <jef@acme.com>.
- For simplicity, only forward error diffusion is implemented.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rgbTriplet</code> - input pixels in ARGB format</dd><dd><code>width</code> - width of the image</dd><dd><code>height</code> - height of the image</dd><dd><code>newPixels</code> - output pixels</dd><dd><code>no_of_color</code> - number of colors used</dd><dd><code>colorPalette</code> - color palette</dd><dd><code>transparent_index</code> - transparent color index of the color palette</dd></dl>
-</li>
-</ul>
-<a name="easyRGB2CMYK(int[], boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>easyRGB2CMYK</h4>
-<pre>public static&nbsp;byte[]&nbsp;easyRGB2CMYK(int[]&nbsp;rgb,
-                  boolean&nbsp;hasAlpha)</pre>
-</li>
-</ul>
-<a name="filterImage(java.awt.image.BufferedImageOp, java.awt.image.BufferedImage, java.awt.image.BufferedImage)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>filterImage</h4>
-<pre>public static&nbsp;java.awt.image.BufferedImage&nbsp;filterImage(java.awt.image.BufferedImageOp&nbsp;bufferedImageOp,
-                                       java.awt.image.BufferedImage&nbsp;srcImg,
-                                       java.awt.image.BufferedImage&nbsp;dstImg)</pre>
-<div class="block">Entry point for image filtering operation. Simply delegates to the underlying ImageFilter.</div>
-</li>
-</ul>
-<a name="getBitDepth(byte[], boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getBitDepth</h4>
-<pre>public static&nbsp;int&nbsp;getBitDepth(byte[]&nbsp;input,
-              boolean&nbsp;hasAlpha)</pre>
-</li>
-</ul>
-<a name="getICCColorSpace(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getICCColorSpace</h4>
-<pre>public static&nbsp;java.awt.color.ICC_ColorSpace&nbsp;getICCColorSpace(java.lang.String&nbsp;pathToICCProfile)
-                                                      throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="getICCProfile(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getICCProfile</h4>
-<pre>public static&nbsp;java.awt.color.ICC_Profile&nbsp;getICCProfile(java.lang.String&nbsp;pathToICCProfile)
-                                                throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="getRGB(java.awt.image.BufferedImage)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getRGB</h4>
-<pre>public static&nbsp;int[]&nbsp;getRGB(java.awt.image.BufferedImage&nbsp;image)</pre>
-<div class="block">Retrieves RGB values from Raster. This seems to be the fastest way to get RGB values.
+ ordered colorPalette.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rgbTriplets</CODE> - an int array of RGB triplets for the image<DD><CODE>newPixels</CODE> - a byte array to hold the color map indexes for the image<DD><CODE>colorPalette</CODE> - the color map for the image
+<DT><B>Returns:</B><DD>an int array holding the color depth and the transparent color index if any</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createGammaTable(float, float)"><!-- --></A><H3>
+createGammaTable</H3>
+<PRE>
+public static byte[] <B>createGammaTable</B>(float&nbsp;gamma,
+                                      float&nbsp;displayExponent)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="correctGamma(int[], byte[])"><!-- --></A><H3>
+correctGamma</H3>
+<PRE>
+public static void <B>correctGamma</B>(int[]&nbsp;rgbColorPalette,
+                                byte[]&nbsp;gammaTable)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createThumbnail(java.io.InputStream)"><!-- --></A><H3>
+createThumbnail</H3>
+<PRE>
+public static java.awt.image.BufferedImage <B>createThumbnail</B>(java.io.InputStream&nbsp;is)
+                                                    throws java.io.IOException</PRE>
+<DL>
+<DD>Creates a thumbnail from image input stream
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>is</CODE> - InputStream for the image
+<DT><B>Returns:</B><DD>thumbnail as a BufferedImage
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createThumbnail8BIM(java.awt.image.BufferedImage)"><!-- --></A><H3>
+createThumbnail8BIM</H3>
+<PRE>
+public static <A HREF="../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</A> <B>createThumbnail8BIM</B>(java.awt.image.BufferedImage&nbsp;thumbnail)
+                                 throws java.io.IOException</PRE>
+<DL>
+<DD>Wraps a BufferedImage inside a Photoshop _8BIM
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>thumbnail</CODE> - input thumbnail image
+<DT><B>Returns:</B><DD>a Photoshop _8BIM
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dither_Bayer(byte[], byte[], int, int, int[][])"><!-- --></A><H3>
+dither_Bayer</H3>
+<PRE>
+public static void <B>dither_Bayer</B>(byte[]&nbsp;gray,
+                                byte[]&nbsp;mask,
+                                int&nbsp;width,
+                                int&nbsp;height,
+                                int[][]&nbsp;threshold)</PRE>
+<DL>
+<DD>Dither gray-scale image using Bayer threshold matrix
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>gray</CODE> - input gray-scale image array - also as output BW image array<DD><CODE>mask</CODE> - a mask array for transparent pixels - 0 transparent, 1 opaque<DD><CODE>width</CODE> - image width<DD><CODE>height</CODE> - image height<DD><CODE>threshold</CODE> - Bayer threshold matrix used to convert to BW image</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dither_FloydSteinberg(byte[], byte[], int, int, int)"><!-- --></A><H3>
+dither_FloydSteinberg</H3>
+<PRE>
+public static void <B>dither_FloydSteinberg</B>(byte[]&nbsp;gray,
+                                         byte[]&nbsp;mask,
+                                         int&nbsp;width,
+                                         int&nbsp;height,
+                                         int&nbsp;threshold)</PRE>
+<DL>
+<DD>Dither gray-scale image using Floyd-Steinberg error diffusion
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>gray</CODE> - input gray-scale image array - also as output BW image array<DD><CODE>mask</CODE> - a mask array for transparent pixels - 0 transparent, 1 opaque<DD><CODE>width</CODE> - image width<DD><CODE>height</CODE> - image height<DD><CODE>threshold</CODE> - gray-scale threshold to convert to BW image</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dither_Bayer(int[], int, int, byte[], int, int[], int, int[][])"><!-- --></A><H3>
+dither_Bayer</H3>
+<PRE>
+public static void <B>dither_Bayer</B>(int[]&nbsp;rgbTriplet,
+                                int&nbsp;width,
+                                int&nbsp;height,
+                                byte[]&nbsp;newPixels,
+                                int&nbsp;no_of_color,
+                                int[]&nbsp;colorPalette,
+                                int&nbsp;transparent_index,
+                                int[][]&nbsp;threshold)</PRE>
+<DL>
+<DD>Dither color image using Bayer threshold matrix. This method sometimes makes the
+ images look too bright. Gamma correction usually can compensate for this problem.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rgbTriplet</CODE> - input pixels in ARGB format<DD><CODE>width</CODE> - image width<DD><CODE>height</CODE> - image height<DD><CODE>newPixels</CODE> - pixel array after dither<DD><CODE>no_of_color</CODE> - actual number of colors used by the color palette<DD><CODE>colorPalette</CODE> - color palette<DD><CODE>transparent_index</CODE> - transparent color index for the color palette<DD><CODE>threshold</CODE> - Bayer threshold matrix</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dither_FloydSteinberg(int[], int, int, byte[], int, int[], int)"><!-- --></A><H3>
+dither_FloydSteinberg</H3>
+<PRE>
+public static void <B>dither_FloydSteinberg</B>(int[]&nbsp;rgbTriplet,
+                                         int&nbsp;width,
+                                         int&nbsp;height,
+                                         byte[]&nbsp;newPixels,
+                                         int&nbsp;no_of_color,
+                                         int[]&nbsp;colorPalette,
+                                         int&nbsp;transparent_index)</PRE>
+<DL>
+<DD>Floyd-Steinberg dithering, based on PPMQuant.c by Jef Poskanzer <jef@acme.com>.
+ For simplicity, only forward error diffusion is implemented.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rgbTriplet</CODE> - input pixels in ARGB format<DD><CODE>width</CODE> - width of the image<DD><CODE>height</CODE> - height of the image<DD><CODE>newPixels</CODE> - output pixels<DD><CODE>no_of_color</CODE> - number of colors used<DD><CODE>colorPalette</CODE> - color palette<DD><CODE>transparent_index</CODE> - transparent color index of the color palette</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="easyRGB2CMYK(int[], boolean)"><!-- --></A><H3>
+easyRGB2CMYK</H3>
+<PRE>
+public static byte[] <B>easyRGB2CMYK</B>(int[]&nbsp;rgb,
+                                  boolean&nbsp;hasAlpha)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="filterImage(java.awt.image.BufferedImageOp, java.awt.image.BufferedImage, java.awt.image.BufferedImage)"><!-- --></A><H3>
+filterImage</H3>
+<PRE>
+public static java.awt.image.BufferedImage <B>filterImage</B>(java.awt.image.BufferedImageOp&nbsp;bufferedImageOp,
+                                                       java.awt.image.BufferedImage&nbsp;srcImg,
+                                                       java.awt.image.BufferedImage&nbsp;dstImg)</PRE>
+<DL>
+<DD>Entry point for image filtering operation. Simply delegates to the underlying ImageFilter.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBitDepth(byte[], boolean)"><!-- --></A><H3>
+getBitDepth</H3>
+<PRE>
+public static int <B>getBitDepth</B>(byte[]&nbsp;input,
+                              boolean&nbsp;hasAlpha)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getICCColorSpace(java.lang.String)"><!-- --></A><H3>
+getICCColorSpace</H3>
+<PRE>
+public static java.awt.color.ICC_ColorSpace <B>getICCColorSpace</B>(java.lang.String&nbsp;pathToICCProfile)
+                                                      throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getICCProfile(java.lang.String)"><!-- --></A><H3>
+getICCProfile</H3>
+<PRE>
+public static java.awt.color.ICC_Profile <B>getICCProfile</B>(java.lang.String&nbsp;pathToICCProfile)
+                                                throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRGB(java.awt.image.BufferedImage)"><!-- --></A><H3>
+getRGB</H3>
+<PRE>
+public static int[] <B>getRGB</B>(java.awt.image.BufferedImage&nbsp;image)</PRE>
+<DL>
+<DD>Retrieves RGB values from Raster. This seems to be the fastest way to get RGB values.
 
  TYPE_INT_RGB        = 1
  TYPE_INT_ARGB       = 2
@@ -660,419 +826,469 @@ extends java.lang.Object</pre>
  TYPE_USHORT_GRAY    = 11
  TYPE_USHORT_565_RGB = 8
  TYPE_USHORT_555_RGB = 9
- TYPE_CUSTOM         = 0.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>image</code> - input BufferedImage</dd>
-<dt><span class="strong">Returns:</span></dt><dd>integer array - default RGB color space representation</dd></dl>
-</li>
-</ul>
-<a name="getRGB2(java.awt.image.BufferedImage)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getRGB2</h4>
-<pre>public static&nbsp;int[]&nbsp;getRGB2(java.awt.image.BufferedImage&nbsp;image)</pre>
-<div class="block">Retrieves RGB values from DataBuffer. This one is slower than getRGB()</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>image</code> - input BufferedImage</dd>
-<dt><span class="strong">Returns:</span></dt><dd>integer array - default RGB color space representation</dd></dl>
-</li>
-</ul>
-<a name="getScaledInstance(java.awt.image.BufferedImage, int, int, java.lang.Object, boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getScaledInstance</h4>
-<pre>public static&nbsp;java.awt.image.BufferedImage&nbsp;getScaledInstance(java.awt.image.BufferedImage&nbsp;img,
-                                             int&nbsp;targetWidth,
-                                             int&nbsp;targetHeight,
-                                             java.lang.Object&nbsp;hint,
-                                             boolean&nbsp;higherQuality)</pre>
-<div class="block">Convenience method that returns a scaled instance of the
- provided <code>BufferedImage</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>img</code> - the original image to be scaled</dd><dd><code>targetWidth</code> - the desired width of the scaled instance,
-    in pixels</dd><dd><code>targetHeight</code> - the desired height of the scaled instance,
-    in pixels</dd><dd><code>hint</code> - one of the rendering hints that corresponds to
+ TYPE_CUSTOM         = 0.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>image</CODE> - input BufferedImage
+<DT><B>Returns:</B><DD>integer array - default RGB color space representation</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRGB2(java.awt.image.BufferedImage)"><!-- --></A><H3>
+getRGB2</H3>
+<PRE>
+public static int[] <B>getRGB2</B>(java.awt.image.BufferedImage&nbsp;image)</PRE>
+<DL>
+<DD>Retrieves RGB values from DataBuffer. This one is slower than getRGB()
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>image</CODE> - input BufferedImage
+<DT><B>Returns:</B><DD>integer array - default RGB color space representation</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getScaledInstance(java.awt.image.BufferedImage, int, int, java.lang.Object, boolean)"><!-- --></A><H3>
+getScaledInstance</H3>
+<PRE>
+public static java.awt.image.BufferedImage <B>getScaledInstance</B>(java.awt.image.BufferedImage&nbsp;img,
+                                                             int&nbsp;targetWidth,
+                                                             int&nbsp;targetHeight,
+                                                             java.lang.Object&nbsp;hint,
+                                                             boolean&nbsp;higherQuality)</PRE>
+<DL>
+<DD>Convenience method that returns a scaled instance of the
+ provided <code>BufferedImage</code>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the original image to be scaled<DD><CODE>targetWidth</CODE> - the desired width of the scaled instance,
+    in pixels<DD><CODE>targetHeight</CODE> - the desired height of the scaled instance,
+    in pixels<DD><CODE>hint</CODE> - one of the rendering hints that corresponds to
     <code>RenderingHints.KEY_INTERPOLATION</code> (e.g.
     <code>RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR</code>,
     <code>RenderingHints.VALUE_INTERPOLATION_BILINEAR</code>,
-    <code>RenderingHints.VALUE_INTERPOLATION_BICUBIC</code>)</dd><dd><code>higherQuality</code> - if true, this method will use a multi-step
+    <code>RenderingHints.VALUE_INTERPOLATION_BICUBIC</code>)<DD><CODE>higherQuality</CODE> - if true, this method will use a multi-step
     scaling technique that provides higher quality than the usual
     one-step technique (only useful in down-scaling cases, where
     <code>targetWidth</code> or <code>targetHeight</code> is
     smaller than the original dimensions, and generally only when
-    the <code>BILINEAR</code> hint is specified)</dd>
-<dt><span class="strong">Returns:</span></dt><dd>a scaled version of the original <code>BufferedImage</code></dd></dl>
-</li>
-</ul>
-<a name="guessImageType(byte[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>guessImageType</h4>
-<pre>public static&nbsp;<a href="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</a>&nbsp;guessImageType(byte[]&nbsp;magicNumber)</pre>
-</li>
-</ul>
-<a name="guessImageType(com.icafe4j.io.PeekHeadInputStream)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>guessImageType</h4>
-<pre>public static&nbsp;<a href="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</a>&nbsp;guessImageType(<a href="../../../../com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a>&nbsp;is)
-                                throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="guessImageType(com.icafe4j.io.RandomAccessInputStream)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>guessImageType</h4>
-<pre>public static&nbsp;<a href="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</a>&nbsp;guessImageType(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;is)
-                                throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="iccp2rgbRaster(java.awt.image.WritableRaster, java.awt.image.ColorModel)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>iccp2rgbRaster</h4>
-<pre>public static&nbsp;java.awt.image.WritableRaster&nbsp;iccp2rgbRaster(java.awt.image.WritableRaster&nbsp;raster,
-                                           java.awt.image.ColorModel&nbsp;cm)</pre>
-<div class="block">Convert ICC_ColorSpace raster to RGB raster w/o alpha</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>raster</code> - WritableRaster for ICC_Profile ColorSpace</dd><dd><code>cm</code> - ColorModel for ICC_Profile ColorSpace</dd>
-<dt><span class="strong">Returns:</span></dt><dd>WritableRaster for RGB ColorSpace</dd></dl>
-</li>
-</ul>
-<a name="invertBits(byte[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>invertBits</h4>
-<pre>public static&nbsp;void&nbsp;invertBits(byte[]&nbsp;input)</pre>
-</li>
-</ul>
-<a name="reduceColors(com.icafe4j.image.quant.QuantMethod, int[], int, byte[], int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>reduceColors</h4>
-<pre>public static&nbsp;int[]&nbsp;reduceColors(<a href="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</a>&nbsp;quantMethod,
-                 int[]&nbsp;rgbTriplets,
-                 int&nbsp;colorDepth,
-                 byte[]&nbsp;newPixels,
-                 int[]&nbsp;colorPalette)</pre>
-</li>
-</ul>
-<a name="reduceColorsDiffusionDither(int[], int, int, int, byte[], int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>reduceColorsDiffusionDither</h4>
-<pre>public static&nbsp;int[]&nbsp;reduceColorsDiffusionDither(int[]&nbsp;rgbTriplets,
-                                int&nbsp;width,
-                                int&nbsp;height,
-                                int&nbsp;colorDepth,
-                                byte[]&nbsp;newPixels,
-                                int[]&nbsp;colorPalette)</pre>
-<div class="block">Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
- followed by Floyd-Steinberg error diffusion dithering.</div>
-</li>
-</ul>
-<a name="reduceColorsDiffusionDither(com.icafe4j.image.quant.QuantMethod, int[], int, int, int, byte[], int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>reduceColorsDiffusionDither</h4>
-<pre>public static&nbsp;int[]&nbsp;reduceColorsDiffusionDither(<a href="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</a>&nbsp;quantMethod,
-                                int[]&nbsp;rgbTriplets,
-                                int&nbsp;width,
-                                int&nbsp;height,
-                                int&nbsp;colorDepth,
-                                byte[]&nbsp;newPixels,
-                                int[]&nbsp;colorPalette)</pre>
-</li>
-</ul>
-<a name="reduceColorsOrderedDither(int[], int, int, int, byte[], int[], int[][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>reduceColorsOrderedDither</h4>
-<pre>public static&nbsp;int[]&nbsp;reduceColorsOrderedDither(int[]&nbsp;rgbTriplet,
-                              int&nbsp;width,
-                              int&nbsp;height,
-                              int&nbsp;colorDepth,
-                              byte[]&nbsp;newPixels,
-                              int[]&nbsp;colorPalette,
-                              int[][]&nbsp;threshold)</pre>
-</li>
-</ul>
-<a name="reduceColorsOrderedDither(com.icafe4j.image.quant.QuantMethod, int[], int, int, int, byte[], int[], int[][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>reduceColorsOrderedDither</h4>
-<pre>public static&nbsp;int[]&nbsp;reduceColorsOrderedDither(<a href="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</a>&nbsp;quantMethod,
-                              int[]&nbsp;rgbTriplets,
-                              int&nbsp;width,
-                              int&nbsp;height,
-                              int&nbsp;colorDepth,
-                              byte[]&nbsp;newPixels,
-                              int[]&nbsp;colorPalette,
-                              int[][]&nbsp;threshold)</pre>
-</li>
-</ul>
-<a name="rgb2bilevel(int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>rgb2bilevel</h4>
-<pre>public static&nbsp;byte[]&nbsp;rgb2bilevel(int[]&nbsp;rgb)</pre>
-</li>
-</ul>
-<a name="rgb2bilevelOrderedDither(int[], int, int, int[][])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>rgb2bilevelOrderedDither</h4>
-<pre>public static&nbsp;byte[]&nbsp;rgb2bilevelOrderedDither(int[]&nbsp;rgb,
+    the <code>BILINEAR</code> hint is specified)
+<DT><B>Returns:</B><DD>a scaled version of the original <code>BufferedImage</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="guessImageType(byte[])"><!-- --></A><H3>
+guessImageType</H3>
+<PRE>
+public static <A HREF="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</A> <B>guessImageType</B>(byte[]&nbsp;magicNumber)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="guessImageType(com.icafe4j.io.PeekHeadInputStream)"><!-- --></A><H3>
+guessImageType</H3>
+<PRE>
+public static <A HREF="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</A> <B>guessImageType</B>(<A HREF="../../../../com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</A>&nbsp;is)
+                                throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="guessImageType(com.icafe4j.io.RandomAccessInputStream)"><!-- --></A><H3>
+guessImageType</H3>
+<PRE>
+public static <A HREF="../../../../com/icafe4j/image/ImageType.html" title="enum in com.icafe4j.image">ImageType</A> <B>guessImageType</B>(<A HREF="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</A>&nbsp;is)
+                                throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="iccp2rgbRaster(java.awt.image.WritableRaster, java.awt.image.ColorModel)"><!-- --></A><H3>
+iccp2rgbRaster</H3>
+<PRE>
+public static java.awt.image.WritableRaster <B>iccp2rgbRaster</B>(java.awt.image.WritableRaster&nbsp;raster,
+                                                           java.awt.image.ColorModel&nbsp;cm)</PRE>
+<DL>
+<DD>Convert ICC_ColorSpace raster to RGB raster w/o alpha
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>raster</CODE> - WritableRaster for ICC_Profile ColorSpace<DD><CODE>cm</CODE> - ColorModel for ICC_Profile ColorSpace
+<DT><B>Returns:</B><DD>WritableRaster for RGB ColorSpace</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="invertBits(byte[])"><!-- --></A><H3>
+invertBits</H3>
+<PRE>
+public static void <B>invertBits</B>(byte[]&nbsp;input)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reduceColors(com.icafe4j.image.quant.QuantMethod, int[], int, byte[], int[])"><!-- --></A><H3>
+reduceColors</H3>
+<PRE>
+public static int[] <B>reduceColors</B>(<A HREF="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</A>&nbsp;quantMethod,
+                                 int[]&nbsp;rgbTriplets,
+                                 int&nbsp;colorDepth,
+                                 byte[]&nbsp;newPixels,
+                                 int[]&nbsp;colorPalette)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reduceColorsDiffusionDither(int[], int, int, int, byte[], int[])"><!-- --></A><H3>
+reduceColorsDiffusionDither</H3>
+<PRE>
+public static int[] <B>reduceColorsDiffusionDither</B>(int[]&nbsp;rgbTriplets,
+                                                int&nbsp;width,
+                                                int&nbsp;height,
+                                                int&nbsp;colorDepth,
+                                                byte[]&nbsp;newPixels,
+                                                int[]&nbsp;colorPalette)</PRE>
+<DL>
+<DD>Reduces a true color image to an indexed-color image with no_of_color using "Popularity algorithm"
+ followed by Floyd-Steinberg error diffusion dithering.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reduceColorsDiffusionDither(com.icafe4j.image.quant.QuantMethod, int[], int, int, int, byte[], int[])"><!-- --></A><H3>
+reduceColorsDiffusionDither</H3>
+<PRE>
+public static int[] <B>reduceColorsDiffusionDither</B>(<A HREF="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</A>&nbsp;quantMethod,
+                                                int[]&nbsp;rgbTriplets,
+                                                int&nbsp;width,
+                                                int&nbsp;height,
+                                                int&nbsp;colorDepth,
+                                                byte[]&nbsp;newPixels,
+                                                int[]&nbsp;colorPalette)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reduceColorsOrderedDither(int[], int, int, int, byte[], int[], int[][])"><!-- --></A><H3>
+reduceColorsOrderedDither</H3>
+<PRE>
+public static int[] <B>reduceColorsOrderedDither</B>(int[]&nbsp;rgbTriplet,
+                                              int&nbsp;width,
+                                              int&nbsp;height,
+                                              int&nbsp;colorDepth,
+                                              byte[]&nbsp;newPixels,
+                                              int[]&nbsp;colorPalette,
+                                              int[][]&nbsp;threshold)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reduceColorsOrderedDither(com.icafe4j.image.quant.QuantMethod, int[], int, int, int, byte[], int[], int[][])"><!-- --></A><H3>
+reduceColorsOrderedDither</H3>
+<PRE>
+public static int[] <B>reduceColorsOrderedDither</B>(<A HREF="../../../../com/icafe4j/image/quant/QuantMethod.html" title="enum in com.icafe4j.image.quant">QuantMethod</A>&nbsp;quantMethod,
+                                              int[]&nbsp;rgbTriplets,
+                                              int&nbsp;width,
+                                              int&nbsp;height,
+                                              int&nbsp;colorDepth,
+                                              byte[]&nbsp;newPixels,
+                                              int[]&nbsp;colorPalette,
+                                              int[][]&nbsp;threshold)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rgb2bilevel(int[])"><!-- --></A><H3>
+rgb2bilevel</H3>
+<PRE>
+public static byte[] <B>rgb2bilevel</B>(int[]&nbsp;rgb)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rgb2bilevelOrderedDither(int[], int, int, int[][])"><!-- --></A><H3>
+rgb2bilevelOrderedDither</H3>
+<PRE>
+public static byte[] <B>rgb2bilevelOrderedDither</B>(int[]&nbsp;rgb,
+                                              int&nbsp;imageWidth,
+                                              int&nbsp;imageHeight,
+                                              int[][]&nbsp;threshold)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rgb2bilevelDiffusionDither(int[], int, int)"><!-- --></A><H3>
+rgb2bilevelDiffusionDither</H3>
+<PRE>
+public static byte[] <B>rgb2bilevelDiffusionDither</B>(int[]&nbsp;rgb,
+                                                int&nbsp;imageWidth,
+                                                int&nbsp;imageHeight)</PRE>
+<DL>
+<DD>RGB to bilevel image conversion with Floyd-Steinberg dither
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rgb</CODE> - input RGB image array (format: ARGBARGBARGB...)<DD><CODE>imageWidth</CODE> - image width<DD><CODE>imageHeight</CODE> - image height
+<DT><B>Returns:</B><DD>byte array for the BW image</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RGB2CMYK(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)"><!-- --></A><H3>
+RGB2CMYK</H3>
+<PRE>
+public static void <B>RGB2CMYK</B>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
+                            int[]&nbsp;rgb,
+                            float[][]&nbsp;C,
+                            float[][]&nbsp;M,
+                            float[][]&nbsp;Y,
+                            float[][]&nbsp;K,
+                            int&nbsp;imageWidth,
+                            int&nbsp;imageHeight)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RGB2CMYK(java.awt.color.ICC_ColorSpace, int[], int, int, boolean)"><!-- --></A><H3>
+RGB2CMYK</H3>
+<PRE>
+public static byte[] <B>RGB2CMYK</B>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
+                              int[]&nbsp;rgb,
                               int&nbsp;imageWidth,
                               int&nbsp;imageHeight,
-                              int[][]&nbsp;threshold)</pre>
-</li>
-</ul>
-<a name="rgb2bilevelDiffusionDither(int[], int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>rgb2bilevelDiffusionDither</h4>
-<pre>public static&nbsp;byte[]&nbsp;rgb2bilevelDiffusionDither(int[]&nbsp;rgb,
-                                int&nbsp;imageWidth,
-                                int&nbsp;imageHeight)</pre>
-<div class="block">RGB to bilevel image conversion with Floyd-Steinberg dither</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rgb</code> - input RGB image array (format: ARGBARGBARGB...)</dd><dd><code>imageWidth</code> - image width</dd><dd><code>imageHeight</code> - image height</dd>
-<dt><span class="strong">Returns:</span></dt><dd>byte array for the BW image</dd></dl>
-</li>
-</ul>
-<a name="RGB2CMYK(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RGB2CMYK</h4>
-<pre>public static&nbsp;void&nbsp;RGB2CMYK(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
-            int[]&nbsp;rgb,
-            float[][]&nbsp;C,
-            float[][]&nbsp;M,
-            float[][]&nbsp;Y,
-            float[][]&nbsp;K,
-            int&nbsp;imageWidth,
-            int&nbsp;imageHeight)</pre>
-</li>
-</ul>
-<a name="RGB2CMYK(java.awt.color.ICC_ColorSpace, int[], int, int, boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RGB2CMYK</h4>
-<pre>public static&nbsp;byte[]&nbsp;RGB2CMYK(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
-              int[]&nbsp;rgb,
-              int&nbsp;imageWidth,
-              int&nbsp;imageHeight,
-              boolean&nbsp;hasAlpha)</pre>
-</li>
-</ul>
-<a name="RGB2CMYK_Inverted(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RGB2CMYK_Inverted</h4>
-<pre>public static&nbsp;void&nbsp;RGB2CMYK_Inverted(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
-                     int[]&nbsp;rgb,
-                     float[][]&nbsp;C,
-                     float[][]&nbsp;M,
-                     float[][]&nbsp;Y,
-                     float[][]&nbsp;K,
-                     int&nbsp;imageWidth,
-                     int&nbsp;imageHeight)</pre>
-</li>
-</ul>
-<a name="rgb2grayscale(int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>rgb2grayscale</h4>
-<pre>public static&nbsp;byte[]&nbsp;rgb2grayscale(int[]&nbsp;rgb)</pre>
-</li>
-</ul>
-<a name="rgb2grayscale(int[], int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>rgb2grayscale</h4>
-<pre>public static&nbsp;float[][]&nbsp;rgb2grayscale(int[]&nbsp;rgb,
-                      int&nbsp;imageWidth,
-                      int&nbsp;imageHeight)</pre>
-</li>
-</ul>
-<a name="rgb2grayscaleA(int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>rgb2grayscaleA</h4>
-<pre>public static&nbsp;byte[]&nbsp;rgb2grayscaleA(int[]&nbsp;rgb)</pre>
-</li>
-</ul>
-<a name="RGB2YCbCr(int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RGB2YCbCr</h4>
-<pre>public static&nbsp;byte[]&nbsp;RGB2YCbCr(int[]&nbsp;rgb)</pre>
-</li>
-</ul>
-<a name="RGB2YCbCr(int[], float[][], float[][], float[][], int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RGB2YCbCr</h4>
-<pre>public static&nbsp;void&nbsp;RGB2YCbCr(int[]&nbsp;rgb,
-             float[][]&nbsp;Y,
-             float[][]&nbsp;Cb,
-             float[][]&nbsp;Cr,
-             int&nbsp;imageWidth,
-             int&nbsp;imageHeight)</pre>
-</li>
-</ul>
-<a name="RGB2YCbCr(int[][], int[][], int[][], float[][], float[][], float[][], int, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RGB2YCbCr</h4>
-<pre>public static&nbsp;void&nbsp;RGB2YCbCr(int[][]&nbsp;red,
-             int[][]&nbsp;green,
-             int[][]&nbsp;blue,
-             float[][]&nbsp;Y,
-             float[][]&nbsp;Cb,
-             float[][]&nbsp;Cr,
-             int&nbsp;imageWidth,
-             int&nbsp;imageHeight)</pre>
-</li>
-</ul>
-<a name="RGB2YCbCrA(int[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RGB2YCbCrA</h4>
-<pre>public static&nbsp;byte[]&nbsp;RGB2YCbCrA(int[]&nbsp;rgba)</pre>
-</li>
-</ul>
-<a name="RGB2YCCK_Inverted(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>RGB2YCCK_Inverted</h4>
-<pre>public static&nbsp;void&nbsp;RGB2YCCK_Inverted(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
-                     int[]&nbsp;rgb,
-                     float[][]&nbsp;Y,
-                     float[][]&nbsp;Cb,
-                     float[][]&nbsp;Cr,
-                     float[][]&nbsp;K,
-                     int&nbsp;imageWidth,
-                     int&nbsp;imageHeight)</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+                              boolean&nbsp;hasAlpha)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RGB2CMYK_Inverted(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)"><!-- --></A><H3>
+RGB2CMYK_Inverted</H3>
+<PRE>
+public static void <B>RGB2CMYK_Inverted</B>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
+                                     int[]&nbsp;rgb,
+                                     float[][]&nbsp;C,
+                                     float[][]&nbsp;M,
+                                     float[][]&nbsp;Y,
+                                     float[][]&nbsp;K,
+                                     int&nbsp;imageWidth,
+                                     int&nbsp;imageHeight)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rgb2grayscale(int[])"><!-- --></A><H3>
+rgb2grayscale</H3>
+<PRE>
+public static byte[] <B>rgb2grayscale</B>(int[]&nbsp;rgb)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rgb2grayscale(int[], int, int)"><!-- --></A><H3>
+rgb2grayscale</H3>
+<PRE>
+public static float[][] <B>rgb2grayscale</B>(int[]&nbsp;rgb,
+                                      int&nbsp;imageWidth,
+                                      int&nbsp;imageHeight)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rgb2grayscaleA(int[])"><!-- --></A><H3>
+rgb2grayscaleA</H3>
+<PRE>
+public static byte[] <B>rgb2grayscaleA</B>(int[]&nbsp;rgb)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RGB2YCbCr(int[])"><!-- --></A><H3>
+RGB2YCbCr</H3>
+<PRE>
+public static byte[] <B>RGB2YCbCr</B>(int[]&nbsp;rgb)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RGB2YCbCr(int[], float[][], float[][], float[][], int, int)"><!-- --></A><H3>
+RGB2YCbCr</H3>
+<PRE>
+public static void <B>RGB2YCbCr</B>(int[]&nbsp;rgb,
+                             float[][]&nbsp;Y,
+                             float[][]&nbsp;Cb,
+                             float[][]&nbsp;Cr,
+                             int&nbsp;imageWidth,
+                             int&nbsp;imageHeight)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RGB2YCbCr(int[][], int[][], int[][], float[][], float[][], float[][], int, int)"><!-- --></A><H3>
+RGB2YCbCr</H3>
+<PRE>
+public static void <B>RGB2YCbCr</B>(int[][]&nbsp;red,
+                             int[][]&nbsp;green,
+                             int[][]&nbsp;blue,
+                             float[][]&nbsp;Y,
+                             float[][]&nbsp;Cb,
+                             float[][]&nbsp;Cr,
+                             int&nbsp;imageWidth,
+                             int&nbsp;imageHeight)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RGB2YCbCrA(int[])"><!-- --></A><H3>
+RGB2YCbCrA</H3>
+<PRE>
+public static byte[] <B>RGB2YCbCrA</B>(int[]&nbsp;rgba)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RGB2YCCK_Inverted(java.awt.color.ICC_ColorSpace, int[], float[][], float[][], float[][], float[][], int, int)"><!-- --></A><H3>
+RGB2YCCK_Inverted</H3>
+<PRE>
+public static void <B>RGB2YCCK_Inverted</B>(java.awt.color.ICC_ColorSpace&nbsp;cmykColorSpace,
+                                     int[]&nbsp;rgb,
+                                     float[][]&nbsp;Y,
+                                     float[][]&nbsp;Cb,
+                                     float[][]&nbsp;Cr,
+                                     float[][]&nbsp;K,
+                                     int&nbsp;imageWidth,
+                                     int&nbsp;imageHeight)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
-<div class="bottomNav"><a name="navbar_bottom">
-<!--   -->
-</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
-<!--   -->
-</a>
-<ul class="navList" title="Navigation">
-<li><a href="../../../../overview-summary.html">Overview</a></li>
-<li><a href="package-summary.html">Package</a></li>
-<li class="navBarCell1Rev">Class</li>
-<li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../../index-all.html">Index</a></li>
-<li><a href="../../../../help-doc.html">Help</a></li>
-</ul>
-</div>
-<div class="subNav">
-<ul class="navList">
-<li><a href="../../../../com/icafe4j/image/util/DCT.html" title="class in com.icafe4j.image.util"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../com/icafe4j/image/util/InverseColorMap.html" title="class in com.icafe4j.image.util"><span class="strong">Next Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../../../index.html?com/icafe4j/image/util/IMGUtils.html" target="_top">Frames</a></li>
-<li><a href="IMGUtils.html" target="_top">No Frames</a></li>
-</ul>
-<ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
-</ul>
-<div>
-<script type="text/javascript"><!--
-  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../com/icafe4j/image/util/DCT.html" title="class in com.icafe4j.image.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../com/icafe4j/image/util/InverseColorMap.html" title="class in com.icafe4j.image.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?com/icafe4j/image/util/IMGUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="IMGUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
   if(window==top) {
-    allClassesLink.style.display = "block";
-  }
-  else {
-    allClassesLink.style.display = "none";
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
-</script>
-</div>
-<div>
-<ul class="subNavList">
-<li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
-</ul>
-<ul class="subNavList">
-<li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
-</ul>
-</div>
-<a name="skip-navbar_bottom">
-<!--   -->
-</a></div>
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-</body>
-</html>
+
+<HR>
+
+</BODY>
+</HTML>

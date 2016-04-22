@@ -1,477 +1,562 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<!-- NewPage -->
-<html lang="en">
-<head>
-<title>SinglyLinkedList</title>
-<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
-</head>
-<body>
-<script type="text/javascript"><!--
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+SinglyLinkedList
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
     if (location.href.indexOf('is-external=true') == -1) {
         parent.document.title="SinglyLinkedList";
     }
-//-->
-</script>
-<noscript>
-<div>JavaScript is disabled on your browser.</div>
-</noscript>
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
 <!-- ========= START OF TOP NAVBAR ======= -->
-<div class="topNav"><a name="navbar_top">
-<!--   -->
-</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
-<!--   -->
-</a>
-<ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
-<li><a href="package-summary.html">Package</a></li>
-<li class="navBarCell1Rev">Class</li>
-<li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../index-all.html">Index</a></li>
-<li><a href="../../../help-doc.html">Help</a></li>
-</ul>
-</div>
-<div class="subNav">
-<ul class="navList">
-<li><a href="../../../com/icafe4j/util/SeparateChainingHashTable.html" title="class in com.icafe4j.util"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../com/icafe4j/util/SoftHashMap.html" title="class in com.icafe4j.util"><span class="strong">Next Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../../index.html?com/icafe4j/util/SinglyLinkedList.html" target="_top">Frames</a></li>
-<li><a href="SinglyLinkedList.html" target="_top">No Frames</a></li>
-</ul>
-<ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
-</ul>
-<div>
-<script type="text/javascript"><!--
-  allClassesLink = document.getElementById("allclasses_navbar_top");
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/icafe4j/util/SeparateChainingHashTable.html" title="class in com.icafe4j.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/icafe4j/util/SoftHashMap.html" title="class in com.icafe4j.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/icafe4j/util/SinglyLinkedList.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SinglyLinkedList.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
   if(window==top) {
-    allClassesLink.style.display = "block";
-  }
-  else {
-    allClassesLink.style.display = "none";
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
-</script>
-</div>
-<div>
-<ul class="subNavList">
-<li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
-</ul>
-<ul class="subNavList">
-<li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
-</ul>
-</div>
-<a name="skip-navbar_top">
-<!--   -->
-</a></div>
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
 <!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
 <!-- ======== START OF CLASS DATA ======== -->
-<div class="header">
-<div class="subTitle">com.icafe4j.util</div>
-<h2 title="Class SinglyLinkedList" class="title">Class SinglyLinkedList&lt;E&gt;</h2>
-</div>
-<div class="contentContainer">
-<ul class="inheritance">
-<li>java.lang.Object</li>
-<li>
-<ul class="inheritance">
-<li>com.icafe4j.util.SinglyLinkedList&lt;E&gt;</li>
-</ul>
-</li>
-</ul>
-<div class="description">
-<ul class="blockList">
-<li class="blockList">
-<hr>
-<br>
-<pre>public class <span class="strong">SinglyLinkedList&lt;E&gt;</span>
-extends java.lang.Object</pre>
-<div class="block">Singly linked list implementation.</div>
-<dl><dt><span class="strong">Version:</span></dt>
-  <dd>1.2 05/07/2007</dd>
-<dt><span class="strong">Author:</span></dt>
-  <dd>Wen Yu, yuwen_66@yahoo.com</dd></dl>
-</li>
-</ul>
-</div>
-<div class="summary">
-<ul class="blockList">
-<li class="blockList">
+<H2>
+<FONT SIZE="-1">
+com.icafe4j.util</FONT>
+<BR>
+Class SinglyLinkedList&lt;E&gt;</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../resources/inherit.gif" ALT="extended by "><B>com.icafe4j.util.SinglyLinkedList&lt;E&gt;</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>SinglyLinkedList&lt;E&gt;</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Singly linked list implementation.
+<P>
+
+<P>
+<DL>
+<DT><B>Version:</B></DT>
+  <DD>1.2 05/07/2007</DD>
+<DT><B>Author:</B></DT>
+  <DD>Wen Yu, yuwen_66@yahoo.com</DD>
+</DL>
+<HR>
+
+<P>
+
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor_summary">
-<!--   -->
-</a>
-<h3>Constructor Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
-<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colOne" scope="col">Constructor and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#SinglyLinkedList()">SinglyLinkedList</a></strong>()</code>&nbsp;</td>
-</tr>
-</table>
-</li>
-</ul>
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#SinglyLinkedList()">SinglyLinkedList</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
 <!-- ========== METHOD SUMMARY =========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method_summary">
-<!--   -->
-</a>
-<h3>Method Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Method and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#add(E)">add</a></strong>(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#addToHead(E)">addToHead</a></strong>(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#addToTail(E)">addToTail</a></strong>(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#clear()">clear</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#contains(E)">contains</a></strong>(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#isEmpty()">isEmpty</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#peekHead()">peekHead</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#peekTail()">peekTail</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#remove()">remove</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#remove(E)">remove</a></strong>(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#removeFromHead()">removeFromHead</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a></code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#removeFromTail()">removeFromTail</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#reverse()">reverse</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#reverse(com.icafe4j.util.SinglyLinkedListNode)">reverse</a></strong>(com.icafe4j.util.SinglyLinkedListNode&lt;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&gt;&nbsp;curr)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#size()">size</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>[]</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#toArray(E[])">toArray</a></strong>(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>[]&nbsp;a)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../com/icafe4j/util/SinglyLinkedList.html#transferList(com.icafe4j.util.SinglyLinkedList)">transferList</a></strong>(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="class in com.icafe4j.util">SinglyLinkedList</a>&lt;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&gt;&nbsp;list)</code>&nbsp;</td>
-</tr>
-</table>
-<ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="details">
-<ul class="blockList">
-<li class="blockList">
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#add(E)">add</A></B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#addToHead(E)">addToHead</A></B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#addToTail(E)">addToTail</A></B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#clear()">clear</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#contains(E)">contains</A></B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#isEmpty()">isEmpty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#peekHead()">peekHead</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#peekTail()">peekTail</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#remove()">remove</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#remove(E)">remove</A></B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#removeFromHead()">removeFromHead</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#removeFromTail()">removeFromTail</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#reverse()">reverse</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#reverse(com.icafe4j.util.SinglyLinkedListNode)">reverse</A></B>(com.icafe4j.util.SinglyLinkedListNode&lt;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&gt;&nbsp;curr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#size()">size</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#toArray(E[])">toArray</A></B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>[]&nbsp;a)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../com/icafe4j/util/SinglyLinkedList.html#transferList(com.icafe4j.util.SinglyLinkedList)">transferList</A></B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="class in com.icafe4j.util">SinglyLinkedList</A>&lt;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&gt;&nbsp;list)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="constructor_detail">
-<!--   -->
-</a>
-<h3>Constructor Detail</h3>
-<a name="SinglyLinkedList()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>SinglyLinkedList</h4>
-<pre>public&nbsp;SinglyLinkedList()</pre>
-</li>
-</ul>
-</li>
-</ul>
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SinglyLinkedList()"><!-- --></A><H3>
+SinglyLinkedList</H3>
+<PRE>
+public <B>SinglyLinkedList</B>()</PRE>
+<DL>
+</DL>
+
 <!-- ============ METHOD DETAIL ========== -->
-<ul class="blockList">
-<li class="blockList"><a name="method_detail">
-<!--   -->
-</a>
-<h3>Method Detail</h3>
-<a name="addToHead(java.lang.Object)">
-<!--   -->
-</a><a name="addToHead(E)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>addToHead</h4>
-<pre>public&nbsp;void&nbsp;addToHead(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</pre>
-</li>
-</ul>
-<a name="add(java.lang.Object)">
-<!--   -->
-</a><a name="add(E)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>add</h4>
-<pre>public&nbsp;void&nbsp;add(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</pre>
-</li>
-</ul>
-<a name="removeFromHead()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>removeFromHead</h4>
-<pre>public&nbsp;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;removeFromHead()</pre>
-</li>
-</ul>
-<a name="remove()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>remove</h4>
-<pre>public&nbsp;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;remove()</pre>
-</li>
-</ul>
-<a name="addToTail(java.lang.Object)">
-<!--   -->
-</a><a name="addToTail(E)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>addToTail</h4>
-<pre>public&nbsp;void&nbsp;addToTail(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</pre>
-</li>
-</ul>
-<a name="removeFromTail()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>removeFromTail</h4>
-<pre>public&nbsp;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;removeFromTail()</pre>
-</li>
-</ul>
-<a name="peekHead()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>peekHead</h4>
-<pre>public&nbsp;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;peekHead()</pre>
-</li>
-</ul>
-<a name="peekTail()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>peekTail</h4>
-<pre>public&nbsp;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;peekTail()</pre>
-</li>
-</ul>
-<a name="contains(java.lang.Object)">
-<!--   -->
-</a><a name="contains(E)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>contains</h4>
-<pre>public&nbsp;boolean&nbsp;contains(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</pre>
-</li>
-</ul>
-<a name="remove(java.lang.Object)">
-<!--   -->
-</a><a name="remove(E)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>remove</h4>
-<pre>public&nbsp;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;remove(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&nbsp;value)</pre>
-</li>
-</ul>
-<a name="isEmpty()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isEmpty</h4>
-<pre>public&nbsp;boolean&nbsp;isEmpty()</pre>
-</li>
-</ul>
-<a name="reverse()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>reverse</h4>
-<pre>public&nbsp;void&nbsp;reverse()</pre>
-</li>
-</ul>
-<a name="reverse(com.icafe4j.util.SinglyLinkedListNode)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>reverse</h4>
-<pre>public&nbsp;void&nbsp;reverse(com.icafe4j.util.SinglyLinkedListNode&lt;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&gt;&nbsp;curr)</pre>
-</li>
-</ul>
-<a name="size()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>size</h4>
-<pre>public&nbsp;int&nbsp;size()</pre>
-</li>
-</ul>
-<a name="clear()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>clear</h4>
-<pre>public&nbsp;void&nbsp;clear()</pre>
-</li>
-</ul>
-<a name="toArray(java.lang.Object[])">
-<!--   -->
-</a><a name="toArray(E[])">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>toArray</h4>
-<pre>public&nbsp;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>[]&nbsp;toArray(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>[]&nbsp;a)</pre>
-</li>
-</ul>
-<a name="transferList(com.icafe4j.util.SinglyLinkedList)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>transferList</h4>
-<pre>public&nbsp;void&nbsp;transferList(<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="class in com.icafe4j.util">SinglyLinkedList</a>&lt;<a href="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</a>&gt;&nbsp;list)</pre>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="addToHead(java.lang.Object)"><!-- --></A><A NAME="addToHead(E)"><!-- --></A><H3>
+addToHead</H3>
+<PRE>
+public void <B>addToHead</B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="add(java.lang.Object)"><!-- --></A><A NAME="add(E)"><!-- --></A><H3>
+add</H3>
+<PRE>
+public void <B>add</B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeFromHead()"><!-- --></A><H3>
+removeFromHead</H3>
+<PRE>
+public <A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A> <B>removeFromHead</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="remove()"><!-- --></A><H3>
+remove</H3>
+<PRE>
+public <A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A> <B>remove</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addToTail(java.lang.Object)"><!-- --></A><A NAME="addToTail(E)"><!-- --></A><H3>
+addToTail</H3>
+<PRE>
+public void <B>addToTail</B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeFromTail()"><!-- --></A><H3>
+removeFromTail</H3>
+<PRE>
+public <A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A> <B>removeFromTail</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="peekHead()"><!-- --></A><H3>
+peekHead</H3>
+<PRE>
+public <A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A> <B>peekHead</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="peekTail()"><!-- --></A><H3>
+peekTail</H3>
+<PRE>
+public <A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A> <B>peekTail</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="contains(java.lang.Object)"><!-- --></A><A NAME="contains(E)"><!-- --></A><H3>
+contains</H3>
+<PRE>
+public boolean <B>contains</B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="remove(java.lang.Object)"><!-- --></A><A NAME="remove(E)"><!-- --></A><H3>
+remove</H3>
+<PRE>
+public <A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A> <B>remove</B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isEmpty()"><!-- --></A><H3>
+isEmpty</H3>
+<PRE>
+public boolean <B>isEmpty</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reverse()"><!-- --></A><H3>
+reverse</H3>
+<PRE>
+public void <B>reverse</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="reverse(com.icafe4j.util.SinglyLinkedListNode)"><!-- --></A><H3>
+reverse</H3>
+<PRE>
+public void <B>reverse</B>(com.icafe4j.util.SinglyLinkedListNode&lt;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&gt;&nbsp;curr)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="size()"><!-- --></A><H3>
+size</H3>
+<PRE>
+public int <B>size</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clear()"><!-- --></A><H3>
+clear</H3>
+<PRE>
+public void <B>clear</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toArray(java.lang.Object[])"><!-- --></A><A NAME="toArray(E[])"><!-- --></A><H3>
+toArray</H3>
+<PRE>
+public <A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>[] <B>toArray</B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>[]&nbsp;a)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="transferList(com.icafe4j.util.SinglyLinkedList)"><!-- --></A><H3>
+transferList</H3>
+<PRE>
+public void <B>transferList</B>(<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="class in com.icafe4j.util">SinglyLinkedList</A>&lt;<A HREF="../../../com/icafe4j/util/SinglyLinkedList.html" title="type parameter in SinglyLinkedList">E</A>&gt;&nbsp;list)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
 <!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
-<div class="bottomNav"><a name="navbar_bottom">
-<!--   -->
-</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
-<!--   -->
-</a>
-<ul class="navList" title="Navigation">
-<li><a href="../../../overview-summary.html">Overview</a></li>
-<li><a href="package-summary.html">Package</a></li>
-<li class="navBarCell1Rev">Class</li>
-<li><a href="package-tree.html">Tree</a></li>
-<li><a href="../../../deprecated-list.html">Deprecated</a></li>
-<li><a href="../../../index-all.html">Index</a></li>
-<li><a href="../../../help-doc.html">Help</a></li>
-</ul>
-</div>
-<div class="subNav">
-<ul class="navList">
-<li><a href="../../../com/icafe4j/util/SeparateChainingHashTable.html" title="class in com.icafe4j.util"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../com/icafe4j/util/SoftHashMap.html" title="class in com.icafe4j.util"><span class="strong">Next Class</span></a></li>
-</ul>
-<ul class="navList">
-<li><a href="../../../index.html?com/icafe4j/util/SinglyLinkedList.html" target="_top">Frames</a></li>
-<li><a href="SinglyLinkedList.html" target="_top">No Frames</a></li>
-</ul>
-<ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
-</ul>
-<div>
-<script type="text/javascript"><!--
-  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../com/icafe4j/util/SeparateChainingHashTable.html" title="class in com.icafe4j.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../com/icafe4j/util/SoftHashMap.html" title="class in com.icafe4j.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../index.html?com/icafe4j/util/SinglyLinkedList.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SinglyLinkedList.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
   if(window==top) {
-    allClassesLink.style.display = "block";
-  }
-  else {
-    allClassesLink.style.display = "none";
+    document.writeln('<A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>');
   }
   //-->
-</script>
-</div>
-<div>
-<ul class="subNavList">
-<li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
-</ul>
-<ul class="subNavList">
-<li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
-</ul>
-</div>
-<a name="skip-navbar_bottom">
-<!--   -->
-</a></div>
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-</body>
-</html>
+
+<HR>
+
+</BODY>
+</HTML>
