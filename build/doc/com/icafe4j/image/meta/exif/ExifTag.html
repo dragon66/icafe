@@ -1,1576 +1,1254 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<!--NewPage-->
-<HTML>
-<HEAD>
-<TITLE>
-ExifTag
-</TITLE>
-
-
-<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
-
-<SCRIPT type="text/javascript">
-function windowTitle()
-{
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>ExifTag</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
     if (location.href.indexOf('is-external=true') == -1) {
         parent.document.title="ExifTag";
     }
-}
-</SCRIPT>
-<NOSCRIPT>
-</NOSCRIPT>
-
-</HEAD>
-
-<BODY BGCOLOR="white" onload="windowTitle();">
-<HR>
-
-
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
 <!-- ========= START OF TOP NAVBAR ======= -->
-<A NAME="navbar_top"><!-- --></A>
-<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_top_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-</EM>
-</TD>
-</TR>
-
-<TR>
-<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../com/icafe4j/image/meta/exif/Exif.html" title="class in com.icafe4j.image.meta.exif"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../com/icafe4j/image/meta/exif/ExifThumbnail.html" title="class in com.icafe4j.image.meta.exif"><B>NEXT CLASS</B></A></FONT></TD>
-<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../../../index.html?com/icafe4j/image/meta/exif/ExifTag.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="ExifTag.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
-&nbsp;<SCRIPT type="text/javascript">
-  <!--
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../../index-all.html">Index</a></li>
+<li><a href="../../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../../com/icafe4j/image/meta/exif/Exif.html" title="class in com.icafe4j.image.meta.exif"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../com/icafe4j/image/meta/exif/ExifThumbnail.html" title="class in com.icafe4j.image.meta.exif"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../../index.html?com/icafe4j/image/meta/exif/ExifTag.html" target="_top">Frames</a></li>
+<li><a href="ExifTag.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
   if(window==top) {
-    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
   }
   //-->
-</SCRIPT>
-<NOSCRIPT>
-  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
-</NOSCRIPT>
-
-
-</FONT></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#enum_constant_summary">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
-<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;<A HREF="#enum_constant_detail">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
-</TR>
-</TABLE>
-<A NAME="skip-navbar_top"></A>
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#enum_constant_summary">Enum Constants</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#enum_constant_detail">Enum Constants</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
-
-<HR>
 <!-- ======== START OF CLASS DATA ======== -->
-<H2>
-<FONT SIZE="-1">
-com.icafe4j.image.meta.exif</FONT>
-<BR>
-Enum ExifTag</H2>
-<PRE>
-java.lang.Object
-  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">java.lang.Enum&lt;<A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A>&gt;
-      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>com.icafe4j.image.meta.exif.ExifTag</B>
-</PRE>
-<DL>
-<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</A>, java.io.Serializable, java.lang.Comparable&lt;<A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A>&gt;</DD>
-</DL>
-<HR>
-<DL>
-<DT><PRE>public enum <B>ExifTag</B><DT>extends java.lang.Enum&lt;<A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A>&gt;<DT>implements <A HREF="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</A></DL>
-</PRE>
-
-<P>
-Defines EXIF tags
-<P>
-
-<P>
-<DL>
-<DT><B>Version:</B></DT>
-  <DD>1.0 06/10/2013</DD>
-<DT><B>Author:</B></DT>
-  <DD>Wen Yu, yuwen_66@yahoo.com</DD>
-</DL>
-<HR>
-
-<P>
+<div class="header">
+<div class="subTitle">com.icafe4j.image.meta.exif</div>
+<h2 title="Enum ExifTag" class="title">Enum ExifTag</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>java.lang.Enum&lt;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a>&gt;</li>
+<li>
+<ul class="inheritance">
+<li>com.icafe4j.image.meta.exif.ExifTag</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a>, java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a>&gt;</dd>
+</dl>
+<hr>
+<br>
+<pre>public enum <span class="strong">ExifTag</span>
+extends java.lang.Enum&lt;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a>&gt;
+implements <a href="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a></pre>
+<div class="block">Defines EXIF tags</div>
+<dl><dt><span class="strong">Version:</span></dt>
+  <dd>1.0 06/10/2013</dd>
+<dt><span class="strong">Author:</span></dt>
+  <dd>Wen Yu, yuwen_66@yahoo.com</dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
 <!-- =========== ENUM CONSTANT SUMMARY =========== -->
-
-<A NAME="enum_constant_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Enum Constant Summary</B></FONT></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#APERTURE_VALUE">APERTURE_VALUE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#BODY_SERIAL_NUMBER">BODY_SERIAL_NUMBER</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#BRIGHTNESS_VALUE">BRIGHTNESS_VALUE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#CFA_PATTERN">CFA_PATTERN</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#COLOR_SPACE">COLOR_SPACE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#COMPONENT_CONFIGURATION">COMPONENT_CONFIGURATION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#COMPRESSED_BITS_PER_PIXEL">COMPRESSED_BITS_PER_PIXEL</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#CONTRAST">CONTRAST</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#CUSTOM_RENDERED">CUSTOM_RENDERED</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#DATE_TIME_DIGITIZED">DATE_TIME_DIGITIZED</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#DATE_TIME_ORIGINAL">DATE_TIME_ORIGINAL</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#DEVICE_SETTING_DESCRIPTION">DEVICE_SETTING_DESCRIPTION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#DIGITAL_ZOOM_RATIO">DIGITAL_ZOOM_RATIO</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXIF_IMAGE_HEIGHT">EXIF_IMAGE_HEIGHT</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXIF_IMAGE_WIDTH">EXIF_IMAGE_WIDTH</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXIF_INTEROPERABILITY_OFFSET">EXIF_INTEROPERABILITY_OFFSET</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXIF_VERSION">EXIF_VERSION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_FILM">EXPAND_FILM</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_FILTER_LENS">EXPAND_FILTER_LENS</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_FLASH_LAMP">EXPAND_FLASH_LAMP</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_LENS">EXPAND_LENS</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_SCANNER">EXPAND_SCANNER</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_SOFTWARE">EXPAND_SOFTWARE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_BIAS_VALUE">EXPOSURE_BIAS_VALUE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_INDEX">EXPOSURE_INDEX</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_MODE">EXPOSURE_MODE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_PROGRAM">EXPOSURE_PROGRAM</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_TIME">EXPOSURE_TIME</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FILE_SOURCE">FILE_SOURCE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FLASH">FLASH</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FLASH_ENERGY">FLASH_ENERGY</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FLASH_PIX_VERSION">FLASH_PIX_VERSION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FNUMBER">FNUMBER</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_LENGTH">FOCAL_LENGTH</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_LENGTH_IN_35MM_FORMAT">FOCAL_LENGTH_IN_35MM_FORMAT</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_PLANE_RESOLUTION_UNIT">FOCAL_PLANE_RESOLUTION_UNIT</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_PLANE_X_RESOLUTION">FOCAL_PLANE_X_RESOLUTION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_PLANE_Y_RESOLUTION">FOCAL_PLANE_Y_RESOLUTION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#GAIN_CONTROL">GAIN_CONTROL</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#IMAGE_UNIQUE_ID">IMAGE_UNIQUE_ID</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#ISO_SPEED_RATINGS">ISO_SPEED_RATINGS</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LENS_Make">LENS_Make</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LENS_MODEL">LENS_MODEL</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LENS_SERIAL_NUMBER">LENS_SERIAL_NUMBER</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LENS_SPECIFICATION">LENS_SPECIFICATION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LIGHT_SOURCE">LIGHT_SOURCE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#MAKER_NODE">MAKER_NODE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#MAX_APERTURE_VALUE">MAX_APERTURE_VALUE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#METERING_MODE">METERING_MODE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#OECF">OECF</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#OWNER_NAME">OWNER_NAME</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#PADDING">PADDING</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#RELATED_SOUND_FILE">RELATED_SOUND_FILE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SATURATION">SATURATION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SCENE_CAPTURE_TYPE">SCENE_CAPTURE_TYPE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SCENE_TYPE">SCENE_TYPE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SENSING_METHOD">SENSING_METHOD</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SHARPNESS">SHARPNESS</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SHUTTER_SPEED_VALUE">SHUTTER_SPEED_VALUE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SPATIAL_FREQUENCY_RESPONSE">SPATIAL_FREQUENCY_RESPONSE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SPECTRAL_SENSITIVITY">SPECTRAL_SENSITIVITY</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUB_SEC_TIME">SUB_SEC_TIME</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUB_SEC_TIME_DIGITIZED">SUB_SEC_TIME_DIGITIZED</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUB_SEC_TIME_ORIGINAL">SUB_SEC_TIME_ORIGINAL</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUBJECT_AREA">SUBJECT_AREA</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUBJECT_DISTANCE">SUBJECT_DISTANCE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUBJECT_DISTANCE_RANGE">SUBJECT_DISTANCE_RANGE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUBJECT_LOCATION">SUBJECT_LOCATION</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#UNKNOWN">UNKNOWN</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#USER_COMMENT">USER_COMMENT</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#WHITE_BALENCE">WHITE_BALENCE</A></B></CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-</TABLE>
-&nbsp;
+<ul class="blockList">
+<li class="blockList"><a name="enum_constant_summary">
+<!--   -->
+</a>
+<h3>Enum Constant Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Enum Constant Summary table, listing enum constants, and an explanation">
+<caption><span>Enum Constants</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Enum Constant and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#APERTURE_VALUE">APERTURE_VALUE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#BODY_SERIAL_NUMBER">BODY_SERIAL_NUMBER</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#BRIGHTNESS_VALUE">BRIGHTNESS_VALUE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#CFA_PATTERN">CFA_PATTERN</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#COLOR_SPACE">COLOR_SPACE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#COMPONENT_CONFIGURATION">COMPONENT_CONFIGURATION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#COMPRESSED_BITS_PER_PIXEL">COMPRESSED_BITS_PER_PIXEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#CONTRAST">CONTRAST</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#CUSTOM_RENDERED">CUSTOM_RENDERED</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#DATE_TIME_DIGITIZED">DATE_TIME_DIGITIZED</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#DATE_TIME_ORIGINAL">DATE_TIME_ORIGINAL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#DEVICE_SETTING_DESCRIPTION">DEVICE_SETTING_DESCRIPTION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#DIGITAL_ZOOM_RATIO">DIGITAL_ZOOM_RATIO</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXIF_IMAGE_HEIGHT">EXIF_IMAGE_HEIGHT</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXIF_IMAGE_WIDTH">EXIF_IMAGE_WIDTH</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXIF_INTEROPERABILITY_OFFSET">EXIF_INTEROPERABILITY_OFFSET</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXIF_VERSION">EXIF_VERSION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_FILM">EXPAND_FILM</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_FILTER_LENS">EXPAND_FILTER_LENS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_FLASH_LAMP">EXPAND_FLASH_LAMP</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_LENS">EXPAND_LENS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_SCANNER">EXPAND_SCANNER</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPAND_SOFTWARE">EXPAND_SOFTWARE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_BIAS_VALUE">EXPOSURE_BIAS_VALUE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_INDEX">EXPOSURE_INDEX</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_MODE">EXPOSURE_MODE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_PROGRAM">EXPOSURE_PROGRAM</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#EXPOSURE_TIME">EXPOSURE_TIME</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FILE_SOURCE">FILE_SOURCE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FLASH">FLASH</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FLASH_ENERGY">FLASH_ENERGY</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FLASH_PIX_VERSION">FLASH_PIX_VERSION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FNUMBER">FNUMBER</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_LENGTH">FOCAL_LENGTH</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_LENGTH_IN_35MM_FORMAT">FOCAL_LENGTH_IN_35MM_FORMAT</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_PLANE_RESOLUTION_UNIT">FOCAL_PLANE_RESOLUTION_UNIT</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_PLANE_X_RESOLUTION">FOCAL_PLANE_X_RESOLUTION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#FOCAL_PLANE_Y_RESOLUTION">FOCAL_PLANE_Y_RESOLUTION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#GAIN_CONTROL">GAIN_CONTROL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#IMAGE_UNIQUE_ID">IMAGE_UNIQUE_ID</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#ISO_SPEED_RATINGS">ISO_SPEED_RATINGS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LENS_Make">LENS_Make</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LENS_MODEL">LENS_MODEL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LENS_SERIAL_NUMBER">LENS_SERIAL_NUMBER</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LENS_SPECIFICATION">LENS_SPECIFICATION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#LIGHT_SOURCE">LIGHT_SOURCE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#MAKER_NODE">MAKER_NODE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#MAX_APERTURE_VALUE">MAX_APERTURE_VALUE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#METERING_MODE">METERING_MODE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#OECF">OECF</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#OWNER_NAME">OWNER_NAME</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#PADDING">PADDING</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#RELATED_SOUND_FILE">RELATED_SOUND_FILE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SATURATION">SATURATION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SCENE_CAPTURE_TYPE">SCENE_CAPTURE_TYPE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SCENE_TYPE">SCENE_TYPE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SENSING_METHOD">SENSING_METHOD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SHARPNESS">SHARPNESS</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SHUTTER_SPEED_VALUE">SHUTTER_SPEED_VALUE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SPATIAL_FREQUENCY_RESPONSE">SPATIAL_FREQUENCY_RESPONSE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SPECTRAL_SENSITIVITY">SPECTRAL_SENSITIVITY</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUB_SEC_TIME">SUB_SEC_TIME</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUB_SEC_TIME_DIGITIZED">SUB_SEC_TIME_DIGITIZED</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUB_SEC_TIME_ORIGINAL">SUB_SEC_TIME_ORIGINAL</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUBJECT_AREA">SUBJECT_AREA</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUBJECT_DISTANCE">SUBJECT_DISTANCE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUBJECT_DISTANCE_RANGE">SUBJECT_DISTANCE_RANGE</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#SUBJECT_LOCATION">SUBJECT_LOCATION</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#UNKNOWN">UNKNOWN</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#USER_COMMENT">USER_COMMENT</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#WHITE_BALENCE">WHITE_BALENCE</a></strong></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ========== METHOD SUMMARY =========== -->
-
-<A NAME="method_summary"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
-<B>Method Summary</B></FONT></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#fromShort(short)">fromShort</A></B>(short&nbsp;value)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#getFieldAsString(java.lang.Object)">getFieldAsString</A></B>(java.lang.Object&nbsp;value)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intended to be overridden by certain tags to provide meaningful string
- representation of the field value such as compression, photo metric interpretation etc.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;<A HREF="../../../../../com/icafe4j/image/tiff/FieldType.html" title="enum in com.icafe4j.image.tiff">FieldType</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#getFieldType()">getFieldType</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#getName()">getName</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;short</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#getValue()">getValue</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#toString()">toString</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A></CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#valueOf(java.lang.String)">valueOf</A></B>(java.lang.String&nbsp;name)</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the enum constant of this type with the specified name.</TD>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
-<CODE>static&nbsp;<A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A>[]</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#values()">values</A></B>()</CODE>
-
-<BR>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array containing the constants of this enum type, in
-the order they are declared.</TD>
-</TR>
-</TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_java.lang.Enum"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class java.lang.Enum</B></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>clone, compareTo, equals, finalize, getDeclaringClass, hashCode, name, ordinal, valueOf</CODE></TD>
-</TR>
-</TABLE>
-&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
-<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
-</TR>
-<TR BGCOLOR="white" CLASS="TableRowColor">
-<TD><CODE>getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
-</TR>
-</TABLE>
-&nbsp;
-<P>
-
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#fromShort(short)">fromShort</a></strong>(short&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#getFieldAsString(java.lang.Object)">getFieldAsString</a></strong>(java.lang.Object&nbsp;value)</code>
+<div class="block">Intended to be overridden by certain tags to provide meaningful string
+ representation of the field value such as compression, photo metric interpretation etc.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/icafe4j/image/tiff/FieldType.html" title="enum in com.icafe4j.image.tiff">FieldType</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#getFieldType()">getFieldType</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#getName()">getName</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>short</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#getValue()">getValue</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#toString()">toString</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#valueOf(java.lang.String)">valueOf</a></strong>(java.lang.String&nbsp;name)</code>
+<div class="block">Returns the enum constant of this type with the specified name.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html#values()">values</a></strong>()</code>
+<div class="block">Returns an array containing the constants of this enum type, in
+the order they are declared.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Enum">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Enum</h3>
+<code>clone, compareTo, equals, finalize, getDeclaringClass, hashCode, name, ordinal, valueOf</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>getClass, notify, notifyAll, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
 <!-- ============ ENUM CONSTANT DETAIL =========== -->
-
-<A NAME="enum_constant_detail"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Enum Constant Detail</B></FONT></TH>
-</TR>
-</TABLE>
-
-<A NAME="EXPOSURE_TIME"><!-- --></A><H3>
-EXPOSURE_TIME</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPOSURE_TIME</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FNUMBER"><!-- --></A><H3>
-FNUMBER</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FNUMBER</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPOSURE_PROGRAM"><!-- --></A><H3>
-EXPOSURE_PROGRAM</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPOSURE_PROGRAM</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SPECTRAL_SENSITIVITY"><!-- --></A><H3>
-SPECTRAL_SENSITIVITY</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SPECTRAL_SENSITIVITY</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="ISO_SPEED_RATINGS"><!-- --></A><H3>
-ISO_SPEED_RATINGS</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>ISO_SPEED_RATINGS</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="OECF"><!-- --></A><H3>
-OECF</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>OECF</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXIF_VERSION"><!-- --></A><H3>
-EXIF_VERSION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXIF_VERSION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="DATE_TIME_ORIGINAL"><!-- --></A><H3>
-DATE_TIME_ORIGINAL</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>DATE_TIME_ORIGINAL</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="DATE_TIME_DIGITIZED"><!-- --></A><H3>
-DATE_TIME_DIGITIZED</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>DATE_TIME_DIGITIZED</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="COMPONENT_CONFIGURATION"><!-- --></A><H3>
-COMPONENT_CONFIGURATION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>COMPONENT_CONFIGURATION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="COMPRESSED_BITS_PER_PIXEL"><!-- --></A><H3>
-COMPRESSED_BITS_PER_PIXEL</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>COMPRESSED_BITS_PER_PIXEL</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SHUTTER_SPEED_VALUE"><!-- --></A><H3>
-SHUTTER_SPEED_VALUE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SHUTTER_SPEED_VALUE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="APERTURE_VALUE"><!-- --></A><H3>
-APERTURE_VALUE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>APERTURE_VALUE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="BRIGHTNESS_VALUE"><!-- --></A><H3>
-BRIGHTNESS_VALUE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>BRIGHTNESS_VALUE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPOSURE_BIAS_VALUE"><!-- --></A><H3>
-EXPOSURE_BIAS_VALUE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPOSURE_BIAS_VALUE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="MAX_APERTURE_VALUE"><!-- --></A><H3>
-MAX_APERTURE_VALUE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>MAX_APERTURE_VALUE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SUBJECT_DISTANCE"><!-- --></A><H3>
-SUBJECT_DISTANCE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SUBJECT_DISTANCE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="METERING_MODE"><!-- --></A><H3>
-METERING_MODE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>METERING_MODE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="LIGHT_SOURCE"><!-- --></A><H3>
-LIGHT_SOURCE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>LIGHT_SOURCE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FLASH"><!-- --></A><H3>
-FLASH</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FLASH</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FOCAL_LENGTH"><!-- --></A><H3>
-FOCAL_LENGTH</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FOCAL_LENGTH</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SUBJECT_AREA"><!-- --></A><H3>
-SUBJECT_AREA</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SUBJECT_AREA</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="MAKER_NODE"><!-- --></A><H3>
-MAKER_NODE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>MAKER_NODE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="USER_COMMENT"><!-- --></A><H3>
-USER_COMMENT</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>USER_COMMENT</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SUB_SEC_TIME"><!-- --></A><H3>
-SUB_SEC_TIME</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SUB_SEC_TIME</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SUB_SEC_TIME_ORIGINAL"><!-- --></A><H3>
-SUB_SEC_TIME_ORIGINAL</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SUB_SEC_TIME_ORIGINAL</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SUB_SEC_TIME_DIGITIZED"><!-- --></A><H3>
-SUB_SEC_TIME_DIGITIZED</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SUB_SEC_TIME_DIGITIZED</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FLASH_PIX_VERSION"><!-- --></A><H3>
-FLASH_PIX_VERSION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FLASH_PIX_VERSION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="COLOR_SPACE"><!-- --></A><H3>
-COLOR_SPACE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>COLOR_SPACE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXIF_IMAGE_WIDTH"><!-- --></A><H3>
-EXIF_IMAGE_WIDTH</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXIF_IMAGE_WIDTH</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXIF_IMAGE_HEIGHT"><!-- --></A><H3>
-EXIF_IMAGE_HEIGHT</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXIF_IMAGE_HEIGHT</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="RELATED_SOUND_FILE"><!-- --></A><H3>
-RELATED_SOUND_FILE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>RELATED_SOUND_FILE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXIF_INTEROPERABILITY_OFFSET"><!-- --></A><H3>
-EXIF_INTEROPERABILITY_OFFSET</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXIF_INTEROPERABILITY_OFFSET</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FLASH_ENERGY"><!-- --></A><H3>
-FLASH_ENERGY</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FLASH_ENERGY</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SPATIAL_FREQUENCY_RESPONSE"><!-- --></A><H3>
-SPATIAL_FREQUENCY_RESPONSE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SPATIAL_FREQUENCY_RESPONSE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FOCAL_PLANE_X_RESOLUTION"><!-- --></A><H3>
-FOCAL_PLANE_X_RESOLUTION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FOCAL_PLANE_X_RESOLUTION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FOCAL_PLANE_Y_RESOLUTION"><!-- --></A><H3>
-FOCAL_PLANE_Y_RESOLUTION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FOCAL_PLANE_Y_RESOLUTION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FOCAL_PLANE_RESOLUTION_UNIT"><!-- --></A><H3>
-FOCAL_PLANE_RESOLUTION_UNIT</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FOCAL_PLANE_RESOLUTION_UNIT</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SUBJECT_LOCATION"><!-- --></A><H3>
-SUBJECT_LOCATION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SUBJECT_LOCATION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPOSURE_INDEX"><!-- --></A><H3>
-EXPOSURE_INDEX</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPOSURE_INDEX</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SENSING_METHOD"><!-- --></A><H3>
-SENSING_METHOD</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SENSING_METHOD</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FILE_SOURCE"><!-- --></A><H3>
-FILE_SOURCE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FILE_SOURCE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SCENE_TYPE"><!-- --></A><H3>
-SCENE_TYPE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SCENE_TYPE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="CFA_PATTERN"><!-- --></A><H3>
-CFA_PATTERN</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>CFA_PATTERN</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="CUSTOM_RENDERED"><!-- --></A><H3>
-CUSTOM_RENDERED</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>CUSTOM_RENDERED</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPOSURE_MODE"><!-- --></A><H3>
-EXPOSURE_MODE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPOSURE_MODE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="WHITE_BALENCE"><!-- --></A><H3>
-WHITE_BALENCE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>WHITE_BALENCE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="DIGITAL_ZOOM_RATIO"><!-- --></A><H3>
-DIGITAL_ZOOM_RATIO</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>DIGITAL_ZOOM_RATIO</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="FOCAL_LENGTH_IN_35MM_FORMAT"><!-- --></A><H3>
-FOCAL_LENGTH_IN_35MM_FORMAT</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>FOCAL_LENGTH_IN_35MM_FORMAT</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SCENE_CAPTURE_TYPE"><!-- --></A><H3>
-SCENE_CAPTURE_TYPE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SCENE_CAPTURE_TYPE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="GAIN_CONTROL"><!-- --></A><H3>
-GAIN_CONTROL</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>GAIN_CONTROL</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="CONTRAST"><!-- --></A><H3>
-CONTRAST</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>CONTRAST</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SATURATION"><!-- --></A><H3>
-SATURATION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SATURATION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SHARPNESS"><!-- --></A><H3>
-SHARPNESS</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SHARPNESS</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="DEVICE_SETTING_DESCRIPTION"><!-- --></A><H3>
-DEVICE_SETTING_DESCRIPTION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>DEVICE_SETTING_DESCRIPTION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="SUBJECT_DISTANCE_RANGE"><!-- --></A><H3>
-SUBJECT_DISTANCE_RANGE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>SUBJECT_DISTANCE_RANGE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="IMAGE_UNIQUE_ID"><!-- --></A><H3>
-IMAGE_UNIQUE_ID</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>IMAGE_UNIQUE_ID</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="OWNER_NAME"><!-- --></A><H3>
-OWNER_NAME</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>OWNER_NAME</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="BODY_SERIAL_NUMBER"><!-- --></A><H3>
-BODY_SERIAL_NUMBER</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>BODY_SERIAL_NUMBER</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="LENS_SPECIFICATION"><!-- --></A><H3>
-LENS_SPECIFICATION</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>LENS_SPECIFICATION</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="LENS_Make"><!-- --></A><H3>
-LENS_Make</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>LENS_Make</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="LENS_MODEL"><!-- --></A><H3>
-LENS_MODEL</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>LENS_MODEL</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="LENS_SERIAL_NUMBER"><!-- --></A><H3>
-LENS_SERIAL_NUMBER</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>LENS_SERIAL_NUMBER</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPAND_SOFTWARE"><!-- --></A><H3>
-EXPAND_SOFTWARE</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPAND_SOFTWARE</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPAND_LENS"><!-- --></A><H3>
-EXPAND_LENS</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPAND_LENS</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPAND_FILM"><!-- --></A><H3>
-EXPAND_FILM</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPAND_FILM</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPAND_FILTER_LENS"><!-- --></A><H3>
-EXPAND_FILTER_LENS</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPAND_FILTER_LENS</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPAND_SCANNER"><!-- --></A><H3>
-EXPAND_SCANNER</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPAND_SCANNER</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="EXPAND_FLASH_LAMP"><!-- --></A><H3>
-EXPAND_FLASH_LAMP</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>EXPAND_FLASH_LAMP</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="PADDING"><!-- --></A><H3>
-PADDING</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>PADDING</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-<HR>
-
-<A NAME="UNKNOWN"><!-- --></A><H3>
-UNKNOWN</H3>
-<PRE>
-public static final <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>UNKNOWN</B></PRE>
-<DL>
-<DL>
-</DL>
-</DL>
-
+<ul class="blockList">
+<li class="blockList"><a name="enum_constant_detail">
+<!--   -->
+</a>
+<h3>Enum Constant Detail</h3>
+<a name="EXPOSURE_TIME">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPOSURE_TIME</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPOSURE_TIME</pre>
+</li>
+</ul>
+<a name="FNUMBER">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FNUMBER</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FNUMBER</pre>
+</li>
+</ul>
+<a name="EXPOSURE_PROGRAM">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPOSURE_PROGRAM</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPOSURE_PROGRAM</pre>
+</li>
+</ul>
+<a name="SPECTRAL_SENSITIVITY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SPECTRAL_SENSITIVITY</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SPECTRAL_SENSITIVITY</pre>
+</li>
+</ul>
+<a name="ISO_SPEED_RATINGS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ISO_SPEED_RATINGS</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> ISO_SPEED_RATINGS</pre>
+</li>
+</ul>
+<a name="OECF">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>OECF</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> OECF</pre>
+</li>
+</ul>
+<a name="EXIF_VERSION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXIF_VERSION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXIF_VERSION</pre>
+</li>
+</ul>
+<a name="DATE_TIME_ORIGINAL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DATE_TIME_ORIGINAL</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> DATE_TIME_ORIGINAL</pre>
+</li>
+</ul>
+<a name="DATE_TIME_DIGITIZED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DATE_TIME_DIGITIZED</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> DATE_TIME_DIGITIZED</pre>
+</li>
+</ul>
+<a name="COMPONENT_CONFIGURATION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>COMPONENT_CONFIGURATION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> COMPONENT_CONFIGURATION</pre>
+</li>
+</ul>
+<a name="COMPRESSED_BITS_PER_PIXEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>COMPRESSED_BITS_PER_PIXEL</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> COMPRESSED_BITS_PER_PIXEL</pre>
+</li>
+</ul>
+<a name="SHUTTER_SPEED_VALUE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SHUTTER_SPEED_VALUE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SHUTTER_SPEED_VALUE</pre>
+</li>
+</ul>
+<a name="APERTURE_VALUE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>APERTURE_VALUE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> APERTURE_VALUE</pre>
+</li>
+</ul>
+<a name="BRIGHTNESS_VALUE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>BRIGHTNESS_VALUE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> BRIGHTNESS_VALUE</pre>
+</li>
+</ul>
+<a name="EXPOSURE_BIAS_VALUE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPOSURE_BIAS_VALUE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPOSURE_BIAS_VALUE</pre>
+</li>
+</ul>
+<a name="MAX_APERTURE_VALUE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MAX_APERTURE_VALUE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> MAX_APERTURE_VALUE</pre>
+</li>
+</ul>
+<a name="SUBJECT_DISTANCE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SUBJECT_DISTANCE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SUBJECT_DISTANCE</pre>
+</li>
+</ul>
+<a name="METERING_MODE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>METERING_MODE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> METERING_MODE</pre>
+</li>
+</ul>
+<a name="LIGHT_SOURCE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LIGHT_SOURCE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> LIGHT_SOURCE</pre>
+</li>
+</ul>
+<a name="FLASH">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FLASH</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FLASH</pre>
+</li>
+</ul>
+<a name="FOCAL_LENGTH">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FOCAL_LENGTH</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FOCAL_LENGTH</pre>
+</li>
+</ul>
+<a name="SUBJECT_AREA">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SUBJECT_AREA</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SUBJECT_AREA</pre>
+</li>
+</ul>
+<a name="MAKER_NODE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MAKER_NODE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> MAKER_NODE</pre>
+</li>
+</ul>
+<a name="USER_COMMENT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>USER_COMMENT</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> USER_COMMENT</pre>
+</li>
+</ul>
+<a name="SUB_SEC_TIME">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SUB_SEC_TIME</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SUB_SEC_TIME</pre>
+</li>
+</ul>
+<a name="SUB_SEC_TIME_ORIGINAL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SUB_SEC_TIME_ORIGINAL</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SUB_SEC_TIME_ORIGINAL</pre>
+</li>
+</ul>
+<a name="SUB_SEC_TIME_DIGITIZED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SUB_SEC_TIME_DIGITIZED</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SUB_SEC_TIME_DIGITIZED</pre>
+</li>
+</ul>
+<a name="FLASH_PIX_VERSION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FLASH_PIX_VERSION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FLASH_PIX_VERSION</pre>
+</li>
+</ul>
+<a name="COLOR_SPACE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>COLOR_SPACE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> COLOR_SPACE</pre>
+</li>
+</ul>
+<a name="EXIF_IMAGE_WIDTH">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXIF_IMAGE_WIDTH</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXIF_IMAGE_WIDTH</pre>
+</li>
+</ul>
+<a name="EXIF_IMAGE_HEIGHT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXIF_IMAGE_HEIGHT</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXIF_IMAGE_HEIGHT</pre>
+</li>
+</ul>
+<a name="RELATED_SOUND_FILE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>RELATED_SOUND_FILE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> RELATED_SOUND_FILE</pre>
+</li>
+</ul>
+<a name="EXIF_INTEROPERABILITY_OFFSET">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXIF_INTEROPERABILITY_OFFSET</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXIF_INTEROPERABILITY_OFFSET</pre>
+</li>
+</ul>
+<a name="FLASH_ENERGY">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FLASH_ENERGY</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FLASH_ENERGY</pre>
+</li>
+</ul>
+<a name="SPATIAL_FREQUENCY_RESPONSE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SPATIAL_FREQUENCY_RESPONSE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SPATIAL_FREQUENCY_RESPONSE</pre>
+</li>
+</ul>
+<a name="FOCAL_PLANE_X_RESOLUTION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FOCAL_PLANE_X_RESOLUTION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FOCAL_PLANE_X_RESOLUTION</pre>
+</li>
+</ul>
+<a name="FOCAL_PLANE_Y_RESOLUTION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FOCAL_PLANE_Y_RESOLUTION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FOCAL_PLANE_Y_RESOLUTION</pre>
+</li>
+</ul>
+<a name="FOCAL_PLANE_RESOLUTION_UNIT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FOCAL_PLANE_RESOLUTION_UNIT</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FOCAL_PLANE_RESOLUTION_UNIT</pre>
+</li>
+</ul>
+<a name="SUBJECT_LOCATION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SUBJECT_LOCATION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SUBJECT_LOCATION</pre>
+</li>
+</ul>
+<a name="EXPOSURE_INDEX">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPOSURE_INDEX</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPOSURE_INDEX</pre>
+</li>
+</ul>
+<a name="SENSING_METHOD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SENSING_METHOD</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SENSING_METHOD</pre>
+</li>
+</ul>
+<a name="FILE_SOURCE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FILE_SOURCE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FILE_SOURCE</pre>
+</li>
+</ul>
+<a name="SCENE_TYPE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SCENE_TYPE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SCENE_TYPE</pre>
+</li>
+</ul>
+<a name="CFA_PATTERN">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CFA_PATTERN</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> CFA_PATTERN</pre>
+</li>
+</ul>
+<a name="CUSTOM_RENDERED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CUSTOM_RENDERED</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> CUSTOM_RENDERED</pre>
+</li>
+</ul>
+<a name="EXPOSURE_MODE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPOSURE_MODE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPOSURE_MODE</pre>
+</li>
+</ul>
+<a name="WHITE_BALENCE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>WHITE_BALENCE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> WHITE_BALENCE</pre>
+</li>
+</ul>
+<a name="DIGITAL_ZOOM_RATIO">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DIGITAL_ZOOM_RATIO</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> DIGITAL_ZOOM_RATIO</pre>
+</li>
+</ul>
+<a name="FOCAL_LENGTH_IN_35MM_FORMAT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>FOCAL_LENGTH_IN_35MM_FORMAT</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> FOCAL_LENGTH_IN_35MM_FORMAT</pre>
+</li>
+</ul>
+<a name="SCENE_CAPTURE_TYPE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SCENE_CAPTURE_TYPE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SCENE_CAPTURE_TYPE</pre>
+</li>
+</ul>
+<a name="GAIN_CONTROL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>GAIN_CONTROL</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> GAIN_CONTROL</pre>
+</li>
+</ul>
+<a name="CONTRAST">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CONTRAST</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> CONTRAST</pre>
+</li>
+</ul>
+<a name="SATURATION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SATURATION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SATURATION</pre>
+</li>
+</ul>
+<a name="SHARPNESS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SHARPNESS</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SHARPNESS</pre>
+</li>
+</ul>
+<a name="DEVICE_SETTING_DESCRIPTION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DEVICE_SETTING_DESCRIPTION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> DEVICE_SETTING_DESCRIPTION</pre>
+</li>
+</ul>
+<a name="SUBJECT_DISTANCE_RANGE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SUBJECT_DISTANCE_RANGE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> SUBJECT_DISTANCE_RANGE</pre>
+</li>
+</ul>
+<a name="IMAGE_UNIQUE_ID">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>IMAGE_UNIQUE_ID</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> IMAGE_UNIQUE_ID</pre>
+</li>
+</ul>
+<a name="OWNER_NAME">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>OWNER_NAME</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> OWNER_NAME</pre>
+</li>
+</ul>
+<a name="BODY_SERIAL_NUMBER">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>BODY_SERIAL_NUMBER</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> BODY_SERIAL_NUMBER</pre>
+</li>
+</ul>
+<a name="LENS_SPECIFICATION">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LENS_SPECIFICATION</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> LENS_SPECIFICATION</pre>
+</li>
+</ul>
+<a name="LENS_Make">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LENS_Make</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> LENS_Make</pre>
+</li>
+</ul>
+<a name="LENS_MODEL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LENS_MODEL</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> LENS_MODEL</pre>
+</li>
+</ul>
+<a name="LENS_SERIAL_NUMBER">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LENS_SERIAL_NUMBER</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> LENS_SERIAL_NUMBER</pre>
+</li>
+</ul>
+<a name="EXPAND_SOFTWARE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPAND_SOFTWARE</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPAND_SOFTWARE</pre>
+</li>
+</ul>
+<a name="EXPAND_LENS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPAND_LENS</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPAND_LENS</pre>
+</li>
+</ul>
+<a name="EXPAND_FILM">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPAND_FILM</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPAND_FILM</pre>
+</li>
+</ul>
+<a name="EXPAND_FILTER_LENS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPAND_FILTER_LENS</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPAND_FILTER_LENS</pre>
+</li>
+</ul>
+<a name="EXPAND_SCANNER">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPAND_SCANNER</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPAND_SCANNER</pre>
+</li>
+</ul>
+<a name="EXPAND_FLASH_LAMP">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>EXPAND_FLASH_LAMP</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> EXPAND_FLASH_LAMP</pre>
+</li>
+</ul>
+<a name="PADDING">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>PADDING</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> PADDING</pre>
+</li>
+</ul>
+<a name="UNKNOWN">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>UNKNOWN</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a> UNKNOWN</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ============ METHOD DETAIL ========== -->
-
-<A NAME="method_detail"><!-- --></A>
-<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
-<B>Method Detail</B></FONT></TH>
-</TR>
-</TABLE>
-
-<A NAME="values()"><!-- --></A><H3>
-values</H3>
-<PRE>
-public static <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A>[] <B>values</B>()</PRE>
-<DL>
-<DD>Returns an array containing the constants of this enum type, in
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="values()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>values</h4>
+<pre>public static&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a>[]&nbsp;values()</pre>
+<div class="block">Returns an array containing the constants of this enum type, in
 the order they are declared.  This method may be used to iterate
 over the constants as follows:
 <pre>
 for (ExifTag c : ExifTag.values())
 &nbsp;   System.out.println(c);
-</pre>
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-
-<DT><B>Returns:</B><DD>an array containing the constants of this enum type, in
-the order they are declared</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="valueOf(java.lang.String)"><!-- --></A><H3>
-valueOf</H3>
-<PRE>
-public static <A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A> <B>valueOf</B>(java.lang.String&nbsp;name)</PRE>
-<DL>
-<DD>Returns the enum constant of this type with the specified name.
-The string must match <I>exactly</I> an identifier used to declare an
+</pre></div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>an array containing the constants of this enum type, in the order they are declared</dd></dl>
+</li>
+</ul>
+<a name="valueOf(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>valueOf</h4>
+<pre>public static&nbsp;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a>&nbsp;valueOf(java.lang.String&nbsp;name)</pre>
+<div class="block">Returns the enum constant of this type with the specified name.
+The string must match <i>exactly</i> an identifier used to declare an
 enum constant in this type.  (Extraneous whitespace characters are 
-not permitted.)
-<P>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the enum constant to be returned.
-<DT><B>Returns:</B><DD>the enum constant with the specified name
-<DT><B>Throws:</B>
-<DD><CODE>java.lang.IllegalArgumentException</CODE> - if this enum type has no constant
-with the specified name
-<DD><CODE>java.lang.NullPointerException</CODE> - if the argument is null</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getName()"><!-- --></A><H3>
-getName</H3>
-<PRE>
-public java.lang.String <B>getName</B>()</PRE>
-<DL>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html#getName()">getName</A></CODE> in interface <CODE><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getValue()"><!-- --></A><H3>
-getValue</H3>
-<PRE>
-public short <B>getValue</B>()</PRE>
-<DL>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html#getValue()">getValue</A></CODE> in interface <CODE><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="toString()"><!-- --></A><H3>
-toString</H3>
-<PRE>
-public java.lang.String <B>toString</B>()</PRE>
-<DL>
-<DD><DL>
-<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Enum&lt;<A HREF="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</A>&gt;</CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="fromShort(short)"><!-- --></A><H3>
-fromShort</H3>
-<PRE>
-public static <A HREF="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</A> <B>fromShort</B>(short&nbsp;value)</PRE>
-<DL>
-<DD><DL>
-</DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getFieldAsString(java.lang.Object)"><!-- --></A><H3>
-getFieldAsString</H3>
-<PRE>
-public java.lang.String <B>getFieldAsString</B>(java.lang.Object&nbsp;value)</PRE>
-<DL>
-<DD>Intended to be overridden by certain tags to provide meaningful string
- representation of the field value such as compression, photo metric interpretation etc.
-<P>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html#getFieldAsString(java.lang.Object)">getFieldAsString</A></CODE> in interface <CODE><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</A></CODE></DL>
-</DD>
-<DD><DL>
-<DT><B>Parameters:</B><DD><CODE>value</CODE> - field value to be mapped to a string
-<DT><B>Returns:</B><DD>a string representation of the field value or empty string if no meaningful string
-        representation exists.</DL>
-</DD>
-</DL>
-<HR>
-
-<A NAME="getFieldType()"><!-- --></A><H3>
-getFieldType</H3>
-<PRE>
-public <A HREF="../../../../../com/icafe4j/image/tiff/FieldType.html" title="enum in com.icafe4j.image.tiff">FieldType</A> <B>getFieldType</B>()</PRE>
-<DL>
-<DD><DL>
-<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html#getFieldType()">getFieldType</A></CODE> in interface <CODE><A HREF="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</A></CODE></DL>
-</DD>
-<DD><DL>
-</DL>
-</DD>
-</DL>
+not permitted.)</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - the name of the enum constant to be returned.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the enum constant with the specified name</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if this enum type has no constant with the specified name</dd>
+<dd><code>java.lang.NullPointerException</code> - if the argument is null</dd></dl>
+</li>
+</ul>
+<a name="getName()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../com/icafe4j/image/tiff/Tag.html#getName()">getName</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getValue()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getValue</h4>
+<pre>public&nbsp;short&nbsp;getValue()</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../com/icafe4j/image/tiff/Tag.html#getValue()">getValue</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Enum&lt;<a href="../../../../../com/icafe4j/image/meta/exif/ExifTag.html" title="enum in com.icafe4j.image.meta.exif">ExifTag</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
+<a name="fromShort(short)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fromShort</h4>
+<pre>public static&nbsp;<a href="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a>&nbsp;fromShort(short&nbsp;value)</pre>
+</li>
+</ul>
+<a name="getFieldAsString(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFieldAsString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getFieldAsString(java.lang.Object&nbsp;value)</pre>
+<div class="block">Intended to be overridden by certain tags to provide meaningful string
+ representation of the field value such as compression, photo metric interpretation etc.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../com/icafe4j/image/tiff/Tag.html#getFieldAsString(java.lang.Object)">getFieldAsString</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a></code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - field value to be mapped to a string</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a string representation of the field value or empty string if no meaningful string
+        representation exists.</dd></dl>
+</li>
+</ul>
+<a name="getFieldType()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getFieldType</h4>
+<pre>public&nbsp;<a href="../../../../../com/icafe4j/image/tiff/FieldType.html" title="enum in com.icafe4j.image.tiff">FieldType</a>&nbsp;getFieldType()</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../com/icafe4j/image/tiff/Tag.html#getFieldType()">getFieldType</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a></code></dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <!-- ========= END OF CLASS DATA ========= -->
-<HR>
-
-
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
-<A NAME="navbar_bottom"><!-- --></A>
-<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
-<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
-<TR>
-<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
-<A NAME="navbar_bottom_firstrow"><!-- --></A>
-<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
-  <TR ALIGN="center" VALIGN="top">
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
-  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
-  </TR>
-</TABLE>
-</TD>
-<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
-</EM>
-</TD>
-</TR>
-
-<TR>
-<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-&nbsp;<A HREF="../../../../../com/icafe4j/image/meta/exif/Exif.html" title="class in com.icafe4j.image.meta.exif"><B>PREV CLASS</B></A>&nbsp;
-&nbsp;<A HREF="../../../../../com/icafe4j/image/meta/exif/ExifThumbnail.html" title="class in com.icafe4j.image.meta.exif"><B>NEXT CLASS</B></A></FONT></TD>
-<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
-  <A HREF="../../../../../index.html?com/icafe4j/image/meta/exif/ExifTag.html" target="_top"><B>FRAMES</B></A>  &nbsp;
-&nbsp;<A HREF="ExifTag.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
-&nbsp;<SCRIPT type="text/javascript">
-  <!--
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../../index-all.html">Index</a></li>
+<li><a href="../../../../../help-doc.html">Help</a></li>
+</ul>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../../com/icafe4j/image/meta/exif/Exif.html" title="class in com.icafe4j.image.meta.exif"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../com/icafe4j/image/meta/exif/ExifThumbnail.html" title="class in com.icafe4j.image.meta.exif"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../../index.html?com/icafe4j/image/meta/exif/ExifTag.html" target="_top">Frames</a></li>
+<li><a href="ExifTag.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
   if(window==top) {
-    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
   }
   //-->
-</SCRIPT>
-<NOSCRIPT>
-  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
-</NOSCRIPT>
-
-
-</FONT></TD>
-</TR>
-<TR>
-<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#enum_constant_summary">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
-<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
-DETAIL:&nbsp;<A HREF="#enum_constant_detail">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
-</TR>
-</TABLE>
-<A NAME="skip-navbar_bottom"></A>
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#enum_constant_summary">Enum Constants</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#enum_constant_detail">Enum Constants</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-
-<HR>
-
-</BODY>
-</HTML>
+</body>
+</html>
