@@ -230,7 +230,7 @@ public class PNGTweaker {
         }
 
         buf = new byte[13 + 4];//13 plus 4 bytes CRC
-        IOUtils.read(is, buf, 0, 17);
+        IOUtils.readFully(is, buf, 0, 17);
 
         while (true) {
             data_len = IOUtils.readIntMM(is);
@@ -246,12 +246,12 @@ public class PNGTweaker {
             switch (chunk) {
             	case ICCP:
             		buf = new byte[data_len];
-            		IOUtils.read(is, buf);            		 
+            		IOUtils.readFully(is, buf);            		 
             		IOUtils.skipFully(is, 4); // Skip CRC
             		return readICCProfile(buf);
             	default:
             		buf = new byte[data_len + 4];
-            		IOUtils.read(is, buf, 0, data_len + 4);
+            		IOUtils.readFully(is, buf, 0, data_len + 4);
             		break;
             }
         }
@@ -284,7 +284,7 @@ public class PNGTweaker {
         }
 
         buf = new byte[13 + 4];//13 plus 4 bytes CRC
-        IOUtils.read(is, buf, 0, 17);
+        IOUtils.readFully(is, buf, 0, 17);
 
         while (true) {
             data_len = IOUtils.readIntMM(is);
@@ -302,7 +302,7 @@ public class PNGTweaker {
             		sb.append("zTXt chunk:\n");
               		sb.append("**********************\n");
             		buf = new byte[data_len];
-            		IOUtils.read(is, buf);
+            		IOUtils.readFully(is, buf);
             		int keyword_len = 0;
             		while(buf[keyword_len] != 0) keyword_len++;
             		sb.append(new String(buf, 0, keyword_len, "UTF-8"));
@@ -323,7 +323,7 @@ public class PNGTweaker {
             		sb.append("tEXt chunk:\n");
             		sb.append("**********************\n");
             		buf = new byte[data_len];
-            		IOUtils.read(is, buf);
+            		IOUtils.readFully(is, buf);
             		keyword_len = 0;
             		while(buf[keyword_len] != 0) keyword_len++;
             		sb.append(new String(buf, 0, keyword_len, "UTF-8"));
@@ -347,7 +347,7 @@ public class PNGTweaker {
             		sb.append("iTXt chunk:\n");
               		sb.append("**********************\n");
             		buf = new byte[data_len];
-            		IOUtils.read(is, buf);
+            		IOUtils.readFully(is, buf);
             		keyword_len = 0;
             		int trans_keyword_len = 0;
             		int lang_flg_len = 0;
@@ -387,7 +387,7 @@ public class PNGTweaker {
             		break;
              	default:
             		buf = new byte[data_len + 4];
-            		IOUtils.read(is, buf, 0, data_len + 4);
+            		IOUtils.readFully(is, buf, 0, data_len + 4);
             		break;
              }
         }
@@ -424,7 +424,7 @@ public class PNGTweaker {
         }     
         
         buf = new byte[13];
-        IOUtils.read(is, buf, 0, 13);
+        IOUtils.readFully(is, buf, 0, 13);
   
         list.add(new Chunk(ChunkType.IHDR, 13, buf, IOUtils.readUnsignedIntMM(is)));         
       
@@ -438,7 +438,7 @@ public class PNGTweaker {
 	       	} 
        		ChunkType chunkType = ChunkType.fromInt(chunk_type);
        		buf = new byte[data_len];
-       		IOUtils.read(is, buf, 0, data_len);
+       		IOUtils.readFully(is, buf, 0, data_len);
               
        		if (chunkType == ChunkType.UNKNOWN)
        			list.add(new UnknownChunk(data_len, chunk_type, buf, IOUtils.readUnsignedIntMM(is)));
@@ -613,7 +613,7 @@ public class PNGTweaker {
         IOUtils.writeIntMM(fs, ChunkType.IHDR.getValue());
 
         buf = new byte[13 + 4];//13 plus 4 bytes CRC
-        IOUtils.read(is, buf, 0, 17);
+        IOUtils.readFully(is, buf, 0, 17);
         IOUtils.write(fs, buf);
 
         while (true) {
@@ -632,7 +632,7 @@ public class PNGTweaker {
               IOUtils.skipFully(is, data_len + 4);
            } else {
               buf = new byte[data_len + 4];
-              IOUtils.read(is, buf, 0, data_len + 4);
+              IOUtils.readFully(is, buf, 0, data_len + 4);
               IOUtils.writeIntMM(fs, data_len);
               IOUtils.writeIntMM(fs, chunk_value);
               IOUtils.write(fs, buf);

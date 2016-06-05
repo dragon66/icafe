@@ -1499,7 +1499,7 @@ public class PNGReader extends ImageReader {
 	 
 	 private byte[] readICCProfile(InputStream is, int data_len) throws Exception {
 		 byte[] buf = new byte[data_len];
-		 IOUtils.read(is, buf);
+		 IOUtils.readFully(is, buf);
 		 int profileName_len = 0;
 		 while(buf[profileName_len] != 0) profileName_len++;
  		 String profileName = new String(buf, 0, profileName_len,"UTF-8");
