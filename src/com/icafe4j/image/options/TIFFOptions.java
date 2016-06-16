@@ -17,10 +17,13 @@ public class TIFFOptions extends ImageOptions {
 	private boolean isApplyPredictor;
 	private Compression tiffCompression = Compression.PACKBITS;
 	private PhotoMetric photoMetric = PhotoMetric.UNKNOWN;
+	private ResolutionUnit resolutionUnit = ResolutionUnit.RESUNIT_INCH;
 	private int defalteCompressionLevel = 4;
 	private boolean writeICCProfile;
 	
 	private int jpegQuality = 90;
+	private int xResolution = 72;
+	private int yResolution = 72;
 	
 	public TIFFOptions() {}
 	
@@ -52,6 +55,18 @@ public class TIFFOptions extends ImageOptions {
 		return tiffCompression;
 	}
 	
+	public ResolutionUnit getResolutionUnit() {
+		return resolutionUnit;
+	}
+	
+	public int getXResolution() {
+		return xResolution;
+	}
+	
+	public int getYResolution() {
+		return yResolution;
+	}
+	
 	public boolean isApplyPredictor() {
 		return isApplyPredictor;
 	}
@@ -77,11 +92,25 @@ public class TIFFOptions extends ImageOptions {
 		this.photoMetric = photoMetric;
 	}
 	
+	public void setResolutionUnit(ResolutionUnit resolutionUnit) {
+		this.resolutionUnit = resolutionUnit;
+	}
+	
 	public void setTiffCompression(Compression tiffCompression) {
 		this.tiffCompression = tiffCompression;
 	}
 	
 	public void setWriteICCProfile(boolean writeICCProfile) {
 		this.writeICCProfile = writeICCProfile;
+	}
+	
+	public void setXResolution(int xResolution) {
+		if(xResolution > 0)
+			this.xResolution = xResolution;
+	}
+	
+	public void setYResolution(int yResolution) {
+		if(yResolution > 0)
+			this.yResolution = yResolution;
 	}
 }

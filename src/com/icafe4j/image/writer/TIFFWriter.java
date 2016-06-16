@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    16Jun2016  Added code to set resolution
  * WY    05Dec2015  Changed writePage() signature
  * WY    20Sep2015  Added LZW and DEFLATE compression for BW images
  * WY    21Jun2015  Removed copyright notice from generated TIFF images
@@ -458,10 +459,17 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		tiffField = new ASCIIField(TiffTag.DATETIME.getValue(), formatter.format(new Date()) + '\0');
 		ifd.addField(tiffField);
 	
-		// TODO: Add TIFFOptions to set these values
-		ifd.addField(new RationalField(TiffTag.X_RESOLUTION.getValue(), new int[]{72, 1}));
-		ifd.addField(new RationalField(TiffTag.Y_RESOLUTION.getValue(), new int[]{72, 1}));
-		ifd.addField(new ShortField(TiffTag.RESOLUTION_UNIT.getValue(), new short[]{2}));		
+		int xResolution = 72;
+		int yResolution = 72;
+		int resolutionUnit = ResolutionUnit.RESUNIT_INCH.getValue();
+		if(tiffOptions != null) {
+			xResolution = tiffOptions.getXResolution();
+			yResolution = tiffOptions.getYResolution();
+			resolutionUnit = tiffOptions.getResolutionUnit().getValue();
+		}
+		ifd.addField(new RationalField(TiffTag.X_RESOLUTION.getValue(), new int[]{xResolution, 1}));
+		ifd.addField(new RationalField(TiffTag.Y_RESOLUTION.getValue(), new int[]{yResolution, 1}));
+		ifd.addField(new ShortField(TiffTag.RESOLUTION_UNIT.getValue(), new short[]{(short)resolutionUnit}));		
 				
 		randomOS.seek(OFFSET_TO_WRITE_FIRST_IFD_OFFSET);
 		// Write IFD offset
@@ -788,6 +796,17 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss z");
 		tiffField = new ASCIIField(TiffTag.DATETIME.getValue(), formatter.format(new Date()) + '\0');
 		ifd.addField(tiffField);
+		int xResolution = 72;
+		int yResolution = 72;
+		int resolutionUnit = ResolutionUnit.RESUNIT_INCH.getValue();
+		if(tiffOptions != null) {
+			xResolution = tiffOptions.getXResolution();
+			yResolution = tiffOptions.getYResolution();
+			resolutionUnit = tiffOptions.getResolutionUnit().getValue();
+		}
+		ifd.addField(new RationalField(TiffTag.X_RESOLUTION.getValue(), new int[]{xResolution, 1}));
+		ifd.addField(new RationalField(TiffTag.Y_RESOLUTION.getValue(), new int[]{yResolution, 1}));
+		ifd.addField(new ShortField(TiffTag.RESOLUTION_UNIT.getValue(), new short[]{(short)resolutionUnit}));
 		
 		// Write IFD
 		return ifd.write(randomOS, stripOffset);

@@ -69,7 +69,7 @@ public class TestImageReader extends TestBase {
 			 }
 		 });
 		  
-		 ImageType imageType = ImageType.PNG;
+		 ImageType imageType = ImageType.TIFF;
 		  
 		 FileOutputStream fo = new FileOutputStream("NEW." + imageType.getExtension());
 				
@@ -84,6 +84,8 @@ public class TestImageReader extends TestBase {
 		  		 tiffOptions.setPhotoMetric(PhotoMetric.SEPARATED);
 		  		 tiffOptions.setWriteICCProfile(true);
 		  		 tiffOptions.setDeflateCompressionLevel(6);
+		  		 tiffOptions.setXResolution(96);
+		  		 tiffOptions.setYResolution(96);
 		  		 builder.imageOptions(tiffOptions);
 		  		 break;
 		  	case PNG:

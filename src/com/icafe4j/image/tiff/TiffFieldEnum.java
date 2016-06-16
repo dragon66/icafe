@@ -174,5 +174,48 @@ public class TiffFieldEnum {
 		private final int value;
 	}
 	
+	public enum ResolutionUnit {
+		RESUNIT_NONE("No absolute unit of measurement. Used for images that may have a non-square aspect ratio, but no meaningful absolute dimensions.", 1),
+		RESUNIT_INCH("Inch.", 2),
+		RESUNIT_CENTIMETER("Centimeter.", 3),
+		UNKNOWN("Unknown", 9999);
+		
+		private ResolutionUnit(String description, int value) {
+			this.description = description;
+			this.value = value;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+		
+		public int getValue() {
+			return value;
+		}
+		
+		@Override
+	    public String toString() {
+			return description;
+		}
+		
+		public static ResolutionUnit fromValue(int value) {
+	       	ResolutionUnit resolutionUnit = typeMap.get(value);
+	    	if (resolutionUnit == null)
+	    	   return UNKNOWN;
+	      	return resolutionUnit;
+	    }
+	    
+	    private static final Map<Integer, ResolutionUnit> typeMap = new HashMap<Integer, ResolutionUnit>();
+	       
+	    static
+	    {
+	      for(ResolutionUnit resolutionUnit : values())
+	    	  typeMap.put(resolutionUnit.getValue(), resolutionUnit);
+	    } 
+		
+		private final String description;
+		private final int value;
+	}
+	
 	private TiffFieldEnum() {}	
 }
