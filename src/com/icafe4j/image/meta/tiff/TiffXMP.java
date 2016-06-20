@@ -13,6 +13,7 @@ public class TiffXMP extends XMP {
 	}
 
 	public void write(OutputStream os) throws IOException {
-		// TODO: add code to write XMP to TIFF image		
+		// TODO: add code to write XMP to TIFF image
+		throw new UnsupportedOperationException("TiffXMP.write() is not implemented.");
 	}
 }
