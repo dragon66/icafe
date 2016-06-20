@@ -14,5 +14,6 @@ public class PngXMP extends XMP {
 
 	public void write(OutputStream os) throws IOException {
 		// TODO: add code to write XMP to PNG image
+		throw new UnsupportedOperationException("PngXMP.write() is not implemented.");
 	}
 }
