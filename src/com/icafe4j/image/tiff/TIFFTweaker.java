@@ -1016,8 +1016,14 @@ public class TIFFTweaker {
 		IFD newExifSubIFD = exif.getExifIFD();
 		IFD newGpsSubIFD = exif.getGPSIFD();
 		
-		if(newImageIFD != null) { // Copy the Image IFD fields - this is dangerous.
-			imageIFD.addFields(newImageIFD.getFields());
+		if(newImageIFD != null) {
+			Collection<TiffField<?>> fields = newImageIFD.getFields();
+			for(TiffField<?> field : fields) {
+				Tag tag = TiffTag.fromShort(field.getTag());
+				if(imageIFD.getField(tag) != null)
+					throw new RuntimeException("Duplicate Tag: " + tag);
+				imageIFD.addField(field);
+			}
 		}
 		
 		if(update && exifSubIFD != null && newExifSubIFD != null) {
