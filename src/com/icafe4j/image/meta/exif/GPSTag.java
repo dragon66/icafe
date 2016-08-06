@@ -198,6 +198,10 @@ public enum GPSTag implements Tag {
     	return "";
 	}
 	
+	public boolean isCritical() {
+		return true;
+	}
+	
 	public FieldType getFieldType() {
 		return FieldType.UNKNOWN;
 	}

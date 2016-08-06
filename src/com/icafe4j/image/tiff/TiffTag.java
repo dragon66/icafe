@@ -818,6 +818,9 @@ public enum TiffTag implements Tag {
 
 			return description;
 		}
+		public boolean isCritical() {
+			return false;
+		}
 	},
 	
 	WINDOWS_XP_COMMENT("WindowsXPComment", (short)0x9c9c, Attribute.PRIVATE) {
@@ -832,6 +835,9 @@ public enum TiffTag implements Tag {
 			}
 			
 			return description;
+		}
+		public boolean isCritical() {
+			return false;
 		}
 	},
 	
@@ -848,6 +854,9 @@ public enum TiffTag implements Tag {
 			
 			return description;
 		}
+		public boolean isCritical() {
+			return false;
+		}
 	},
 	
 	WINDOWS_XP_KEYWORDS("WindowsXPKeywords", (short)0x9c9e, Attribute.PRIVATE){
@@ -863,6 +872,9 @@ public enum TiffTag implements Tag {
 			
 			return description;
 		}
+		public boolean isCritical() {
+			return false;
+		}
 	},
 	
 	WINDOWS_XP_SUBJECT("WindowsXPSubject", (short) 0x9c9f, Attribute.PRIVATE) {
@@ -877,6 +889,9 @@ public enum TiffTag implements Tag {
 			}
 
 			return description;
+		}
+		public boolean isCritical() {
+			return false;
 		}
 	},
 	
@@ -947,6 +962,10 @@ public enum TiffTag implements Tag {
     public short getValue()	{
 		return this.value;
 	}
+    
+    public boolean isCritical() {
+    	return true;
+    }
     
     @Override
     public String toString() {

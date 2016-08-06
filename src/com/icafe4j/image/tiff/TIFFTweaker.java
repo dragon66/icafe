@@ -1020,7 +1020,7 @@ public class TIFFTweaker {
 			Collection<TiffField<?>> fields = newImageIFD.getFields();
 			for(TiffField<?> field : fields) {
 				Tag tag = TiffTag.fromShort(field.getTag());
-				if(imageIFD.getField(tag) != null)
+				if(imageIFD.getField(tag) != null && tag.isCritical())
 					throw new RuntimeException("Duplicate Tag: " + tag);
 				imageIFD.addField(field);
 			}

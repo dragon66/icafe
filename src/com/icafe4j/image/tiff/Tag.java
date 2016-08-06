@@ -21,4 +21,5 @@ public interface Tag {
 	public FieldType getFieldType();
 	public String getName();
 	public short getValue();
+	public boolean isCritical();
 }

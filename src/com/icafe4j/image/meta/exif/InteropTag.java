@@ -103,6 +103,10 @@ public enum InteropTag implements Tag {
     public String getFieldAsString(Object value) {
     	return "";
 	}
+    
+    public boolean isCritical() {
+    	return true;
+    }
 	
 	public FieldType getFieldType() {
 		return FieldType.UNKNOWN;
