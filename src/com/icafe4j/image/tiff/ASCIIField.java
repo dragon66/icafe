@@ -11,6 +11,7 @@
 package com.icafe4j.image.tiff;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import com.icafe4j.io.RandomAccessOutputStream;
 
@@ -23,8 +24,16 @@ import com.icafe4j.io.RandomAccessOutputStream;
 public final class ASCIIField extends TiffField<String> {
 
 	public ASCIIField(short tag, String data) { // ASCII field is NUL- terminated ASCII string
-		super(tag, FieldType.ASCII, data.trim().length() + 1); // Remove white spaces
+		super(tag, FieldType.ASCII, getLength(data));
 		this.data = data.trim() + '\0'; // Add NULL to the end of the string
+	}
+	
+	private static int getLength(String data) {
+		try {
+			return data.trim().getBytes("UTF-8").length + 1;
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Failed to create ASCIIField.");
+		}
 	}
 	
 	public String getDataAsString() {
@@ -34,7 +43,7 @@ public final class ASCIIField extends TiffField<String> {
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
 		
-		byte[] buf = data.getBytes("iso-8859-1");
+		byte[] buf = data.getBytes("UTF-8");
         
 		if (buf.length <= 4) {
 			dataOffset = (int)os.getStreamPointer();

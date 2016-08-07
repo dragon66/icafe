@@ -108,7 +108,7 @@ public enum FieldType {
     		case WINDOWSXP: // Not a real TIFF field type, just a convenient way to add Windows XP field as a sting
     			if(typeClass == String.class) {
     				try {
-						byte[] xp = ((String)data).getBytes("UTF-16LE");
+						byte[] xp = (((String)data).trim() +'\0').getBytes("UTF-16LE");
 						retValue = new ByteField(tag.getValue(), xp); 
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
