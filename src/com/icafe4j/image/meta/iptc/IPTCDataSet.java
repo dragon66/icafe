@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    16Aug2016  Added support for Unicode string data
  * WY    16Jul2015  Added two new constructors for IPTCApplicationTag
  * WY    19Dec2015  Added getDataAsString()
  * WY    01Feb2015  Added equals() and hashCode()
@@ -24,6 +25,7 @@ package com.icafe4j.image.meta.iptc;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.slf4j.Logger;
@@ -54,6 +56,14 @@ public class IPTCDataSet {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCDataSet.class);
 	
+	private static byte[] getBytes(String str) {
+		try {
+			return str.getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Unsupported encoding UTF-8");
+		}
+	}
+	
 	public IPTCDataSet(int tag, byte[] data) {
 		this(IPTCRecord.APPLICATION, tag, data);
 	}
@@ -68,7 +78,7 @@ public class IPTCDataSet {
 	}
 	
 	public IPTCDataSet(int tag, String value) {
-		this(tag, value.getBytes());
+		this(tag, IPTCDataSet.getBytes(value));
 	}
 	
 	public IPTCDataSet(IPTCApplicationTag appTag, byte[] data) {
@@ -84,7 +94,7 @@ public class IPTCDataSet {
 	}
 	
 	public IPTCDataSet(IPTCRecord record, int tag, String value) {
-		this(record, tag, value.getBytes());
+		this(record, tag, IPTCDataSet.getBytes(value));
 	}
 	
 	public boolean allowMultiple() {
