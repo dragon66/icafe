@@ -159,7 +159,7 @@ public class IPTC extends Metadata {
 			}
 			// Remove possible duplicates
 			for (Map.Entry<String, List<IPTCDataSet>> entry : datasetMap.entrySet()){
-			    entry.setValue(new ArrayList<IPTCDataSet>(new HashSet<IPTCDataSet>(entry.getValue())));
+			    entry.setValue(new ArrayList<IPTCDataSet>(new LinkedHashSet<IPTCDataSet>(entry.getValue())));
 			}
 			
 			isDataRead = true;
