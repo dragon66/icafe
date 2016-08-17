@@ -56,7 +56,7 @@ public class IPTCDataSet {
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(IPTCDataSet.class);
 	
-	private static byte[] getBytes(String str) {
+	private static final byte[] getBytes(String str) {
 		try {
 			return str.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e) {
