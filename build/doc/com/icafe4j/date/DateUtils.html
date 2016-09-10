@@ -34,7 +34,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../com/icafe4j/date/DateTime.html" title="class in com.icafe4j.date"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../com/icafe4j/date/ISO8601DateUtils.html" title="class in com.icafe4j.date"><span class="strong">Next Class</span></a></li>
+<li>Next Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/icafe4j/date/DateUtils.html" target="_top">Frames</a></li>
@@ -148,18 +148,34 @@ extends java.lang.Object</pre>
          int&nbsp;days)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/date/DateUtils.html#format(java.util.Date,%20java.lang.String)">format</a></strong>(java.util.Date&nbsp;date,
+      java.lang.String&nbsp;format)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/date/DateUtils.html#formatISO8601(java.util.Date)">formatISO8601</a></strong>(java.util.Date&nbsp;date)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/date/DateUtils.html#formatISO8601(java.util.Date,%20java.util.TimeZone)">formatISO8601</a></strong>(java.util.Date&nbsp;date,
+             java.util.TimeZone&nbsp;timeZone)</code>
+<div class="block">Formats a DateTime to a ISO8601 string with a second fraction part of up to 3 digits.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static java.util.Date</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/date/DateUtils.html#hoursAfter(java.util.Date,%20int)">hoursAfter</a></strong>(java.util.Date&nbsp;date,
           int&nbsp;hours)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/date/DateUtils.html#isValidDateStr(java.lang.String,%20java.lang.String)">isValidDateStr</a></strong>(java.lang.String&nbsp;date,
               java.lang.String&nbsp;format)</code>
 <div class="block">See <a href="../../../com/icafe4j/date/DateUtils.html#isValidDateStr(java.lang.String,%20java.lang.String,%20java.util.Locale)"><code>isValidDateStr(String, String, Locale)</code></a> for more details</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/date/DateUtils.html#isValidDateStr(java.lang.String,%20java.lang.String,%20java.util.Locale)">isValidDateStr</a></strong>(java.lang.String&nbsp;date,
               java.lang.String&nbsp;format,
@@ -167,10 +183,16 @@ extends java.lang.Object</pre>
 <div class="block">Checks if a date string conforms to a specific format for the given locale</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.util.Date</code></td>
 <td class="colLast"><code><strong><a href="../../../com/icafe4j/date/DateUtils.html#monthsAfter(java.util.Date,%20int)">monthsAfter</a></strong>(java.util.Date&nbsp;date,
            int&nbsp;months)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../com/icafe4j/date/DateTime.html" title="class in com.icafe4j.date">DateTime</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/icafe4j/date/DateUtils.html#parseISO8601(java.lang.String)">parseISO8601</a></strong>(java.lang.String&nbsp;input)</code>
+<div class="block">Parses a ISO8601 string into a DateTime to retain time zone information.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.util.Date</code></td>
@@ -248,6 +270,36 @@ extends java.lang.Object</pre>
                        int&nbsp;days)</pre>
 </li>
 </ul>
+<a name="format(java.util.Date, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>format</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;format(java.util.Date&nbsp;date,
+                      java.lang.String&nbsp;format)</pre>
+</li>
+</ul>
+<a name="formatISO8601(java.util.Date)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatISO8601</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;formatISO8601(java.util.Date&nbsp;date)</pre>
+</li>
+</ul>
+<a name="formatISO8601(java.util.Date, java.util.TimeZone)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatISO8601</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;formatISO8601(java.util.Date&nbsp;date,
+                             java.util.TimeZone&nbsp;timeZone)</pre>
+<div class="block">Formats a DateTime to a ISO8601 string with a second fraction part of up to 3 digits.</div>
+</li>
+</ul>
 <a name="hoursAfter(java.util.Date, int)">
 <!--   -->
 </a>
@@ -294,6 +346,57 @@ extends java.lang.Object</pre>
                          int&nbsp;months)</pre>
 </li>
 </ul>
+<a name="parseISO8601(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parseISO8601</h4>
+<pre>public static&nbsp;<a href="../../../com/icafe4j/date/DateTime.html" title="class in com.icafe4j.date">DateTime</a>&nbsp;parseISO8601(java.lang.String&nbsp;input)
+                             throws java.text.ParseException</pre>
+<div class="block">Parses a ISO8601 string into a DateTime to retain time zone information.
+ 
+ The pattern is dynamically created in accordance with the input date string.
+ Time zone is optional.
+ 
+ The fraction part of the second if exists is cut down to 3 digits, i.e to the 
+ precision of millisecond.
+ <p>
+ http://www.w3.org/TR/NOTE-datetime
+ <p>
+ The formats are as follows. Exactly the components shown here must be
+ present, with exactly this punctuation. Note that the "T" appears literally
+ in the string, to indicate the beginning of the time element, as specified in
+ ISO 8601.
+ <pre>
+    Year:
+       YYYY (eg 1997)
+    Year and month:
+       YYYY-MM (eg 1997-07)
+    Complete date:
+       YYYY-MM-DD (eg 1997-07-16)
+    Complete date plus hours and minutes:
+       YYYY-MM-DDThh:mmTZD (eg 1997-07-16T19:20+01:00)
+    Complete date plus hours, minutes and seconds:
+       YYYY-MM-DDThh:mm:ssTZD (eg 1997-07-16T19:20:30+01:00)
+    Complete date plus hours, minutes, seconds and a decimal fraction of a second
+       YYYY-MM-DDThh:mm:ss.sTZD (eg 1997-07-16T19:20:30.45+01:00)
+
+ where:
+
+      YYYY = four-digit year
+      MM   = two-digit month (01=January, etc.)
+      DD   = two-digit day of month (01 through 31)
+      hh   = two digits of hour (00 through 23) (am/pm NOT allowed)
+      mm   = two digits of minute (00 through 59)
+      ss   = two digits of second (00 through 59)
+      s    = one or more digits representing a decimal fraction of a second
+      TZD  = time zone designator (Z or +hh:mm or -hh:mm)
+ </pre></div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.text.ParseException</code></dd></dl>
+</li>
+</ul>
 <a name="yearsAfter(java.util.Date, int)">
 <!--   -->
 </a>
@@ -330,7 +433,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../com/icafe4j/date/DateTime.html" title="class in com.icafe4j.date"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../com/icafe4j/date/ISO8601DateUtils.html" title="class in com.icafe4j.date"><span class="strong">Next Class</span></a></li>
+<li>Next Class</li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?com/icafe4j/date/DateUtils.html" target="_top">Frames</a></li>

@@ -12,6 +12,6 @@ public class TestISO8601DateUtils extends TestBase {
 	}
 	
     public void test(String ... args) throws Exception {
-       	logger.info(ISO8601DateUtils.parse("2008-09-22T16:20:30.998-05:00").formatISO8601());
+       	logger.info(DateUtils.parseISO8601("2008-09-22T16:20:30.998-05:00").formatISO8601());
     }
 }

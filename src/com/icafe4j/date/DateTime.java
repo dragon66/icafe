@@ -151,7 +151,7 @@ public class DateTime
      * Formats a DateTime to a ISO8601 string with a second fraction part of up to 3 digits.
      */
     public String formatISO8601() {        
-        return ISO8601DateUtils.formatISO8601(date, timeZone);    	            
+        return DateUtils.formatISO8601(date, timeZone);    	            
     }
 	
 	public Date getDate() {
