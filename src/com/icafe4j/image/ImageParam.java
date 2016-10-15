@@ -65,7 +65,7 @@ public class ImageParam {
     
     private static final DitherMethod DEFAULT_DITHER_METHOD = DitherMethod.FLOYD_STEINBERG;
 	private static final QuantMethod DEFAULT_QUANT_METHOD = QuantMethod.POPULARITY;
-	private static final QuantQuality DEFAULT_QUANT_QUALITY = QuantQuality.MEDIUM;
+	private static final QuantQuality DEFAULT_QUANT_QUALITY = QuantQuality.GOOD;
 	
     // Default Bayer 8X8 threshold matrix for ordered dither
     private static final int[][] DEFAULT_DITHER_MATRIX = {
