@@ -294,15 +294,20 @@ public class JPEGTweaker {
 		}	
 	}
 	
-	// Extract depth map from google phones
+	// Extract depth map from google phones and cardboard camera
 	public static void extractDepthMap(InputStream is, String pathToDepthMap) throws IOException {
 		Map<MetadataType, Metadata> meta = readMetadata(is);
 		XMP xmp = (XMP)meta.get(MetadataType.XMP);
 		if(xmp != null && xmp.hasExtendedXmp()) {
 			Document xmpDocument = xmp.getMergedDocument();
 			String depthMapMime = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GDepth:Mime");
+			String depthData = "GDepth:Data";
+			if(StringUtils.isNullOrEmpty(depthMapMime)) {
+				depthMapMime = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GImage:Mime");
+				depthData = "GImage:Data";
+			}					
 			if(!StringUtils.isNullOrEmpty(depthMapMime)) {
-				String data = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GDepth:Data");
+				String data = XMLUtils.getAttribute(xmpDocument, "rdf:Description", depthData);
 				if(!StringUtils.isNullOrEmpty(data)) {
 					String outpath = "";
 					if(pathToDepthMap.endsWith("\\") || pathToDepthMap.endsWith("/"))
