@@ -1,6 +1,7 @@
 ***************************
-Last modified on 08/16/2016
+Last modified on 11/06/2016
 ***************************
+06Nov2016  Added support for Cardboard Camera image and audio
 16Aug2016  Added support for Unicode string data to IPTCDataSet
 16Jun2016  Added code to TIFFWriter to set resolution 
 04Apr2016  Rewrite GIFTweaker insertXMPApplicationBlock() to leverage GifXMP

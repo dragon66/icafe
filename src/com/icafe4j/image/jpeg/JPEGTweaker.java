@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =======================================================
+ * WY    06Nov2016  Added support for Cardboard Camera image and audio
  * WY    03Apr2016  Rewrite insertXMP() to leverage new JpegXMP write()
  * WY    27Mar2016  Rewrite writeComment() to leverage COMBuilder
  * WY    28Sep2015  Fixed "unsupportedOperationException" with insertExif()
@@ -294,7 +295,7 @@ public class JPEGTweaker {
 		}	
 	}
 	
-	// Extract depth map from google phones and cardboard camera
+	// Extract depth map from google phones and cardboard camera audio & stereo pair
 	public static void extractDepthMap(InputStream is, String pathToDepthMap) throws IOException {
 		Map<MetadataType, Metadata> meta = readMetadata(is);
 		XMP xmp = (XMP)meta.get(MetadataType.XMP);
@@ -302,6 +303,7 @@ public class JPEGTweaker {
 			Document xmpDocument = xmp.getMergedDocument();
 			String depthMapMime = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GDepth:Mime");
 			String depthData = "GDepth:Data";
+			String audioMime = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GAudio:Mime");
 			if(StringUtils.isNullOrEmpty(depthMapMime)) {
 				depthMapMime = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GImage:Mime");
 				depthData = "GImage:Data";
@@ -318,6 +320,27 @@ public class JPEGTweaker {
 						outpath += ".png";
 					} else if(depthMapMime.equalsIgnoreCase("image/jpeg")) {
 						outpath += ".jpg";
+					}
+					try {
+						byte[] image = Base64.decodeToByteArray(data);							
+						FileOutputStream fout = new FileOutputStream(new File(outpath));
+						fout.write(image);
+						fout.close();
+					} catch (Exception e) {							
+						e.printStackTrace();
+					}
+				}		
+			}
+			if(!StringUtils.isNullOrEmpty(audioMime)) { // Cardboard Camera Audio
+				String data = XMLUtils.getAttribute(xmpDocument, "rdf:Description", "GAudio:Data");
+				if(!StringUtils.isNullOrEmpty(data)) {
+					String outpath = "";
+					if(pathToDepthMap.endsWith("\\") || pathToDepthMap.endsWith("/"))
+						outpath = pathToDepthMap + "google_cardboard_audio";
+					else
+						outpath = pathToDepthMap.replaceFirst("[.][^.]+$", "") + "_cardboard_audio";
+					if(audioMime.equalsIgnoreCase("audio/mp4a-latm")) {
+						outpath += ".mp4";
 					}
 					try {
 						byte[] image = Base64.decodeToByteArray(data);							
