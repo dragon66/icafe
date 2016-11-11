@@ -388,7 +388,7 @@ public class JPEGWriter extends ImageWriter {
 		writeICCProfile(os, icc_profile.getData());
 	}
 	
-	private static void writeICCProfile(OutputStream os, byte[] data) throws Exception {
+	private void writeICCProfile(OutputStream os, byte[] data) throws Exception {
 		// ICC_Profile ID
 		final String ICC_PROFILE_ID = "ICC_PROFILE\0";
 		int maxSegmentLen = 65535;
