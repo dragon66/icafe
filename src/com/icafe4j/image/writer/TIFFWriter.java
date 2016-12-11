@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    11Dec2016  Added byte order support to TiffOptions
  * WY    16Jun2016  Added code to set resolution
  * WY    05Dec2015  Changed writePage() signature
  * WY    20Sep2015  Added LZW and DEFLATE compression for BW images
@@ -66,9 +67,11 @@ import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.image.tiff.UndefinedField;
 import com.icafe4j.image.tiff.TiffFieldEnum.*;
 import com.icafe4j.image.util.IMGUtils;
+import com.icafe4j.io.ByteOrder;
 import com.icafe4j.io.FileCacheRandomAccessOutputStream;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.io.RandomAccessOutputStream;
+import com.icafe4j.io.WriteStrategyII;
 import com.icafe4j.io.WriteStrategyMM;
 import com.icafe4j.util.ArrayUtils;
 import com.icafe4j.util.CollectionUtils;
@@ -423,11 +426,30 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 	@Override
 	protected void write(int[] pixels, int imageWidth, int imageHeight,
 			OutputStream os) throws Exception {
+		// Set image parameters
+		ImageParam param = getImageParam();
+		ImageOptions options = param.getImageOptions();
+		
+		if(options instanceof TIFFOptions) {
+			tiffOptions = (TIFFOptions)options;
+		}
 		// Wrap OutputStream with a RandomAccessOutputStream	
 		randomOS = new FileCacheRandomAccessOutputStream(os);
-		randomOS.setWriteStrategy(WriteStrategyMM.getInstance());
 		
-		randomOS.writeShort(IOUtils.BIG_ENDIAN);
+		ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
+		
+		if(tiffOptions != null) {
+			byteOrder = tiffOptions.getByteOrder();
+		}
+		
+		if(byteOrder == ByteOrder.BIG_ENDIAN) {
+			randomOS.setWriteStrategy(WriteStrategyMM.getInstance());
+			randomOS.writeShort(IOUtils.BIG_ENDIAN);
+		} else {
+			randomOS.setWriteStrategy(WriteStrategyII.getInstance());
+			randomOS.writeShort(IOUtils.LITTLE_ENDIAN);
+		}			
+		
 		randomOS.writeShort(0x2a); // TIFF identifier
 		
 		// Single IFD only
@@ -443,7 +465,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		
 		randomOS.seek(stripOffset);
 		// Write image data
-		writePageData(pixels, imageWidth, imageHeight);		
+		writePageData(param, pixels, imageWidth, imageHeight);		
 		
 		// We have done with the strips, now add a new STRIP_OFFSETS field.
 		tiffField = new LongField(TiffTag.STRIP_OFFSETS.getValue(), CollectionUtils.integerListToIntArray(stripOffsets));
@@ -614,15 +636,11 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		compressSample(newPixels, samplesPerPixel*imageWidth, imageHeight, compression, 1024);
 	}
 	
-	private void writePageData(int[] pixels, int imageWidth, int imageHeight) throws Exception {
+	private void writePageData(ImageParam param, int[] pixels, int imageWidth, int imageHeight) throws Exception {
 		//
-		ImageParam param = getImageParam();
-		ImageOptions options = param.getImageOptions();
-		
 		Compression compression = Compression.PACKBITS;
 		
-		if(options instanceof TIFFOptions) {
-			tiffOptions = (TIFFOptions)options;
+		if(tiffOptions != null) {
 			compression = tiffOptions.getTiffCompression();
 		}
 		// Start writing image data				
@@ -641,7 +659,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		} else {
 			// JPEG is a special case
 			if(compression == Compression.JPG) {
-				if(getImageParam().hasAlpha())
+				if(param.hasAlpha())
 					LOGGER.warn("#Warning: JPEG compression does not support transparency (all transparency information will be lost!)");
 				jpegCompress(pixels, imageWidth, imageHeight, param.getColorType() == ImageColorType.GRAY_SCALE);			
 			} else {
@@ -779,9 +797,18 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		reset(offset);
 		
 		randomOS = randomOutStream;
-		randomOS.seek(stripOffset);	
+		randomOS.seek(stripOffset);
+		
+		// Set image parameters
+		ImageParam param = getImageParam();
+		ImageOptions options = param.getImageOptions();
+		
+		if(options instanceof TIFFOptions) {
+			tiffOptions = (TIFFOptions)options;
+		}
+		//
 		// Write image data
-		writePageData(pixels, imageWidth, imageHeight);
+		writePageData(param, pixels, imageWidth, imageHeight);
 		 
 		// We have done with the strips, now add a new STRIP_OFFSETS field.
 		tiffField = new LongField(TiffTag.STRIP_OFFSETS.getValue(), CollectionUtils.integerListToIntArray(stripOffsets));

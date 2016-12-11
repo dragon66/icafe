@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    11Dec2016  Added byte order to writeMultipageTIFF
  * WY    19Aug2015  Added code to write multipage TIFF page by page
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    21Jun2015  Removed copyright notice from generated TIFF images
@@ -136,6 +137,7 @@ import com.icafe4j.io.RandomAccessOutputStream;
 import com.icafe4j.io.ReadStrategy;
 import com.icafe4j.io.ReadStrategyII;
 import com.icafe4j.io.ReadStrategyMM;
+import com.icafe4j.io.WriteStrategy;
 import com.icafe4j.io.WriteStrategyII;
 import com.icafe4j.io.WriteStrategyMM;
 import com.icafe4j.string.StringUtils;
@@ -2129,7 +2131,7 @@ public class TIFFTweaker {
 	}
 	
 	public static int prepareForWrite(RandomAccessOutputStream rout) throws IOException {
-		return writeHeader(IOUtils.BIG_ENDIAN, rout);
+		return writeHeader(rout);
 	}
 	
 	public static void printIFDs(Collection<IFD> list, String indent) {
@@ -2863,6 +2865,10 @@ public class TIFFTweaker {
 	public static void splitPages(RandomAccessInputStream rin, String outputFilePrefix) throws IOException {
 		List<IFD> list = new ArrayList<IFD>();
 		short endian = rin.readShort();
+		WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
+		// Set write strategy based on byte order
+		if(endian == IOUtils.LITTLE_ENDIAN)
+		    writeStrategy = WriteStrategyII.getInstance();
 		rin.seek(STREAM_HEAD);
 		int offset = readHeader(rin);
 		readIFDs(null, null, TiffTag.class, list, offset, rin);
@@ -2872,8 +2878,9 @@ public class TIFFTweaker {
 		
 		for(int i = 0; i < list.size(); i++) {
 			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOutputStream(fileNamePrefix + i + ".tif"));
+			rout.setWriteStrategy(writeStrategy);
 			// Write TIFF header
-			int writeOffset = writeHeader(endian, rout);
+			int writeOffset = writeHeader(rout);
 			// Write page data
 			writeOffset = copyPageData(list.get(i), writeOffset, rin, rout);
 			int firstIFDOffset = writeOffset;
@@ -2890,7 +2897,7 @@ public class TIFFTweaker {
 	
 	public static void write(TIFFImage tiffImage, RandomAccessOutputStream rout) throws IOException {
 		RandomAccessInputStream rin = tiffImage.getInputStream();
-		int offset = writeHeader(IOUtils.BIG_ENDIAN, rout);
+		int offset = writeHeader(rout);
 		offset = copyPages(tiffImage.getIFDs(), offset, rin, rout);
 		int firstIFDOffset = tiffImage.getIFDs().get(0).getStartOffset();	
 	 
@@ -2898,17 +2905,10 @@ public class TIFFTweaker {
 	}
 	
 	// Return stream offset where to write actual image data or IFD	
-	private static int writeHeader(short endian, RandomAccessOutputStream rout) throws IOException {
+	private static int writeHeader(RandomAccessOutputStream rout) throws IOException {
 		// Write byte order
-		rout.writeShort(endian);
-		// Set write strategy based on byte order
-		if (endian == IOUtils.BIG_ENDIAN)
-		    rout.setWriteStrategy(WriteStrategyMM.getInstance());
-		else if(endian == IOUtils.LITTLE_ENDIAN)
-		    rout.setWriteStrategy(WriteStrategyII.getInstance());
-		else {
-			throw new RuntimeException("Invalid TIFF byte order");
-	    }		
+		short endian = rout.getEndian();
+		rout.writeShort(endian);		
 		// Write TIFF identifier
 		rout.writeShort(0x2a);
 		
@@ -2929,7 +2929,7 @@ public class TIFFTweaker {
 	 */
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageFrame ... frames) throws IOException {
 		// Write header first
-		int writeOffset = writeHeader(IOUtils.BIG_ENDIAN, rout);
+		int writeOffset = writeHeader(rout);
 		// Write pages
 		int pageNumber = 0;
 		int maxPageNumber = frames.length;
@@ -2958,8 +2958,8 @@ public class TIFFTweaker {
 	}
 	
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageParam[] imageParam, BufferedImage ... images) throws IOException {
-		// Write header first		
-		int writeOffset = writeHeader(IOUtils.BIG_ENDIAN, rout);
+		// Write header first
+		int writeOffset = writeHeader(rout);
 		// Write pages
 		int pageNumber = 0;
 		int maxPageNumber = images.length;

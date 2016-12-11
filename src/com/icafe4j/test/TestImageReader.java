@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,6 +25,7 @@ import com.icafe4j.image.quant.QuantMethod;
 import com.icafe4j.image.reader.ImageReader;
 import com.icafe4j.image.tiff.TiffFieldEnum.Compression;
 import com.icafe4j.image.tiff.TiffFieldEnum.PhotoMetric;
+import com.icafe4j.io.ByteOrder;
 import com.icafe4j.io.PeekHeadInputStream;
 
 /**
@@ -78,6 +80,7 @@ public class TestImageReader extends TestBase {
 		 switch(imageType) {
 		  	case TIFF:// Set TIFF-specific options
 		  		 TIFFOptions tiffOptions = new TIFFOptions();
+		  		 tiffOptions.setByteOrder(ByteOrder.LITTLE_ENDIAN);
 		  		 tiffOptions.setApplyPredictor(true);
 		  		 tiffOptions.setTiffCompression(Compression.CCITTFAX4);
 		  		 tiffOptions.setJPEGQuality(60);

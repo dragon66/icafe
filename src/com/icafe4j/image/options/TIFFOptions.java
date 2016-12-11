@@ -12,12 +12,14 @@ package com.icafe4j.image.options;
 
 import com.icafe4j.image.ImageType;
 import com.icafe4j.image.tiff.TiffFieldEnum.*;
+import com.icafe4j.io.ByteOrder;
 
 public class TIFFOptions extends ImageOptions {
 	private boolean isApplyPredictor;
 	private Compression tiffCompression = Compression.PACKBITS;
 	private PhotoMetric photoMetric = PhotoMetric.UNKNOWN;
 	private ResolutionUnit resolutionUnit = ResolutionUnit.RESUNIT_INCH;
+	private ByteOrder byteOrder = ByteOrder.BIG_ENDIAN;
 	private int defalteCompressionLevel = 4;
 	private boolean writeICCProfile;
 	
@@ -30,9 +32,19 @@ public class TIFFOptions extends ImageOptions {
 	// Copy constructor
 	public TIFFOptions(TIFFOptions options) {
 		this.isApplyPredictor = options.isApplyPredictor;
-		this.defalteCompressionLevel = options.defalteCompressionLevel;
-		this.jpegQuality = options.jpegQuality;
 		this.tiffCompression = options.tiffCompression;
+		this.photoMetric = options.photoMetric;
+		this.resolutionUnit = options.resolutionUnit;
+		this.byteOrder = options.byteOrder;
+		this.defalteCompressionLevel = options.defalteCompressionLevel;
+		this.writeICCProfile = options.writeICCProfile;
+		this.jpegQuality = options.jpegQuality;
+		this.xResolution = options.xResolution;
+		this.yResolution = options.yResolution;		
+	}
+	
+	public ByteOrder getByteOrder() {
+		return byteOrder;
 	}
 	
 	public int getDeflateCompressionLevel() {
@@ -77,6 +89,10 @@ public class TIFFOptions extends ImageOptions {
 	
 	public void setApplyPredictor(boolean isApplyPredictor) {
 		this.isApplyPredictor = isApplyPredictor;
+	}
+	
+	public void setByteOrder(ByteOrder byteOrder) {
+		this.byteOrder = byteOrder;
 	}
 	
 	public void setDeflateCompressionLevel(int deflateCompressionLevel) {

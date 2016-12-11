@@ -31,6 +31,7 @@ import com.icafe4j.io.FileCacheRandomAccessInputStream;
 import com.icafe4j.io.FileCacheRandomAccessOutputStream;
 import com.icafe4j.io.RandomAccessInputStream;
 import com.icafe4j.io.RandomAccessOutputStream;
+import com.icafe4j.io.WriteStrategyII;
 import com.icafe4j.util.FileUtils;
 
 public class TestTIFFTweaker extends TestBase {
@@ -107,6 +108,7 @@ public class TestTIFFTweaker extends TestBase {
 				
 				fout = new FileOutputStream("NEW.tif");
 				rout = new FileCacheRandomAccessOutputStream(fout);
+				rout.setWriteStrategy(WriteStrategyII.getInstance());
 				
 				if(args[1].equalsIgnoreCase("writemultipage")) {
 					//TIFFTweaker.writeMultipageTIFF(rout, frames);
