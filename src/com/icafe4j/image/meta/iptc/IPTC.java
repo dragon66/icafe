@@ -144,14 +144,16 @@ public class IPTC extends Metadata {
 				int tag = data[i++]&0xff;
 				int recordSize = IOUtils.readUnsignedShortMM(data, i);
 				i += 2;
-				IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, data, i);
-				String name = dataSet.getName();
-				if(datasetMap.get(name) == null) {
-					List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
-					list.add(dataSet);
-					datasetMap.put(name, list);
-				} else
-					datasetMap.get(name).add(dataSet);
+				if(recordSize > 0) {
+					IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, data, i);
+					String name = dataSet.getName();
+					if(datasetMap.get(name) == null) {
+						List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
+						list.add(dataSet);
+						datasetMap.put(name, list);
+					} else
+						datasetMap.get(name).add(dataSet);
+				}
 				i += recordSize;
 				// Sanity check
 				if(i >= data.length) break;	
