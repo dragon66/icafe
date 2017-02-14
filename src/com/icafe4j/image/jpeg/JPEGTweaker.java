@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =======================================================
+ * WY    13Feb2017  Fixed bug with APP1 segment length too small
  * WY    06Nov2016  Added support for Cardboard Camera image and audio
  * WY    03Apr2016  Rewrite insertXMP() to leverage new JpegXMP write()
  * WY    27Mar2016  Rewrite writeComment() to leverage COMBuilder
@@ -1099,28 +1100,26 @@ public class JPEGTweaker {
 				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
 				    	segments.add(new Segment(emarker, 0, null));
 						marker = IOUtils.readShortMM(is);
-						break;
+						break;				    
 				    case APP1:
-				    	// Read and remove the old XMP data
-				    	length = IOUtils.readUnsignedShortMM(is);
-						byte[] xmpExtId = new byte[XMP_EXT_ID.length()];
-						IOUtils.readFully(is, xmpExtId);
-						// Remove XMP and ExtendedXMP segments.
-						if(Arrays.equals(xmpExtId, XMP_EXT_ID.getBytes())) {
-							IOUtils.skipFully(is, length - XMP_EXT_ID.length() - 2);
-						} else if(new String(xmpExtId, 0, XMP_ID.length()).equals(XMP_ID)) {
-							IOUtils.skipFully(is,  length - XMP_EXT_ID.length() - 2);
-						} else { // We are going to keep other types of data							
-							byte[] temp = new byte[length - XMP_EXT_ID.length() - 2];
-							IOUtils.readFully(is, temp);
-							segments.add(new Segment(emarker, length, ArrayUtils.concat(xmpExtId, temp)));
-							// If it's EXIF, we keep the index
-							if(new String(xmpExtId, 0, EXIF_ID.length()).equals(EXIF_ID)) {
-								exifIndex = segments.size() - 1;
-							}
-						}
-						marker = IOUtils.readShortMM(is);
-						break;
+				        // Read and remove the old XMP data
+				        length = IOUtils.readUnsignedShortMM(is);
+				        byte[] temp = new byte[length - 2];
+				        IOUtils.readFully(is, temp);
+				        // Remove XMP and ExtendedXMP segments.
+				        if(temp.length > XMP_EXT_ID.length() && new String(temp, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
+				                ;
+				        } else if (temp.length > XMP_ID.length() && new String(temp, 0, XMP_ID.length()).equals(XMP_ID)) {
+				                ;
+				        } else {                                               
+				                segments.add(new Segment(emarker, length, temp));
+				                // If it's EXIF, we keep the index
+				                if(temp.length > EXIF_ID.length() && new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID)) {
+				                        exifIndex = segments.size() - 1;
+				                }
+				        }
+				        marker = IOUtils.readShortMM(is);
+				        break;
 				    case APP0:
 				    	app0Index = segments.size();
 				    default:
