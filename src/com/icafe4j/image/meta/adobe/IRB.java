@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    16Feb2017  Fix bug with zero size 8BIM block
  * WY    14Apr2015  Added getThumbnailResource()
  * WY    10Apr2015  Added containsThumbnail() and getThumbnail()
  * WY    19Jan2015  Initial creation
@@ -109,6 +110,8 @@ public class IRB extends Metadata {
 					//
 					int size = IOUtils.readIntMM(data, i);
 					i += 4;
+					
+					if(size <= 0) continue; //Fix bug with zero size 8BIM
 					
 					ImageResourceID eId = ImageResourceID.fromShort(id); 
 					
