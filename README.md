@@ -81,7 +81,8 @@ Image metadata manipulation:
 Who is using ICAFE
 ------------------
 
-* ExifStock http://www.stockphoto-tools.com/ for TIFF IPTC support.
+* ExifStock http://www.stockphoto-tools.com/ for metadata support like TIFF IPTC etc.
+* StockHelper http://saranaisoft.com/en/ for metadata support like IPTC, XMP etc.
 
 Where can I get the latest release?
 -----------------------------------
