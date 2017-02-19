@@ -249,7 +249,9 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/JPEGTweaker.html#insertIRB(java.io.InputStream,%20java.io.OutputStream,%20java.util.Collection,%20boolean)">insertIRB</a></strong>(java.io.InputStream&nbsp;is,
          java.io.OutputStream&nbsp;os,
          java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</a>&gt;&nbsp;bims,
-         boolean&nbsp;update)</code>&nbsp;</td>
+         boolean&nbsp;update)</code>
+<div class="block">Inserts a collection of _8BIM into a JPEG APP13 Photoshop IRB segment</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
@@ -588,7 +590,7 @@ extends java.lang.Object</pre>
               boolean&nbsp;update)
                        throws java.io.IOException</pre>
 <div class="block">Inserts a list of IPTCDataSet into a JPEG APP13 Photoshop IRB segment</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - InputStream for the original image</dd><dd><code>os</code> - OutputStream for the image with IPTC APP13 inserted</dd><dd><code>iptcs</code> - a list of IPTCDataSet to be inserted</dd><dd><code>update</code> - if true, keep the original data, otherwise, replace the complete APP13 data</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - InputStream for the original image</dd><dd><code>os</code> - OutputStream for the image with IPTC inserted</dd><dd><code>iptcs</code> - a collection of IPTCDataSet to be inserted</dd><dd><code>update</code> - boolean if true, keep the original IPTC data; otherwise, replace it completely with the new IPTC data</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
@@ -604,7 +606,9 @@ extends java.lang.Object</pre>
              java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</a>&gt;&nbsp;bims,
              boolean&nbsp;update)
                       throws java.io.IOException</pre>
-<dl><dt><span class="strong">Throws:</span></dt>
+<div class="block">Inserts a collection of _8BIM into a JPEG APP13 Photoshop IRB segment</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - InputStream for the original image</dd><dd><code>os</code> - OutputStream for the image with _8BIMs inserted</dd><dd><code>bims</code> - a collection of _8BIM to be inserted</dd><dd><code>update</code> - boolean if true, keep the other _8BIMs; otherwise, replace the whole IRB with the inserted _8BIMs</dd>
+<dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
