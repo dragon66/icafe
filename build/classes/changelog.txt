@@ -1,6 +1,7 @@
 ***************************
-Last modified on 02/13/2017
+Last modified on 02/20/2017
 ***************************
+20Feb2017  Fix GIFTweaker.splitFrames() throws stream closed exception
 13Feb2017  Fixed bug with JPEGTweaker.insertXMP
 11Dec2016  Added byte order support to TIFFWriter and TIFFTweaker
 06Nov2016  Added support for Cardboard Camera image and audio

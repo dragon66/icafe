@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ====================================================
+ * WY    20Feb2017  Fix splitFrames() throws stream closed exception
  * WY    04Apr2016  Rewrite insertXMPApplicationBlock() to leverage GifXMP
  * WY    09Oct2015  Fixed regression bug with splitAnimatedGIF()
  * WY    16Sep2015  Added insertComment() to insert comment extension
@@ -475,7 +476,6 @@ public class GIFTweaker {
 		do {
 			outFileName = StringUtils.isNullOrEmpty(outputFilePrefix)?"frame_" + frameCount++:outputFilePrefix + "_frame_" + frameCount++;
 			os = new FileOutputStream(outFileName + ".gif");
-			os.close();
 		} while(copyFrame(is, os, DTO));
 		
 		os.close(); // Close the last file stream in order to delete it
