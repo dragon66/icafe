@@ -81,6 +81,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -1898,8 +1899,25 @@ public class TIFFTweaker {
 	 * @throws IOException
 	 */
 	public static void mergeTiffImagesEx(RandomAccessOutputStream merged, File... images) throws IOException {
+		if (images != null && images.length > 1) {
+			InputStream[] pages = new InputStream[images.length];
+			for (int i = 0; i < images.length; i++) {
+				pages[i] = new FileInputStream(images[i]);
+			}
+			mergeTiffImagesEx(merged, pages);
+		}
+	}
+
+	/**
+	 * Merges a list of TIFF images into one regardless of the original bit depth
+	 * 
+	 * @param merged RandomAccessOutputStream for the merged TIFF
+	 * @param inputstreams of TIFF image files to be merged
+	 * @throws IOException
+	 */
+	public static void mergeTiffImagesEx(RandomAccessOutputStream merged, InputStream... images) throws IOException {
 		if(images != null && images.length > 1) {
-			FileInputStream fis1 = new FileInputStream(images[0]);
+			InputStream fis1 = images[0];
 			RandomAccessInputStream image1 = new FileCacheRandomAccessInputStream(fis1);
 			List<IFD> ifds1 = new ArrayList<IFD>();
 			int offset1 = copyHeader(image1, merged);
@@ -1916,7 +1934,7 @@ public class TIFFTweaker {
 			short writeEndian = merged.getEndian();
 			for(int i = 1; i < images.length; i++) {
 				List<IFD> ifds2 = new ArrayList<IFD>();
-				FileInputStream fis2 = new FileInputStream(images[i]);
+				InputStream fis2 = images[i];
 				RandomAccessInputStream image2 = new FileCacheRandomAccessInputStream(fis2); 
 				readIFDs(ifds2, image2);
 				for(int j = 0; j < ifds2.size(); j++) {
