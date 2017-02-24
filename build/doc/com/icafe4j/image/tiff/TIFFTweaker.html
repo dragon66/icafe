@@ -426,54 +426,61 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#mergeTiffImagesEx(com.icafe4j.io.RandomAccessOutputStream,%20java.io.InputStream...)">mergeTiffImagesEx</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;merged,
+                 java.io.InputStream...&nbsp;images)</code>
+<div class="block">Merges a list of TIFF images into one regardless of the original bit depth</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#prepareForInsert(com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream,%20java.util.List)">prepareForInsert</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
                 <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
                 java.util.List&lt;<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&gt;&nbsp;ifds)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#prepareForWrite(com.icafe4j.io.RandomAccessOutputStream)">prepareForWrite</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#printIFD(com.icafe4j.image.tiff.IFD,%20java.lang.Class,%20java.lang.String)">printIFD</a></strong>(<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&nbsp;currIFD,
         java.lang.Class&lt;? extends <a href="../../../../com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff">Tag</a>&gt;&nbsp;tagClass,
         java.lang.String&nbsp;indent)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#printIFDs(java.util.Collection,%20java.lang.String)">printIFDs</a></strong>(java.util.Collection&lt;<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&gt;&nbsp;list,
          java.lang.String&nbsp;indent)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#readIFDs(java.util.List,%20com.icafe4j.io.RandomAccessInputStream)">readIFDs</a></strong>(java.util.List&lt;<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&gt;&nbsp;list,
         <a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>,<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#readMetadata(com.icafe4j.io.RandomAccessInputStream)">readMetadata</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>,<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#readMetadata(com.icafe4j.io.RandomAccessInputStream,%20int)">readMetadata</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
             int&nbsp;pageNumber)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#removeMetadata(int,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream,%20com.icafe4j.image.meta.MetadataType...)">removeMetadata</a></strong>(int&nbsp;pageNumber,
               <a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
               <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
               <a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>...&nbsp;metadataTypes)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#removeMetadata(com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream,%20com.icafe4j.image.meta.MetadataType...)">removeMetadata</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
               <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
               <a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>...&nbsp;metadataTypes)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#removeMetadata(java.util.Set,%20int,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream)">removeMetadata</a></strong>(java.util.Set&lt;<a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>&gt;&nbsp;metadataTypes,
               int&nbsp;pageNumber,
@@ -482,13 +489,13 @@ extends java.lang.Object</pre>
 <div class="block">Remove meta data from TIFF image</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#removeMetadata(java.util.Set,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream)">removeMetadata</a></strong>(java.util.Set&lt;<a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>&gt;&nbsp;metadataTypes,
               <a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
               <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#removePages(int,%20int,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream)">removePages</a></strong>(int&nbsp;startPage,
            int&nbsp;endPage,
@@ -497,7 +504,7 @@ extends java.lang.Object</pre>
 <div class="block">Remove a range of pages from a multiple page TIFF image</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#removePages(com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream,%20int...)">removePages</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
            <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
@@ -505,50 +512,50 @@ extends java.lang.Object</pre>
 <div class="block">Remove pages from a multiple page TIFF image</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#retainPages(int,%20int,%20com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream)">retainPages</a></strong>(int&nbsp;startPage,
            int&nbsp;endPage,
            <a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
            <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#retainPages(com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream,%20int...)">retainPages</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
            <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
            int...&nbsp;pages)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#splitPages(com.icafe4j.io.RandomAccessInputStream,%20java.lang.String)">splitPages</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
           java.lang.String&nbsp;outputFilePrefix)</code>
 <div class="block">Split a multiple page TIFF into single page TIFFs</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#write(com.icafe4j.image.tiff.TIFFImage,%20com.icafe4j.io.RandomAccessOutputStream)">write</a></strong>(<a href="../../../../com/icafe4j/image/tiff/TIFFImage.html" title="class in com.icafe4j.image.tiff">TIFFImage</a>&nbsp;tiffImage,
      <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#writeMultipageTIFF(com.icafe4j.io.RandomAccessOutputStream,%20java.awt.image.BufferedImage...)">writeMultipageTIFF</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
                   java.awt.image.BufferedImage...&nbsp;images)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#writeMultipageTIFF(com.icafe4j.io.RandomAccessOutputStream,%20com.icafe4j.image.ImageFrame...)">writeMultipageTIFF</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
                   <a href="../../../../com/icafe4j/image/ImageFrame.html" title="class in com.icafe4j.image">ImageFrame</a>...&nbsp;frames)</code>
 <div class="block">Write an array of ImageFrames as a multiple page TIFF.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#writeMultipageTIFF(com.icafe4j.io.RandomAccessOutputStream,%20com.icafe4j.image.ImageParam[],%20java.awt.image.BufferedImage...)">writeMultipageTIFF</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
                   <a href="../../../../com/icafe4j/image/ImageParam.html" title="class in com.icafe4j.image">ImageParam</a>[]&nbsp;imageParam,
                   java.awt.image.BufferedImage...&nbsp;images)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#writePage(java.awt.image.BufferedImage,%20com.icafe4j.io.RandomAccessOutputStream,%20java.util.List,%20int,%20com.icafe4j.image.writer.TIFFWriter)">writePage</a></strong>(java.awt.image.BufferedImage&nbsp;image,
          <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
@@ -556,7 +563,7 @@ extends java.lang.Object</pre>
          int&nbsp;writeOffset,
          <a href="../../../../com/icafe4j/image/writer/TIFFWriter.html" title="class in com.icafe4j.image.writer">TIFFWriter</a>&nbsp;writer)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#writePage(com.icafe4j.image.ImageFrame,%20com.icafe4j.io.RandomAccessOutputStream,%20java.util.List,%20int,%20com.icafe4j.image.writer.TIFFWriter)">writePage</a></strong>(<a href="../../../../com/icafe4j/image/ImageFrame.html" title="class in com.icafe4j.image">ImageFrame</a>&nbsp;page,
          <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
@@ -1248,6 +1255,21 @@ extends java.lang.Object</pre>
                               throws java.io.IOException</pre>
 <div class="block">Merges a list of TIFF images into one regardless of the original bit depth</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>merged</code> - RandomAccessOutputStream for the merged TIFF</dd><dd><code>images</code> - input TIFF image files to be merged</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="mergeTiffImagesEx(com.icafe4j.io.RandomAccessOutputStream, java.io.InputStream...)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mergeTiffImagesEx</h4>
+<pre>public static&nbsp;void&nbsp;mergeTiffImagesEx(<a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;merged,
+                     java.io.InputStream...&nbsp;images)
+                              throws java.io.IOException</pre>
+<div class="block">Merges a list of TIFF images into one regardless of the original bit depth</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>merged</code> - RandomAccessOutputStream for the merged TIFF</dd><dd><code>images</code> - InputStreams of TIFF images to be merged</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>

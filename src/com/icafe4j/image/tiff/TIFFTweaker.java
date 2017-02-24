@@ -1912,7 +1912,7 @@ public class TIFFTweaker {
 	 * Merges a list of TIFF images into one regardless of the original bit depth
 	 * 
 	 * @param merged RandomAccessOutputStream for the merged TIFF
-	 * @param inputstreams of TIFF image files to be merged
+	 * @param images InputStreams of TIFF images to be merged
 	 * @throws IOException
 	 */
 	public static void mergeTiffImagesEx(RandomAccessOutputStream merged, InputStream... images) throws IOException {
