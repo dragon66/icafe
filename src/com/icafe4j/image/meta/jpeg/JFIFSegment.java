@@ -71,7 +71,7 @@ public class JFIFSegment extends Metadata {
 	}
 	
 	public JFIFSegment(int majorVersion, int minorVersion, int densityUnit, int xDensity, int yDensity, JFIFThumbnail thumbnail) {
-		super(MetadataType.JPG_JFIF, null);
+		super(MetadataType.JPG_JFIF);
 		checkInput(majorVersion, minorVersion, densityUnit, xDensity, yDensity);
 		this.majorVersion = majorVersion;
 		this.minorVersion = minorVersion;

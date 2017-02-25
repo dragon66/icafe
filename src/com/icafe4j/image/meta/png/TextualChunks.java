@@ -54,14 +54,14 @@ public class TextualChunks extends Metadata {
 	private Map<String, String> keyValMap;
 	
 	public TextualChunks() {
-		super(MetadataType.PNG_TEXTUAL, null);
+		super(MetadataType.PNG_TEXTUAL);
 		this.queue = new LinkedList<Chunk>();
 		this.chunks = new ArrayList<Chunk>();
 		this.keyValMap = new HashMap<String, String>();		
 	}
 		
 	public TextualChunks(Collection<Chunk> chunks) {
-		super(MetadataType.PNG_TEXTUAL, null);
+		super(MetadataType.PNG_TEXTUAL);
 		validateChunks(chunks);
 		this.queue = new LinkedList<Chunk>(chunks);
 		this.chunks = new ArrayList<Chunk>();

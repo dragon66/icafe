@@ -58,7 +58,7 @@ public class IPTC extends Metadata {
 	private Map<String, List<IPTCDataSet>> datasetMap;
 	
 	public IPTC() {
-		super(MetadataType.IPTC, null);
+		super(MetadataType.IPTC);
 		datasetMap =  new HashMap<String, List<IPTCDataSet>>();
 		isDataRead = true;
 	}

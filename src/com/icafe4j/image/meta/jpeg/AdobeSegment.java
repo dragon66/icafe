@@ -44,7 +44,7 @@ public class AdobeSegment extends Metadata {
 	}
 	
 	public AdobeSegment(int dctEncodeVersion, int app14Flags0, int app14Flags1, int colorTransform) {
-		super(MetadataType.JPG_ADOBE, null);
+		super(MetadataType.JPG_ADOBE);
 		this.m_DCTEncodeVersion = dctEncodeVersion;
 		this.m_APP14Flags0 = app14Flags0;
 		this.m_APP14Flags1 = app14Flags1;

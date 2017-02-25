@@ -40,12 +40,12 @@ public class ImageMetadata extends Metadata {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageMetadata.class);
 	
 	public ImageMetadata(Document document) {
-		super(MetadataType.IMAGE, null);
+		super(MetadataType.IMAGE);
 		this.document = document;
 	}
 	
 	public ImageMetadata(Document document, Map<String, Thumbnail> thumbnails) {
-		super(MetadataType.IMAGE, null);
+		super(MetadataType.IMAGE);
 		this.document = document;
 		this.thumbnails = thumbnails;
 	}

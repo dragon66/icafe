@@ -72,7 +72,7 @@ public abstract class Exif extends Metadata {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Exif.class);
 	
 	public Exif() {
-		super(MetadataType.EXIF, null);
+		super(MetadataType.EXIF);
 		isDataRead = true;
 	}
 	

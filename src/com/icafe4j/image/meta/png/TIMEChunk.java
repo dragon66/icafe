@@ -71,7 +71,7 @@ public class TIMEChunk extends Metadata {
 	}
 
 	public TIMEChunk(ChunkType chunkType, int year, int month, int day, int hour, int minute, int second) {
-		super(validate(chunkType), null);
+		super(validate(chunkType));
 		checkDate(year, month, day, hour, minute, second);
 		this.year = year;
 		this.month = month;

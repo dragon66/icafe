@@ -486,9 +486,16 @@ public abstract class Metadata implements MetadataReader {
 		peekHeadInputStream.shallowClose();
 	}
 	
-	public Metadata(MetadataType type, byte[] data) {
+	public Metadata(MetadataType type) {
 		this.type = type;
-		this.data = data;
+	}
+	
+	public Metadata(MetadataType type, byte[] data) {
+		if(type == null) throw new IllegalArgumentException("Metadata type must be specified");
+		if(data == null) throw new IllegalArgumentException("Input data array is null");
+		if(data.length == 0) isDataRead = true; // Allow for zero length data but disable read
+		this.type = type;
+		this.data = data;		
 	}
 	
 	protected void ensureDataRead() {

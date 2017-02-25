@@ -40,13 +40,14 @@ public class DuckySegment extends Metadata {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DuckySegment.class);
 		
 	public DuckySegment() {
-		super(MetadataType.JPG_DUCKY, null);
+		super(MetadataType.JPG_DUCKY);
 		datasetMap =  new EnumMap<DuckyTag, DuckyDataSet>(DuckyTag.class);
 		isDataRead = true;
 	}
 	
 	public DuckySegment(byte[] data) {
 		super(MetadataType.JPG_DUCKY, data);
+		ensureDataRead();
 	}
 	
 	public void addDataSet(DuckyDataSet dataSet) {

@@ -40,13 +40,13 @@ public class Comments extends Metadata {
 	private List<String> comments;
 	
 	public Comments() {
-		super(MetadataType.COMMENT, null);
+		super(MetadataType.COMMENT);
 		queue = new LinkedList<byte[]>();
 		comments = new ArrayList<String>();
 	}
 	
 	public Comments(List<String> comments) {
-		super(MetadataType.COMMENT, null);
+		super(MetadataType.COMMENT);
 		queue = new LinkedList<byte[]>();
 		if(comments == null) throw new IllegalArgumentException("Input is null");
 		this.comments = comments;
