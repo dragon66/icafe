@@ -402,7 +402,7 @@ public class JPEGTweaker {
 						byte[] jfif_buf = new byte[length - 2];
 					    IOUtils.readFully(is, jfif_buf);
 					    // EXIF segment
-					    if(new String(jfif_buf, 0, JFIF_ID.length()).equals(JFIF_ID) || new String(jfif_buf, 0, JFXX_ID.length()).equals(JFXX_ID)) {
+					    if(jfif_buf.length >= JFIF_ID.length() && new String(jfif_buf, 0, JFIF_ID.length()).equals(JFIF_ID) || jfif_buf.length >= JFXX_ID.length() && new String(jfif_buf, 0, JFXX_ID.length()).equals(JFXX_ID)) {
 					      	int thumbnailWidth = jfif_buf[12]&0xff;
 					    	int thumbnailHeight = jfif_buf[13]&0xff;
 					    	String outpath = "";
@@ -1140,7 +1140,7 @@ public class JPEGTweaker {
 				}
 			}
 	    }
-	}
+	}	
 	
 	/**
 	 * Insert XMP into single APP1 or multiple segments. Support ExtendedXMP.
@@ -1323,26 +1323,36 @@ public class JPEGTweaker {
 	}
 	
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
+		// Create a map to hold all the metadata and thumbnails
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
+		
 		// Need to wrap the input stream with a BufferedInputStream to
 		// speed up reading SOS
-		is = new BufferedInputStream(is);
-		// Definitions
+		if(!(is instanceof BufferedInputStream))
+			is = new BufferedInputStream(is);
+		
+		// Used to read Quantization and Huffman tables
 		List<QTable> m_qTables = new ArrayList<QTable>(4);
 		List<HTable> m_acTables = new ArrayList<HTable>(4);	
-		List<HTable> m_dcTables = new ArrayList<HTable>(4);		
-		// Each SOFReader is associated with a single SOF segment
-		// Usually there is only one SOF segment, but for hierarchical
-		// JPEG, there could be more than one SOF
+		List<HTable> m_dcTables = new ArrayList<HTable>(4);
+		
+		/* Each SOFReader is associated with a single SOF segment
+		 * Usually there is only one SOF segment, but for hierarchical
+		 * JPEG, there could be more than one SOF
+		 */
 		List<SOFReader> readers = new ArrayList<SOFReader>();
+		
 		// Used to read multiple segment ICCProfile
 		ByteArrayOutputStream iccProfileStream = null;
+		
 		// Used to read multiple segment Adobe APP13
 		ByteArrayOutputStream eightBIMStream = null;
+		
 		// Used to read multiple segment XMP
 		byte[] extendedXMP = null;
 		String xmpGUID = ""; // 32 byte ASCII hex string
+		
 		Comments comments = null;
 		
 		List<Segment> appnSegments = new ArrayList<Segment>();
@@ -1422,7 +1432,7 @@ public class JPEGTweaker {
 					case JPG: // JPG and JPGn shouldn't appear in the image.
 					case JPG0:
 					case JPG13:
-				    case TEM: // The only stand alone mark besides SOI, EOI, and RSTn. 
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
 						marker = IOUtils.readShortMM(is);
 						break;
 				    case PADDING:
@@ -1449,23 +1459,23 @@ public class JPEGTweaker {
 			byte[] data = segment.getData();
 			length = segment.getLength();
 			if(segment.getMarker() == Marker.APP0) {
-				if (new String(data, 0, JFIF_ID.length()).equals(JFIF_ID)) {
+				if (data.length >= JFIF_ID.length() && new String(data, 0, JFIF_ID.length()).equals(JFIF_ID)) {
 					metadataMap.put(MetadataType.JPG_JFIF, new JFIFSegment(ArrayUtils.subArray(data, JFIF_ID.length(), length - JFIF_ID.length() - 2)));
 				}
 			} else if(segment.getMarker() == Marker.APP1) {
 				// Check for EXIF
-				if(new String(data, 0, EXIF_ID.length()).equals(EXIF_ID)) {
+				if(data.length >= EXIF_ID.length() && new String(data, 0, EXIF_ID.length()).equals(EXIF_ID)) {
 					// We found EXIF
 					JpegExif exif = new JpegExif(ArrayUtils.subArray(data, EXIF_ID.length(), length - EXIF_ID.length() - 2));
 					metadataMap.put(MetadataType.EXIF, exif);
-				} else if(new String(data, 0, XMP_ID.length()).equals(XMP_ID) ||
-						new String(data, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID)) {
+				} else if(data.length >= XMP_ID.length() && new String(data, 0, XMP_ID.length()).equals(XMP_ID) ||
+						data.length >= NON_STANDARD_XMP_ID.length() && new String(data, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID)) {
 					// We found XMP, add it to metadata list (We may later revise it if we have ExtendedXMP)
 					XMP xmp = new JpegXMP(ArrayUtils.subArray(data, XMP_ID.length(), length - XMP_ID.length() - 2));
 					metadataMap.put(MetadataType.XMP, xmp);
 					// Retrieve XMP GUID if available
 					xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
-				} else if(new String(data, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
+				} else if(data.length >= XMP_EXT_ID.length() && new String(data, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
 					// We found ExtendedXMP, add the data to ExtendedXMP memory buffer				
 					int i = XMP_EXT_ID.length();
 					// 128-bit MD5 digest of the full ExtendedXMP serialization
@@ -1485,23 +1495,23 @@ public class JPEGTweaker {
 				}
 			} else if(segment.getMarker() == Marker.APP2) {
 				// We're only interested in ICC_Profile
-				if (new String(data, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
+				if (data.length >= ICC_PROFILE_ID.length() && new String(data, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
 					if(iccProfileStream == null)
 						iccProfileStream = new ByteArrayOutputStream();
 					iccProfileStream.write(ArrayUtils.subArray(data, ICC_PROFILE_ID.length() + 2, length - ICC_PROFILE_ID.length() - 4));
 				}
 			} else if(segment.getMarker() == Marker.APP12) {
-				if (new String(data, 0, DUCKY_ID.length()).equals(DUCKY_ID)) {
+				if (data.length >= DUCKY_ID.length() && new String(data, 0, DUCKY_ID.length()).equals(DUCKY_ID)) {
 					metadataMap.put(MetadataType.JPG_DUCKY, new DuckySegment(ArrayUtils.subArray(data, DUCKY_ID.length(), length - DUCKY_ID.length() - 2)));
 				}
 			} else if(segment.getMarker() == Marker.APP13) {
-				if (new String(data, 0, PHOTOSHOP_IRB_ID.length()).equals(PHOTOSHOP_IRB_ID)) {
+				if (data.length >= PHOTOSHOP_IRB_ID.length() && new String(data, 0, PHOTOSHOP_IRB_ID.length()).equals(PHOTOSHOP_IRB_ID)) {
 					if(eightBIMStream == null)
 						eightBIMStream = new ByteArrayOutputStream();
 					eightBIMStream.write(ArrayUtils.subArray(data, PHOTOSHOP_IRB_ID.length(), length - PHOTOSHOP_IRB_ID.length() - 2));
 				}
 			} else if(segment.getMarker() == Marker.APP14) {
-				if (new String(data, 0, ADOBE_ID.length()).equals(ADOBE_ID)) {
+				if (data.length >= ADOBE_ID.length() && new String(data, 0, ADOBE_ID.length()).equals(ADOBE_ID)) {
 					metadataMap.put(MetadataType.JPG_ADOBE, new AdobeSegment(ArrayUtils.subArray(data, ADOBE_ID.length(), length - ADOBE_ID.length() - 2)));
 				}
 			}
@@ -1744,113 +1754,94 @@ public class JPEGTweaker {
 							length = IOUtils.readUnsignedShortMM(is);
 							IOUtils.skipFully(is, length - 2);
 							marker = IOUtils.readShortMM(is);
-							break;
-						}
-						marker = copySegment(marker, is, os);
+						} else
+							marker = copySegment(marker, is, os);
 						break;						
 					case APP0:
 						if(metadataTypes.contains(MetadataType.JPG_JFIF)) {
 							length = IOUtils.readUnsignedShortMM(is);
-							byte[] temp = new byte[JFIF_ID.length()];
-							IOUtils.readFully(is, temp);	
+						    byte[] temp = new byte[length - 2];
+						    IOUtils.readFully(is, temp);
+							//byte[] temp = new byte[JFIF_ID.length()];
 							// JFIF segment
-							if (Arrays.equals(temp, JFIF_ID.getBytes())) {
-								IOUtils.skipFully(is, length - JFIF_ID.length() - 2);
+							if (temp.length >= JFIF_ID.length() && new String(temp, 0, JFIF_ID.length()).equals(JFIF_ID)) {
+								;
 							} else {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
-								IOUtils.write(os, temp); // Write the already read bytes
-								temp = new byte[length - JFIF_ID.length() - 2];
-								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
 							marker = IOUtils.readShortMM(is);
-							break;
-						}
-						marker = copySegment(marker, is, os);
+						} else
+							marker = copySegment(marker, is, os);
 						break;
 					case APP1:
 						// We are only interested in EXIF and XMP
 						if(metadataTypes.contains(MetadataType.EXIF) || metadataTypes.contains(MetadataType.XMP)) {
 							length = IOUtils.readUnsignedShortMM(is);
-							byte[] temp = new byte[XMP_EXT_ID.length()];
+							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);
 							// XMP segment.
-							if(Arrays.equals(temp, XMP_EXT_ID.getBytes()) && metadataTypes.contains(MetadataType.XMP)) {
-								IOUtils.skipFully(is, length - XMP_EXT_ID.length() - 2);
-							} else if(new String(temp, 0, XMP_ID.length()).equals(XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
-								IOUtils.skipFully(is,  length - XMP_EXT_ID.length() - 2);
-							} else if(new String(temp, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID) && metadataTypes.contains(MetadataType.XMP)) {
-								IOUtils.skipFully(is,  length - XMP_EXT_ID.length() - 2);
-							} else if(new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID)
-									&& metadataTypes.contains(MetadataType.EXIF)) { // EXIF
-								IOUtils.skipFully(is, length - XMP_EXT_ID.length() - 2);
+							if(metadataTypes.contains(MetadataType.XMP) && temp.length >= XMP_EXT_ID.length() && new String(temp, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
+								;
+							} else if(metadataTypes.contains(MetadataType.XMP) && temp.length >= XMP_ID.length() && new String(temp, 0, XMP_ID.length()).equals(XMP_ID)) {
+								;
+							} else if(metadataTypes.contains(MetadataType.XMP) && temp.length >= NON_STANDARD_XMP_ID.length() && new String(temp, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID)) {
+								;
+							} else if(metadataTypes.contains(MetadataType.EXIF) && temp.length >= EXIF_ID.length() && new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID)) { // EXIF
+								;
 							} else { // We don't want to remove any of them
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
-								IOUtils.write(os, temp); // Write the already read bytes
-								temp = new byte[length - XMP_EXT_ID.length() - 2];
-								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
 							marker = IOUtils.readShortMM(is);
-							break;
-						}
-						marker = copySegment(marker, is, os);
+						} else
+							marker = copySegment(marker, is, os);
 						break;
 					case APP2:
 						if(metadataTypes.contains(MetadataType.ICC_PROFILE)) {
 							length = IOUtils.readUnsignedShortMM(is);
-							byte[] temp = new byte[ICC_PROFILE_ID.length()];
+							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);	
 							// ICC_Profile segment
-							if (Arrays.equals(temp, ICC_PROFILE_ID.getBytes())) {
-								IOUtils.skipFully(is, length - ICC_PROFILE_ID.length() - 2);
+							if (temp.length >= ICC_PROFILE_ID.length() && new String(temp, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
+								;
 							} else {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
-								IOUtils.write(os, temp); // Write the already read bytes
-								temp = new byte[length - ICC_PROFILE_ID.length() - 2];
-								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
 							marker = IOUtils.readShortMM(is);
-							break;
-						}
-						marker = copySegment(marker, is, os);
+						} else
+							marker = copySegment(marker, is, os);
 						break;
 					case APP12:
 						if(metadataTypes.contains(MetadataType.JPG_DUCKY)) {
 							length = IOUtils.readUnsignedShortMM(is);
-							byte[] temp = new byte[DUCKY_ID.length()];
+							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);	
 							// Ducky segment
-							if (Arrays.equals(temp, DUCKY_ID.getBytes())) {
-								IOUtils.skipFully(is, length - DUCKY_ID.length() - 2);
+							if (temp.length >= DUCKY_ID.length() && new String(temp, 0, DUCKY_ID.length()).equals(DUCKY_ID)) {
+								;
 							} else {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
-								IOUtils.write(os, temp); // Write the already read bytes
-								temp = new byte[length - DUCKY_ID.length() - 2];
-								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
 							marker = IOUtils.readShortMM(is);
-							break;
-						}
-						marker = copySegment(marker, is, os);
+						} else
+							marker = copySegment(marker, is, os);
 						break;
 					case APP13:
 						if(metadataTypes.contains(MetadataType.PHOTOSHOP_IRB) || metadataTypes.contains(MetadataType.IPTC)
 							|| metadataTypes.contains(MetadataType.XMP) || metadataTypes.contains(MetadataType.EXIF)) {
 							length = IOUtils.readUnsignedShortMM(is);
-							byte[] temp = new byte[PHOTOSHOP_IRB_ID.length()];
+							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);	
 							// PHOTOSHOP IRB segment
-							if (Arrays.equals(temp, PHOTOSHOP_IRB_ID.getBytes())) {
-								temp = new byte[length - PHOTOSHOP_IRB_ID.length() - 2];
-								IOUtils.readFully(is, temp);
-								IRB irb = new IRB(temp);
+							if (temp.length >= PHOTOSHOP_IRB_ID.length() && new String(temp, 0, PHOTOSHOP_IRB_ID.length()).equals(PHOTOSHOP_IRB_ID)) {
+								IRB irb = new IRB(ArrayUtils.subArray(temp, PHOTOSHOP_IRB_ID.length(), temp.length - PHOTOSHOP_IRB_ID.length()));
 								// Shallow copy the map.
 								Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());								
 								if(!metadataTypes.contains(MetadataType.PHOTOSHOP_IRB)) {
@@ -1873,36 +1864,28 @@ public class JPEGTweaker {
 							} else {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
-								IOUtils.write(os, temp); // Write the already read bytes
-								temp = new byte[length - PHOTOSHOP_IRB_ID.length() - 2];
-								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
 							marker = IOUtils.readShortMM(is);
-							break;
-						}
-						marker = copySegment(marker, is, os);
+						} else
+							marker = copySegment(marker, is, os);
 						break;
 					case APP14:
 						if(metadataTypes.contains(MetadataType.JPG_ADOBE)) {
 							length = IOUtils.readUnsignedShortMM(is);
-							byte[] temp = new byte[ADOBE_ID.length()];
+							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);	
 							// Adobe segment
-							if (Arrays.equals(temp, ADOBE_ID.getBytes())) {
-								IOUtils.skipFully(is, length - ADOBE_ID.length() - 2);
+							if (temp.length >= ADOBE_ID.length() && new String(temp, 0, ADOBE_ID.length()).equals(ADOBE_ID)) {
+								;
 							} else {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
-								IOUtils.write(os, temp); // Write the already read bytes
-								temp = new byte[length - ADOBE_ID.length() - 2];
-								IOUtils.readFully(is, temp);
 								IOUtils.write(os, temp);
 							}
 							marker = IOUtils.readShortMM(is);
-							break;
-						}
-						marker = copySegment(marker, is, os);
+						} else
+							marker = copySegment(marker, is, os);
 						break;
 					default:
 						marker = copySegment(marker, is, os);
