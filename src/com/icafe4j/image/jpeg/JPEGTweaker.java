@@ -115,7 +115,7 @@ import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.meta.image.ImageMetadata;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
-import com.icafe4j.image.meta.jpeg.AdobeSegment;
+import com.icafe4j.image.meta.jpeg.Adobe;
 import com.icafe4j.image.meta.jpeg.Ducky;
 import com.icafe4j.image.meta.jpeg.JFIF;
 import com.icafe4j.image.meta.jpeg.JpegExif;
@@ -1053,6 +1053,196 @@ public class JPEGTweaker {
 	}
 	
 	/**
+	 * Insert a collection of Metadata into an image
+	 * 
+	 * @param metadata a collection of Metadata to be inserted
+	 * @param is InputStream for the image
+	 * @param os OutputStream for the image with Metadata inserted
+	 * @throws IOException
+	 */
+	public static void insertMetadata(Collection<Metadata> metadata, InputStream is, OutputStream os) throws IOException {
+		boolean finished = false;
+		int length = 0;
+		short marker;
+		Marker emarker;
+		int app0Index = -1;
+		int exifIndex = -1;
+		
+		// Used to read multiple segment Adobe APP13
+		ByteArrayOutputStream eightBIMStream = null;
+		
+		// Create a map to hold all the metadata
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+		for(Metadata meta : metadata)
+			metadataMap.put(meta.getType(), meta);
+		
+		// Create a list to hold the temporary Segments 
+		List<Segment> segments = new ArrayList<Segment>();
+		
+		// Before we actually read anything, see if we want to generate a thumbnail from the input first
+		// We need thumbnail image but don't have one, create one from the current image input stream
+		Exif exif = (Exif)metadataMap.remove(MetadataType.EXIF);
+	
+		if(exif != null && exif.isThumbnailRequired() && !exif.containsThumbnail()) {
+			is = new FileCacheRandomAccessInputStream(is);
+			// Insert thumbnail into EXIF wrapper
+			exif.setThumbnailImage(IMGUtils.createThumbnail(is));
+		}
+		
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+			throw new IllegalArgumentException("Invalid JPEG image, expected SOI marker not found!");
+		
+		IOUtils.writeShortMM(os, Marker.SOI.getValue());
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished) {
+			if (Marker.fromShort(marker) == Marker.SOS)	{
+				/* Insert the items from the metadata map we created from the input
+				 * metadata collection. Not all types of metadata are supported.
+				 * Only the ones we can handle are inserted.
+				 */
+				// Insert APP0 JFIF first
+				JFIF jfif = (JFIF)metadataMap.remove(MetadataType.JPG_JFIF);
+				for(int i = 0; i < app0Index; i++) // Write until before APP0 index
+					segments.get(i).write(os);
+				if(jfif != null) {
+					//placeholder - writeAPP0;
+				}
+				// Insert all the other items from the segment until we come to EXIF
+				int index = Math.max(app0Index, exifIndex);
+				for(int i = (app0Index < 0 ? 0 : app0Index); i < index; i++)
+					segments.get(i).write(os);
+				if (exif != null) {
+					// Now we insert the EXIF data
+			   		exif.write(os);
+				}
+				XMP xmp = (XMP)metadataMap.remove(MetadataType.XMP);
+				if (xmp instanceof JpegXMP) {
+					// Now we insert the XMP data
+			   		xmp.write(os);
+				}
+				ICCProfile profile = (ICCProfile)metadataMap.remove(MetadataType.ICC_PROFILE);
+				if(profile != null) {
+					profile.write(os);
+				}			
+				IPTC iptc = (IPTC)metadataMap.remove(MetadataType.IPTC);
+				if(iptc != null) {
+					Map<Short, _8BIM> bimMap = null;
+					if(eightBIMStream != null) {
+						IRB irb = new IRB(eightBIMStream.toByteArray());
+			    		// Shallow copy the map.
+			    		bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
+						bimMap.remove(ImageResourceID.IPTC_NAA.getValue());					
+				  	}
+					eightBIMStream.reset();
+					// Insert IPTC data as one of IRB 8BIM block
+					iptc.write(eightBIMStream);
+					// Create 8BIM for IPTC
+					_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", eightBIMStream.toByteArray());
+					if(bimMap != null) {
+						bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
+						writeIRB(os, bimMap.values()); // Write the whole thing as one APP13
+					} else {
+						writeIRB(os, newBIM); // Write the one and only one 8BIM as one APP13
+					}
+				}
+				IRB irb = (IRB)metadataMap.remove(MetadataType.PHOTOSHOP_IRB);
+				if(irb != null) {
+					writeIRB(os, irb.get8BIM().values());
+				}
+				Comments comments = (Comments)metadataMap.remove(MetadataType.COMMENT);
+				if(comments != null) {
+					// Write comment
+					for(String comment : comments.getComments())
+						writeComment(comment, os);
+				}
+				// Write the other segments
+				for(int i = index; i < segments.size(); i++)
+					segments.get(i).write(os);
+				// Copy the leftover stuff
+				IOUtils.writeShortMM(os, marker);
+				copyToEnd(is, os); // Copy the rest of the data
+				finished = true; // No more marker to read, we are done.				
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
+				
+				switch (emarker) {
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
+				    	segments.add(new Segment(emarker, 0, null));
+						marker = IOUtils.readShortMM(is);
+						break;
+				    case APP0:
+				    	length = IOUtils.readUnsignedShortMM(is);
+				    	byte[] app0Bytes = new byte[length - 2];
+				    	IOUtils.readFully(is, app0Bytes);
+				    	if(metadataMap.get(MetadataType.JPG_JFIF) != null) {
+				    		// We are supposed to skip this, but as we haven't actually implemented
+				    		// inserting of the APP0 JFIF, we still keep it in the segment list
+				    		segments.add(new Segment(emarker, length, app0Bytes));
+				    	} else
+				    		segments.add(new Segment(emarker, length, app0Bytes));
+				    	app0Index = segments.size(); // Keep the APP0 index
+						marker = IOUtils.readShortMM(is);
+				    	break;
+				    case APP1:
+				        // Read and remove the old XMP data
+				        length = IOUtils.readUnsignedShortMM(is);
+				        byte[] temp = new byte[length - 2];
+				        IOUtils.readFully(is, temp);
+				        // Remove XMP and ExtendedXMP segments.
+				        if(metadataMap.get(MetadataType.XMP) != null && temp.length >= XMP_EXT_ID.length() && new String(temp, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
+			                ;
+				        } else if (metadataMap.get(MetadataType.XMP) != null && temp.length >= XMP_ID.length() && new String(temp, 0, XMP_ID.length()).equals(XMP_ID)) {
+			                ;					        
+				        } else if(exif != null && temp.length >= EXIF_ID.length() && new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID)) {
+					        // We keep the EXIF index
+				        	exifIndex = segments.size();
+			            } else { // Put other data into segment list
+			            	segments.add(new Segment(emarker, length, temp));
+				        }
+				        marker = IOUtils.readShortMM(is);
+				        break;
+				    case APP2:
+				  		length = IOUtils.readUnsignedShortMM(is);
+				  	  	byte[] icc_profile_buf = new byte[length - 2];
+				  	  	IOUtils.readFully(is, icc_profile_buf);	
+						// ICC_PROFILE segment.
+						if(metadataMap.get(MetadataType.ICC_PROFILE) != null && icc_profile_buf.length >= ICC_PROFILE_ID.length() && new String(icc_profile_buf, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
+							;
+						} else {// Not an ICC_Profile segment, copy it
+							segments.add(new Segment(emarker, length, icc_profile_buf));
+						}
+						marker = IOUtils.readShortMM(is);
+						break;
+				    case APP13:
+				    	if(eightBIMStream == null)
+			    			eightBIMStream = new ByteArrayOutputStream();
+				    	readAPP13(is, eightBIMStream);				    	
+				    	marker = IOUtils.readShortMM(is);
+				    	break;
+				    default:
+					    length = IOUtils.readUnsignedShortMM(is);				
+					    byte[] buf = new byte[length - 2];
+					    IOUtils.readFully(is, buf);
+					    if(emarker == Marker.UNKNOWN)
+					    	segments.add(new UnknownSegment(marker, length, buf));
+					    else
+					    	segments.add(new Segment(emarker, length, buf));
+					    marker = IOUtils.readShortMM(is);
+				}
+			}
+	    }
+		// Close the input stream in case it's an instance of RandomAccessInputStream
+		if(is instanceof RandomAccessInputStream)
+			((RandomAccessInputStream)is).shallowClose();
+	}
+	
+	/**
 	 * Insert a XMP instance into the image. 
 	 * The XMP instance must be able to fit into one APP1.
 	 * 
@@ -1141,196 +1331,7 @@ public class JPEGTweaker {
 				}
 			}
 	    }
-	}
-	
-	/**
-	 * Insert a collection of Metadata into an image
-	 * 
-	 * @param metadata a collection of Metadata to be inserted
-	 * @param is InputStream for the image
-	 * @param os OutputStream for the image with Metadata inserted
-	 * @throws IOException
-	 */
-	public static void insertMetadata(Collection<Metadata> metadata, InputStream is, OutputStream os) throws IOException {
-		boolean finished = false;
-		int length = 0;
-		short marker;
-		Marker emarker;
-		int app0Index = -1;
-		int exifIndex = -1;
-		
-		// Used to read multiple segment Adobe APP13
-		ByteArrayOutputStream eightBIMStream = null;
-		
-		// Create a map to hold all the metadata
-		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
-		for(Metadata meta : metadata)
-			metadataMap.put(meta.getType(), meta);
-		
-		// Create a list to hold the temporary Segments 
-		List<Segment> segments = new ArrayList<Segment>();
-		
-		// Before we actually read anything, see if we want to generate a thumbnail from the input first
-		// We need thumbnail image but don't have one, create one from the current image input stream
-		Exif exif = (Exif)metadataMap.remove(MetadataType.EXIF);
-	
-		if(exif != null && exif.isThumbnailRequired() && !exif.containsThumbnail()) {
-			is = new FileCacheRandomAccessInputStream(is);
-			// Insert thumbnail into EXIF wrapper
-			exif.setThumbnailImage(IMGUtils.createThumbnail(is));
-		}
-		
-		// The very first marker should be the start_of_image marker!	
-		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
-			throw new IllegalArgumentException("Invalid JPEG image, expected SOI marker not found!");
-		
-		IOUtils.writeShortMM(os, Marker.SOI.getValue());
-		
-		marker = IOUtils.readShortMM(is);
-		
-		while (!finished) {
-			if (Marker.fromShort(marker) == Marker.SOS)	{
-				/* Insert the items from the metadata map we created from the input
-				 * metadata collection. Not all types of metadata are supported.
-				 * Only the ones we can handle are inserted.
-				 */
-				// Insert APP0 JFIF first
-				JFIF jfif = (JFIF)metadataMap.remove(MetadataType.JPG_JFIF);
-				for(int i = 0; i < app0Index; i++) // Write until before APP0 index
-					segments.get(i).write(os);
-				if(jfif != null) {
-					//placeholder - writeAPP0;
-				}
-				// Insert all the other items from the segment until we come to EXIF
-				for(int i = (app0Index < 0 ? 0 : app0Index); i < Math.max(app0Index, exifIndex); i++)
-					segments.get(i).write(os);
-				if (exif != null) {
-					// Now we insert the EXIF data
-			   		exif.write(os);
-				}
-				XMP xmp = (XMP)metadataMap.remove(MetadataType.XMP);
-				if (xmp instanceof JpegXMP) {
-					// Now we insert the XMP data
-			   		xmp.write(os);
-				}
-				ICCProfile profile = (ICCProfile)metadataMap.remove(MetadataType.ICC_PROFILE);
-				if(profile != null) {
-					profile.write(os);
-				}			
-				IPTC iptc = (IPTC)metadataMap.remove(MetadataType.IPTC);
-				if(iptc != null) {
-					Map<Short, _8BIM> bimMap = null;
-					if(eightBIMStream != null) {
-						IRB irb = new IRB(eightBIMStream.toByteArray());
-			    		// Shallow copy the map.
-			    		bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
-						bimMap.remove(ImageResourceID.IPTC_NAA.getValue());					
-				  	}
-					eightBIMStream.reset();
-					// Insert IPTC data as one of IRB 8BIM block
-					iptc.write(eightBIMStream);
-					// Create 8BIM for IPTC
-					_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", eightBIMStream.toByteArray());
-					if(bimMap != null) {
-						bimMap.put(newBIM.getID(), newBIM); // Add the IPTC_NAA 8BIM to the map
-						writeIRB(os, bimMap.values()); // Write the whole thing as one APP13
-					} else {
-						writeIRB(os, newBIM); // Write the one and only one 8BIM as one APP13
-					}
-				}
-				IRB irb = (IRB)metadataMap.remove(MetadataType.PHOTOSHOP_IRB);
-				if(irb != null) {
-					writeIRB(os, irb.get8BIM().values());
-				}
-				Comments comments = (Comments)metadataMap.remove(MetadataType.COMMENT);
-				if(comments != null) {
-					// Write comment
-					for(String comment : comments.getComments())
-						writeComment(comment, os);
-				}
-				// Write the other segments
-				for(int i = exifIndex; i < segments.size(); i++)
-					segments.get(i).write(os);
-				// Copy the leftover stuff
-				IOUtils.writeShortMM(os, marker);
-				copyToEnd(is, os); // Copy the rest of the data
-				finished = true; // No more marker to read, we are done.				
-			} else { // Read markers
-				emarker = Marker.fromShort(marker);
-				
-				switch (emarker) {
-					case JPG: // JPG and JPGn shouldn't appear in the image.
-					case JPG0:
-					case JPG13:
-				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn.
-				    	segments.add(new Segment(emarker, 0, null));
-						marker = IOUtils.readShortMM(is);
-						break;
-				    case APP0:
-				    	length = IOUtils.readUnsignedShortMM(is);
-				    	byte[] app0Bytes = new byte[length - 2];
-				    	IOUtils.readFully(is, app0Bytes);
-				    	if(metadataMap.get(MetadataType.JPG_JFIF) != null) {
-				    		// We are supposed to skip this, but as we haven't actually implemented
-				    		// inserting of the APP0 JFIF, we still keep it in the segment list
-				    		segments.add(new Segment(emarker, length, app0Bytes));
-				    	} else
-				    		segments.add(new Segment(emarker, length, app0Bytes));
-				    	app0Index = segments.size(); // Keep the APP0 index
-						marker = IOUtils.readShortMM(is);
-				    	break;
-				    case APP1:
-				        // Read and remove the old XMP data
-				        length = IOUtils.readUnsignedShortMM(is);
-				        byte[] temp = new byte[length - 2];
-				        IOUtils.readFully(is, temp);
-				        // Remove XMP and ExtendedXMP segments.
-				        if(metadataMap.get(MetadataType.XMP) != null && temp.length >= XMP_EXT_ID.length() && new String(temp, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
-			                ;
-				        } else if (metadataMap.get(MetadataType.XMP) != null && temp.length >= XMP_ID.length() && new String(temp, 0, XMP_ID.length()).equals(XMP_ID)) {
-			                ;					        
-				        } else if(exif != null && temp.length >= EXIF_ID.length() && new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID)) {
-					        // We keep the EXIF index
-				        	exifIndex = segments.size();
-			            } else { // Put other data into segment list
-			            	segments.add(new Segment(emarker, length, temp));
-				        }
-				        marker = IOUtils.readShortMM(is);
-				        break;
-				    case APP2:
-				  		length = IOUtils.readUnsignedShortMM(is);
-				  	  	byte[] icc_profile_buf = new byte[length - 2];
-				  	  	IOUtils.readFully(is, icc_profile_buf);	
-						// ICC_PROFILE segment.
-						if(metadataMap.get(MetadataType.ICC_PROFILE) != null && icc_profile_buf.length >= ICC_PROFILE_ID.length() && new String(icc_profile_buf, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
-							;
-						} else {// Not an ICC_Profile segment, copy it
-							segments.add(new Segment(emarker, length, icc_profile_buf));
-						}
-						marker = IOUtils.readShortMM(is);
-						break;
-				    case APP13:
-				    	if(eightBIMStream == null)
-			    			eightBIMStream = new ByteArrayOutputStream();
-				    	readAPP13(is, eightBIMStream);				    	
-				    	marker = IOUtils.readShortMM(is);
-				    	break;
-				    default:
-					    length = IOUtils.readUnsignedShortMM(is);				
-					    byte[] buf = new byte[length - 2];
-					    IOUtils.readFully(is, buf);
-					    if(emarker == Marker.UNKNOWN)
-					    	segments.add(new UnknownSegment(marker, length, buf));
-					    else
-					    	segments.add(new Segment(emarker, length, buf));
-					    marker = IOUtils.readShortMM(is);
-				}
-			}
-	    }
-		// Close the input stream in case it's an instance of RandomAccessInputStream
-		if(is instanceof RandomAccessInputStream)
-			((RandomAccessInputStream)is).shallowClose();
-	}
+	}	
 	
 	/**
 	 * Insert XMP into single APP1 or multiple segments. Support ExtendedXMP.
@@ -1702,7 +1703,7 @@ public class JPEGTweaker {
 				}
 			} else if(segment.getMarker() == Marker.APP14) {
 				if (data.length >= ADOBE_ID.length() && new String(data, 0, ADOBE_ID.length()).equals(ADOBE_ID)) {
-					metadataMap.put(MetadataType.JPG_ADOBE, new AdobeSegment(ArrayUtils.subArray(data, ADOBE_ID.length(), length - ADOBE_ID.length() - 2)));
+					metadataMap.put(MetadataType.JPG_ADOBE, new Adobe(ArrayUtils.subArray(data, ADOBE_ID.length(), length - ADOBE_ID.length() - 2)));
 				}
 			}
 		}

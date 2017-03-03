@@ -9,7 +9,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * AdobeSegment.java
+ * Adobe.java
  *
  * Who   Date       Description
  * ====  =======    ============================================================
@@ -29,21 +29,21 @@ import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
 
-public class AdobeSegment extends Metadata {
+public class Adobe extends Metadata {
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(AdobeSegment.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Adobe.class);
 
 	private int m_DCTEncodeVersion;
 	private int m_APP14Flags0;
 	private int m_APP14Flags1;
 	private int m_ColorTransform;
 	
-	public AdobeSegment(byte[] data) {
+	public Adobe(byte[] data) {
 		super(MetadataType.JPG_ADOBE, data);
 		ensureDataRead();
 	}
 	
-	public AdobeSegment(int dctEncodeVersion, int app14Flags0, int app14Flags1, int colorTransform) {
+	public Adobe(int dctEncodeVersion, int app14Flags0, int app14Flags1, int colorTransform) {
 		super(MetadataType.JPG_ADOBE);
 		this.m_DCTEncodeVersion = dctEncodeVersion;
 		this.m_APP14Flags0 = app14Flags0;
@@ -91,12 +91,12 @@ public class AdobeSegment extends Metadata {
 	public void showMetadata() {
 		ensureDataRead();
 		String[] colorTransform = {"Unknown (RGB or CMYK)", "YCbCr", "YCCK"};
-		LOGGER.info("JPEG AdobeSegment output starts =>");
+		LOGGER.info("JPEG Adobe output starts =>");
 		LOGGER.info("DCTEncodeVersion: {}", m_DCTEncodeVersion);
 		LOGGER.info("APP14Flags0: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags0));
 		LOGGER.info("APP14Flags1: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags1));
 		LOGGER.info("ColorTransform: {}", (m_ColorTransform <= 2)?colorTransform[m_ColorTransform]:m_ColorTransform);
-		LOGGER.info("<= JPEG AdobeSegment output ends");
+		LOGGER.info("<= JPEG Adobe output ends");
 	}
 
 	public void write(OutputStream os) throws IOException {

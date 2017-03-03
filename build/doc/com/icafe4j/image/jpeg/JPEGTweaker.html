@@ -634,6 +634,22 @@ extends java.lang.Object</pre>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>
+<a name="insertMetadata(java.util.Collection, java.io.InputStream, java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertMetadata</h4>
+<pre>public static&nbsp;void&nbsp;insertMetadata(java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;&nbsp;metadata,
+                  java.io.InputStream&nbsp;is,
+                  java.io.OutputStream&nbsp;os)
+                           throws java.io.IOException</pre>
+<div class="block">Insert a collection of Metadata into an image</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>metadata</code> - a collection of Metadata to be inserted</dd><dd><code>is</code> - InputStream for the image</dd><dd><code>os</code> - OutputStream for the image with Metadata inserted</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
 <a name="insertXMP(java.io.InputStream, java.io.OutputStream, com.icafe4j.image.meta.xmp.XMP)">
 <!--   -->
 </a>
@@ -647,22 +663,6 @@ extends java.lang.Object</pre>
 <div class="block">Insert a XMP instance into the image. 
  The XMP instance must be able to fit into one APP1.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - InputStream for the image.</dd><dd><code>os</code> - OutputStream for the image.</dd><dd><code>jpegXmp</code> - XMP instance</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd></dl>
-</li>
-</ul>
-<a name="insertMetadata(java.util.Collection, java.io.InputStream, java.io.OutputStream)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>insertMetadata</h4>
-<pre>public static&nbsp;void&nbsp;insertMetadata(java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;&nbsp;metadata,
-                  java.io.InputStream&nbsp;is,
-                  java.io.OutputStream&nbsp;os)
-                           throws java.io.IOException</pre>
-<div class="block">Insert a collection of Metadata into an image</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>metadata</code> - a collection of Metadata to be inserted</dd><dd><code>is</code> - InputStream for the image</dd><dd><code>os</code> - OutputStream for the image with Metadata inserted</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
