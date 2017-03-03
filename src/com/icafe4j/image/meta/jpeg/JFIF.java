@@ -9,7 +9,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * JFIFSegment.java
+ * JFIF.java
  *
  * Who   Date       Description
  * ====  =======    ============================================================
@@ -38,9 +38,9 @@ import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.util.ArrayUtils;
 
-public class JFIFSegment extends Metadata {
+public class JFIF extends Metadata {
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(JFIFSegment.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JFIF.class);
 		
 	private static void checkInput(int majorVersion, int minorVersion, int densityUnit, int xDensity, int yDensity) {
 		if(majorVersion < 0 || majorVersion > 0xff) throw new IllegalArgumentException("Invalid major version number: " + majorVersion);
@@ -61,16 +61,16 @@ public class JFIFSegment extends Metadata {
 	
 	private JFIFThumbnail thumbnail;
 
-	public JFIFSegment(byte[] data) {
+	public JFIF(byte[] data) {
 		super(MetadataType.JPG_JFIF, data);
 		ensureDataRead();
 	}
 	
-	public JFIFSegment(int majorVersion, int minorVersion, int densityUnit, int xDensity, int yDensity) {
+	public JFIF(int majorVersion, int minorVersion, int densityUnit, int xDensity, int yDensity) {
 		this(majorVersion, minorVersion, densityUnit, xDensity, yDensity, null);
 	}
 	
-	public JFIFSegment(int majorVersion, int minorVersion, int densityUnit, int xDensity, int yDensity, JFIFThumbnail thumbnail) {
+	public JFIF(int majorVersion, int minorVersion, int densityUnit, int xDensity, int yDensity, JFIFThumbnail thumbnail) {
 		super(MetadataType.JPG_JFIF);
 		checkInput(majorVersion, minorVersion, densityUnit, xDensity, yDensity);
 		this.majorVersion = majorVersion;

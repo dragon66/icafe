@@ -22,8 +22,10 @@ import com.icafe4j.image.meta.adobe.IPTC_NAA;
 import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
+import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCApplicationTag;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
+import com.icafe4j.image.meta.jpeg.JFIF;
 import com.icafe4j.image.meta.jpeg.JpegExif;
 import com.icafe4j.image.meta.jpeg.JpegXMP;
 import com.icafe4j.image.meta.tiff.TiffExif;
@@ -119,6 +121,15 @@ public class TestMetadata extends TestBase {
 
 		Metadata.insertExif(fin, fout, populateExif(JpegExif.class), true);
 		
+		fin = new FileInputStream("images/12.jpg");
+		fout = new FileOutputStream("12-exif-iptc-inserted.jpg");
+		
+		List<Metadata> metaList = new ArrayList<Metadata>();
+		metaList.add(populateExif(JpegExif.class));
+		metaList.add(createIPTC());
+		metaList.add(new JFIF(new byte[]{}));
+		Metadata.insertMetadata(metaList, fin, fout);
+		
 		fin.close();
 		fout.close();
 		
@@ -159,6 +170,12 @@ public class TestMetadata extends TestBase {
 		iptcs.add(new IPTCDataSet(IPTCApplicationTag.KEY_WORDS, "Welcome 'icafe' user!"));
 		
 		return iptcs;
+	}
+	
+	private static IPTC createIPTC() {
+		IPTC iptc = new IPTC();
+		iptc.addDataSets(createIPTCDataSet());
+		return iptc;
 	}
 	
 	private static List<_8BIM> createPhotoshopIPTC() {

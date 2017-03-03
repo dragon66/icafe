@@ -261,6 +261,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/JPEGTweaker.html#insertMetadata(java.util.Collection,%20java.io.InputStream,%20java.io.OutputStream)">insertMetadata</a></strong>(java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;&nbsp;metadata,
+              java.io.InputStream&nbsp;is,
+              java.io.OutputStream&nbsp;os)</code>
+<div class="block">Insert a collection of Metadata into an image</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/JPEGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20java.lang.String,%20java.lang.String)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
          java.io.OutputStream&nbsp;os,
          java.lang.String&nbsp;xmp,
@@ -268,7 +276,7 @@ extends java.lang.Object</pre>
 <div class="block">Insert XMP into single APP1 or multiple segments.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/JPEGTweaker.html#insertXMP(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.xmp.XMP)">insertXMP</a></strong>(java.io.InputStream&nbsp;is,
          java.io.OutputStream&nbsp;os,
@@ -276,23 +284,23 @@ extends java.lang.Object</pre>
 <div class="block">Insert a XMP instance into the image.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.util.Map&lt;<a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>,<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/JPEGTweaker.html#readMetadata(java.io.InputStream)">readMetadata</a></strong>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/JPEGTweaker.html#removeAPPn(com.icafe4j.image.jpeg.Marker,%20java.io.InputStream,%20java.io.OutputStream)">removeAPPn</a></strong>(<a href="../../../../com/icafe4j/image/jpeg/Marker.html" title="enum in com.icafe4j.image.jpeg">Marker</a>&nbsp;APPn,
           java.io.InputStream&nbsp;is,
           java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/JPEGTweaker.html#removeMetadata(java.io.InputStream,%20java.io.OutputStream,%20com.icafe4j.image.meta.MetadataType...)">removeMetadata</a></strong>(java.io.InputStream&nbsp;is,
               java.io.OutputStream&nbsp;os,
               <a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>...&nbsp;metadataTypes)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/jpeg/JPEGTweaker.html#removeMetadata(java.util.Set,%20java.io.InputStream,%20java.io.OutputStream)">removeMetadata</a></strong>(java.util.Set&lt;<a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>&gt;&nbsp;metadataTypes,
               java.io.InputStream&nbsp;is,
@@ -639,6 +647,22 @@ extends java.lang.Object</pre>
 <div class="block">Insert a XMP instance into the image. 
  The XMP instance must be able to fit into one APP1.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>is</code> - InputStream for the image.</dd><dd><code>os</code> - OutputStream for the image.</dd><dd><code>jpegXmp</code> - XMP instance</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertMetadata(java.util.Collection, java.io.InputStream, java.io.OutputStream)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertMetadata</h4>
+<pre>public static&nbsp;void&nbsp;insertMetadata(java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;&nbsp;metadata,
+                  java.io.InputStream&nbsp;is,
+                  java.io.OutputStream&nbsp;os)
+                           throws java.io.IOException</pre>
+<div class="block">Insert a collection of Metadata into an image</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>metadata</code> - a collection of Metadata to be inserted</dd><dd><code>is</code> - InputStream for the image</dd><dd><code>os</code> - OutputStream for the image with Metadata inserted</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>

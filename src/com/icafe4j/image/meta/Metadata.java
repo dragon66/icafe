@@ -12,7 +12,8 @@
  * Metadata.java
  *
  * Who   Date       Description
- * ====  =========  =====================================================
+ * ====  =========  =====================================================================
+ * WY    02Mar2017  Added insertMetadata(Collection<Metadata>, InputStream, OutputStream)
  * WY    26Sep2015  Added insertComment(InputStream, OutputStream, String)
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
  * WY    16Apr2015  Changed insertIRB() parameter List to Collection
@@ -363,6 +364,30 @@ public abstract class Metadata implements MetadataReader {
 		peekHeadInputStream.shallowClose();
 	}
 	
+	/**
+	 * Insert a collection of Metadata into an image
+	 * 
+	 * @param metadata a collection of Metadata to be inserted
+	 * @param is InputStream for the image
+	 * @param os OutputStream for the image with Metadata inserted
+	 * @throws IOException
+	 */
+	public static void insertMetadata(Collection<Metadata> metadata, InputStream is, OutputStream os) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(peekHeadInputStream);		
+		// Delegate metadata inserting to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				JPEGTweaker.insertMetadata(metadata, peekHeadInputStream, os);
+				break;
+			default:
+				peekHeadInputStream.close();
+				throw new IllegalArgumentException("inserting more than one metadata is not supported for " + imageType + " image");				
+		}
+		peekHeadInputStream.shallowClose();
+	}
+	
 	public static void insertXMP(InputStream is, OutputStream out, String xmp) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
@@ -495,7 +520,8 @@ public abstract class Metadata implements MetadataReader {
 		if(data == null) throw new IllegalArgumentException("Input data array is null");
 		if(data.length == 0) isDataRead = true; // Allow for zero length data but disable read
 		this.type = type;
-		this.data = data;		
+		this.data = data;
+		
 	}
 	
 	protected void ensureDataRead() {
