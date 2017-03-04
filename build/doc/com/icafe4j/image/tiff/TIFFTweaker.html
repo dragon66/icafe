@@ -296,6 +296,21 @@ extends java.lang.Object</pre>
          boolean&nbsp;update)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#insertMetadata(com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream,%20java.util.Collection)">insertMetadata</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
+              <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
+              java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;&nbsp;metadata)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#insertMetadata(com.icafe4j.io.RandomAccessInputStream,%20com.icafe4j.io.RandomAccessOutputStream,%20int,%20java.util.Collection)">insertMetadata</a></strong>(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
+              <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
+              int&nbsp;pageNumber,
+              java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;&nbsp;metadata)</code>
+<div class="block">Insert a collection of Metadata into TIFF page specified by the pageNumber</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><strong><a href="../../../../com/icafe4j/image/tiff/TIFFTweaker.html#insertPage(java.awt.image.BufferedImage,%20int,%20com.icafe4j.io.RandomAccessOutputStream,%20java.util.List,%20int,%20com.icafe4j.image.writer.TIFFWriter)">insertPage</a></strong>(java.awt.image.BufferedImage&nbsp;image,
           int&nbsp;pageNumber,
@@ -974,6 +989,38 @@ extends java.lang.Object</pre>
              boolean&nbsp;update)
                       throws java.io.IOException</pre>
 <dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertMetadata(com.icafe4j.io.RandomAccessInputStream, com.icafe4j.io.RandomAccessOutputStream, java.util.Collection)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertMetadata</h4>
+<pre>public static&nbsp;void&nbsp;insertMetadata(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
+                  <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
+                  java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;&nbsp;metadata)
+                           throws java.io.IOException</pre>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="insertMetadata(com.icafe4j.io.RandomAccessInputStream, com.icafe4j.io.RandomAccessOutputStream, int, java.util.Collection)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>insertMetadata</h4>
+<pre>public static&nbsp;void&nbsp;insertMetadata(<a href="../../../../com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a>&nbsp;rin,
+                  <a href="../../../../com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a>&nbsp;rout,
+                  int&nbsp;pageNumber,
+                  java.util.Collection&lt;<a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta">Metadata</a>&gt;&nbsp;metadata)
+                           throws java.io.IOException</pre>
+<div class="block">Insert a collection of Metadata into TIFF page specified by the pageNumber</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>rin</code> - input image stream</dd><dd><code>rout</code> - output image stream</dd><dd><code>metadata</code> - a collection of Metadata to be inserted</dd><dd><code>pageNumber</code> - page offset where to insert EXIF (zero based)</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
 <dd><code>java.io.IOException</code></dd></dl>
 </li>
 </ul>

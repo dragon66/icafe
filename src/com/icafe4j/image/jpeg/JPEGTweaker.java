@@ -1076,6 +1076,20 @@ public class JPEGTweaker {
 		for(Metadata meta : metadata)
 			metadataMap.put(meta.getType(), meta);
 		
+		// Remove duplicate IPTC if we have them in both places of IPTC and IRB
+		if(metadataMap.get(MetadataType.IPTC) != null) {
+			IRB irb = (IRB)metadataMap.get(MetadataType.PHOTOSHOP_IRB);
+			if(irb != null) {
+				// Shallow copy the map.
+	    		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
+				bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				for(_8BIM bim : bimMap.values())
+					bim.write(bout);
+				metadataMap.put(MetadataType.PHOTOSHOP_IRB, new IRB(bout.toByteArray()));
+			}
+		}
+		
 		// Create a list to hold the temporary Segments 
 		List<Segment> segments = new ArrayList<Segment>();
 		

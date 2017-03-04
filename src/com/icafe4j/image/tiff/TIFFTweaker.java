@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    04Mar2017  Added insertMetadata() to insert multiple Metadata at one time
  * WY    11Dec2016  Added byte order to writeMultipageTIFF
  * WY    19Aug2015  Added code to write multipage TIFF page by page
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
@@ -1233,6 +1234,147 @@ public class TIFFTweaker {
 			bim.write(bout);
 		
 		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
+		
+		offset = copyPages(ifds, offset, rin, rout);
+		int firstIFDOffset = ifds.get(0).getStartOffset();	
+
+		writeToStream(rout, firstIFDOffset);	
+	}
+	
+	public static void insertMetadata(RandomAccessInputStream rin, RandomAccessOutputStream rout, Collection<Metadata> metadata) throws IOException {
+		insertMetadata(rin, rout, 0, metadata);
+	}
+	
+	/**
+	 * Insert a collection of Metadata into TIFF page specified by the pageNumber
+	 * 
+	 * @param rin input image stream
+	 * @param rout output image stream
+	 * @param metadata a collection of Metadata to be inserted
+	 * @param pageNumber page offset where to insert EXIF (zero based)
+	 * @throws Exception
+	 */	
+	public static void insertMetadata(RandomAccessInputStream rin, RandomAccessOutputStream rout, int pageNumber, Collection<Metadata> metadata) throws IOException {
+		int offset = copyHeader(rin, rout);
+		// Read the IFDs into a list first
+		List<IFD> ifds = new ArrayList<IFD>();
+		readIFDs(null, null, TiffTag.class, ifds, offset, rin);
+		
+		if(pageNumber < 0 || pageNumber >= ifds.size())
+			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
+		
+		IFD workingPage = ifds.get(pageNumber);
+		
+		// Create a map to hold all the metadata
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+		for(Metadata meta : metadata)
+			metadataMap.put(meta.getType(), meta);
+	
+		// Remove duplicate IPTC if we have them in both places of IPTC and IRB
+		if(metadataMap.get(MetadataType.IPTC) != null) {
+			IRB irb = (IRB)metadataMap.get(MetadataType.PHOTOSHOP_IRB);
+			if(irb != null) {
+				// Shallow copy the map.
+	    		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
+				bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				for(_8BIM bim : bimMap.values())
+					bim.write(bout);
+				metadataMap.put(MetadataType.PHOTOSHOP_IRB, new IRB(bout.toByteArray()));
+			}
+		}
+		
+		ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		
+		// Check to see if we need to insert EXIF
+		Exif exif = (Exif)metadataMap.remove(MetadataType.EXIF);
+		if(exif != null) {
+			IFD newImageIFD = exif.getImageIFD();
+			IFD newExifSubIFD = exif.getExifIFD();
+			IFD newGpsSubIFD = exif.getGPSIFD();
+			
+			if(newImageIFD != null) { // Update working page
+				Collection<TiffField<?>> fields = newImageIFD.getFields();
+				for(TiffField<?> field : fields) {
+					Tag tag = TiffTag.fromShort(field.getTag());
+					if(workingPage.getField(tag) != null && tag.isCritical())
+						throw new RuntimeException("Duplicate Tag: " + tag);
+					workingPage.addField(field);
+				}
+			}
+			
+			if(newExifSubIFD != null) {
+				workingPage.addField(new LongField(TiffTag.EXIF_SUB_IFD.getValue(), new int[]{0})); // Place holder
+				workingPage.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);		
+			}
+			
+			if(newGpsSubIFD != null) {
+				workingPage.addField(new LongField(TiffTag.GPS_SUB_IFD.getValue(), new int[]{0})); // Place holder
+				workingPage.addChild(TiffTag.GPS_SUB_IFD, newGpsSubIFD);		
+			}
+			
+			offset = FIRST_WRITE_OFFSET; // Reset the writing offset			
+		}
+		
+		// Check to see if we need to insert XMP
+		XMP xmp = (XMP)metadataMap.remove(MetadataType.XMP);
+		if(xmp != null) {
+			workingPage.addField(new UndefinedField(TiffTag.XMP.getValue(), xmp.getData()));
+		}
+		
+		ICCProfile iccProfile = (ICCProfile)metadataMap.remove(MetadataType.ICC_PROFILE);
+		if(iccProfile != null) {
+			workingPage.addField(new UndefinedField(TiffTag.ICC_PROFILE.getValue(), iccProfile.getData()));
+		}
+		
+		// Check to see if we need to insert IPTC
+		IPTC iptc = (IPTC)metadataMap.remove(MetadataType.IPTC);
+		if(iptc != null) {
+			// Remove regular IPTC tag field
+			workingPage.removeField(TiffTag.IPTC);		
+			TiffField<?> f_photoshop = workingPage.getField(TiffTag.PHOTOSHOP);
+			if(f_photoshop != null) { // Read 8BIMs
+				IRB irb = new IRB((byte[])f_photoshop.getData());
+				// Shallow copy the map.
+				Map<Short, _8BIM> bims = new HashMap<Short, _8BIM>(irb.get8BIM());
+				bims.remove(ImageResourceID.IPTC_NAA.getValue());
+				// Insert IPTC data as one of IRB 8BIM block
+				iptc.write(bout);
+				// Create 8BIM for IPTC
+				_8BIM iptc_bim = new _8BIM(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());
+				bout.reset();
+				iptc_bim.write(bout); // Write the IPTC 8BIM first
+				for(_8BIM bim : bims.values()) // Copy the other 8BIMs if any
+					bim.write(bout);
+				// Add a new Photoshop tag field to TIFF
+				workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
+			} else { // We don't have photoshop, add IPTC to regular IPTC tag field
+				bout.reset();
+				iptc.write(bout);
+				workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
+			}
+		}
+		
+		IRB irb = (IRB)metadataMap.remove(MetadataType.PHOTOSHOP_IRB);
+		if(irb != null) {
+			bout.reset();
+			for(_8BIM bim : irb.get8BIM().values())
+				bim.write(bout);
+			
+			workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
+		}
+		
+		Comments comments = (Comments)metadataMap.remove(MetadataType.COMMENT);
+		if(comments != null) {
+			StringBuilder commentsBuilder = new StringBuilder();
+			// Write comment
+			// ASCII field allows for multiple strings
+			for(String comment : comments.getComments()) {
+				commentsBuilder.append(comment);
+				commentsBuilder.append('\0');
+			}
+			workingPage.addField(new ASCIIField(TiffTag.IMAGE_DESCRIPTION.getValue(), commentsBuilder.toString()));
+		}		
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	

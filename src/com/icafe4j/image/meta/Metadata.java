@@ -381,6 +381,13 @@ public abstract class Metadata implements MetadataReader {
 			case JPG:
 				JPEGTweaker.insertMetadata(metadata, peekHeadInputStream, os);
 				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
+				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
+				TIFFTweaker.insertMetadata(randIS, randOS, metadata);
+				randIS.shallowClose();
+				randOS.shallowClose();
+				break;
 			default:
 				peekHeadInputStream.close();
 				throw new IllegalArgumentException("inserting more than one metadata is not supported for " + imageType + " image");				

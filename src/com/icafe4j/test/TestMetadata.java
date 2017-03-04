@@ -22,6 +22,7 @@ import com.icafe4j.image.meta.adobe.IPTC_NAA;
 import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
+import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCApplicationTag;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
@@ -116,6 +117,16 @@ public class TestMetadata extends TestBase {
 		fin.close();
 		fout.close();
 		
+		fin = new FileInputStream("images/exif.tif");
+		fout = new FileOutputStream("exif-exif-iptc-comment- inserted.tif");
+
+		List<Metadata> metaList = new ArrayList<Metadata>();
+		metaList.add(populateExif(TiffExif.class));
+		metaList.add(createIPTC());
+		metaList.add(new Comments(Arrays.asList("Comment1", "Comment2")));
+		
+		Metadata.insertMetadata(metaList, fin, fout);
+		
 		fin = new FileInputStream("images/12.jpg");
 		fout = new FileOutputStream("12-exif-inserted.jpg");
 
@@ -124,10 +135,11 @@ public class TestMetadata extends TestBase {
 		fin = new FileInputStream("images/12.jpg");
 		fout = new FileOutputStream("12-exif-iptc-inserted.jpg");
 		
-		List<Metadata> metaList = new ArrayList<Metadata>();
+		metaList.clear();
 		metaList.add(populateExif(JpegExif.class));
 		metaList.add(createIPTC());
 		metaList.add(new JFIF(new byte[]{}));
+		
 		Metadata.insertMetadata(metaList, fin, fout);
 		
 		fin.close();
