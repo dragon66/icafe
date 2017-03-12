@@ -40,7 +40,7 @@ public class Tetris extends Applet implements Runnable
 	private int yCount;
 	private char board[][];
 
-	private Image piece0,piece1,piece2,piece3,image; 
+	private Image piece0, piece1, piece2, piece3, image; 
 	
 	private int count1, count2, count3;
 
@@ -67,8 +67,7 @@ public class Tetris extends Applet implements Runnable
 	private boolean sync;
 
 	
-	public void init()
-	{
+	public void init() {
 		blocksize = 15;
 		boardx = 150;
 		boardy = 100;
@@ -78,9 +77,8 @@ public class Tetris extends Applet implements Runnable
 		state = 'p';
 	    board = new char[yCount][xCount];
 		piece = new Piece[4];
-		for (int i=0;i<4;i++)
-		{
-			piece[i]=new Piece();
+		for (int i = 0; i < 4; i++)	{
+			piece[i] = new Piece();
 		}
 	
      	width = this.getSize().width;
@@ -99,36 +97,30 @@ public class Tetris extends Applet implements Runnable
 
 		mediatracker = new MediaTracker(this);
 		
-		mediatracker.addImage(piece0,0);
-		mediatracker.addImage(piece1,1);
-		mediatracker.addImage(piece2,2);
-		mediatracker.addImage(piece3,3);
+		mediatracker.addImage(piece0, 0);
+		mediatracker.addImage(piece1, 1);
+		mediatracker.addImage(piece2, 2);
+		mediatracker.addImage(piece3, 3);
 
-		try
-		{
+		try	{
 			mediatracker.waitForAll();	
 		}
-		catch (InterruptedException e)
-		{
+		catch (InterruptedException e) {
 			System.out.println("error loading image!");
 		}
 
 	  	this.addKeyListener(new MyKeyAdapter()); 
 		
-		this.addMouseListener(new MouseAdapter()
-		{
+		this.addMouseListener(new MouseAdapter() {
 			@SuppressWarnings("deprecation")
-			public void mousePressed(MouseEvent e)
-	        {
-			  if (state == 'p')
-			  {
+			public void mousePressed(MouseEvent e) {
+			  if (state == 'p') {
 		    	   state = 'g';
 				   t = new Thread(Tetris.this);
 		           t.start();   
 			  }
 		      
-			  if (state == 'o')
-		      {
+			  if (state == 'o') {
 				  t.stop();
 				  t = null;
 				  state = 'g';
@@ -139,55 +131,44 @@ public class Tetris extends Applet implements Runnable
 		});
 	}
 
-	private void setUp()
-	{
+	private void setUp() {
  	    score = 0;
 		moving = 'n';
 		sync = true;
 		sleepnum = 100;
 		count3 = 0;
 		
-		for (count1 = 0; count1 < yCount; count1++){
-			for (count2 = 0; count2 < xCount; count2++)
-			{
+		for (count1 = 0; count1 < yCount; count1++) {
+			for (count2 = 0; count2 < xCount; count2++)	{
 				board[count1][count2] = 'n';
 			}
 		}
 	}
 	
-	public void run()
-	{   
+	public void run() {   
 		setUp();
 
-		while(true)
-		{
-	      if (state == 'g')
-			{
-				if (moving == 'n')
-				{
+		while(true)	{
+	      if (state == 'g') {
+				if (moving == 'n') {
 			      	initpiece();
 		           	repaint();
 					moving = 'y';
-				}
-				else
-				{
+				} else   {
 					count3++;
                    
-					if (count3 >= speed)
-					  {
-        				if(valid!=0)
-						  {
-							if(sync)
-							{
+					if (count3 >= speed) {
+        				if(valid != 0) {
+							if(sync) {
 							sync = false;
 							board[piece[0].y][piece[0].x] = 'n';
 					    	board[piece[1].y][piece[1].x] = 'n';
 						    board[piece[2].y][piece[2].x] = 'n';
 					    	board[piece[3].y][piece[3].x] = 'n';
 												
-							valid = checkCollision(piece[0].y+1,piece[0].x,piece[1].y+1,
-									piece[1].x,piece[2].y+1,piece[2].x,
-									piece[3].y+1,piece[3].x);
+							valid = checkCollision(piece[0].y + 1, piece[0].x, piece[1].y + 1,
+									piece[1].x, piece[2].y + 1, piece[2].x,
+									piece[3].y + 1, piece[3].x);
 										
 							if (valid == 1)
 							{
@@ -203,8 +184,7 @@ public class Tetris extends Applet implements Runnable
 							
 							repaint();
 	                       
-							if (valid == 0)
-							{
+							if (valid == 0)	{
 								calcScore();		
 							    repaint();
 							   	moving = 'n';
@@ -222,141 +202,114 @@ public class Tetris extends Applet implements Runnable
 		}//end of while
 	}
 
-	public void paint(Graphics g)
-	{
-       char id = 'n';
+	public void paint(Graphics g) {
+		char id = 'n';
 		offScrGraphics.setColor(Color.gray);
 		offScrGraphics.fillRect(0, 0, width, height);
 
-		if ((state == 'g')||(state == 'o'))
-		{
+		if ((state == 'g')||(state == 'o'))	{
 			offScrGraphics.setColor(Color.black);
-    		offScrGraphics.fillRect(boardx,boardy,xCount*blocksize,yCount*blocksize);
+    		offScrGraphics.fillRect(boardx, boardy, xCount*blocksize, yCount*blocksize);
 		    
 			for (count1 = 0; count1 < yCount; count1++)
-				for (count2 = 0; count2 < xCount; count2++)
-				{
+				for (count2 = 0; count2 < xCount; count2++)	{
 					id = board[count1][count2];
-					if(id != 'n')
-					{
-					  switch (board[count1][count2])
-					   {
-						 case '0': 
-						 {
-							image = piece0;
-        				    break;
-						 }
-						 case '1':
-						 {
-							image = piece1;
-					  	    break;
-						 }
-						 case '2':
-						 {
-							image = piece2;
-                           break;
-						 }
-						 case '3': 
-						 {
-							image = piece3;
-							break;
-						 }
-			   	       }
-				    offScrGraphics.drawImage(image,boardx+count2*blocksize,boardy+count1*blocksize,this);
+					if(id != 'n') {
+						switch (board[count1][count2]) {
+							case '0': 
+								image = piece0;
+								break;
+							 case '1':
+								image = piece1;
+						  	    break;
+							 case '2':
+								image = piece2;
+								break;
+							 case '3': 
+								image = piece3;
+								break;
+	   	       			}
+						offScrGraphics.drawImage(image,boardx+count2*blocksize,boardy+count1*blocksize,this);
 					}
 		        }
 
 			offScrGraphics.setColor(Color.yellow);
-			offScrGraphics.drawString("Score: "+score,130,60);
+			offScrGraphics.drawString("Score: " + score, 130, 60);
 
 			if (state == 'o')
-				offScrGraphics.drawString("Game Over! Click to play again!",130,80);
+				offScrGraphics.drawString("Game Over! Click to play again!", 130, 80);
 		}
-		if (state == 'p')
-		{
+		if (state == 'p') {
 			offScrGraphics.setColor(Color.blue);
-			offScrGraphics.drawString("Click to start",width/3,height/3);
+			offScrGraphics.drawString("Click to start", width/3, height/3);
 		}
 
 		g.drawImage(offscreenImage, 0, 0, this);
 	}
 	
-	public void update(Graphics g)
-	{
+	public void update(Graphics g) {
 		paint(g);
 	}
 
-	private void initpiece()
-	{
+	private void initpiece() {
 		piecetype = (int)(Math.random()*5);
 		pieceposition = (int)(Math.random()*xCount);
 		
-		if(pieceposition>xCount-5)
-			pieceposition = xCount-5;
-		else if(pieceposition<3) pieceposition = 3;
+		if(pieceposition > xCount - 5)
+			pieceposition = xCount - 5;
+		else if(pieceposition < 3) pieceposition = 3;
 
-		switch (piecetype)
-		{
+		switch (piecetype) {
 		  case 0:
-		  {
-		 	piece[0].init(0,pieceposition,'1');
-			piece[1].init(1,pieceposition,'0');
-			piece[2].init(2,pieceposition,'3');
-			piece[3].init(3,pieceposition,'2');
+		 	piece[0].init(0, pieceposition, '1');
+			piece[1].init(1, pieceposition, '0');
+			piece[2].init(2, pieceposition, '3');
+			piece[3].init(3, pieceposition, '2');
 
-			valid = checkCollision(piece[0].y,piece[0].x,piece[1].y,
-					   piece[1].x,piece[2].y,piece[2].x,
-					   piece[3].y,piece[3].x);
+			valid = checkCollision(piece[0].y, piece[0].x, piece[1].y,
+					   piece[1].x, piece[2].y, piece[2].x,
+					   piece[3].y, piece[3].x);
 			break;
-		  }
 		  case 1:
-		  {
-			piece[0].init(0,pieceposition,'0');
-			piece[1].init(0,pieceposition+1,'1');
-			piece[2].init(0,pieceposition+2,'2');
-			piece[3].init(1,pieceposition+1,'3');
+			piece[0].init(0,pieceposition, '0');
+			piece[1].init(0,pieceposition + 1, '1');
+			piece[2].init(0,pieceposition + 2, '2');
+			piece[3].init(1,pieceposition + 1, '3');
 			
-			valid = checkCollision(piece[0].y,piece[0].x,piece[1].y,
-					   piece[1].x,piece[2].y,piece[2].x,
-					   piece[3].y,piece[3].x);
+			valid = checkCollision(piece[0].y, piece[0].x, piece[1].y,
+					   piece[1].x, piece[2].y, piece[2].x,
+					   piece[3].y, piece[3].x);
 			break;
-		  }
 		  case 2:
-		  {
-			piece[0].init(0,pieceposition,'1');
-			piece[1].init(0,pieceposition+1,'0');
-			piece[2].init(1,pieceposition,'2');
-			piece[3].init(1,pieceposition+1,'3');
+			piece[0].init(0, pieceposition, '1');
+			piece[1].init(0, pieceposition + 1, '0');
+			piece[2].init(1, pieceposition, '2');
+			piece[3].init(1, pieceposition + 1, '3');
 			
-			valid = checkCollision(piece[0].y,piece[0].x,piece[1].y,
-					   piece[1].x,piece[2].y,piece[2].x,
-					   piece[3].y,piece[3].x);
+			valid = checkCollision(piece[0].y, piece[0].x, piece[1].y,
+					   piece[1].x, piece[2].y, piece[2].x,
+					   piece[3].y, piece[3].x);
 			break;
-		  }
 		  case 3:
-		  {
-        	piece[0].init(0,pieceposition,'3');
-			piece[1].init(1,pieceposition,'0');
-			piece[2].init(2,pieceposition,'1');
-			piece[3].init(2,pieceposition+1,'2');
+	      	piece[0].init(0, pieceposition, '3');
+			piece[1].init(1, pieceposition, '0');
+			piece[2].init(2, pieceposition, '1');
+			piece[3].init(2, pieceposition + 1, '2');
 
-			valid = checkCollision(piece[0].y,piece[0].x,piece[1].y,
-					   piece[1].x,piece[2].y,piece[2].x,
-					   piece[3].y,piece[3].x);
+			valid = checkCollision(piece[0].y, piece[0].x, piece[1].y,
+					   piece[1].x, piece[2].y, piece[2].x,
+					   piece[3].y, piece[3].x);
 			break;
-		  }
 		  case 4:
-		  {
-			piece[0].init(0,pieceposition,'2');
-			piece[1].init(1,pieceposition,'1');
-			piece[2].init(2,pieceposition,'0');
-			piece[3].init(2,pieceposition-1,'3');
+			piece[0].init(0, pieceposition, '2');
+			piece[1].init(1, pieceposition, '1');
+			piece[2].init(2, pieceposition, '0');
+			piece[3].init(2, pieceposition - 1, '3');
 			
-			valid = checkCollision(piece[0].y,piece[0].x,piece[1].y,
-					   piece[1].x,piece[2].y,piece[2].x,
-					   piece[3].y,piece[3].x);
+			valid = checkCollision(piece[0].y, piece[0].x, piece[1].y,
+					   piece[1].x, piece[2].y, piece[2].x,
+					   piece[3].y, piece[3].x);
 			break;
-		  }
 		}
 		board[piece[0].y][piece[0].x] = piece[0].id;
 		board[piece[1].y][piece[1].x] = piece[1].id;
@@ -367,53 +320,50 @@ public class Tetris extends Applet implements Runnable
 		   state = 'o';
 	}
 
-	private int checkCollision(int p0y,int p0x, int p1y, int p1x, int p2y, int p2x, int p3y, int p3x)
-	{
-		if ((p0y > yCount-1)||(p1y > yCount-1)||(p2y > yCount-1)||(p3y > yCount-1))
-			return (0);
+	private int checkCollision(int p0y,int p0x, int p1y, int p1x, int p2y, int p2x, int p3y, int p3x) {
+		if ((p0y > yCount - 1) || (p1y > yCount - 1) || (p2y > yCount - 1) || (p3y > yCount - 1))
+			return 0;
 
-		if ((p0y < 0)||(p1y < 0)||(p2y < 0)||(p3y < 0))
-			return (2);
+		if ((p0y < 0) || (p1y < 0) || (p2y < 0) || (p3y < 0))
+			return 2;
 
-		if ((p0x < 0)||(p1x < 0)||(p2x < 0)||(p3x < 0))
-			return (2);
+		if ((p0x < 0) || (p1x < 0) || (p2x < 0) || (p3x < 0))
+			return 2;
 
-		if ((p0x > xCount-1)||(p1x > xCount-1)||(p2x > xCount-1)||(p3x > xCount-1))
-			return (2);
+		if ((p0x > xCount - 1) || (p1x > xCount - 1) || (p2x > xCount - 1) || (p3x > xCount - 1))
+			return 2;
 
-		if ((board[p0y][p0x] == 'n')&&
-		    (board[p1y][p1x] == 'n')&&
-		    (board[p2y][p2x] == 'n')&&
+		if ((board[p0y][p0x] == 'n') &&
+		    (board[p1y][p1x] == 'n') &&
+		    (board[p2y][p2x] == 'n') &&
 		    (board[p3y][p3x] == 'n'))
+			
 			return 1;
 		
 		return 0;
 	}
 
-	private void calcScore()
-	{
+	private void calcScore() {
 		char fullrow = 'n';
 		int count = 0;
 		
-		for (int j = yCount-1; j >= 0; j--)
-		{
+		for (int j = yCount-1; j >= 0; j--)	{
 			if (fullrow == 'n')
 				fullrow = 'y';
 			else
 				j++;
 
 			for (int i = 0; i < xCount; i++)
-				if (board[j][i] == 'n')
-			     {
+				if (board[j][i] == 'n') {
 					fullrow = 'n';
-					if(count>1)
-					score+=count*100;
+					if(count > 1)
+					score += count*100;
 					count = 0;
+					
 					break;
 				 }
 
-			if (fullrow == 'y')
-			{
+			if (fullrow == 'y')	{
 				for (int k = j; k > 0; k--)
 					for (int l = 0; l < xCount; l++)
 						board[k][l] = board[k-1][l];
@@ -424,26 +374,22 @@ public class Tetris extends Applet implements Runnable
 				score += 100;
 				count++;
 				sleepnum -= 2;
+				
 				if (sleepnum < 10)
 					sleepnum = 10;
 			}
 		}
 	}
 
-	private class MyKeyAdapter extends KeyAdapter
-	{
+	private class MyKeyAdapter extends KeyAdapter {
 		private int key;
 
-		public void keyPressed(KeyEvent e)
-		{
-			if((moving == 'y')&&(state!='o'))
-			{
+		public void keyPressed(KeyEvent e) {
+			if((moving == 'y')&&(state!='o')) {
 				key = e.getKeyCode();
 		
-				if (key == 40)//DOWN ARROW
-				{
-					if(sync)
-					{
+				if (key == 40) {//DOWN ARROW
+					if(sync) {
 						sync = false;
 			
 						board[piece[0].y][piece[0].x] = 'n';
@@ -451,9 +397,9 @@ public class Tetris extends Applet implements Runnable
 						board[piece[2].y][piece[2].x] = 'n';
 						board[piece[3].y][piece[3].x] = 'n';
 												
-						while ((valid = checkCollision(piece[0].y+1,piece[0].x,piece[1].y+1,
-							piece[1].x,piece[2].y+1,piece[2].x,
-							piece[3].y+1,piece[3].x)) == 1)
+						while ((valid = checkCollision(piece[0].y + 1, piece[0].x, piece[1].y + 1,
+							piece[1].x, piece[2].y + 1, piece[2].x,
+							piece[3].y + 1, piece[3].x)) == 1)
 						{
 							piece[0].y++;
 							piece[1].y++;
@@ -473,27 +419,24 @@ public class Tetris extends Applet implements Runnable
 					}
 				}
 			
-				if (key == 37)//LEFT ARROW
-				{
+				if (key == 37) {//LEFT ARROW
 					if((piece[0].x-1 >= 0)&&
-							(piece[1].x-1 >= 0)&&
-							(piece[2].x-1 >= 0)&&
+							(piece[1].x-1 >= 0) &&
+							(piece[2].x-1 >= 0) &&
 							(piece[3].x-1 >= 0))
 					{
-						if(sync)
-						{
+						if(sync) {
 							sync = false;
 							board[piece[0].y][piece[0].x] = 'n';
 							board[piece[1].y][piece[1].x] = 'n';
 							board[piece[2].y][piece[2].x] = 'n';
 							board[piece[3].y][piece[3].x] = 'n';
 
-							valid = checkCollision(piece[0].y,piece[0].x-1,piece[1].y,
-									piece[1].x-1,piece[2].y,piece[2].x-1,
-									piece[3].y,piece[3].x-1);
+							valid = checkCollision(piece[0].y, piece[0].x - 1, piece[1].y,
+									piece[1].x - 1, piece[2].y, piece[2].x - 1,
+									piece[3].y, piece[3].x - 1);
 
-							if (valid == 1)
-							{
+							if (valid == 1)	{
 								piece[0].x--;
 								piece[1].x--;
 								piece[2].x--;
@@ -513,15 +456,13 @@ public class Tetris extends Applet implements Runnable
 					}
 				}
 
-				if (key == 39)//RIGHT ARROW
-				{
+				if (key == 39) {//RIGHT ARROW
 					if((piece[0].x+1 < xCount)&&
 							(piece[1].x+1 < xCount)&&
 							(piece[2].x+1 < xCount)&&
 							(piece[3].x+1 < xCount))
 					{
-						if(sync)
-						{
+						if(sync) {
 							sync = false;
 							board[piece[0].y][piece[0].x] = 'n';
 							board[piece[1].y][piece[1].x] = 'n';
@@ -529,12 +470,11 @@ public class Tetris extends Applet implements Runnable
 							board[piece[3].y][piece[3].x] = 'n';
 
 
-							valid = checkCollision(piece[0].y,piece[0].x+1,piece[1].y,
-									piece[1].x+1,piece[2].y,piece[2].x+1,
-									piece[3].y,piece[3].x+1);
+							valid = checkCollision(piece[0].y, piece[0].x + 1, piece[1].y,
+									piece[1].x + 1, piece[2].y, piece[2].x + 1,
+									piece[3].y, piece[3].x + 1);
 
-							if (valid == 1)
-							{
+							if (valid == 1)	{
 								piece[0].x++;
 								piece[1].x++;
 								piece[2].x++;
@@ -556,18 +496,13 @@ public class Tetris extends Applet implements Runnable
 			}
 		}
 
-		public void keyReleased(KeyEvent e)
-		{
-			if((moving == 'y')&&(state!='o'))
-			{
+		public void keyReleased(KeyEvent e)	{
+			if((moving == 'y') && (state != 'o')) {
 				key = e.getKeyCode();
 	   
-				if (state == 'g')
-				{
-					if (key == 38)//UP ARROW
-					{   
-						if(sync)
-						{
+				if (state == 'g') {
+					if (key == 38) {//UP ARROW
+						if(sync) {
 							sync = false;
 			   
 							board[piece[0].y][piece[0].x] = 'n';
@@ -575,73 +510,60 @@ public class Tetris extends Applet implements Runnable
 							board[piece[2].y][piece[2].x] = 'n';
 							board[piece[3].y][piece[3].x] = 'n';
 		
-							switch(piecetype)
-							{	 
+							switch(piecetype) {	 
 								case 0: // line
 						   		{
-						   			if (piece[0].y != piece[1].y) // vertical line
-						   			{
-						   				if(piece[0].y<piece[1].y) // upright
-						   				{
-						   					valid = checkCollision(piece[1].y,piece[1].x-2,piece[1].y,
-						   							piece[1].x-1,piece[1].y,piece[1].x,
-						   							piece[1].y,piece[1].x+1);
-						   					if (valid == 1)
-						   					{
+						   			if (piece[0].y != piece[1].y) {// vertical line
+						   				if(piece[0].y<piece[1].y) {// upright
+						   					valid = checkCollision(piece[1].y,piece[1].x - 2, piece[1].y,
+						   							piece[1].x - 1, piece[1].y, piece[1].x,
+						   							piece[1].y, piece[1].x+1);
+						   					if (valid == 1)	{
 						   						piece[0].y = piece[1].y;
 						   						piece[2].y = piece[1].y;
 						   						piece[3].y = piece[1].y;
 	
-						   						piece[0].x = piece[1].x+1;
-						   						piece[2].x = piece[1].x-1;
-						   						piece[3].x = piece[1].x-2;
+						   						piece[0].x = piece[1].x + 1;
+						   						piece[2].x = piece[1].x - 1;
+						   						piece[3].x = piece[1].x - 2;
 						   					}
-						   				}
-						   				else //upside down 
-						   				{
-						   					valid = checkCollision(piece[1].y,piece[1].x-1,piece[1].y,
-						   							piece[1].x,piece[1].y,piece[1].x+1,
-						   							piece[1].y,piece[1].x+2);
-						   					if (valid == 1)
-						   					{
+						   				} else {//upside down 
+						   			 		valid = checkCollision(piece[1].y, piece[1].x - 1, piece[1].y,
+						   							piece[1].x, piece[1].y, piece[1].x + 1,
+						   							piece[1].y, piece[1].x + 2);
+						   					if (valid == 1)	{
 						   						piece[0].y = piece[1].y;
 						   						piece[2].y = piece[1].y;
 						   						piece[3].y = piece[1].y;
 	
-						   						piece[0].x = piece[1].x-1;
-						   						piece[2].x = piece[1].x+1;
-						   						piece[3].x = piece[1].x+2;
+						   						piece[0].x = piece[1].x - 1;
+						   						piece[2].x = piece[1].x + 1;
+						   						piece[3].x = piece[1].x + 2;
 						   					}
 						   				}
-						   			}
-						   			else //Horizontal line
-						   			{			
-						   				if(piece[0].x>piece[1].x) // from right to left
-						   				{
-						   					valid = checkCollision(piece[1].y-2,piece[1].x,piece[1].y-1,
-						   							piece[1].x,piece[1].y,piece[1].x,
-						   							piece[1].y+1,piece[1].x);
-						   					if (valid == 1)
-						   					{
-						   						piece[0].y = piece[1].y+1;
-						   						piece[2].y = piece[1].y-1;
-						   						piece[3].y = piece[1].y-2;
+						   			} else { //Horizontal line
+						   				if(piece[0].x > piece[1].x) {// from right to left
+						   		 			valid = checkCollision(piece[1].y - 2, piece[1].x, piece[1].y - 1,
+						   							piece[1].x, piece[1].y, piece[1].x,
+						   							piece[1].y + 1, piece[1].x);
+						   					if (valid == 1)	{
+						   						piece[0].y = piece[1].y + 1;
+						   						piece[2].y = piece[1].y - 1;
+						   						piece[3].y = piece[1].y - 2;
 	
 						   						piece[0].x = piece[1].x;
 						   						piece[2].x = piece[1].x;
 						   						piece[3].x = piece[1].x;
 						   					}
 						   				}
-						   				else // from left to right 
-						   				{
-						   					valid = checkCollision(piece[1].y-1,piece[1].x,piece[1].y,
-						   							piece[1].x,piece[1].y+1,piece[1].x,
-						   							piece[1].y+2,piece[1].x);
-						   					if (valid == 1)
-						   					{
-						   						piece[0].y = piece[1].y-1;
-						   						piece[2].y = piece[1].y+1;
-						   						piece[3].y = piece[1].y+2;
+						   				else {// from left to right 
+					 	   					valid = checkCollision(piece[1].y - 1, piece[1].x, piece[1].y,
+						   							piece[1].x, piece[1].y + 1, piece[1].x,
+						   							piece[1].y + 2, piece[1].x);
+						   					if (valid == 1)	{
+						   						piece[0].y = piece[1].y - 1;
+						   						piece[2].y = piece[1].y + 1;
+						   						piece[3].y = piece[1].y + 2;
 	
 						   						piece[0].x = piece[1].x;
 						   						piece[2].x = piece[1].x;
@@ -654,68 +576,57 @@ public class Tetris extends Applet implements Runnable
 	
 						   		case 1: // 3 across and one in middle
 						   		{
-						   			if (piece[3].y > piece[1].y)
-						   			{
-						   				valid = checkCollision(piece[3].y,piece[3].x,piece[1].y,
-						   						piece[1].x,piece[1].y-1,piece[1].x,
-						   						piece[2].y,piece[2].x);
+						   			if (piece[3].y > piece[1].y) {
+						   				valid = checkCollision(piece[3].y, piece[3].x, piece[1].y,
+						   						piece[1].x, piece[1].y - 1, piece[1].x,
+						   						piece[2].y, piece[2].x);
 	
-						   				if (valid == 1)
-						   				{
+						   				if (valid == 1)	{
 						   					piece[0].y = piece[3].y;
 						   					piece[0].x = piece[3].x;
 						   					piece[3].y = piece[2].y;
 						   					piece[3].x = piece[2].x;
-						   					piece[2].y = piece[1].y-1;
+						   					piece[2].y = piece[1].y - 1;
 						   					piece[2].x = piece[1].x;
 						   				}
-						   			}
-						   			else if (piece[3].y < piece[1].y)
-						   			{
-						   				valid = checkCollision(piece[3].y,piece[3].x,piece[1].y,
-						   						piece[1].x,piece[1].y+1,piece[1].x,
-						   						piece[2].y,piece[2].x);
+						   			} else if (piece[3].y < piece[1].y) {
+						   				valid = checkCollision(piece[3].y, piece[3].x, piece[1].y,
+						   						piece[1].x, piece[1].y + 1, piece[1].x,
+						   						piece[2].y, piece[2].x);
 	
-						   				if (valid == 1)
-						   				{
+						   				if (valid == 1)	{
 						   					piece[0].y = piece[3].y;
 						   					piece[0].x = piece[3].x;
 						   					piece[3].y = piece[2].y;
 						   					piece[3].x = piece[2].x;
-						   					piece[2].y = piece[1].y+1;
+						   					piece[2].y = piece[1].y + 1;
 						   					piece[2].x = piece[1].x;
 						   				}
-						   			}
-						   			else if (piece[2].y > piece[1].y)
-						   			{
-						   				valid = checkCollision(piece[3].y,piece[3].x,piece[1].y,
-						   						piece[1].x,piece[1].y,piece[1].x+1,
-						   						piece[2].y,piece[2].x);
+						   			} else if (piece[2].y > piece[1].y)	{
+						   				valid = checkCollision(piece[3].y, piece[3].x, piece[1].y,
+						   						piece[1].x, piece[1].y, piece[1].x + 1,
+						   						piece[2].y, piece[2].x);
 	
-						   				if (valid == 1)
-						   				{
+						   				if (valid == 1) {
 						   					piece[0].y = piece[3].y;
 						   					piece[0].x = piece[3].x;
 						   					piece[3].y = piece[2].y;
 						   					piece[3].x = piece[2].x;
 						   					piece[2].y = piece[1].y;
-						   					piece[2].x = piece[1].x+1;
+						   					piece[2].x = piece[1].x + 1;
 						   				}
-						   			}
-						   			else if (piece[2].y < piece[1].y)
-						   			{
-						   				valid = checkCollision(piece[3].y,piece[3].x,piece[1].y,
-						   						piece[1].x,piece[1].y,piece[1].x-1,
-						   						piece[2].y,piece[2].x);
+						   			} else if (piece[2].y < piece[1].y)	{
+						   				valid = checkCollision(piece[3].y, piece[3].x, piece[1].y,
+						   						piece[1].x, piece[1].y, piece[1].x - 1,
+						   						piece[2].y, piece[2].x);
 	
-						   				if (valid == 1)
-						   				{
+						   				if (valid == 1)	{
 						   					piece[0].y = piece[3].y;
 						   					piece[0].x = piece[3].x;
 						   					piece[3].y = piece[2].y;
 						   					piece[3].x = piece[2].x;
 						   					piece[2].y = piece[1].y;
-						   					piece[2].x = piece[1].x-1;
+						   					piece[2].x = piece[1].x - 1;
 						   				}
 						   			}
 						   			break;
@@ -723,68 +634,57 @@ public class Tetris extends Applet implements Runnable
 	
 						   		case 3: // 3 down 1 to right
 						   		{
-						   			if (piece[3].x > piece[2].x)
-						   			{
-						   				valid = checkCollision(piece[1].y,piece[1].x-1,piece[1].y,
-						   						piece[1].x,piece[1].y,piece[1].x+1,
-						   						piece[1].y-1,piece[1].x+1);
+						   			if (piece[3].x > piece[2].x) {
+						   				valid = checkCollision(piece[1].y, piece[1].x - 1, piece[1].y,
+						   						piece[1].x, piece[1].y, piece[1].x + 1,
+						   						piece[1].y - 1, piece[1].x + 1);
 	
-						   				if (valid == 1)
-						   				{
+						   				if (valid == 1)	{
 						   					piece[0].y = piece[1].y;
-						   					piece[0].x = piece[1].x-1;
+						   					piece[0].x = piece[1].x - 1;
 						   					piece[2].y = piece[1].y;
-						   					piece[2].x = piece[1].x+1;
-						   					piece[3].y = piece[2].y-1;
+						   					piece[2].x = piece[1].x + 1;
+						   					piece[3].y = piece[2].y - 1;
 						   					piece[3].x = piece[2].x;
 						   				}
-						   			}
-						   			else if (piece[3].x < piece[2].x)
-						   			{
-						   				valid = checkCollision(piece[1].y,piece[1].x+1,piece[1].y,
-						   						piece[1].x,piece[1].y,piece[1].x-1,
-						   						piece[1].y+1,piece[1].x-1);
+						   			} else if (piece[3].x < piece[2].x)	{
+						   				valid = checkCollision(piece[1].y, piece[1].x + 1, piece[1].y,
+						   						piece[1].x, piece[1].y, piece[1].x - 1,
+						   						piece[1].y + 1, piece[1].x - 1);
 	
-						   				if (valid == 1)
-						   				{
+						   				if (valid == 1)	{
 						   					piece[0].y = piece[1].y;
-						   					piece[0].x = piece[1].x+1;
+						   					piece[0].x = piece[1].x + 1;
 						   					piece[2].y = piece[1].y;
-						   					piece[2].x = piece[1].x-1;
-						   					piece[3].y = piece[2].y+1;
+						   					piece[2].x = piece[1].x - 1;
+						   					piece[3].y = piece[2].y + 1;
 						   					piece[3].x = piece[2].x;
 						   				}
-						   			}
-						   			else if (piece[3].y < piece[2].y)
-						   			{
-					   					valid = checkCollision(piece[1].y+1,piece[1].x,piece[1].y,
-					   						piece[1].x,piece[1].y-1,piece[1].x,
-					   						piece[1].y-1,piece[1].x-1);
+						   			} else if (piece[3].y < piece[2].y)	{
+					   					valid = checkCollision(piece[1].y+1, piece[1].x, piece[1].y,
+					   						piece[1].x, piece[1].y - 1, piece[1].x,
+					   						piece[1].y - 1, piece[1].x - 1);
 	
-						   				if (valid == 1)
-						   				{
-						   					piece[0].y = piece[1].y+1;
+						   				if (valid == 1)	{
+						   					piece[0].y = piece[1].y + 1;
 						   					piece[0].x = piece[1].x;
-						   					piece[2].y = piece[1].y-1;
+						   					piece[2].y = piece[1].y - 1;
 						   					piece[2].x = piece[1].x;
 						   					piece[3].y = piece[2].y;
-						   					piece[3].x = piece[2].x-1;
+						   					piece[3].x = piece[2].x - 1;
 					   					}
-					   				}
-					   				else if (piece[3].y > piece[2].y)
-					   				{
-					   					valid = checkCollision(piece[1].y-1,piece[1].x,piece[1].y,
-					   						piece[1].x,piece[1].y+1,piece[1].x,
-					   						piece[1].y+1,piece[1].x+1);
+					   				} else if (piece[3].y > piece[2].y)	{
+					   					valid = checkCollision(piece[1].y - 1, piece[1].x, piece[1].y,
+					   						piece[1].x,piece[1].y + 1, piece[1].x,
+					   						piece[1].y + 1, piece[1].x + 1);
 					   				
-					   					if (valid == 1)
-					   					{
-					   						piece[0].y = piece[1].y-1;
+					   					if (valid == 1)	{
+					   						piece[0].y = piece[1].y - 1;
 					   						piece[0].x = piece[1].x;
-					   						piece[2].y = piece[1].y+1;
+					   						piece[2].y = piece[1].y + 1;
 					   						piece[2].x = piece[1].x;
 					   						piece[3].y = piece[2].y;
-					   						piece[3].x = piece[2].x+1;
+					   						piece[3].x = piece[2].x + 1;
 					   					}
 					   				}
 					   				break;
@@ -792,68 +692,57 @@ public class Tetris extends Applet implements Runnable
 			
 					   			case 4:// 3 down 1 to left
 					   			{
-					   				if (piece[3].x > piece[2].x)
-					   				{
-					   					valid = checkCollision(piece[1].y,piece[1].x+1,piece[1].y,
-					   						piece[1].x,piece[1].y,piece[1].x-1,
-					   						piece[1].y-1,piece[1].x-1);
+					   				if (piece[3].x > piece[2].x) {
+					   					valid = checkCollision(piece[1].y, piece[1].x + 1, piece[1].y,
+					   						piece[1].x, piece[1].y, piece[1].x - 1,
+					   						piece[1].y-1, piece[1].x - 1);
 	
-					   					if (valid == 1)
-					   					{
+					   					if (valid == 1)	{
 					   						piece[0].y = piece[1].y;
-					   						piece[0].x = piece[1].x+1;
+					   						piece[0].x = piece[1].x + 1;
 					   						piece[2].y = piece[1].y;
-					   						piece[2].x = piece[1].x-1;
-					   						piece[3].y = piece[2].y-1;
+					   						piece[2].x = piece[1].x - 1;
+					   						piece[3].y = piece[2].y - 1;
 					   						piece[3].x = piece[2].x;
 					   					}
-					   				}
-					   				else if (piece[3].x < piece[2].x)
-					   				{
-					   					valid = checkCollision(piece[1].y,piece[1].x-1,piece[1].y,
-					   						piece[1].x,piece[1].y,piece[1].x+1,
-					   						piece[1].y+1,piece[1].x+1);
+					   				} else if (piece[3].x < piece[2].x) {
+					   					valid = checkCollision(piece[1].y, piece[1].x - 1, piece[1].y,
+					   						piece[1].x, piece[1].y, piece[1].x + 1,
+					   						piece[1].y+1,piece[1].x + 1);
 	
-					   					if (valid == 1)
-					   					{
+					   					if (valid == 1)	{
 					   						piece[0].y = piece[1].y;
-					   						piece[0].x = piece[1].x-1;
+					   						piece[0].x = piece[1].x - 1;
 					   						piece[2].y = piece[1].y;
-					   						piece[2].x = piece[1].x+1;
-					   						piece[3].y = piece[2].y+1;
+					   						piece[2].x = piece[1].x + 1;
+					   						piece[3].y = piece[2].y + 1;
 					   						piece[3].x = piece[2].x;
 					   					}
-					   				}
-					   				else if (piece[3].y < piece[2].y)
-					   				{
-					   					valid = checkCollision(piece[1].y-1,piece[1].x,piece[1].y,
-					   						piece[1].x,piece[1].y+1,piece[1].x,
-					   						piece[1].y+1,piece[1].x-1);
+					   				} else if (piece[3].y < piece[2].y)	{
+					   					valid = checkCollision(piece[1].y - 1, piece[1].x, piece[1].y,
+					   						piece[1].x, piece[1].y + 1, piece[1].x,
+					   						piece[1].y + 1, piece[1].x - 1);
 	
-					   					if (valid == 1)
-					   					{
-					   						piece[0].y = piece[1].y-1;
+					   					if (valid == 1)	{
+					   						piece[0].y = piece[1].y - 1;
 					   						piece[0].x = piece[1].x;
-					   						piece[2].y = piece[1].y+1;
+					   						piece[2].y = piece[1].y + 1;
 					   						piece[2].x = piece[1].x;
 					   						piece[3].y = piece[2].y;
-					   						piece[3].x = piece[2].x-1;
+					   						piece[3].x = piece[2].x - 1;
 					   					}
-					   				}
-					   				else if (piece[3].y > piece[2].y)
-					   				{
-					   					valid = checkCollision(piece[1].y+1,piece[1].x,piece[1].y,
-					   						piece[1].x,piece[1].y-1,piece[1].x,
-					   						piece[1].y-1,piece[1].x+1);
+					   				} else if (piece[3].y > piece[2].y)	{
+					   					valid = checkCollision(piece[1].y + 1, piece[1].x, piece[1].y,
+					   						piece[1].x, piece[1].y - 1, piece[1].x,
+					   						piece[1].y - 1, piece[1].x + 1);
 	
-					   					if (valid == 1)
-					   					{
-					   						piece[0].y = piece[1].y+1;
+					   					if (valid == 1)	{
+					   						piece[0].y = piece[1].y + 1;
 					   						piece[0].x = piece[1].x;
-					   						piece[2].y = piece[1].y-1;
+					   						piece[2].y = piece[1].y - 1;
 					   						piece[2].x = piece[1].x;
 					   						piece[3].y = piece[2].y;
-					   						piece[3].x = piece[2].x+1;
+					   						piece[3].x = piece[2].x + 1;
 					   					}
 					   				}//end of else if
 					   				break;
@@ -875,20 +764,17 @@ public class Tetris extends Applet implements Runnable
 		}
 	}
 
-	private class Piece
-	{
+	private class Piece {
 		private int x;
 		private int y;
 		private char id;
 
-		private Piece(){}
+		private Piece() { }
 	
-		private void init(int y,int x,char id)
-		{
+		private void init(int y,int x,char id) {
 			this.x = x;
 			this.y = y;
 			this.id = id;
 		}
 	}
 }
-

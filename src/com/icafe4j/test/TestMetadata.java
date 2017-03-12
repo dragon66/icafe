@@ -118,7 +118,7 @@ public class TestMetadata extends TestBase {
 		fout.close();
 		
 		fin = new FileInputStream("images/exif.tif");
-		fout = new FileOutputStream("exif-exif-iptc-comment- inserted.tif");
+		fout = new FileOutputStream("exif-exif-iptc-comment-inserted.tif");
 
 		List<Metadata> metaList = new ArrayList<Metadata>();
 		metaList.add(populateExif(TiffExif.class));
