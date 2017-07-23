@@ -2,7 +2,7 @@ ICAFE
 =====
 
 What is ICAFE?
-ICAFE is a pure Java libray for:
+ICAFE is a pure Java library for:
 - Reading, writing images of popular formats - such as JPG, TIFF, GIF, PNG, BMP etc.
 - Converting between different image formats.
 - Extracting, inserting, and removing image metadata such as EXIF, Photoshop IRB, ICC_Profile, IPTC, XMP, thumbnail etc.
