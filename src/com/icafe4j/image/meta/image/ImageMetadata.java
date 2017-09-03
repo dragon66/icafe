@@ -81,7 +81,7 @@ public class ImageMetadata extends Metadata {
 			    LOGGER.info("Thumbnail #{}: {} thumbnail:", i, entry.getKey());
 			    Thumbnail thumbnail = entry.getValue();
 			    LOGGER.info("Thumbnail width: {}", ((thumbnail.getWidth() < 0)? " Unavailable": thumbnail.getWidth()));
-				LOGGER.info("Thumbanil height: {}", ((thumbnail.getHeight() < 0)? " Unavailable": thumbnail.getHeight()));
+				LOGGER.info("Thumbnail height: {}", ((thumbnail.getHeight() < 0)? " Unavailable": thumbnail.getHeight()));
 				LOGGER.info("Thumbnail data type: {}", thumbnail.getDataTypeAsString());
 				i++;
 			}
