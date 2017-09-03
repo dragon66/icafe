@@ -15,6 +15,7 @@ import java.io.OutputStream;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.icafe4j.image.jpeg.Marker;
@@ -49,28 +50,58 @@ public class JpegXMP extends XMP {
 		super(xmp, extendedXmp);
 	}
 
-	public void write(OutputStream os) throws IOException {
-		// Add packet wrapper to the XMP document
-		// Add PI at the beginning and end of the document, we will support only UTF-8, no BOM
+	public void write(OutputStream os) throws IOException {		
 		Document xmpDoc = getXmpDocument();
-		XMLUtils.insertLeadingPI(xmpDoc, "xpacket", "begin='' id='W5M0MpCehiHzreSzNTczkc9d'");
-		XMLUtils.insertTrailingPI(xmpDoc, "xpacket", "end='r'");
-		byte[] extendedXmp = getExtendedXmpData();
+		NodeList list = xmpDoc.getChildNodes();
+		boolean foundPI = false;
+        for (int j = 0; j < list.getLength(); j++) {
+            Node currentNode = list.item(j);
+            if (currentNode.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE && currentNode.getNodeName().equalsIgnoreCase("xpacket")) {
+            	foundPI = true;
+            	break;
+            }            
+        }
+        if(!foundPI) {
+        	// Add packet wrapper to the XMP document
+    		// Add PI at the beginning and end of the document, we will support only UTF-8, no BOM
+        	XMLUtils.insertLeadingPI(xmpDoc, "xpacket", "begin='?' id='W5M0MpCehiHzreSzNTczkc9d'");
+    		XMLUtils.insertTrailingPI(xmpDoc, "xpacket", "end='r'");
+        }
+      	// Serialize XMP to byte array
+		byte[] xmp = XMLUtils.serializeToByteArray(xmpDoc);
+		if(xmp.length > MAX_XMP_CHUNK_SIZE) {
+			Document extendedXMPDoc = XMLUtils.createDocumentNode();
+			// Copy all the children of rdf:RDF element
+	  		Node xmpRDF = xmpDoc.getElementsByTagName("rdf:RDF").item(0);	  		 
+			NodeList nodes = xmpRDF.getChildNodes();
+			Element extendedRDF = extendedXMPDoc.createElement("rdf:RDF");
+			extendedRDF.setAttribute("xmlns:rdf", "'http://www.w3.org/1999/02/22-rdf-syntax-ns#'");
+			extendedXMPDoc.appendChild(extendedRDF);
+		  	for(int i = 0; i < nodes.getLength(); i++) {
+		  		Node curr = extendedXMPDoc.importNode(nodes.item(i), true);
+	    		extendedRDF.appendChild(curr);
+	    	}
+		  	int numOfItems = nodes.getLength();
+		  	for(int i = 1; i <= numOfItems; i++) {
+		  		xmpRDF.removeChild(nodes.item(numOfItems - i));
+	    	}		  	
+		  	xmp = XMLUtils.serializeToByteArray(xmpDoc);
+		  	setExtendedXMPData(XMLUtils.serializeToByteArray(extendedXMPDoc));
+		}
 		String guid = null;
+		byte[] extendedXmp = getExtendedXmpData();	     
 		if(extendedXmp != null) { // We have ExtendedXMP
-			guid = StringUtils.generateMD5(extendedXmp);
-			NodeList descriptions = xmpDoc.getElementsByTagName("rdf:Description");
-			int length = descriptions.getLength();
-			if(length > 0) {
-				Element node = (Element)descriptions.item(length - 1);
+			if(XMLUtils.getAttribute(xmpDoc, "rdf:Description", "xmpNote:HasExtendedXMP").length() == 0) {
+				guid = StringUtils.generateMD5(extendedXmp);
+				Element node = XMLUtils.createElement(xmpDoc, "rdf:Description");
 				node.setAttribute("xmlns:xmpNote", "http://ns.adobe.com/xmp/extension/");
 				node.setAttribute("xmpNote:HasExtendedXMP", guid);
+				xmpDoc.getElementsByTagName("rdf:RDF").item(0).appendChild(node);
+				xmp = XMLUtils.serializeToByteArray(xmpDoc);
+			} else {
+				guid = XMLUtils.getAttribute(xmpDoc, "rdf:Description", "xmpNote:HasExtendedXMP");
 			}
-		}
-		// Serialize XMP to byte array
-		byte[] xmp = XMLUtils.serializeToByteArray(xmpDoc);
-		if(xmp.length > MAX_XMP_CHUNK_SIZE)
-			throw new RuntimeException("XMP data size exceededs JPEG segment size");
+		}	
 		// Write XMP segment
 		IOUtils.writeShortMM(os, Marker.APP1.getValue());
 		// Write segment length
@@ -79,7 +110,7 @@ public class JpegXMP extends XMP {
 		os.write(XMP_ID.getBytes());
 		os.write(xmp);
 		// Write ExtendedXMP if we have
-		if(extendedXmp != null) {
+		if(extendedXmp != null) { // We have ExtendedXMP
 			int numOfChunks = extendedXmp.length / MAX_EXTENDED_XMP_CHUNK_SIZE;
 			int extendedXmpLen = extendedXmp.length;
 			int offset = 0;
