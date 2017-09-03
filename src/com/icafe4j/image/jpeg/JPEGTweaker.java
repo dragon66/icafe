@@ -1257,13 +1257,19 @@ public class JPEGTweaker {
 	}
 	
 	/**
-	 * Insert a XMP instance into the image. 
-	 * The XMP instance must be able to fit into one APP1.
+	 * Insert a XMP instance into the image.
+	 * <p>
+	 * The XMP instance can be created either by passing both standard and extended XMP or
+	 * simply by passing a single standard XMP. If the serialized standard XMP size exceeds
+	 * the size of one APP1 segment, it will be split into a standard part and an extended
+	 * part automatically. This process is transparent to the user and is the preferred way
+	 * of inserting XMP into JPEG images.
 	 * 
 	 * @param is InputStream for the image.
 	 * @param os OutputStream for the image.
 	 * @param jpegXmp XMP instance
 	 * @throws IOException
+	 * @see JpegXMP
 	 */
 	public static void insertXMP(InputStream is, OutputStream os, XMP jpegXmp) throws IOException {
 		boolean finished = false;
@@ -1349,8 +1355,9 @@ public class JPEGTweaker {
 	
 	/**
 	 * Insert XMP into single APP1 or multiple segments. Support ExtendedXMP.
-	 * The standard part of the XMP must be a valid XMP with packet wrapper and,
-	 * should already include the GUID for the ExtendedXMP in case of ExtendedXMP.
+	 * The standard part of the XMP must be a valid XMP w/o packet wrapper and,
+	 * In case of ExtendedXMP the required namespace and the tag xmpNote:HasExtendedXMP
+	 * will be added.
 	 * <p>
 	 * When converted to bytes, the XMP part should be able to fit into one APP1.
 	 * 
