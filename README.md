@@ -75,8 +75,10 @@ Image metadata manipulation:
    * Insert XMP metada into JPEG, GIF, PNG, and TIFF image
    * Extract XMP metadata from JPEG, GIF, PNG, and TIFF image
    * In case of JPEG, handle normal XMP and extendedXMP which cannot fit into one APP1 segment
+ - JPEG and TIFF bulk metadata insertion support - insert more than one metadata types with a single method call
+ - JPEG XMP auto-split into standard and extended XMP in case the XMP data size exceeds JPEG APP1 segment limit
  
-**NOTE**: The metadata related part of has become another repository "pixymeta" which has no dependency on reading and writing function of "icafe". There is also an Android version called "pixymeta-android".
+**NOTE**: The metadata related part of icafe has become another repository "pixymeta" which has no dependency on reading and writing function of "icafe". There is also an Android version called "pixymeta-android".
 
 Who is using ICAFE
 ------------------
