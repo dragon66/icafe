@@ -63,13 +63,8 @@ public class TestMetadata extends TestBase {
 			fin = new FileInputStream("images/1.jpg");
 			fout = new FileOutputStream("1-xmp-inserted.jpg");
 			XMP jpegXmp = null;
-			if(!xmp.hasExtendedXmp())
-				jpegXmp = new JpegXMP(xmp.getData());
-			else {
-				Document xmpDoc = xmp.getXmpDocument();
-				Document extendedXmpDoc = xmp.getExtendedXmpDocument();
-				jpegXmp = new JpegXMP(XMLUtils.serializeToStringLS(xmpDoc, xmpDoc.getDocumentElement()), XMLUtils.serializeToStringLS(extendedXmpDoc));
-			}
+			Document xmpDoc = xmp.getMergedDocument();
+			jpegXmp = new JpegXMP(XMLUtils.serializeToByteArray(xmpDoc));
 			Metadata.insertXMP(fin, fout, jpegXmp);			
 			fin.close();
 			fout.close();
