@@ -86,7 +86,7 @@ public class XMLUtils {
 		return builder.newDocument();
 	}
 	
-	public static Node createElement(Document doc, String tagName) {
+	public static Element createElement(Document doc, String tagName) {
 		return doc.createElement(tagName);
 	}
 	
@@ -191,13 +191,12 @@ public class XMLUtils {
 	public static void insertLeadingPI(Document doc, String target, String data) {
 		Element element = doc.getDocumentElement();
 	    ProcessingInstruction pi = doc.createProcessingInstruction(target, data);
-	    element.getParentNode().insertBefore(pi, element);
+	    doc.insertBefore(pi, element);
 	}
 	
 	public static void insertTrailingPI(Document doc, String target, String data) {
-		Element element = doc.getDocumentElement();
 	    ProcessingInstruction pi = doc.createProcessingInstruction(target, data);
-	    element.getParentNode().appendChild(pi);
+	    doc.appendChild(pi);
 	}
 	
 	public static void printNode(Node node, String indent) {
