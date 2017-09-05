@@ -75,7 +75,7 @@ public class JpegXMP extends XMP {
 	  		Node xmpRDF = xmpDoc.getElementsByTagName("rdf:RDF").item(0);	  		 
 			NodeList nodes = xmpRDF.getChildNodes();
 			Element extendedRDF = extendedXMPDoc.createElement("rdf:RDF");
-			extendedRDF.setAttribute("xmlns:rdf", "'http://www.w3.org/1999/02/22-rdf-syntax-ns#'");
+			extendedRDF.setAttribute("xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 			extendedXMPDoc.appendChild(extendedRDF);
 		  	for(int i = 0; i < nodes.getLength(); i++) {
 		  		Node curr = extendedXMPDoc.importNode(nodes.item(i), true);
