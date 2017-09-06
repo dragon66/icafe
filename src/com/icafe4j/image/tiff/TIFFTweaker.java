@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * SV    06Sep2017  Added split a multiple page TIFF into custom number of pages TIFFs, byte arrays
  * SV    05Sep2017  Added split a multiple page TIFF into single page TIFFs byte arrays
  * WY    04Mar2017  Added insertMetadata() to insert multiple Metadata at one time
  * WY    11Dec2016  Added byte order to writeMultipageTIFF

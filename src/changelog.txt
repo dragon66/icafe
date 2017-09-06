@@ -1,6 +1,7 @@
 ***************************
 Last modified on 09/05/2017
 ***************************
+06Sep2017  Added split a multiple page TIFF into custom number of pages TIFFs, byte arrays
 05Sep2017  Added split a multiple page TIFF into single page TIFFs byte arrays
 04Mar2017  Added insertMetadata() to TIFFTweaker
 02Mar2017  Added insertMetadata() to JPEGTweaker
