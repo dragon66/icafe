@@ -3041,7 +3041,7 @@ public class TIFFTweaker {
             rout.close();
             //Convert to byte array
             byte[] byteData = baos.toByteArray();
-            LOGGER.info("File " + i + " has byte size: " + byteData.length / 1024 + " kb");
+            LOGGER.debug("File " + i + " has byte size: " + byteData.length / 1024 + " kb");
             outputFilesByte.add(byteData);
         }
         rin.close();
