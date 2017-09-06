@@ -1,6 +1,7 @@
 ***************************
 Last modified on 03/04/2017
 ***************************
+06Sep2017  Clean project structure
 04Mar2017  Added insertMetadata() to TIFFTweaker
 02Mar2017  Added insertMetadata() to JPEGTweaker
 20Feb2017  Fix GIFTweaker.splitFrames() throws stream closed exception
