@@ -3010,7 +3010,7 @@ public class TIFFTweaker {
      * @param rin input RandomAccessInputStream to read multiple page TIFF
      * @param outputFilesByte output files as a list of byte arrays
      */
-    public static void splitPages(RandomAccessInputStream rin, List<byte[]> outputFilesByte) throws IOException {
+    public static void splitPages(RandomAccessInputStream rin, final List<byte[]> outputFilesByte) throws IOException {
         List<IFD> list = new ArrayList<IFD>();
         short endian = rin.readShort();
         WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
