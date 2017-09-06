@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
 
 import com.icafe4j.image.ImageColorType;
 import com.icafe4j.image.ImageFrame;
