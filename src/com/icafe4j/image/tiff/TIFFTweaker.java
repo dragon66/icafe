@@ -3014,11 +3014,13 @@ public class TIFFTweaker {
         List<IFD> list = new ArrayList<IFD>();
         short endian = rin.readShort();
         WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
+        // Set write strategy based on byte order
+ 		if(endian == IOUtils.LITTLE_ENDIAN)
+ 		    writeStrategy = WriteStrategyII.getInstance();
         rin.seek(STREAM_HEAD);
         int offset = readHeader(rin);
         readIFDs(null, null, TiffTag.class, list, offset, rin);
-        for (int i = 0; i < list.size(); i++)
-        {
+        for (int i = 0; i < list.size(); i++) {
             //To read image into byte array
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             RandomAccessOutputStream rout = new MemoryCacheRandomAccessOutputStream(baos);
@@ -3038,7 +3040,7 @@ public class TIFFTweaker {
             rout.close();
             //Convert to byte array
             byte[] byteData = baos.toByteArray();
-            System.out.println("File " + i + " has byte size: " + byteData.length / 1024 + " kb");
+            LOGGER.info("File " + i + " has byte size: " + byteData.length / 1024 + " kb");
             outputFilesByte.add(byteData);
         }
         rin.close();
