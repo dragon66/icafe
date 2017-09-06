@@ -94,6 +94,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.icafe4j.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -131,17 +132,6 @@ import com.icafe4j.image.meta.tiff.TiffXMP;
 import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.image.writer.TIFFWriter;
-import com.icafe4j.io.FileCacheRandomAccessInputStream;
-import com.icafe4j.io.FileCacheRandomAccessOutputStream;
-import com.icafe4j.io.IOUtils;
-import com.icafe4j.io.RandomAccessInputStream;
-import com.icafe4j.io.RandomAccessOutputStream;
-import com.icafe4j.io.ReadStrategy;
-import com.icafe4j.io.ReadStrategyII;
-import com.icafe4j.io.ReadStrategyMM;
-import com.icafe4j.io.WriteStrategy;
-import com.icafe4j.io.WriteStrategyII;
-import com.icafe4j.io.WriteStrategyMM;
 import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
@@ -3014,6 +3004,45 @@ public class TIFFTweaker {
 		
 		return pagesRetained;
 	}
+
+    /**
+     * Split a multiple page TIFF into single page TIFFs byte arrays
+     * @param rin input RandomAccessInputStream to read multiple page TIFF
+     * @param outputFilesByte output files as a list of byte arrays
+     */
+    public static void splitPages(RandomAccessInputStream rin, List<byte[]> outputFilesByte) throws IOException {
+        List<IFD> list = new ArrayList<IFD>();
+        short endian = rin.readShort();
+        WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
+        rin.seek(STREAM_HEAD);
+        int offset = readHeader(rin);
+        readIFDs(null, null, TiffTag.class, list, offset, rin);
+        for (int i = 0; i < list.size(); i++)
+        {
+            //To read image into byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            RandomAccessOutputStream rout = new MemoryCacheRandomAccessOutputStream(baos);
+            rout.setWriteStrategy(writeStrategy);
+            // Write TIFF header
+            int writeOffset = writeHeader(rout);
+            // Write page data
+            writeOffset = copyPageData(list.get(i), writeOffset, rin, rout);
+            int firstIFDOffset = writeOffset;
+            // Write IFD
+            if (list.get(i).removeField(TiffTag.SUBFILE_TYPE) == null)
+                list.get(i).removeField(TiffTag.NEW_SUBFILE_TYPE);
+            list.get(i).removeField(TiffTag.PAGE_NUMBER);
+            list.get(i).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{1}));
+            writeOffset = list.get(i).write(rout, writeOffset);
+            writeToStream(rout, firstIFDOffset);
+            rout.close();
+            //Convert to byte array
+            byte[] byteData = baos.toByteArray();
+            System.out.println("File " + i + " has byte size: " + byteData.length / 1024 + " kb");
+            outputFilesByte.add(byteData);
+        }
+        rin.close();
+    }
 	
 	/**
 	 * Split a multiple page TIFF into single page TIFFs
