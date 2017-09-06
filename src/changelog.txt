@@ -1,6 +1,7 @@
 ***************************
-Last modified on 03/04/2017
+Last modified on 09/05/2017
 ***************************
+05Sep2017  Added splitPages() to split multiple page TIFFs into single page TIFFs byte array
 04Mar2017  Added insertMetadata() to TIFFTweaker
 02Mar2017  Added insertMetadata() to JPEGTweaker
 20Feb2017  Fix GIFTweaker.splitFrames() throws stream closed exception

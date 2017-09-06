@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * SV    05Sep2017  Added splitPages() to split multiple page TIFFs into single page TIFFs byte array
  * WY    04Mar2017  Added insertMetadata() to insert multiple Metadata at one time
  * WY    11Dec2016  Added byte order to writeMultipageTIFF
  * WY    19Aug2015  Added code to write multipage TIFF page by page
@@ -94,7 +95,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.icafe4j.io.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -132,6 +133,18 @@ import com.icafe4j.image.meta.tiff.TiffXMP;
 import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.image.writer.TIFFWriter;
+import com.icafe4j.io.FileCacheRandomAccessInputStream;
+import com.icafe4j.io.FileCacheRandomAccessOutputStream;
+import com.icafe4j.io.IOUtils;
+import com.icafe4j.io.RandomAccessInputStream;
+import com.icafe4j.io.RandomAccessOutputStream;
+import com.icafe4j.io.ReadStrategy;
+import com.icafe4j.io.ReadStrategyII;
+import com.icafe4j.io.ReadStrategyMM;
+import com.icafe4j.io.WriteStrategy;
+import com.icafe4j.io.WriteStrategyII;
+import com.icafe4j.io.WriteStrategyMM;
+import com.icafe4j.io.MemoryCacheRandomAccessOutputStream;
 import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
@@ -3006,7 +3019,7 @@ public class TIFFTweaker {
 	}
 
     /**
-     * Split a multiple page TIFF into single page TIFFs byte arrays
+     * Split a multiple page TIFF into single page TIFFs byte array
      * @param rin input RandomAccessInputStream to read multiple page TIFF
      * @param outputFilesByte output files as a list of byte arrays
      */
