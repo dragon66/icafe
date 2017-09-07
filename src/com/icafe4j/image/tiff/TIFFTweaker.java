@@ -3044,7 +3044,6 @@ public class TIFFTweaker {
             LOGGER.debug("File " + i + " has byte size: " + byteData.length / 1024 + " kb");
             outputFilesByte.add(byteData);
         }
-        rin.close();
     }
 	
 	/**
