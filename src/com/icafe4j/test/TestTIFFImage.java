@@ -12,7 +12,6 @@ import com.icafe4j.image.tiff.TiffField;
 import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.io.FileCacheRandomAccessInputStream;
 import com.icafe4j.io.FileCacheRandomAccessOutputStream;
-import com.icafe4j.io.RandomAccessInputStream;
 import com.icafe4j.io.RandomAccessOutputStream;
 
 public class TestTIFFImage extends TestBase {
@@ -23,10 +22,10 @@ public class TestTIFFImage extends TestBase {
 	
 	public void test(String ... args) throws Exception {
 		FileInputStream fin = new FileInputStream(args[0]);
-		RandomAccessInputStream rin = new FileCacheRandomAccessInputStream(fin);
 		FileOutputStream fout = new FileOutputStream("NEW.tif");
 		RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(fout);
-		TIFFImage tiffImage = new TIFFImage(rin);
+		// We pass in an InputStream without an explicit handle
+		TIFFImage tiffImage = new TIFFImage(new FileCacheRandomAccessInputStream(fin));
 		int numOfPages = tiffImage.getNumOfPages();
 		tiffImage.setWorkingPage(numOfPages - 1); // Add something to the last page
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss z");
@@ -38,7 +37,7 @@ public class TestTIFFImage extends TestBase {
 			numOfPages--;
 		}		
 		tiffImage.write(rout);
-		rin.close(); // Release resources
+		tiffImage.close(); // Release resources
 		rout.close(); // Release resources
 	}
 }
