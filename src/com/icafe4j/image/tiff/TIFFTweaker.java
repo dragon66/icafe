@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * SV    06Sep2017  Added split a multiple page TIFF into custom number of pages TIFFs, byte arrays
  * SV    05Sep2017  Added split a multiple page TIFF into single page TIFFs byte arrays
  * WY    04Mar2017  Added insertMetadata() to insert multiple Metadata at one time
  * WY    11Dec2016  Added byte order to writeMultipageTIFF
@@ -77,6 +78,7 @@ package com.icafe4j.image.tiff;
 
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
@@ -3007,17 +3009,164 @@ public class TIFFTweaker {
 	}
 
     /**
+     * Split a multiple page TIFF into custom number of pages TIFFs byte arrays
+     * @param rin input RandomAccessInputStream to read multiple page TIFF
+     * @param outputFilesByte output files as a list of byte arrays
+     * @param numOfPages  Split the file into smaller files with specific number of pages
+     * @throws IOException
+     */
+    public static void splitPages(RandomAccessInputStream rin, List<byte[]> outputFilesByte, int numOfPages) throws IOException {
+        if (numOfPages < 2) {
+            splitPages(rin, outputFilesByte);
+            LOGGER.info("Splitting into single-pages");
+            return;
+        }
+
+        List<byte[]> holdBytesList = new ArrayList<byte[]>();
+        //Initial split into all single pages
+        splitPagesKeepStreamOpen(rin,holdBytesList);
+        //Return if Number of pages already greater than total file size. No action performed.
+        if (numOfPages >= holdBytesList.size()) {
+            LOGGER.info("Custom page count already greater than total pages in file. No action performed.");
+            return;
+        }
+
+        List<RandomAccessInputStream[]> randomAccessInputStreamsList = new ArrayList<RandomAccessInputStream[]>(); //stores the subgroups of inputstreams
+        RandomAccessInputStream[] randomAccessInputStreams = new RandomAccessInputStream[numOfPages]; //subgroup of inputstreams
+
+        for (int i = 0, j = 0; i < holdBytesList.size(); i++)
+        { //j keeps track of the subgroup
+            byte[] byteData = holdBytesList.get(i);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteData);
+            RandomAccessInputStream randomAccessInputStream = new MemoryCacheRandomAccessInputStream(byteArrayInputStream);
+            if (j > numOfPages - 1)
+            {
+                j = 0;
+                randomAccessInputStreamsList.add(randomAccessInputStreams); //add subgroup to list
+                //if last batch of pages are less than numOfPages
+                if (numOfPages > holdBytesList.size() - i)
+                    randomAccessInputStreams = new RandomAccessInputStream[holdBytesList.size() - i];
+                else randomAccessInputStreams = new RandomAccessInputStream[numOfPages];
+            }
+            randomAccessInputStreams[j++] = randomAccessInputStream;
+        }
+        randomAccessInputStreamsList.add(randomAccessInputStreams);
+
+        for (int i = 0; i < randomAccessInputStreamsList.size(); i++)
+        {
+            RandomAccessInputStream[] rais = randomAccessInputStreamsList.get(i);
+            if (rais.length > 1)
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                RandomAccessOutputStream rout = new MemoryCacheRandomAccessOutputStream(baos);
+                TIFFTweaker.mergeTiffImagesEx(rout, rais);
+                byte[] byteData = baos.toByteArray();
+                LOGGER.info("Adding file " + byteData.length / 1024 + " kb");
+                outputFilesByte.add(byteData);
+                rout.close();
+                baos.close();
+            } else
+            {
+                List<byte[]> temp = new ArrayList<byte[]>();
+                splitPagesKeepStreamOpen(rais[0],temp);
+                LOGGER.info("Adding file " + temp.get(0).length / 1024 + " kb");
+                outputFilesByte.add(temp.get(0));
+            }
+        }
+        rin.close();
+    }
+
+    /**
+     * Split a multiple page TIFF into custom number of pages TIFFs
+     * @param rin input RandomAccessInputStream to read multiple page TIFF
+     * @param outputFilePrefix output file name prefix for the split TIFFs
+     * @param numOfPages  Split the file into smaller files with specific number of pages
+     * @throws IOException
+     */
+    public static void splitPages(RandomAccessInputStream rin, String outputFilePrefix, int numOfPages) throws IOException {
+        if (numOfPages < 2) {
+            splitPages(rin, outputFilePrefix);
+            LOGGER.info("Splitting into single-pages");
+            return;
+        }
+
+        List<byte[]> outputFilesByte = new ArrayList<byte[]>();
+
+        //Initial split into all single pages
+        splitPagesKeepStreamOpen(rin,outputFilesByte);
+        //Return if Number of pages already greater than total file size. No action performed.
+        if (numOfPages >= outputFilesByte.size()) {
+            LOGGER.info("Number of pages already greater than total file size. No action performed.");
+            return;
+        }
+
+        List<RandomAccessInputStream[]> randomAccessInputStreamsList = new ArrayList<RandomAccessInputStream[]>(); //stores the subgroups of inputstreams
+        RandomAccessInputStream[] randomAccessInputStreams = new RandomAccessInputStream[numOfPages]; //subgroup of inputstreams
+
+        for (int i = 0, j = 0; i < outputFilesByte.size(); i++)
+        { //j keeps track of the subgroup
+            byte[] byteData = outputFilesByte.get(i);
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteData);
+            RandomAccessInputStream randomAccessInputStream = new MemoryCacheRandomAccessInputStream(byteArrayInputStream);
+            if (j > numOfPages - 1)
+            {
+                j = 0;
+                randomAccessInputStreamsList.add(randomAccessInputStreams); //add subgroup to list
+                //if last batch of pages are less than numOfPages
+                if (numOfPages > outputFilesByte.size() - i)
+                    randomAccessInputStreams = new RandomAccessInputStream[outputFilesByte.size() - i];
+                else randomAccessInputStreams = new RandomAccessInputStream[numOfPages];
+            }
+            randomAccessInputStreams[j++] = randomAccessInputStream;
+        }
+        randomAccessInputStreamsList.add(randomAccessInputStreams);
+
+        String fileNamePrefix = "file_#";
+        if(!StringUtils.isNullOrEmpty(outputFilePrefix)) fileNamePrefix = outputFilePrefix + "_" + fileNamePrefix;
+
+        List<IFD> list = new ArrayList<IFD>();
+        short endian = rin.readShort();
+        WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
+        rin.seek(STREAM_HEAD);
+        int offset = readHeader(rin);
+        readIFDs(null, null, TiffTag.class, list, offset, rin);
+
+        for (int i = 0; i < randomAccessInputStreamsList.size(); i++)
+        {
+            RandomAccessInputStream[] rais = randomAccessInputStreamsList.get(i);
+            if (rais.length > 1)
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOutputStream(fileNamePrefix + i + ".tiff"));
+                rout.setWriteStrategy(writeStrategy);
+                TIFFTweaker.mergeTiffImagesEx(rout, rais);
+                rout.close();
+                baos.close();
+            } else
+            {
+                splitPagesKeepStreamOpen(rais[0],fileNamePrefix + i);
+            }
+        }
+        rin.close();
+    }
+
+    /**
      * Split a multiple page TIFF into single page TIFFs byte arrays
      * @param rin input RandomAccessInputStream to read multiple page TIFF
      * @param outputFilesByte output files as a list of byte arrays
      */
     public static void splitPages(RandomAccessInputStream rin, final List<byte[]> outputFilesByte) throws IOException {
+        splitPagesKeepStreamOpen(rin, outputFilesByte);
+        rin.close();
+    }
+
+    private static void splitPagesKeepStreamOpen(RandomAccessInputStream rin, final List<byte[]> outputFilesByte) throws IOException {
         List<IFD> list = new ArrayList<IFD>();
         short endian = rin.readShort();
         WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
         // Set write strategy based on byte order
- 		if(endian == IOUtils.LITTLE_ENDIAN)
- 		    writeStrategy = WriteStrategyII.getInstance();
+        if(endian == IOUtils.LITTLE_ENDIAN)
+            writeStrategy = WriteStrategyII.getInstance();
         rin.seek(STREAM_HEAD);
         int offset = readHeader(rin);
         readIFDs(null, null, TiffTag.class, list, offset, rin);
@@ -3054,37 +3203,42 @@ public class TIFFTweaker {
 	 * @throws IOException
 	 */
 	public static void splitPages(RandomAccessInputStream rin, String outputFilePrefix) throws IOException {
-		List<IFD> list = new ArrayList<IFD>();
-		short endian = rin.readShort();
-		WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
-		// Set write strategy based on byte order
-		if(endian == IOUtils.LITTLE_ENDIAN)
-		    writeStrategy = WriteStrategyII.getInstance();
-		rin.seek(STREAM_HEAD);
-		int offset = readHeader(rin);
-		readIFDs(null, null, TiffTag.class, list, offset, rin);
-		
-		String fileNamePrefix = "page_#";
-		if(!StringUtils.isNullOrEmpty(outputFilePrefix)) fileNamePrefix = outputFilePrefix + "_" + fileNamePrefix;
-		
-		for(int i = 0; i < list.size(); i++) {
-			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOutputStream(fileNamePrefix + i + ".tif"));
-			rout.setWriteStrategy(writeStrategy);
-			// Write TIFF header
-			int writeOffset = writeHeader(rout);
-			// Write page data
-			writeOffset = copyPageData(list.get(i), writeOffset, rin, rout);
-			int firstIFDOffset = writeOffset;
-			// Write IFD
-			if(list.get(i).removeField(TiffTag.SUBFILE_TYPE) == null)
-				list.get(i).removeField(TiffTag.NEW_SUBFILE_TYPE);
-			list.get(i).removeField(TiffTag.PAGE_NUMBER);
-			list.get(i).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{1}));
-			writeOffset = list.get(i).write(rout, writeOffset);
-			writeToStream(rout, firstIFDOffset);
-			rout.close();
-		}
+        splitPagesKeepStreamOpen(rin, outputFilePrefix);
+        rin.close();
 	}
+
+    private static void splitPagesKeepStreamOpen(RandomAccessInputStream rin, String outputFilePrefix) throws IOException {
+        List<IFD> list = new ArrayList<IFD>();
+        short endian = rin.readShort();
+        WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
+        // Set write strategy based on byte order
+        if(endian == IOUtils.LITTLE_ENDIAN)
+            writeStrategy = WriteStrategyII.getInstance();
+        rin.seek(STREAM_HEAD);
+        int offset = readHeader(rin);
+        readIFDs(null, null, TiffTag.class, list, offset, rin);
+
+        String fileNamePrefix = "page_#";
+        if(!StringUtils.isNullOrEmpty(outputFilePrefix)) fileNamePrefix = outputFilePrefix + "_" + fileNamePrefix;
+
+        for(int i = 0; i < list.size(); i++) {
+            RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOutputStream(fileNamePrefix + i + ".tif"));
+            rout.setWriteStrategy(writeStrategy);
+            // Write TIFF header
+            int writeOffset = writeHeader(rout);
+            // Write page data
+            writeOffset = copyPageData(list.get(i), writeOffset, rin, rout);
+            int firstIFDOffset = writeOffset;
+            // Write IFD
+            if(list.get(i).removeField(TiffTag.SUBFILE_TYPE) == null)
+                list.get(i).removeField(TiffTag.NEW_SUBFILE_TYPE);
+            list.get(i).removeField(TiffTag.PAGE_NUMBER);
+            list.get(i).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{1}));
+            writeOffset = list.get(i).write(rout, writeOffset);
+            writeToStream(rout, firstIFDOffset);
+            rout.close();
+        }
+    }
 	
 	public static void write(TIFFImage tiffImage, RandomAccessOutputStream rout) throws IOException {
 		RandomAccessInputStream rin = tiffImage.getInputStream();

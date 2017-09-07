@@ -161,8 +161,11 @@ public class TestTIFFTweaker extends TestBase {
 				TIFFTweaker.splitPages(rin, FileUtils.getNameWithoutExtension(new File(args[0])));
 			} else if(args[1].equalsIgnoreCase("splitpagebytes")) {
 				TIFFTweaker.splitPages(rin, new ArrayList<byte[]>());
-			}
-			else if(args[1].equalsIgnoreCase("insertexif")) {
+			} else if (args[1].equalsIgnoreCase("splitpagecustom")) {
+                TIFFTweaker.splitPages(rin, FileUtils.getNameWithoutExtension(new File(args[0])), Integer.parseInt(args[2]));
+			} else if (args[1].equalsIgnoreCase("splitpagecustombytes")) {
+                TIFFTweaker.splitPages(rin, new ArrayList<byte[]>(), Integer.parseInt(args[2]));
+            } else if(args[1].equalsIgnoreCase("insertexif")) {
 				fout = new FileOutputStream("EXIF.tif");
 				rout = new FileCacheRandomAccessOutputStream(fout);
 				TIFFTweaker.insertExif(rin, rout, populateExif(), true);
