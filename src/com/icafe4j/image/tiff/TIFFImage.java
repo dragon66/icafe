@@ -10,6 +10,7 @@
 
 package com.icafe4j.image.tiff;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +26,7 @@ import com.icafe4j.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 05/23/2014
  */
-public class TIFFImage implements Iterable<IFD> {
+public class TIFFImage implements Iterable<IFD>, Closeable {
 	// Define fields
 	private int numOfPages;
 	private int workingPage;
@@ -91,5 +92,9 @@ public class TIFFImage implements Iterable<IFD> {
 
 	public Iterator<IFD> iterator() {
 		return ifds.iterator();
+	}
+
+	public void close() throws IOException {
+		rin.close();		
 	}
 }
