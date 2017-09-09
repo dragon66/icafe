@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    09Sep2017  Added split a multiple page TIFF into smaller multiple page TIFF
  * SV    05Sep2017  Added split a multiple page TIFF into single page TIFFs byte arrays
  * WY    04Mar2017  Added insertMetadata() to insert multiple Metadata at one time
  * WY    11Dec2016  Added byte order to writeMultipageTIFF
@@ -215,8 +216,7 @@ public class TIFFTweaker {
 		rin.seek(0x02);
 		short tiff_id = rin.readShort();
 		
-		if(tiff_id!=0x2a)//"*" 42 decimal
-		{
+		if(tiff_id != 0x2a) { //"*" 42 decimal
 		   rin.close();
 		   rout.close();
 		   throw new RuntimeException("Invalid TIFF identifier");
@@ -3082,6 +3082,107 @@ public class TIFFTweaker {
 			list.get(i).addField(new ShortField(TiffTag.SUBFILE_TYPE.getValue(), new short[]{1}));
 			writeOffset = list.get(i).write(rout, writeOffset);
 			writeToStream(rout, firstIFDOffset);
+			rout.close();
+		}
+	}
+	
+	/**
+	 * Split a multiple page TIFF into multiple page TIFF with size pages each
+	 * 
+	 * @param rin input RandomAccessInputStream to read multiple page TIFF
+	 * @param outputFilePrefix output file name prefix for the split TIFFs
+	 * @param size number of pages each output image contains
+	 * @throws IOException
+	 */
+	public static void splitPages(RandomAccessInputStream rin, String outputFilePrefix, int size) throws IOException {
+		if(size <= 0) throw new IllegalArgumentException("Negative size specified");
+		if(size == 1) splitPages(rin, outputFilePrefix);
+		// The user is serious keep on working
+		List<IFD> list = new ArrayList<IFD>();
+		short endian = rin.readShort();
+		WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
+		// Set write strategy based on byte order
+		if(endian == IOUtils.LITTLE_ENDIAN)
+		    writeStrategy = WriteStrategyII.getInstance();
+		rin.seek(STREAM_HEAD);
+		int offset = readHeader(rin);
+		readIFDs(null, null, TiffTag.class, list, offset, rin);
+		
+		String fileNamePrefix = "image_#";
+		if(!StringUtils.isNullOrEmpty(outputFilePrefix)) fileNamePrefix = outputFilePrefix + "_" + fileNamePrefix;
+		
+		if(list.size() <= size) return; // No need to do anything
+		
+		int partition = list.size()/size;
+		int leftOver = list.size()%size;
+			
+		int fromIndex = 0;
+		
+		for(int i = 0; i < partition; i++) {
+			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOutputStream(fileNamePrefix + i + ".tif"));
+			rout.setWriteStrategy(writeStrategy);
+			// Write TIFF header
+			int writeOffset = writeHeader(rout);
+			// Write page data
+						
+			for(int j = 0; j < size; j++) {
+				writeOffset = copyPageData(list.get(fromIndex + j), writeOffset, rin, rout);
+			}
+			
+			int firstIFDOffset = writeOffset;
+			
+			// Write IFDs
+			for(int k = 0; k < size; k++) {
+				if(list.get(fromIndex + k).removeField(TiffTag.SUBFILE_TYPE) == null)
+					list.get(fromIndex + k).removeField(TiffTag.NEW_SUBFILE_TYPE);
+				list.get(fromIndex + k).removeField(TiffTag.PAGE_NUMBER);
+				list.get(fromIndex + k).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)k, (short)size}));
+				list.get(fromIndex + k).addField(new ShortField(TiffTag.NEW_SUBFILE_TYPE.getValue(), new short[]{2}));
+				writeOffset = list.get(fromIndex + k).write(rout, writeOffset);
+			}
+			
+			// Link the IFDs
+			for(int l = 0; l < size - 1; l++) {
+				list.get(fromIndex + l).setNextIFDOffset(rout, list.get(fromIndex + l + 1).getStartOffset());				
+			}
+			
+			writeToStream(rout, firstIFDOffset);
+			
+			rout.close();
+			// Reset fromIndex
+			fromIndex += size;
+		}
+		// Dealing with the left over pages
+		if(leftOver > 0) {
+			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOutputStream(fileNamePrefix + partition + ".tif"));
+			rout.setWriteStrategy(writeStrategy);
+			// Write TIFF header
+			int writeOffset = writeHeader(rout);
+			// Write page data
+						
+			for(int j = 0; j < leftOver; j++) {
+				writeOffset = copyPageData(list.get(fromIndex + j), writeOffset, rin, rout);
+			}
+			
+			int firstIFDOffset = writeOffset;
+			
+			// Write IFDs
+			for(int k = 0; k < leftOver; k++) {
+				if(list.get(fromIndex + k).removeField(TiffTag.SUBFILE_TYPE) == null)
+					list.get(fromIndex + k).removeField(TiffTag.NEW_SUBFILE_TYPE);
+				list.get(fromIndex + k).removeField(TiffTag.PAGE_NUMBER);
+				list.get(fromIndex + k).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)k, (short)size}));
+				list.get(fromIndex + k).addField(new ShortField(TiffTag.NEW_SUBFILE_TYPE.getValue(), new short[]{2}));
+				writeOffset = list.get(fromIndex + k).write(rout, writeOffset);
+			}
+			
+			// Link the IFDs
+			for(int l = 0; l < leftOver - 1; l++) {
+				list.get(fromIndex + l).setNextIFDOffset(rout, list.get(fromIndex + l + 1).getStartOffset());				
+			}
+			
+			writeToStream(rout, firstIFDOffset);
+			
 			rout.close();
 		}
 	}
