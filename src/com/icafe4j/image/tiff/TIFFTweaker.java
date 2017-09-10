@@ -3187,6 +3187,119 @@ public class TIFFTweaker {
 		}
 	}
 	
+	/**
+	 * Split a multiple page TIFF into size pages TIFFs byte arrays
+	 * 
+	 * @param rin input RandomAccessInputStream to read multiple page TIFF
+	 * @param outputFilesByte output files as a list of byte arrays
+	 * @param size number of pages each output image contains
+	 * @throws IOException
+	 */
+	public static void splitPages(RandomAccessInputStream rin, final List<byte[]> outputFilesByte, int size) throws IOException {
+		if(size <= 0) throw new IllegalArgumentException("Negative size specified");
+		if(size == 1) splitPages(rin, outputFilesByte);
+		// The user is serious keep on working
+		List<IFD> list = new ArrayList<IFD>();
+		short endian = rin.readShort();
+		WriteStrategy writeStrategy = WriteStrategyMM.getInstance();
+		// Set write strategy based on byte order
+		if(endian == IOUtils.LITTLE_ENDIAN)
+		    writeStrategy = WriteStrategyII.getInstance();
+		rin.seek(STREAM_HEAD);
+		int offset = readHeader(rin);
+		readIFDs(null, null, TiffTag.class, list, offset, rin);
+		
+		if(list.size() <= size) return; // No need to do anything
+		
+		int partition = list.size()/size;
+		int leftOver = list.size()%size;
+			
+		int fromIndex = 0;
+		
+		for(int i = 0; i < partition; i++) {
+			 //To read image into byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(baos);
+			rout.setWriteStrategy(writeStrategy);
+			// Write TIFF header
+			int writeOffset = writeHeader(rout);
+			// Write page data
+						
+			for(int j = 0; j < size; j++) {
+				writeOffset = copyPageData(list.get(fromIndex + j), writeOffset, rin, rout);
+			}
+			
+			int firstIFDOffset = writeOffset;
+			
+			// Write IFDs
+			for(int k = 0; k < size; k++) {
+				if(list.get(fromIndex + k).removeField(TiffTag.SUBFILE_TYPE) == null)
+					list.get(fromIndex + k).removeField(TiffTag.NEW_SUBFILE_TYPE);
+				list.get(fromIndex + k).removeField(TiffTag.PAGE_NUMBER);
+				list.get(fromIndex + k).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)k, (short)size}));
+				list.get(fromIndex + k).addField(new ShortField(TiffTag.NEW_SUBFILE_TYPE.getValue(), new short[]{2}));
+				writeOffset = list.get(fromIndex + k).write(rout, writeOffset);
+			}
+			
+			// Link the IFDs
+			for(int l = 0; l < size - 1; l++) {
+				list.get(fromIndex + l).setNextIFDOffset(rout, list.get(fromIndex + l + 1).getStartOffset());				
+			}
+			
+			writeToStream(rout, firstIFDOffset);
+			
+			rout.close();
+			
+			//Convert to byte array
+            byte[] byteData = baos.toByteArray();
+            LOGGER.debug("File " + i + " has byte size: " + byteData.length / 1024 + " kb");
+            outputFilesByte.add(byteData);
+            
+			// Reset fromIndex
+			fromIndex += size;
+		}
+		// Dealing with the left over pages
+		if(leftOver > 0) {
+			 //To read image into byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(baos);
+			rout.setWriteStrategy(writeStrategy);
+			// Write TIFF header
+			int writeOffset = writeHeader(rout);
+			// Write page data
+						
+			for(int j = 0; j < leftOver; j++) {
+				writeOffset = copyPageData(list.get(fromIndex + j), writeOffset, rin, rout);
+			}
+			
+			int firstIFDOffset = writeOffset;
+			
+			// Write IFDs
+			for(int k = 0; k < leftOver; k++) {
+				if(list.get(fromIndex + k).removeField(TiffTag.SUBFILE_TYPE) == null)
+					list.get(fromIndex + k).removeField(TiffTag.NEW_SUBFILE_TYPE);
+				list.get(fromIndex + k).removeField(TiffTag.PAGE_NUMBER);
+				list.get(fromIndex + k).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)k, (short)size}));
+				list.get(fromIndex + k).addField(new ShortField(TiffTag.NEW_SUBFILE_TYPE.getValue(), new short[]{2}));
+				writeOffset = list.get(fromIndex + k).write(rout, writeOffset);
+			}
+			
+			// Link the IFDs
+			for(int l = 0; l < leftOver - 1; l++) {
+				list.get(fromIndex + l).setNextIFDOffset(rout, list.get(fromIndex + l + 1).getStartOffset());				
+			}
+			
+			writeToStream(rout, firstIFDOffset);
+			
+			rout.close();
+			
+		  //Convert to byte array
+            byte[] byteData = baos.toByteArray();
+            LOGGER.debug("File " + partition + " has byte size: " + byteData.length / 1024 + " kb");
+            outputFilesByte.add(byteData);
+		}
+	}
+	
 	public static void write(TIFFImage tiffImage, RandomAccessOutputStream rout) throws IOException {
 		RandomAccessInputStream rin = tiffImage.getInputStream();
 		int offset = writeHeader(rout);
