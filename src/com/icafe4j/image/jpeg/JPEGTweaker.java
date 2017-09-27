@@ -1148,9 +1148,12 @@ public class JPEGTweaker {
 						IRB irb = new IRB(eightBIMStream.toByteArray());
 			    		// Shallow copy the map.
 			    		bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
-						bimMap.remove(ImageResourceID.IPTC_NAA.getValue());					
+						bimMap.remove(ImageResourceID.IPTC_NAA.getValue());
+						// Reset stream for further use
+				  		eightBIMStream.reset();						
+					} else {
+		    			eightBIMStream = new ByteArrayOutputStream();
 				  	}
-					eightBIMStream.reset();
 					// Insert IPTC data as one of IRB 8BIM block
 					iptc.write(eightBIMStream);
 					// Create 8BIM for IPTC
