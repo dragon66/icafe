@@ -31,19 +31,16 @@ public class LRUCache<K,V> implements Map<K,V>, java.io.Serializable {
 	
 	private Map<K,V> map = null;
 	
-	public LRUCache()
-	{
+	public LRUCache() {
 	   this(10, false);	
 	}
 	
-	public LRUCache(boolean isThreadsafe)
-	{
+	public LRUCache(boolean isThreadsafe) {
 		this(10, isThreadsafe);
 	}
 	
-	public LRUCache(final int limit, boolean isThreadsafe)
-	{
-		map = new LinkedHashMap<K,V>() {
+	public LRUCache(final int limit, boolean isThreadsafe) {
+		map = new LinkedHashMap<K,V>(16, 0.75f, true) {
 			    private static final long serialVersionUID = 3195834455030574184L;
 
 				public boolean removeEldestEntry (Map.Entry<K,V> eldest){
@@ -51,8 +48,7 @@ public class LRUCache<K,V> implements Map<K,V>, java.io.Serializable {
 				}
 			};
 		
-		if(isThreadsafe)
-		{
+		if(isThreadsafe) {
 			map = Collections.synchronizedMap(map);
 		}	
 	}	
