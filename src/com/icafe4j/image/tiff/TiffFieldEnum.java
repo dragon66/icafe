@@ -10,6 +10,7 @@
 
 package com.icafe4j.image.tiff;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -122,12 +123,27 @@ public class TiffFieldEnum {
 	    
 	    private static final Map<Integer, Compression> typeMap = new HashMap<Integer, Compression>();
 	       
-	    static
-	    {
+	    static {
 	      for(Compression compression : values())
 	    	  typeMap.put(compression.getValue(), compression);
 	    } 
+	    
+	    public static EnumSet<Compression> forBilevel() {
+	    	return EnumSet.of(CCITTRLE, CCITTFAX3, CCITTFAX4, LZW, DEFLATE, DEFLATE_ADOBE, PACKBITS);
+	    }
+	    
+	    public static EnumSet<Compression> forIndexed() {
+	    	return EnumSet.of(LZW, DEFLATE, DEFLATE_ADOBE, PACKBITS);
+	    }
+	    
+	    public static EnumSet<Compression> forGrayScale() {
+	    	return EnumSet.of(LZW, DEFLATE, DEFLATE_ADOBE, PACKBITS, JPG);
+	    }
 
+	    public static EnumSet<Compression> forTrueColor() {
+	    	return EnumSet.of(LZW, DEFLATE, DEFLATE_ADOBE, PACKBITS, JPG);
+	    }
+	    
 		private String description;
 		private int value;
 	}
