@@ -13,6 +13,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    22Oct2017  Added compression type check
  * WY    11Dec2016  Added byte order support to TiffOptions
  * WY    16Jun2016  Added code to set resolution
  * WY    05Dec2015  Changed writePage() signature
@@ -34,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.EnumSet;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,6 +67,7 @@ import com.icafe4j.image.tiff.ShortField;
 import com.icafe4j.image.tiff.TiffField;
 import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.image.tiff.UndefinedField;
+import com.icafe4j.image.tiff.UnsupportedCompressionException;
 import com.icafe4j.image.tiff.TiffFieldEnum.*;
 import com.icafe4j.image.util.IMGUtils;
 import com.icafe4j.io.ByteOrder;
@@ -505,7 +508,11 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 	}
 	
 	private void writeBilevel(byte[] pixels, int imageWidth, int imageHeight, Compression compression) throws Exception {
-		//
+		// Check Compression type
+		EnumSet<Compression> supportedCompressionTypes = Compression.forBilevel();
+		
+		if(!supportedCompressionTypes.contains(compression)) throw new UnsupportedCompressionException("Bilevel Image only supports the following compression types: " + supportedCompressionTypes);
+	
 		TiffField<?> tiffField = new ShortField(TiffTag.SAMPLES_PER_PIXEL.getValue(), new short[]{1});
 		ifd.addField(tiffField);
 		tiffField = new ShortField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue(), new short[]{(short)PhotoMetric.WHITE_IS_ZERO.getValue()});
@@ -513,7 +520,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		tiffField = new ShortField(TiffTag.BITS_PER_SAMPLE.getValue(), new short[]{1});
 		ifd.addField(tiffField);		
 		tiffField = new ShortField(TiffTag.FILL_ORDER.getValue(), new short[] {1});
-		ifd.addField(tiffField);		
+		ifd.addField(tiffField);
 		
 		switch(compression) {
 			case CCITTRLE:
@@ -549,6 +556,11 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 	}
 	
 	private void writeGrayScale(byte[] newPixels, int imageWidth, int imageHeight, Compression compression, boolean hasAlpha) throws Exception {		
+		// Check compression type
+		EnumSet<Compression> supportedCompressionTypes = Compression.forGrayScale();
+		
+		if(!supportedCompressionTypes.contains(compression)) throw new UnsupportedCompressionException("GrayScale Image only supports the following compression types: " + supportedCompressionTypes);
+		
 		// Assume 8 bits first
 		int bitsPerPixel = 8;
 		boolean applyPredictor = true;
@@ -677,6 +689,11 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 	}
 	
 	private void writeIndexed(int[] pixels, int imageWidth, int imageHeight, Compression compression) throws Exception {		
+		// Check compression type
+		EnumSet<Compression> supportedCompressionTypes = Compression.forIndexed();
+		
+		if(!supportedCompressionTypes.contains(compression)) throw new UnsupportedCompressionException("Indexed Image only supports the following compression types: " + supportedCompressionTypes);
+		
 		// Create data for the strip
 		byte[] newPixels = new byte[imageWidth*imageHeight];
 		int[] colorPalette = new int[256];
@@ -707,6 +724,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		}
 		
 		// See if we are dealing with BW image
+		/** Comment out to respect user's compression setting
 		if(bitsPerPixel == 1) {
 			
 			int color0 = colorPalette[0]&0xffffff;
@@ -720,8 +738,8 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 				
 				return;
 			}
-		}
-				
+		}*/
+		
 		int numOfColors = (1<<bitsPerPixel);
 		int numOfColors2 = (numOfColors<<1);
 		// Create color map
@@ -840,6 +858,11 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 	}
 	
 	private void writeTrueColor(int[] pixels, int imageWidth, int imageHeight, Compression compression) throws Exception {
+		// Check compression type
+		EnumSet<Compression> supportedCompressionTypes = Compression.forTrueColor();
+		
+		if(!supportedCompressionTypes.contains(compression)) throw new UnsupportedCompressionException("TrueColor Image only supports the following compression types: " + supportedCompressionTypes);
+		
 		// Whether or not to include alpha channel
 		boolean applyPredictor = true;
 		PhotoMetric photoMetric = PhotoMetric.RGB;
