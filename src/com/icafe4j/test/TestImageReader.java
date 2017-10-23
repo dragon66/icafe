@@ -82,7 +82,7 @@ public class TestImageReader extends TestBase {
 		  		 TIFFOptions tiffOptions = new TIFFOptions();
 		  		 tiffOptions.setByteOrder(ByteOrder.LITTLE_ENDIAN);
 		  		 tiffOptions.setApplyPredictor(true);
-		  		 tiffOptions.setTiffCompression(Compression.CCITTFAX4);
+		  		 tiffOptions.setTiffCompression(Compression.LZW);
 		  		 tiffOptions.setJPEGQuality(60);
 		  		 tiffOptions.setPhotoMetric(PhotoMetric.SEPARATED);
 		  		 tiffOptions.setWriteICCProfile(true);
