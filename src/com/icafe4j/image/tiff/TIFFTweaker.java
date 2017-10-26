@@ -3354,12 +3354,13 @@ public class TIFFTweaker {
 		}
 		
 		// Link the IFDs
-		for(int i = 0; i < frames.length - 1; i++)
+		for(int i = 0; i < list.size() - 1; i++)
 			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
-				
-		int firstIFDOffset = list.get(0).getStartOffset();
 		
-		writeToStream(rout, firstIFDOffset);
+		if(list.size() > 0) { // We have at least one page to write
+			int firstIFDOffset = list.get(0).getStartOffset();
+			writeToStream(rout, firstIFDOffset);
+		}		
 	}
 	
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageParam[] imageParam, BufferedImage ... images) throws IOException {
@@ -3395,12 +3396,13 @@ public class TIFFTweaker {
 		}
 		
 		// Link the IFDs
-		for(int i = 0; i < images.length - 1; i++)
+		for(int i = 0; i < list.size() - 1; i++)
 			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
-				
-		int firstIFDOffset = list.get(0).getStartOffset();
 		
-		writeToStream(rout, firstIFDOffset);
+		if(list.size() > 0) { // We have at least one page to write
+			int firstIFDOffset = list.get(0).getStartOffset();
+			writeToStream(rout, firstIFDOffset);
+		}		
 	}
 	
 	public static int writePage(BufferedImage image, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
