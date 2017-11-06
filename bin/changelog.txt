@@ -1,6 +1,9 @@
 ***************************
-Last modified on 03/04/2017
+Last modified on 10/22/2017
 ***************************
+22Oct2017  Added compression type check to TIFFWriter
+09Sep2017  Added split a multiple page TIFF into smaller multiple page TIFF
+05Sep2017  Added split a multiple page TIFF into single page TIFFs byte arrays
 04Mar2017  Added insertMetadata() to TIFFTweaker
 02Mar2017  Added insertMetadata() to JPEGTweaker
 20Feb2017  Fix GIFTweaker.splitFrames() throws stream closed exception
