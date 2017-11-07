@@ -6,6 +6,5 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.12.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.12.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_60/lib/tools.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
