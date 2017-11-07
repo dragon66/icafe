@@ -80,8 +80,8 @@
    	        <arg value="org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file" />
      	    <arg value="-Durl=${ossrh-snapshots-repository-url}" />
       		<arg value="-DrepositoryId=${ossrh-server-id}" />
-      		<arg value="-DpomFile=pom.xml" />
-      		<arg value="-Dfile=${jar}" />
+      		<arg value="-DpomFile=${basedir}/pom.xml" />
+      		<arg value="-Dfile=${basedir}/${jar}" />
     	</artifact:mvn>
   </target>
 </project>
