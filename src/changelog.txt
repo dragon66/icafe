@@ -1,6 +1,7 @@
 ***************************
-Last modified on 10/22/2017
+Last modified on 11/16/2017
 ***************************
+16Nov2017  Re-factor methods of TIFFTweaker
 22Oct2017  Added compression type check to TIFFWriter
 09Sep2017  Added split a multiple page TIFF into smaller multiple page TIFF
 05Sep2017  Added split a multiple page TIFF into single page TIFFs byte arrays
