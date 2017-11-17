@@ -47,7 +47,7 @@ public abstract class RandomAccessInputStream extends InputStream implements Dat
     }
     
     /**
-     * Closes the RandomAccessInputStream and it's underlying stream
+     * Closes the RandomAccessInputStream and but keeps it's underlying stream open
      * @throws IOException
      */
     public abstract void shallowClose() throws IOException;
