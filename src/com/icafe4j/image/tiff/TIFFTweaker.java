@@ -188,7 +188,7 @@ public class TIFFTweaker {
 		
 		int writeOffset = FIRST_WRITE_OFFSET;
 		// Read the IFDs into a list first
-		readIFDs(list, offset, rin, TiffTag.class);
+		readIFDs(list, offset, rin);
 		offset = copyPages(list, writeOffset, rin, rout);
 		int firstIFDOffset = list.get(0).getStartOffset();	
 
@@ -548,7 +548,7 @@ public class TIFFTweaker {
 		int offset = readHeader(rin);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -571,7 +571,7 @@ public class TIFFTweaker {
 		int offset = readHeader(rin);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -959,7 +959,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -1000,7 +1000,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -1063,7 +1063,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -1124,7 +1124,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -1197,7 +1197,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 	
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -1250,7 +1250,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -1433,7 +1433,7 @@ public class TIFFTweaker {
 		List<IFD> insertedList = new ArrayList<IFD>(frames.length);
 		
 		// Read the IFDs into a list first
-		readIFDs(list, offset, rin, TiffTag.class);
+		readIFDs(list, offset, rin);
 		
 		if(pageNumber < 0) pageNumber = 0;
 		else if(pageNumber > list.size()) pageNumber = list.size();
@@ -1520,7 +1520,7 @@ public class TIFFTweaker {
 		List<IFD> insertedList = new ArrayList<IFD>(images.length);
 		
 		// Read the IFDs into a list first
-		readIFDs(list, offset, rin, TiffTag.class);
+		readIFDs(list, offset, rin);
 		
 		if(pageNumber < 0) pageNumber = 0;
 		else if(pageNumber > list.size()) pageNumber = list.size();
@@ -1661,7 +1661,7 @@ public class TIFFTweaker {
 		List<IFD> ifds1 = new ArrayList<IFD>();
 		int offset1 = copyHeader(original, output);
 		// Read IFDs for the first image
-		readIFDs(ifds1, offset1, original, TiffTag.class);
+		readIFDs(ifds1, offset1, original);
 		// Sanity check
 		if(pageNumber < 0) pageNumber = 0;
 		else if(pageNumber > ifds1.size()) pageNumber = ifds1.size();
@@ -1900,7 +1900,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -1942,8 +1942,8 @@ public class TIFFTweaker {
 		// Read IFDs
 		List<IFD> ifds1 = new ArrayList<IFD>();
 		List<IFD> ifds2 = new ArrayList<IFD>();
-		readIFDs(ifds1, offset1, image1, TiffTag.class);
-		readIFDs(ifds2, offset2, image2, TiffTag.class);
+		readIFDs(ifds1, offset1, image1);
+		readIFDs(ifds2, offset2, image2);
 		int maxPageNumber = ifds1.size() + ifds2.size();
 		// Reset pageNumber
 		for(int i = 0; i < ifds1.size(); i++) {
@@ -1984,7 +1984,7 @@ public class TIFFTweaker {
 			List<IFD> ifds1 = new ArrayList<IFD>();
 			int offset1 = copyHeader(image1, merged);
 			// Read IFDs for the first image
-			readIFDs(ifds1, offset1, image1, TiffTag.class);
+			readIFDs(ifds1, offset1, image1);
 			for(int i = 0; i < ifds1.size(); i++) {
 				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
 				// Place holder, to be updated afterwards
@@ -2038,7 +2038,7 @@ public class TIFFTweaker {
 			List<IFD> ifds1 = new ArrayList<IFD>();
 			int offset1 = copyHeader(image1, merged);
 			// Read IFDs for the first image
-			readIFDs(ifds1, offset1, image1, TiffTag.class);
+			readIFDs(ifds1, offset1, image1);
 			for(int i = 0; i < ifds1.size(); i++) {
 				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
 				// Place holder, to be updated afterwards
@@ -2259,7 +2259,7 @@ public class TIFFTweaker {
 			List<IFD> ifds1 = new ArrayList<IFD>();
 			int offset1 = copyHeader(image1, merged);
 			// Read IFDs for the first image
-			readIFDs(ifds1, offset1, image1, TiffTag.class);
+			readIFDs(ifds1, offset1, image1);
 			for(int i = 0; i < ifds1.size(); i++) {
 				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
 				// Place holder, to be updated afterwards
@@ -2470,7 +2470,7 @@ public class TIFFTweaker {
 	public static int prepareForInsert(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IFD> ifds) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		if(ifds.size() == 1) { // Make the original image one page of the new multiple page TIFF
 			if(ifds.get(0).removeField(TiffTag.SUBFILE_TYPE) == null)
 				ifds.get(0).removeField(TiffTag.NEW_SUBFILE_TYPE);
@@ -2861,16 +2861,16 @@ public class TIFFTweaker {
 		return rin.readInt();
 	}
 	
-	private static void readIFDs(List<IFD> list, int offset, RandomAccessInputStream rin, Class<? extends Tag> tagClass) throws IOException {
+	private static void readIFDs(List<IFD> list, int offset, RandomAccessInputStream rin) throws IOException {
 		// Read the IFDs into a list first	
 		while (offset != 0) {
-			offset = readIFD(rin, list, offset, tagClass, null, null);
+			offset = readIFD(rin, list, offset, TiffTag.class, null, null);
 		}
 	}
 	
 	public static void readIFDs(List<IFD> list, RandomAccessInputStream rin) throws IOException {
 		int offset = readHeader(rin);
-		readIFDs(list, offset, rin, TiffTag.class);
+		readIFDs(list, offset, rin);
 	}
 	
 	public static Map<MetadataType, Metadata> readMetadata(RandomAccessInputStream rin) throws IOException {
@@ -2881,7 +2881,7 @@ public class TIFFTweaker {
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		int offset = readHeader(rin);
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 		
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -2959,7 +2959,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
-		readIFDs(ifds, offset, rin, TiffTag.class);
+		readIFDs(ifds, offset, rin);
 	
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -3062,7 +3062,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		
 		// Step 1: read the IFDs into a list first
-		readIFDs(list, offset, rin, TiffTag.class);		
+		readIFDs(list, offset, rin);		
 		// Step 2: remove pages from a multiple page TIFF
 		int pagesRemoved = 0;
 		if(startPage <= list.size() - 1)  {
@@ -3106,7 +3106,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		
 		// Step 1: read the IFDs into a list first
-		readIFDs(list, offset, rin, TiffTag.class);
+		readIFDs(list, offset, rin);
 		// Step 2: remove pages from a multiple page TIFF
 		int pagesRemoved = 0;			
 		pages = ArrayUtils.removeDuplicates(pages);
@@ -3146,7 +3146,7 @@ public class TIFFTweaker {
 		int offset = copyHeader(rin, rout);
 		
 		// Step 1: read the IFDs into a list first
-		readIFDs(list, offset, rin, TiffTag.class);		
+		readIFDs(list, offset, rin);		
 		// Step 2: remove pages from a multiple page TIFF
 		int pagesRetained = list.size();
 		List<IFD> newList = new ArrayList<IFD>();
@@ -3183,7 +3183,7 @@ public class TIFFTweaker {
 	  
 		int offset = copyHeader(rin, rout);
 		// Step 1: read the IFDs into a list first
-		readIFDs(list, offset, rin, TiffTag.class);		
+		readIFDs(list, offset, rin);		
 		// Step 2: remove pages from a multiple page TIFF
 		int pagesRetained = list.size();
 		List<IFD> newList = new ArrayList<IFD>();
@@ -3227,7 +3227,7 @@ public class TIFFTweaker {
  		    writeStrategy = WriteStrategyII.getInstance();
         rin.seek(STREAM_HEAD);
         int offset = readHeader(rin);
-        readIFDs(list, offset, rin, TiffTag.class);
+        readIFDs(list, offset, rin);
         for (int i = 0; i < list.size(); i++) {
             //To read image into byte array
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -3269,7 +3269,7 @@ public class TIFFTweaker {
 		    writeStrategy = WriteStrategyII.getInstance();
 		rin.seek(STREAM_HEAD);
 		int offset = readHeader(rin);
-		readIFDs(list, offset, rin, TiffTag.class);
+		readIFDs(list, offset, rin);
 		
 		String fileNamePrefix = "page_#";
 		if(!StringUtils.isNullOrEmpty(outputFilePrefix)) fileNamePrefix = outputFilePrefix + "_" + fileNamePrefix;
@@ -3313,7 +3313,7 @@ public class TIFFTweaker {
 		    writeStrategy = WriteStrategyII.getInstance();
 		rin.seek(STREAM_HEAD);
 		int offset = readHeader(rin);
-		readIFDs(list, offset, rin, TiffTag.class);
+		readIFDs(list, offset, rin);
 		
 		String fileNamePrefix = "image_#";
 		if(!StringUtils.isNullOrEmpty(outputFilePrefix)) fileNamePrefix = outputFilePrefix + "_" + fileNamePrefix;
@@ -3414,7 +3414,7 @@ public class TIFFTweaker {
 		    writeStrategy = WriteStrategyII.getInstance();
 		rin.seek(STREAM_HEAD);
 		int offset = readHeader(rin);
-		readIFDs(list, offset, rin, TiffTag.class);
+		readIFDs(list, offset, rin);
 		
 		if(list.size() <= size) return; // No need to do anything
 		
