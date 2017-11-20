@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    20Nov2017  Added re-factored merge() method
  * WY    09Sep2017  Added split a multiple page TIFF into smaller multiple page TIFF
  * SV    05Sep2017  Added split a multiple page TIFF into single page TIFFs byte arrays
  * WY    04Mar2017  Added insertMetadata() to insert multiple Metadata at one time
@@ -1922,119 +1923,9 @@ public class TIFFTweaker {
 		insertXMP(xmpBytes, rin, rout);
 	}
 	
-	/**
-	 * Merges two TIFF images together
-	 * <p>
-	 * Note: this method works for all TIFF images with BitsPerSample <= 8.
-	 * For BitsPerSample > 8, the result is unpredictable: if the image is
-	 * the first one in the list to be merged, or the endianness of the image
-	 * is the same as the merged image, it works fine, otherwise, the merged
-	 * image with BitsPerSample > 8 will contain wrong image data.
-	 * 
-	 * @param image1 RandomAccessInputStream for the first TIFF image
-	 * @param image2 RandomAccessInputStream for the second TIFF image
-	 * @param merged RanomAccessOutputStream for the merged TIFF image
-	 * @throws IOException
-	 */
-	public static void mergeTiffImages(RandomAccessInputStream image1, RandomAccessInputStream image2, RandomAccessOutputStream merged) throws IOException {
-		int offset1 = copyHeader(image1, merged);
-		int offset2 = readHeader(image2);
-		// Read IFDs
-		List<IFD> ifds1 = new ArrayList<IFD>();
-		List<IFD> ifds2 = new ArrayList<IFD>();
-		readIFDs(ifds1, offset1, image1);
-		readIFDs(ifds2, offset2, image2);
-		int maxPageNumber = ifds1.size() + ifds2.size();
-		// Reset pageNumber
-		for(int i = 0; i < ifds1.size(); i++) {
-			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
-			ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)maxPageNumber}));
-		}
-		for(int i = 0; i < ifds2.size(); i++) {
-			ifds2.get(i).removeField(TiffTag.PAGE_NUMBER);
-			ifds2.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)(i+ifds1.size()), (short)maxPageNumber}));
-		}		
-		int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, image1, merged);
-		offset = copyPages(ifds2, offset, image2, merged);
-		// Link the two IFDs
-		ifds1.get(ifds1.size() - 1).setNextIFDOffset(merged, ifds2.get(0).getStartOffset());
-		// Figure out the first IFD offset
-		int firstIFDOffset = ifds1.get(0).getStartOffset();
-		// And write the IFDs
-		writeToStream(merged, firstIFDOffset); // DONE!
-	}
-	
-	/**
-	 * Merges a list of TIFF images (single or multiple page) into one. 
-	 * <p>
-	 * Note: this method works for all TIFF images with BitsPerSample <= 8.
-	 * For BitsPerSample > 8, the result is unpredictable: if the image is
-	 * the first one in the list to be merged, or the endianness of the image
-	 * is the same as the merged image, it works fine, otherwise, the merged
-	 * image with BitsPerSample > 8 will contain wrong image data.  
-	 *  
-	 * @param merged RandomAccessOutputStream for the merged TIFF
-	 * @param images input TIFF image files to be merged
-	 * @throws IOException
-	 */
-	public static void mergeTiffImages(RandomAccessOutputStream merged, File... images) throws IOException {
-		if(images != null && images.length > 1) {
-			FileInputStream fis1 = new FileInputStream(images[0]);
-			RandomAccessInputStream image1 = new FileCacheRandomAccessInputStream(fis1);
-			List<IFD> ifds1 = new ArrayList<IFD>();
-			int offset1 = copyHeader(image1, merged);
-			// Read IFDs for the first image
-			readIFDs(ifds1, offset1, image1);
-			for(int i = 0; i < ifds1.size(); i++) {
-				ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
-				// Place holder, to be updated afterwards
-				ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0}));
-			}
-			int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, image1, merged);
-			// Release resources
-			image1.close();
-			for(int i = 1; i < images.length; i++) {
-				List<IFD> ifds2 = new ArrayList<IFD>();
-				FileInputStream fis2 = new FileInputStream(images[i]);
-				RandomAccessInputStream image2 = new FileCacheRandomAccessInputStream(fis2); 
-				readIFDs(ifds2, image2);
-				for(int j = 0; j < ifds2.size(); j++) {
-					ifds2.get(j).removeField(TiffTag.PAGE_NUMBER);
-					// Place holder, to be updated afterwards
-					ifds2.get(j).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0})); 
-				}
-				offset = copyPages(ifds2, offset, image2, merged);
-				// Link the two IFDs
-				ifds1.get(ifds1.size() - 1).setNextIFDOffset(merged, ifds2.get(0).getStartOffset());
-				ifds1.addAll(ifds2);
-				// Release resources
-				image2.close();
-			}
-			int maxPageNumber = ifds1.size();
-			// Reset pageNumber and total pages
-			for(int i = 0; i < ifds1.size(); i++) {
-				offset = ifds1.get(i).getField(TiffTag.PAGE_NUMBER).getDataOffset();
-				merged.seek(offset);
-				merged.writeShort((short)i); // Update page number for this page
-				merged.writeShort((short)maxPageNumber); // Update total page number
-			}			
-			// Figure out the first IFD offset
-			int firstIFDOffset = ifds1.get(0).getStartOffset();
-			// And write the IFDs
-			writeToStream(merged, firstIFDOffset); // DONE!
-		}
-	}
-	
-	/**
-	 * Merges a list of TIFF images into one regardless of the original bit depth
-	 * 
-	 * @param merged RandomAccessOutputStream for the merged TIFF
-	 * @param images input TIFF image files to be merged
-	 * @throws IOException
-	 */
-	public static void mergeTiffImagesEx(RandomAccessOutputStream merged, File... images) throws IOException {
-		if(images != null && images.length > 1) {
-			RandomAccessInputStream image1 = new FileCacheRandomAccessInputStream(new FileInputStream(images[0]));
+	private static <E> void merge(RandomAccessOutputStream merged, RandomInputStreamAdaptor<E> adaptor) throws IOException {
+		if(adaptor.hasNext()) {
+			RandomAccessInputStream image1 = adaptor.next();
 			List<IFD> ifds1 = new ArrayList<IFD>();
 			int offset1 = copyHeader(image1, merged);
 			// Read IFDs for the first image
@@ -2048,9 +1939,9 @@ public class TIFFTweaker {
 			// Release resources
 			image1.close();
 			short writeEndian = merged.getEndian();
-			for(int i = 1; i < images.length; i++) {
+			while (adaptor.hasNext()) {
 				List<IFD> ifds2 = new ArrayList<IFD>();
-				RandomAccessInputStream image2 = new FileCacheRandomAccessInputStream(new FileInputStream(images[i])); 
+				RandomAccessInputStream image2 = adaptor.next(); 
 				readIFDs(ifds2, image2);
 				for(int j = 0; j < ifds2.size(); j++) {
 					ifds2.get(j).removeField(TiffTag.PAGE_NUMBER);
@@ -2245,17 +2136,66 @@ public class TIFFTweaker {
 			}
 		}
 	}
-
+	
 	/**
-	 * Merges a list of TIFF images into one regardless of the original bit depth
+	 * Merges two TIFF images together
+	 * <p>
+	 * Note: this method works for all TIFF images with BitsPerSample <= 8.
+	 * For BitsPerSample > 8, the result is unpredictable: if the image is
+	 * the first one in the list to be merged, or the endianness of the image
+	 * is the same as the merged image, it works fine, otherwise, the merged
+	 * image with BitsPerSample > 8 will contain wrong image data.
 	 * 
-	 * @param merged RandomAccessOutputStream for the merged TIFF
-	 * @param images InputStreams of TIFF images to be merged
+	 * @param image1 RandomAccessInputStream for the first TIFF image
+	 * @param image2 RandomAccessInputStream for the second TIFF image
+	 * @param merged RanomAccessOutputStream for the merged TIFF image
 	 * @throws IOException
 	 */
-	public static void mergeTiffImagesEx(RandomAccessOutputStream merged, InputStream... images) throws IOException {
+	public static void mergeTiffImages(RandomAccessInputStream image1, RandomAccessInputStream image2, RandomAccessOutputStream merged) throws IOException {
+		int offset1 = copyHeader(image1, merged);
+		int offset2 = readHeader(image2);
+		// Read IFDs
+		List<IFD> ifds1 = new ArrayList<IFD>();
+		List<IFD> ifds2 = new ArrayList<IFD>();
+		readIFDs(ifds1, offset1, image1);
+		readIFDs(ifds2, offset2, image2);
+		int maxPageNumber = ifds1.size() + ifds2.size();
+		// Reset pageNumber
+		for(int i = 0; i < ifds1.size(); i++) {
+			ifds1.get(i).removeField(TiffTag.PAGE_NUMBER);
+			ifds1.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)i, (short)maxPageNumber}));
+		}
+		for(int i = 0; i < ifds2.size(); i++) {
+			ifds2.get(i).removeField(TiffTag.PAGE_NUMBER);
+			ifds2.get(i).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{(short)(i+ifds1.size()), (short)maxPageNumber}));
+		}		
+		int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, image1, merged);
+		offset = copyPages(ifds2, offset, image2, merged);
+		// Link the two IFDs
+		ifds1.get(ifds1.size() - 1).setNextIFDOffset(merged, ifds2.get(0).getStartOffset());
+		// Figure out the first IFD offset
+		int firstIFDOffset = ifds1.get(0).getStartOffset();
+		// And write the IFDs
+		writeToStream(merged, firstIFDOffset); // DONE!
+	}
+	
+	/**
+	 * Merges a list of TIFF images (single or multiple page) into one. 
+	 * <p>
+	 * Note: this method works for all TIFF images with BitsPerSample <= 8.
+	 * For BitsPerSample > 8, the result is unpredictable: if the image is
+	 * the first one in the list to be merged, or the endianness of the image
+	 * is the same as the merged image, it works fine, otherwise, the merged
+	 * image with BitsPerSample > 8 will contain wrong image data.  
+	 *  
+	 * @param merged RandomAccessOutputStream for the merged TIFF
+	 * @param images input TIFF image files to be merged
+	 * @throws IOException
+	 */
+	public static void mergeTiffImages(RandomAccessOutputStream merged, File... images) throws IOException {
 		if(images != null && images.length > 1) {
-			RandomAccessInputStream image1 = new FileCacheRandomAccessInputStream(images[0]);
+			FileInputStream fis1 = new FileInputStream(images[0]);
+			RandomAccessInputStream image1 = new FileCacheRandomAccessInputStream(fis1);
 			List<IFD> ifds1 = new ArrayList<IFD>();
 			int offset1 = copyHeader(image1, merged);
 			// Read IFDs for the first image
@@ -2268,202 +2208,61 @@ public class TIFFTweaker {
 			int offset = copyPages(ifds1, FIRST_WRITE_OFFSET, image1, merged);
 			// Release resources
 			image1.close();
-			short writeEndian = merged.getEndian();
 			for(int i = 1; i < images.length; i++) {
 				List<IFD> ifds2 = new ArrayList<IFD>();
-				RandomAccessInputStream image2 = new FileCacheRandomAccessInputStream(images[i]); 
+				FileInputStream fis2 = new FileInputStream(images[i]);
+				RandomAccessInputStream image2 = new FileCacheRandomAccessInputStream(fis2); 
 				readIFDs(ifds2, image2);
 				for(int j = 0; j < ifds2.size(); j++) {
 					ifds2.get(j).removeField(TiffTag.PAGE_NUMBER);
 					// Place holder, to be updated afterwards
 					ifds2.get(j).addField(new ShortField(TiffTag.PAGE_NUMBER.getValue(), new short[]{0, 0})); 
 				}
-				short readEndian = image2.getEndian();
-				if(readEndian == writeEndian) // Copy as is
-					offset = copyPages(ifds2, offset, image2, merged);
-				else {
-					// Need to check BitsPerSample to see if we are dealing with images with BitsPerSample > 8
-					IFD prevIFD = null;
-					for(int j = 0; j < ifds2.size(); j++) {
-						IFD currIFD = ifds2.get(j);
-						int bitsPerSample = 1; // Default
-						TiffField<?> f_bitsPerSample = currIFD.getField(TiffTag.BITS_PER_SAMPLE);
-						if(f_bitsPerSample != null) bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
-						if(bitsPerSample <= 8) { // Just copy data
-							offset = copyPageData(currIFD, offset, image2, merged);							
-						} else if(bitsPerSample%8 == 0) {
-							/*
-							 * TIFF viewers seem to have problem interpreting data with more than 8 BitsPerSample.
-							 * Most of the viewers interpret BitsPerSample%8 == 0 according to the  endianess of the image,
-							 * but think other bit depth like 12 bits always as big endian. For now we only flip the
-							 * endian for BitsPerSample%8 == 0 as needed and leave the other bit depth images as is.
-							 */
-							// Flip the byte sequence of the data
-							ImageDecoder decoder = null;
-							ImageEncoder encoder = null;
-							// Original image data start from these offsets.
-							TiffField<?> stripOffSets = currIFD.removeField(TiffTag.STRIP_OFFSETS);							
-							if(stripOffSets == null)
-								stripOffSets = currIFD.removeField(TiffTag.TILE_OFFSETS);									
-							TiffField<?> stripByteCounts = currIFD.getField(TiffTag.STRIP_BYTE_COUNTS);							
-							if(stripByteCounts == null)
-								stripByteCounts = currIFD.getField(TiffTag.TILE_BYTE_COUNTS);
-							/* 
-							 * Make sure this will work in the case when neither STRIP_OFFSETS nor TILE_OFFSETS presents.
-							 * Not sure if this will ever happen for TIFF. JPEG EXIF data do not contain these fields. 
-							 */
-							if(stripOffSets != null) { 
-								int[] counts = stripByteCounts.getDataAsLong();		
-								int[] off = stripOffSets.getDataAsLong();
-								int[] temp = new int[off.length];
-								
-								int[] uncompressedStripByteCounts = getUncompressedStripByteCounts(currIFD, off.length);
-								
-								// We are going to write the image data first
-								merged.seek(offset);
-								
-								TiffField<?> tiffField = currIFD.getField(TiffTag.COMPRESSION);
-								int tiffCompression = 1;
-								if(tiffField != null)
-									tiffCompression = tiffField.getDataAsLong()[0];
-								TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(tiffCompression);
-								
-								int samplesPerPixel = 1;
-								tiffField = currIFD.getField(TiffTag.SAMPLES_PER_PIXEL);								
-								if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
-								
-								int planaryConfiguration = 1;
-								
-								tiffField = currIFD.getField(TiffTag.PLANAR_CONFIGURATTION);		
-								if(tiffField != null) planaryConfiguration = tiffField.getDataAsLong()[0];										
-								
-								int scanLineStride = getRowWidth(currIFD);
-								if(planaryConfiguration == 1) scanLineStride *= samplesPerPixel;
-								
-								// Need to uncompress the data, reorder the byte sequence, and compress the data again
-								switch(compression) { // Predictor seems to work for LZW, DEFLATE as is! Need more test though!
-									case LZW: // Tested
-										decoder = new LZWTreeDecoder(8, true);
-										encoder = new LZWTreeEncoder(merged, 8, 4096, null); // 4K buffer	
-										break;
-									case DEFLATE:
-									case DEFLATE_ADOBE: // Tested
-										decoder = new DeflateDecoder();
-										encoder = new DeflateEncoder(merged, 4096, 4, null); // 4K buffer	
-										break;
-									case PACKBITS:
-										// Not tested
-										for(int k = 0; k < off.length; k++) {
-											image2.seek(off[k]);
-											byte[] buf = new byte[counts[k]];
-											image2.readFully(buf);
-											byte[] buf2 = new byte[uncompressedStripByteCounts[k]];
-											Packbits.unpackbits(buf, buf2);
-											ArrayUtils.flipEndian(buf2, 0, buf2.length, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
-											// Compress the data
-											buf2 = new byte[buf.length + (buf.length + 127)/128];
-											int bytesCompressed = Packbits.packbits(buf, buf2);
-											merged.write(buf2, 0, bytesCompressed);
-											temp[k] = offset;
-											offset += bytesCompressed; // DONE!
-										}
-										break;
-									case NONE:										
-										// In case we only have one strip/tile but StripByteCounts contains wrong value
-										// If there is only one strip/samplesPerPixel strips for PlanaryConfiguration = 2
-										if(planaryConfiguration == 1 && off.length == 1 || planaryConfiguration == 2 && off.length == samplesPerPixel)
-										{
-											int[] totalBytes2Read = getBytes2Read(currIFD);
-										
-											for(int k = 0; k < off.length; k++)
-												counts[k] = totalBytes2Read[k];					
-										}
-										// Read the data, reorder the byte sequence and write back the data
-										for(int k = 0; k < off.length; k++) {
-											image2.seek(off[k]);
-											byte[] buf = new byte[counts[k]];
-											image2.readFully(buf);										
-											buf = ArrayUtils.flipEndian(buf, 0, buf.length, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
-											merged.write(buf);
-											temp[k] = offset;
-											offset += buf.length;
-										}										
-										break;
-									default: // Fall back to simple copy, at least won't break the whole merged image
-										for(int l = 0; l < off.length; l++) {
-											image2.seek(off[l]);
-											byte[] buf = new byte[counts[l]];
-											image2.readFully(buf);
-											merged.write(buf);
-											temp[l] = offset;
-											offset += buf.length;
-										}
-										break;								
-								}
-								if(decoder != null) {
-									for(int k = 0; k < off.length; k++) {
-										image2.seek(off[k]);
-										byte[] buf = new byte[counts[k]];
-										image2.readFully(buf);
-										decoder.setInput(buf);
-										int bytesDecompressed = 0;
-										byte[] decompressed = new byte[uncompressedStripByteCounts[k]];
-										try {
-											bytesDecompressed = decoder.decode(decompressed, 0, uncompressedStripByteCounts[k]);
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
-										buf = ArrayUtils.flipEndian(decompressed, 0, bytesDecompressed, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
-										// Compress the data
-										try {
-											encoder.initialize();
-											encoder.encode(buf, 0, buf.length);
-											encoder.finish();
-										} catch (Exception e) {
-											e.printStackTrace();
-										}
-										temp[k] = offset;
-										offset += encoder.getCompressedDataLen(); // DONE!
-									}
-								}
-								if(currIFD.getField(TiffTag.STRIP_BYTE_COUNTS) != null)
-									stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
-								else
-									stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
-								currIFD.addField(stripOffSets);		
-							}
-						} else { // Just copy since in this case TIFF viewers tend to think the data is always in TIFF LZW packing format
-							offset = copyPageData(currIFD, offset, image2, merged);
-						}
-						if(prevIFD != null) // Link this IFD with previous one if any
-							prevIFD.setNextIFDOffset(merged, offset);
-						// Then write the IFD
-						offset = currIFD.write(merged, offset);							
-						prevIFD = currIFD;
-					}					
-				}
+				offset = copyPages(ifds2, offset, image2, merged);
 				// Link the two IFDs
 				ifds1.get(ifds1.size() - 1).setNextIFDOffset(merged, ifds2.get(0).getStartOffset());
 				ifds1.addAll(ifds2);
 				// Release resources
 				image2.close();
 			}
-			
 			int maxPageNumber = ifds1.size();
-			
-			if(maxPageNumber > 0) {
-				// Reset pageNumber and total pages
-				for(int i = 0; i < ifds1.size(); i++) {
-					offset = ifds1.get(i).getField(TiffTag.PAGE_NUMBER).getDataOffset();
-					merged.seek(offset);
-					merged.writeShort((short)i); // Update page number for this page
-					merged.writeShort((short)maxPageNumber); // Update total page number
-				}			
-				// Figure out the first IFD offset
-				int firstIFDOffset = ifds1.get(0).getStartOffset();
-				// And write the IFDs
-				writeToStream(merged, firstIFDOffset); // DONE!
-			}
+			// Reset pageNumber and total pages
+			for(int i = 0; i < ifds1.size(); i++) {
+				offset = ifds1.get(i).getField(TiffTag.PAGE_NUMBER).getDataOffset();
+				merged.seek(offset);
+				merged.writeShort((short)i); // Update page number for this page
+				merged.writeShort((short)maxPageNumber); // Update total page number
+			}			
+			// Figure out the first IFD offset
+			int firstIFDOffset = ifds1.get(0).getStartOffset();
+			// And write the IFDs
+			writeToStream(merged, firstIFDOffset); // DONE!
+		}
+	}
+	
+	/**
+	 * Merges a list of TIFF images into one regardless of the original bit depth
+	 * 
+	 * @param merged RandomAccessOutputStream for the merged TIFF
+	 * @param images input TIFF image files to be merged
+	 * @throws IOException
+	 */
+	public static void mergeTiffImagesEx(RandomAccessOutputStream merged, File... images) throws IOException {
+		if(images != null && images.length > 1) {
+			merge(merged, new File2RandomInputStreamAdaptor(images));
+		}			
+	}
+		
+	/**
+	 * Merges a list of TIFF images into one regardless of the original bit depth
+	 * 
+	 * @param merged RandomAccessOutputStream for the merged TIFF
+	 * @param images InputStreams of TIFF images to be merged
+	 * @throws IOException
+	 */
+	public static void mergeTiffImagesEx(RandomAccessOutputStream merged, InputStream... images) throws IOException {
+		if(images != null && images.length > 1) {
+			merge(merged, new Stream2RandomInputStreamAdaptor(images));
 		}
 	}
 	
@@ -3500,7 +3299,7 @@ public class TIFFTweaker {
 			
 			rout.close();
 			
-		  //Convert to byte array
+			//Convert to byte array
             byte[] byteData = baos.toByteArray();
             LOGGER.debug("File " + partition + " has byte size: " + byteData.length / 1024 + " kb");
             outputFilesByte.add(byteData);
