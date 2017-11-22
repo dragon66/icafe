@@ -464,21 +464,20 @@ public class TIFFReader extends ImageReader {
 					lumaBlue = 1.0f*lumas[4]/lumas[5];
 				}
 											
-				int offsetX = 0;
 				int offsetY = 0;
 				
 				int bytesY = expandedImageWidth*expandedImageHeight;
 				pixels = new byte[bytesY*3];
 				
 				byte[] temp = null, temp2 = null;
-						
+				
 				if(planaryConfiguration == 1) {
 					// Define variables related to data unit
 					int bytesPerUnitY = samplingFactor[0]*samplingFactor[1];
 					int bytesPerUnitCb = 1;
 					int bytesPerUnitCr = 1;
 					int bytesPerDataUnit = bytesPerUnitY + bytesPerUnitCb + bytesPerUnitCr;
-					int dataUnitsPerWidth = expandedImageWidth/samplingFactor[0];							
+					int dataUnitsPerWidth = expandedImageWidth/samplingFactor[0];					
 					
 					switch(compression) {
 						case NONE:
@@ -488,59 +487,12 @@ public class TIFFReader extends ImageReader {
 								temp = new byte[len];
 								randIS.readFully(temp);
 								
-								offset = 0;
-								offsetX = 0;
-								
 								int numOfDataUnit = len/bytesPerDataUnit;
-						
-								for(int j = 1; j <= numOfDataUnit; j++) {
-									int offsetCb = offset + bytesPerUnitY;
-									int Cb = temp[offsetCb]&0xff;
-									int Cr = temp[offsetCb + 1]&0xff;
-									for(int k = 0; k < samplingFactor[1]; k++) {// Rows
-										for(int l = 0; l < samplingFactor[0]; l++, offsetX++) { // Columns
-											// Populate the pixels array
-											int Y = temp[offset++]&0xff;
-											// Convert YCbCr code to full-range YCbCr.
-									        float fY = (Y - referenceBlackY)*codingRangeY/(referenceWhiteY - referenceBlackY);
-									        float fCb = (Cb - referenceBlackCb)*codingRangeCbCr/(referenceWhiteCb - referenceBlackCb);
-									        float fCr = (Cr - referenceBlackCr)*codingRangeCbCr/(referenceWhiteCr - referenceBlackCr);
-									        /*
-									         * R, G, and B may be computed from YCbCr as follows:
-									         * R = Cr * ( 2 - 2 * LumaRed ) + Y
-									         * G = ( Y - LumaBlue * B - LumaRed * R ) / LumaGreen
-									         * B = Cb * ( 2 - 2 * LumaBlue ) + Y
-									        */ 
-									        float R = (fCr * (2 - 2 * lumaRed) + fY);
-									        float B = (fCb * (2 - 2 * lumaBlue) + fY);
-											float G = ((fY - lumaBlue * B - lumaRed * R) / lumaGreen);
-											// This is very important!!!
-											if(R < 0) R = 0;
-											if(R > 255) R = 255;
-											if(G < 0) G = 0;
-											if(G > 255) G = 255;
-											if(B < 0) B = 0;
-											if(B > 255) B = 255;
-											//
-											int yPos = offsetX + offsetY*expandedImageWidth;
-											int redPos = 3*yPos;
-											
-											pixels[redPos] = (byte)R;
-											pixels[redPos+1] = (byte)G;
-											pixels[redPos+2] = (byte)B;											
-										}
-										offsetX -= samplingFactor[0];
-										offsetY += 1;
-									}
-									offsetY -= samplingFactor[1];
-									offset += 2;
-									offsetX += samplingFactor[0];
-									if(j%dataUnitsPerWidth == 0) {
-										offsetY += samplingFactor[1];
-										offsetX = 0;
-									}
-								}
-							}							
+								
+								offsetY = upsampling(offsetY, numOfDataUnit, bytesPerUnitY, samplingFactor, referenceBlackY, referenceWhiteY, referenceBlackCb,
+										referenceWhiteCb, referenceBlackCr, referenceWhiteCr, codingRangeY, codingRangeCbCr, lumaRed, lumaGreen, lumaBlue, temp,
+										pixels, expandedImageWidth, dataUnitsPerWidth);
+							}
 							
 							break;
 						case LZW:
@@ -554,58 +506,30 @@ public class TIFFReader extends ImageReader {
 								decoder.setInput(temp);
 								int numOfBytes = decoder.decode(temp2, 0, temp2.length);	
 								
-								offset = 0;
-								offsetX = 0;
+								int numOfDataUnit = numOfBytes/bytesPerDataUnit;
+								
+								offsetY = upsampling(offsetY, numOfDataUnit, bytesPerUnitY, samplingFactor, referenceBlackY, referenceWhiteY, referenceBlackCb,
+										referenceWhiteCb, referenceBlackCr, referenceWhiteCr, codingRangeY, codingRangeCbCr, lumaRed, lumaGreen, lumaBlue, temp2,
+										pixels, expandedImageWidth, dataUnitsPerWidth);
+							}
+							
+							break;
+						case PACKBITS:
+							for(int i = 0; i < stripByteCounts.length; i++) {
+								randIS.seek(stripOffsets[i]);
+								int len = stripByteCounts[i];
+								temp = new byte[len];
+								randIS.readFully(temp);
+								temp2 = new byte[stripBytes[i]];
+								Packbits.unpackbits(temp, temp2);
+								
+								int numOfBytes = stripBytes[i];	
 								
 								int numOfDataUnit = numOfBytes/bytesPerDataUnit;
 								
-								for(int j = 1; j <= numOfDataUnit; j++) {
-									int offsetCb = offset + bytesPerUnitY;
-									int Cb = temp2[offsetCb]&0xff;
-									int Cr = temp2[offsetCb + 1]&0xff;
-									for(int k = 0; k < samplingFactor[1]; k++) {// Rows
-										for(int l = 0; l < samplingFactor[0]; l++, offsetX++) { // Columns
-											// Populate the pixels array
-											int Y = temp2[offset++]&0xff;
-											// Convert YCbCr code to full-range YCbCr.
-											float fY = (Y - referenceBlackY)*codingRangeY/(referenceWhiteY - referenceBlackY);
-											float fCb = (Cb - referenceBlackCb)*codingRangeCbCr/(referenceWhiteCb - referenceBlackCb);
-											float fCr = (Cr - referenceBlackCr)*codingRangeCbCr/(referenceWhiteCr - referenceBlackCr);
-											/*
-											 * R, G, and B may be computed from YCbCr as follows:
-											 * R = Cr * ( 2 - 2 * LumaRed ) + Y
-											 * G = ( Y - LumaBlue * B - LumaRed * R ) / LumaGreen
-											 * B = Cb * ( 2 - 2 * LumaBlue ) + Y
-											 */ 
-											float R =  (fCr * (2 - 2 * lumaRed) + fY);
-											float B = (fCb * (2 - 2 * lumaBlue) + fY);
-											float G = ((fY - lumaBlue * B - lumaRed * R) / lumaGreen);
-											// This is very important!!!
-											if(R < 0) R = 0;
-											if(R > 255) R = 255;
-											if(G < 0) G = 0;
-											if(G > 255) G = 255;
-											if(B < 0) B = 0;
-											if(B > 255) B = 255;
-											
-											int yPos = offsetX + offsetY*expandedImageWidth;
-											int redPos = 3*yPos;
-											
-											pixels[redPos] = (byte)R;
-											pixels[redPos+1] = (byte)G;
-											pixels[redPos+2] = (byte)B;
-										}
-										offsetX -= samplingFactor[0];
-										offsetY += 1;
-									}
-									offsetY -= samplingFactor[1];
-									offset += 2;
-									offsetX += samplingFactor[0];
-									if(j%dataUnitsPerWidth == 0) {
-										offsetY += samplingFactor[1];
-										offsetX = 0;
-									}
-								}
+								offsetY = upsampling(offsetY, numOfDataUnit, bytesPerUnitY, samplingFactor, referenceBlackY, referenceWhiteY, referenceBlackCb,
+										referenceWhiteCb, referenceBlackCr, referenceWhiteCr, codingRangeY, codingRangeCbCr, lumaRed, lumaGreen, lumaBlue, temp2,
+										pixels, expandedImageWidth, dataUnitsPerWidth);
 							}
 							
 							break;
@@ -1548,5 +1472,64 @@ public class TIFFReader extends ImageReader {
 		byte[] temp2 = new byte[bytes2Read];
 		Packbits.unpackbits(temp, temp2);
 		System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
+	}
+	
+	private int upsampling(int offsetY, int numOfDataUnit, int bytesPerUnitY, int[] samplingFactor, float referenceBlackY, float referenceWhiteY, 
+			float referenceBlackCb, float referenceWhiteCb, float referenceBlackCr, float referenceWhiteCr,  float codingRangeY,
+			float codingRangeCbCr, 	float lumaRed, float lumaGreen,	float lumaBlue, byte[] temp, byte[] pixels,
+			int expandedImageWidth, int dataUnitsPerWidth) {
+		// Reset
+		int offset = 0;
+		int offsetX = 0;
+		
+		for(int j = 1; j <= numOfDataUnit; j++) {
+			int offsetCb = offset + bytesPerUnitY;
+			int Cb = temp[offsetCb]&0xff;
+			int Cr = temp[offsetCb + 1]&0xff;
+			for(int k = 0; k < samplingFactor[1]; k++) {// Rows
+				for(int l = 0; l < samplingFactor[0]; l++, offsetX++) { // Columns
+					// Populate the pixels array
+					int Y = temp[offset++]&0xff;
+					// Convert YCbCr code to full-range YCbCr.
+			        float fY = (Y - referenceBlackY)*codingRangeY/(referenceWhiteY - referenceBlackY);
+			        float fCb = (Cb - referenceBlackCb)*codingRangeCbCr/(referenceWhiteCb - referenceBlackCb);
+			        float fCr = (Cr - referenceBlackCr)*codingRangeCbCr/(referenceWhiteCr - referenceBlackCr);
+			        /*
+			         * R, G, and B may be computed from YCbCr as follows:
+			         * R = Cr * ( 2 - 2 * LumaRed ) + Y
+			         * G = ( Y - LumaBlue * B - LumaRed * R ) / LumaGreen
+			         * B = Cb * ( 2 - 2 * LumaBlue ) + Y
+			        */ 
+			        float R = (fCr * (2 - 2 * lumaRed) + fY);
+			        float B = (fCb * (2 - 2 * lumaBlue) + fY);
+					float G = ((fY - lumaBlue * B - lumaRed * R) / lumaGreen);
+					// This is very important!!!
+					if(R < 0) R = 0;
+					if(R > 255) R = 255;
+					if(G < 0) G = 0;
+					if(G > 255) G = 255;
+					if(B < 0) B = 0;
+					if(B > 255) B = 255;
+					//
+					int yPos = offsetX + offsetY*expandedImageWidth;
+					int redPos = 3*yPos;
+					
+					pixels[redPos] = (byte)R;
+					pixels[redPos+1] = (byte)G;
+					pixels[redPos+2] = (byte)B;											
+				}
+				offsetX -= samplingFactor[0];
+				offsetY += 1;
+			}
+			offsetY -= samplingFactor[1];
+			offset += 2;
+			offsetX += samplingFactor[0];
+			if(j%dataUnitsPerWidth == 0) {
+				offsetY += samplingFactor[1];
+				offsetX = 0;
+			}
+		}
+		
+		return offsetY;
 	}
 }
