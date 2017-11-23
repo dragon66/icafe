@@ -1,6 +1,7 @@
 ***************************
-Last modified on 11/20/2017
+Last modified on 11/22/2017
 ***************************
+22Nov2017  Added support for BlackIsZero and WhiteIsZero to TIFFReader
 20Nov2017  Added re-factored method merge() to TIFFTweaker
 16Nov2017  Re-factor methods of TIFFTweaker
 22Oct2017  Added compression type check to TIFFWriter

@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    22Nov2017  Added support for BlackIsZero and WhiteIsZero
  * WY    09Nov2015  Fixed bug with stripped CMYK decoding
  * WY    13Sep2015  Extract unpackStrip() method
  * WY    08Jan2015  Better exception handling to resume from failed frame decoding 
@@ -83,6 +84,7 @@ import com.icafe4j.image.tiff.TIFFTweaker;
 import com.icafe4j.image.tiff.Tag;
 import com.icafe4j.image.tiff.TiffField;
 import com.icafe4j.image.tiff.TiffFieldEnum;
+import com.icafe4j.image.tiff.TiffFieldEnum.PhotoMetric;
 import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.image.tiff.UndefinedField;
 import com.icafe4j.image.util.IMGUtils;
@@ -107,7 +109,32 @@ public class TIFFReader extends ImageReader {
 	private int endian = IOUtils.BIG_ENDIAN;
 	private static final int[] redMask =   {0x00, 0x04, 0x30, 0x1c0, 0xf00};
 	private static final int[] greenMask = {0x00, 0x02, 0x0c, 0x038, 0x0f0};
-	private static final int[] blueMask =  {0x00, 0x01, 0x03, 0x007, 0x00f};
+	private static final int[] blueMask =  {0x00, 0x01, 0x03, 0x007, 0x00f};	
+	 
+	private static final int[] BLACK_WHITE_PALETTE = {0xFF000000, 0xFFFFFFFF};
+	private static final int[] BLACK_WHITE_PALETTE_WHITE_IS_ZERO = {0xFFFFFFFF, 0xFF000000};
+	private static final int[] FOUR_COLOR_PALETTE = {0xFF000000, 0xFF404040, 0xFF808080, 0xFFFFFFFF};
+	private static final int[] FOUR_COLOR_PALETTE_WHITE_IS_ZERO = {0xFFFFFFFF, 0xFF808080, 0xFF404040, 0xFF000000};
+	private static final int[] SIXTEEN_COLOR_PALETTE = {0xFF000000, 0xFF111111, 0xFF222222, 0xFF333333,
+		 											   0xFF444444, 0xFF555555, 0xFF666666, 0xFF777777,
+		 											   0xFF888888, 0xFF999999, 0xFFAAAAAA, 0xFFBBBBBB,
+		 											   0xFFCCCCCC, 0xFFDDDDDD, 0xFFEEEEEE, 0xFFFFFFFF};
+	private static final int[] SIXTEEN_COLOR_PALETTE_WHITE_IS_ZERO = {0xFFFFFFFF, 0xFFEEEEEE, 0xFFDDDDDD, 0xFFCCCCCC, 
+													   0xFFBBBBBB, 0xFFAAAAAA, 0xFF999999, 0xFF888888, 0xFF777777,
+													   0xFF666666, 0xFF555555, 0xFF444444, 0xFF333333, 0xFF222222,
+													   0xFF111111, 0xFF000000};
+	private static final int[] EIGHT_BIT_COLOR_PALETTE = new int[256];
+	private static final int[] EIGHT_BIT_COLOR_PALETTE_WHITE_IS_ZERO = new int[256];
+	 
+	static {
+		for(int i = 0; i < 256; i++)
+			EIGHT_BIT_COLOR_PALETTE[i] = 0xFF000000|(i<<16)|(i<<8)|(i&0xff);
+	}
+	
+	static {
+		for(int i = 0; i < 256; i++)
+			EIGHT_BIT_COLOR_PALETTE_WHITE_IS_ZERO[255 - i] = 0xFF000000|(i<<16)|(i<<8)|(i&0xff);
+	}
 	
 	private static final int bufLen = 40960; // 40K read buffer
 	
@@ -265,7 +292,7 @@ public class TIFFReader extends ImageReader {
 				for(int i = 0, index = 0; i < colorMap.length/3;i++) {
 					rgbColorPalette[index++] = 0xff000000|((colorMap[i]&0xff00)<<8)|((colorMap[i+numOfColors]&0xff00))|((colorMap[i+numOfColors2]&0xff00)>>8) ;
 				}
-				int bytesPerScanLine = (imageWidth*bitsPerSample +7)/8;
+				int bytesPerScanLine = (imageWidth*bitsPerSample + 7)/8;
 				pixels = new byte[bytesPerScanLine*imageHeight];				
 				switch(compression) {
 					case NONE:
@@ -826,6 +853,71 @@ public class TIFFReader extends ImageReader {
 					}
 				}
 			
+				return new BufferedImage(cm, raster, false, null);
+			case BLACK_IS_ZERO:
+			case WHITE_IS_ZERO:
+				bytesPerScanLine = (imageWidth*bitsPerSample + 7)/8;
+				pixels = new byte[bytesPerScanLine*imageHeight];
+				switch(bitsPerSample) {
+					case 1: 
+						rgbColorPalette = (e_photoMetric == PhotoMetric.BLACK_IS_ZERO)? BLACK_WHITE_PALETTE:BLACK_WHITE_PALETTE_WHITE_IS_ZERO;
+						break;
+					case 2: 
+						rgbColorPalette = (e_photoMetric == PhotoMetric.BLACK_IS_ZERO)? FOUR_COLOR_PALETTE:FOUR_COLOR_PALETTE_WHITE_IS_ZERO;
+						break;
+					case 4: 
+						rgbColorPalette = (e_photoMetric == PhotoMetric.BLACK_IS_ZERO)? SIXTEEN_COLOR_PALETTE:SIXTEEN_COLOR_PALETTE_WHITE_IS_ZERO;
+						break;
+					case 8:
+						rgbColorPalette = (e_photoMetric == PhotoMetric.BLACK_IS_ZERO)? EIGHT_BIT_COLOR_PALETTE:EIGHT_BIT_COLOR_PALETTE_WHITE_IS_ZERO;
+						break;
+					default:
+				}
+				switch(compression) {
+					case NONE:
+						for(int i = 0; i < stripByteCounts.length; i++) {
+							int bytes2Read = stripBytes[i];
+							randIS.seek(stripOffsets[i]);
+							randIS.readFully(pixels, offset, bytes2Read);
+							offset += bytes2Read;
+						}
+						break;
+					case LZW:
+						decoder = new LZWTreeDecoder(8, true);
+						break;
+					case DEFLATE:
+					case DEFLATE_ADOBE:
+						decoder = new DeflateDecoder();
+						break;
+					case PACKBITS:
+						for(int i = 0; i < stripByteCounts.length; i++) {
+							int bytes2Read = stripBytes[i];
+							unpackStrip(pixels, offset, stripBytes[i], stripOffsets[i], stripByteCounts[i]);
+							offset += bytes2Read;
+						}
+						break;
+					default:
+				}
+				if(decoder != null) {
+					for(int i = 0; i < stripByteCounts.length; i++) {
+						temp = new byte[stripByteCounts[i]];
+						randIS.seek(stripOffsets[i]);
+						randIS.readFully(temp);
+						decoder.setInput(temp);
+						int numOfBytes = decoder.decode(pixels, offset, stripBytes[i]);
+						offset += numOfBytes;
+					}
+				}
+				//Create a BufferedImage
+				db = new DataBufferByte(pixels, pixels.length);
+				if(bitsPerSample != 8) {
+					raster = Raster.createPackedRaster(db, imageWidth, imageHeight, bitsPerSample, null);
+				} else {
+					int[] off = {0};//band offset, we have only one band start at 0
+					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth, 1, off, null);
+				}
+				cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_BYTE);
+				   
 				return new BufferedImage(cm, raster, false, null);
 			default:
 		 		break;
