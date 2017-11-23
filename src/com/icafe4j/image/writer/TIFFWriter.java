@@ -585,7 +585,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		boolean noAlpha = !hasAlpha;
 		
 		if(noAlpha) {
-			// Get the actually bits needed to represent this gray-scale image
+			// Get the actual bits needed to represent this gray-scale image
 			bitsPerPixel = IMGUtils.getBitDepth(newPixels, false);;
 			// TIFF only allows for 4 and 8 bits grays-scale image
 			switch(bitsPerPixel) {
