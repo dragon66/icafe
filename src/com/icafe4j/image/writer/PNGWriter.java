@@ -251,7 +251,7 @@ public class PNGWriter extends ImageWriter {
     }
 	
 	private void writeGrayScale(byte[] pixels, int imageWidth, int imageHeight, boolean hasAlpha, OutputStream os) throws Exception {
-		// The rule of thumb is don't use any filter for gray-scale image but in some cases, PEATH or adaptive filter does much better
+		// The rule of thumb is don't use any filter for gray-scale image but in some cases, PAETH or adaptive filter does much better
 		// Add IHDR chunk
 		IHDRBuilder hdrBuilder = new IHDRBuilder().width(imageWidth).height(imageHeight).compressionMethod(0).
 				filterMethod(0).interlaceMethod(0);

@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    23Nov2017  Fix bug with gray-scale image byte packing
  * WY    22Oct2017  Added compression type check
  * WY    11Dec2016  Added byte order support to TiffOptions
  * WY    16Jun2016  Added code to set resolution
@@ -587,7 +588,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		if(noAlpha) {
 			// Get the actual bits needed to represent this gray-scale image
 			bitsPerPixel = IMGUtils.getBitDepth(newPixels, false);;
-			// TIFF only allows for 4 and 8 bits grays-scale image
+			// TIFF only allows for 4 and 8 bits gray-scale image
 			switch(bitsPerPixel) {
 				case 1:
 				case 2:
@@ -608,6 +609,8 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 			for(int l = 0; l < newPixels.length; l++) {
 				newPixels[l] = (byte)((newPixels[l]<<bitsPerPixel)>>8);
 			}
+			// Pack bytePixels according to bitsPerPixel value
+			newPixels = ArrayUtils.packByteArray(newPixels, imageWidth, 0, bitsPerPixel, imageWidth*imageHeight);
 		}
 		
 		TiffField<?> tiffField = new ShortField(TiffTag.PHOTOMETRIC_INTERPRETATION.getValue(), new short[]{(short)PhotoMetric.BLACK_IS_ZERO.getValue()});
