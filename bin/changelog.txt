@@ -1,6 +1,7 @@
 ***************************
 Last modified on 11/23/2017
 ***************************
+23Nov2017  Added TIFFReader support for 16 bit gray-scale
 23Nov2017  Fixed TIFFWriter bug with gray-scale image byte packing
 22Nov2017  Added support for BlackIsZero and WhiteIsZero to TIFFReader
 20Nov2017  Added re-factored method merge() to TIFFTweaker

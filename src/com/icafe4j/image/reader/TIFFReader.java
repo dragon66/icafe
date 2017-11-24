@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    23Nov2017  Added support for 16 bits gray-scale
  * WY    22Nov2017  Added support for BlackIsZero and WhiteIsZero
  * WY    09Nov2015  Fixed bug with stripped CMYK decoding
  * WY    13Sep2015  Extract unpackStrip() method
@@ -908,16 +909,24 @@ public class TIFFReader extends ImageReader {
 						offset += numOfBytes;
 					}
 				}
+				
 				//Create a BufferedImage
-				db = new DataBufferByte(pixels, pixels.length);
-				if(bitsPerSample != 8) {
+				if(bitsPerSample <= 8) {
+					if(predictor == 2 && planaryConfiguration == 1)
+						pixels = applyDePredictor(samplesPerPixel, pixels, imageWidth, imageHeight);								
+					db = new DataBufferByte(pixels, pixels.length);
+					cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_BYTE);
 					raster = Raster.createPackedRaster(db, imageWidth, imageHeight, bitsPerSample, null);
-				} else {
-					int[] off = {0};//band offset, we have only one band start at 0
-					raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth, 1, off, null);
-				}
-				cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_BYTE);
-				   
+					if(bitsPerPixel == 8) // band offset {0}, we have only one band start at 0
+						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth, 1, new int[] {0}, null);
+				} else { // Assume bitsPerSample <= 16
+					Object tempArray = ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, (bitsPerSample%8 == 0)?endian == IOUtils.BIG_ENDIAN:true);
+					if(predictor == 2 && planaryConfiguration == 1)
+						tempArray = applyDePredictor(samplesPerPixel, (short[])tempArray, imageWidth, imageHeight);								
+					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), false, false, trans, DataBuffer.TYPE_USHORT);
+					raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
+					raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
+				} 
 				return new BufferedImage(cm, raster, false, null);
 			default:
 		 		break;
@@ -1542,7 +1551,19 @@ public class TIFFReader extends ImageReader {
 					input[j + k] += input[j - numOfSamples + k];
 				}
 			}
-		}		
+		}
+		return input;
+	}
+	
+	// De-predictor for PLANARY_CONFIGURATION value 1 and DataBuffer.TYPE_USHORT	
+	private static short[] applyDePredictor(int numOfSamples, short[] input, int imageWidth, int imageHeight) {
+		for(int i = 0, inc = numOfSamples*imageWidth, maxVal = inc - numOfSamples, minVal = numOfSamples; i <= imageHeight - 1; maxVal += inc, minVal += inc, i++) {
+			for (int j = minVal; j <= maxVal; j+=numOfSamples) {
+				for(int k = 0; k < numOfSamples; k++) {
+					input[j + k] += input[j - numOfSamples + k];
+				}
+			}
+		}
 		return input;
 	}
 	
