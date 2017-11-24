@@ -920,9 +920,11 @@ public class TIFFReader extends ImageReader {
 					if(bitsPerPixel == 8) // band offset {0}, we have only one band start at 0
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth, 1, new int[] {0}, null);
 				} else { // Assume bitsPerSample <= 16
-					Object tempArray = ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, (bitsPerSample%8 == 0)?endian == IOUtils.BIG_ENDIAN:true);
+					short[] tempArray = (short[])ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, (bitsPerSample%8 == 0)?endian == IOUtils.BIG_ENDIAN:true);
 					if(predictor == 2 && planaryConfiguration == 1)
-						tempArray = applyDePredictor(samplesPerPixel, (short[])tempArray, imageWidth, imageHeight);								
+						tempArray = applyDePredictor(samplesPerPixel, tempArray, imageWidth, imageHeight);								
+					if(e_photoMetric == PhotoMetric.WHITE_IS_ZERO)
+						IMGUtils.invertBits(tempArray);
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), false, false, trans, DataBuffer.TYPE_USHORT);
 					raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
 					raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);

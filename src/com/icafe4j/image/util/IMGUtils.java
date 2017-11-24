@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ==============================================================
+ * WY    24Nov2017  Added invertBits(short[]) to handle TIFF 16 bit WhiteIsZero
  * WY    07Feb2016  Renamed methods related to popularity quantization
  * WY    31Jan2016  Removed ditherThreshold related method arguments
  * WY    31Dec2015  Removed error limit from dither_FloydSteinberg
@@ -1061,6 +1062,13 @@ public class IMGUtils {
 	public static void invertBits(byte[] input) {
 		for(int i = input.length - 1; i >= 0; i--) {
 			input[i] = (byte)~input[i];
+		}
+	}
+	
+	// Change the bit color sex of a short array
+	public static void invertBits(short[] input) {
+		for(int i = input.length - 1; i >= 0; i--) {
+			input[i] = (short)~input[i];
 		}
 	}
 	
