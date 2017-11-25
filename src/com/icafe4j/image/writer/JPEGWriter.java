@@ -152,7 +152,7 @@ public class JPEGWriter extends ImageWriter {
 			isTiffFlavor = jpegOptions.isTiffFlavor();
 			writeICCProfile = jpegOptions.writeICCProfile();
 		}
-		if(colorSpace == JPEGOptions.COLOR_SPACE_CMYK || colorSpace == JPEGOptions.COLOR_SPACE_YCCK){
+		if(colorSpace == JPEGOptions.COLOR_SPACE_CMYK || colorSpace == JPEGOptions.COLOR_SPACE_YCCK) {
 			numOfComponents = 4;
 			if(cmykColorSpace == null)
 				cmykColorSpace = IMGUtils.getICCColorSpace(pathToCMYKProfile);
@@ -268,8 +268,7 @@ public class JPEGWriter extends ImageWriter {
 		os.write(app14);
 	}
 	
-	private void writeComment(String comment, OutputStream os) throws Exception
-	{
+	private void writeComment(String comment, OutputStream os) throws Exception	{
 		byte[] data = comment.getBytes();
 		int len = data.length + 2;
 		byte[] COM = new byte[len + 2];
@@ -350,8 +349,7 @@ public class JPEGWriter extends ImageWriter {
 		new Segment(Marker.DQT, dqt.length + 2, dqt).write(os);
 	}
 	
-	private void writeEOI(OutputStream os) throws Exception
-	{
+	private void writeEOI(OutputStream os) throws Exception	{
 		byte[] EOI = {(byte)0xff, (byte)0xd9};
 		os.write(EOI);
 	}
@@ -467,8 +465,7 @@ public class JPEGWriter extends ImageWriter {
 		encoder.finish();
 	}
 	
-	private void writeJFIF(OutputStream os) throws Exception
-	{
+	private void writeJFIF(OutputStream os) throws Exception {
 		// App0 segment
 		byte[] JFIF = new byte[18];
 		// JFIF marker: 0xffe0
@@ -558,8 +555,7 @@ public class JPEGWriter extends ImageWriter {
 		os.write(SOF);
 	}
 	
-	private void writeSOI(OutputStream os) throws Exception
-	{
+	private void writeSOI(OutputStream os) throws Exception {
 		byte[] SOI = {(byte)0xff, (byte)0xd8};
 		os.write(SOI);
 	}
