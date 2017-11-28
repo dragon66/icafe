@@ -5,7 +5,7 @@ import java.util.Iterator;
 public abstract class RandomInputStreamAdaptor<E> implements Iterator<RandomAccessInputStream> {
 	protected E[] input;
 	protected int index;
-	int size;
+	private final int size;
 	
 	public RandomInputStreamAdaptor(E[] streams) {
 		if(streams == null) throw new IllegalArgumentException("Input array is null");
