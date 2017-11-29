@@ -857,8 +857,10 @@ public class TIFFReader extends ImageReader {
 				return new BufferedImage(cm, raster, false, null);
 			case BLACK_IS_ZERO:
 			case WHITE_IS_ZERO:
-				bytesPerScanLine = (imageWidth*bitsPerSample + 7)/8;
-				pixels = new byte[bytesPerScanLine*imageHeight];
+				bytesPerScanLine = samplesPerPixel*((imageWidth*bitsPerSample + 7)/8);
+				totalBytes2Read = imageHeight*bytesPerScanLine;
+				if(planaryConfiguration == 2) bytesPerScanLine = (imageWidth*bitsPerSample + 7)/8;
+				pixels = new byte[totalBytes2Read];
 				switch(bitsPerSample) {
 					case 1: 
 						rgbColorPalette = (e_photoMetric == PhotoMetric.BLACK_IS_ZERO)? BLACK_WHITE_PALETTE:BLACK_WHITE_PALETTE_WHITE_IS_ZERO;
@@ -917,14 +919,22 @@ public class TIFFReader extends ImageReader {
 					db = new DataBufferByte(pixels, pixels.length);
 					cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_BYTE);
 					raster = Raster.createPackedRaster(db, imageWidth, imageHeight, bitsPerSample, null);
-					if(bitsPerPixel == 8) // band offset {0}, we have only one band start at 0
-						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth, 1, new int[] {0}, null);
-				} else { // Assume bitsPerSample <= 16
+					if(bitsPerSample == 8 && samplesPerPixel == 2) { // Deal with alpha transparency
+						if(e_photoMetric == PhotoMetric.WHITE_IS_ZERO)
+							IMGUtils.invertBits(pixels, 2); // Unlike samplesPerPixel == 1 case, we have to invert bits here as we are using ComponentColorModel
+						numOfBands = samplesPerPixel;
+						int[] bandOffsets = {0, 0, 0, 1};
+						transparent = true;
+						trans = Transparency.TRANSLUCENT;
+						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
+						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandOffsets, null);
+					}
+				} else { // Assume bitsPerSample <= 16 and no alpha transparency
 					short[] tempArray = (short[])ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, (bitsPerSample%8 == 0)?endian == IOUtils.BIG_ENDIAN:true);
 					if(predictor == 2 && planaryConfiguration == 1)
 						tempArray = applyDePredictor(samplesPerPixel, tempArray, imageWidth, imageHeight);								
 					if(e_photoMetric == PhotoMetric.WHITE_IS_ZERO)
-						IMGUtils.invertBits(tempArray);
+						IMGUtils.invertBits(tempArray, 1);
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), false, false, trans, DataBuffer.TYPE_USHORT);
 					raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
 					raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);

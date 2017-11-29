@@ -1059,15 +1059,15 @@ public class IMGUtils {
 	}
 	
 	// Change the bit color sex of a byte array
-	public static void invertBits(byte[] input) {
-		for(int i = input.length - 1; i >= 0; i--) {
+	public static void invertBits(byte[] input, int pixelStride) {
+		for(int i = input.length - 1; i >= 0; i -= pixelStride) {
 			input[i] = (byte)~input[i];
 		}
 	}
 	
 	// Change the bit color sex of a short array
-	public static void invertBits(short[] input) {
-		for(int i = input.length - 1; i >= 0; i--) {
+	public static void invertBits(short[] input, int pixelStride) {
+		for(int i = input.length - 1; i >= 0; i -= pixelStride) {
 			input[i] = (short)~input[i];
 		}
 	}

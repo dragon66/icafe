@@ -609,7 +609,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 			for(int l = 0; l < newPixels.length; l++) {
 				newPixels[l] = (byte)((newPixels[l]<<bitsPerPixel)>>8);
 			}
-			// Pack bytePixels according to bitsPerPixel value
+			// Pack newPixels according to bitsPerPixel value
 			newPixels = ArrayUtils.packByteArray(newPixels, imageWidth, 0, bitsPerPixel, imageWidth*imageHeight);
 		}
 		
