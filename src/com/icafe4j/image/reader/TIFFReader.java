@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    28Nov2017  Added gray-scale alpha support
  * WY    23Nov2017  Added support for 16 bits gray-scale
  * WY    22Nov2017  Added support for BlackIsZero and WhiteIsZero
  * WY    09Nov2015  Fixed bug with stripped CMYK decoding
@@ -919,7 +920,7 @@ public class TIFFReader extends ImageReader {
 					db = new DataBufferByte(pixels, pixels.length);
 					cm = new IndexColorModel(bitsPerSample, rgbColorPalette.length, rgbColorPalette, 0, false, -1, DataBuffer.TYPE_BYTE);
 					raster = Raster.createPackedRaster(db, imageWidth, imageHeight, bitsPerSample, null);
-					if(bitsPerSample == 8 && samplesPerPixel == 2) { // Deal with alpha transparency
+					if(samplesPerPixel == 2) { // Deal with alpha transparency
 						if(e_photoMetric == PhotoMetric.WHITE_IS_ZERO)
 							IMGUtils.invertBits(pixels, 2); // Unlike samplesPerPixel == 1 case, we have to invert bits here as we are using ComponentColorModel
 						numOfBands = samplesPerPixel;
@@ -929,15 +930,19 @@ public class TIFFReader extends ImageReader {
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandOffsets, null);
 					}
-				} else { // Assume bitsPerSample <= 16 and no alpha transparency
+				} else { // Assume bitsPerSample <= 16
 					short[] tempArray = (short[])ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, (bitsPerSample%8 == 0)?endian == IOUtils.BIG_ENDIAN:true);
 					if(predictor == 2 && planaryConfiguration == 1)
 						tempArray = applyDePredictor(samplesPerPixel, tempArray, imageWidth, imageHeight);								
 					if(e_photoMetric == PhotoMetric.WHITE_IS_ZERO)
-						IMGUtils.invertBits(tempArray, 1);
-					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), false, false, trans, DataBuffer.TYPE_USHORT);
+						IMGUtils.invertBits(tempArray, samplesPerPixel);
+					if(samplesPerPixel == 2) { // Deal with alpha transparency
+						transparent = true;
+						trans = Transparency.TRANSLUCENT;
+					}
+					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
 					raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
-					raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);
+					raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);					
 				} 
 				return new BufferedImage(cm, raster, false, null);
 			default:
