@@ -21,7 +21,7 @@ import java.util.Map;
  * @version 1.0 12/20/2013
  */
 public enum T4WhiteCode implements T4Code {
-	// Terminal codes
+	// Terminating codes
 	CODE0(0, 8, (short)0x3500),
 	CODE1(1, 6, (short)0x1c00),
 	CODE2(2, 4, (short)0x7000),
@@ -130,14 +130,14 @@ public enum T4WhiteCode implements T4Code {
 	// Unknown code
 	UNKNOWN(9999, 12, (short)0x0000);
  	
-	private T4WhiteCode(int value, int codeLen, short code) {
-		this.value = value;
+	private T4WhiteCode(int runLen, int codeLen, short code) {
+		this.runLen = runLen;
 		this.codeLen = codeLen;
 		this.code = code;
 	}
 	
 	public int getRunLen() {
-		return value;
+		return runLen;
 	}
 	
 	public int getCodeLen() {
@@ -173,7 +173,7 @@ public enum T4WhiteCode implements T4Code {
 		}	
 	}	
 	
-	private final int value;
+	private final int runLen;
 	private final int codeLen;
 	private final short code;
 }

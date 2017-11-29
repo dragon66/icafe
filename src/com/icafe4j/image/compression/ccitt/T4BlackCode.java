@@ -21,7 +21,7 @@ import java.util.Map;
  * @version 1.0 12/20/2013
  */
 public enum T4BlackCode implements T4Code {
-	// Terminal codes
+	// Terminating codes
 	CODE0(0, 10, (short)0x0dc0),
 	CODE1(1, 3, (short)0x4000),
 	CODE2(2, 2, (short)0xc000),
