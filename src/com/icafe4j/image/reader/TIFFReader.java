@@ -71,6 +71,9 @@ import com.icafe4j.image.color.CMYKColorSpace;
 import com.icafe4j.image.color.Int32ComponentColorModel;
 import com.icafe4j.image.compression.ImageDecoder;
 import com.icafe4j.image.compression.deflate.DeflateDecoder;
+import com.icafe4j.image.compression.huffman.T4BlackCodeHuffmanTree;
+import com.icafe4j.image.compression.huffman.T4CodeHuffmanTreeNode;
+import com.icafe4j.image.compression.huffman.T4WhiteCodeHuffmanTree;
 import com.icafe4j.image.compression.lzw.LZWTreeDecoder;
 import com.icafe4j.image.compression.packbits.Packbits;
 import com.icafe4j.image.tiff.ASCIIField;
@@ -884,7 +887,17 @@ public class TIFFReader extends ImageReader {
 							randIS.seek(stripOffsets[i]);
 							randIS.readFully(pixels, offset, bytes2Read);
 							offset += bytes2Read;
+						}						
+						break;
+					case CCITTRLE:
+						temp = new byte[imageWidth*imageHeight];
+						for(int i = 0; i < stripByteCounts.length; i++) {
+							int bytes2Read = stripByteCounts[i];
+							randIS.seek(stripOffsets[i]);
+							randIS.readFully(temp, offset, stripByteCounts[i]);
+							offset += bytes2Read;
 						}
+						pixels = decodeCode(temp, imageWidth, imageHeight);
 						break;
 					case LZW:
 						decoder = new LZWTreeDecoder(8, true);
@@ -1661,5 +1674,132 @@ public class TIFFReader extends ImageReader {
 		}
 		
 		return offsetY;
+	}
+	
+	// This is to be moved to G31DDecoder
+	private byte[] decodeCode(byte[] bytes, int imageWidth, int imageHeight) {
+		T4CodeHuffmanTreeNode blackNodes = new T4BlackCodeHuffmanTree().generate();
+		T4CodeHuffmanTreeNode whiteNodes = new T4WhiteCodeHuffmanTree().generate();
+		T4CodeHuffmanTreeNode currNode = whiteNodes;
+		int totalBytes = imageWidth*imageHeight;
+		byte[] result = new byte[totalBytes];
+		int i = 0;
+		int j = 0;
+		int off = 7;
+		byte cur = bytes[i];
+
+		boolean isWhiteCode = true;
+		int runLen = 0;
+		int remaining = imageWidth;
+		
+		while(true) {
+			if(((cur>>off) & 0x01) == 0) {
+				if(currNode.left() != null) {
+					//System.out.println("0");
+					currNode = currNode.left();
+					off--;
+					if(off < 0) {
+						off = 7;
+						i++;
+						if(i >= bytes.length ) break;
+						cur = bytes[i];				
+					}
+				} else {
+					runLen += currNode.value();			
+					if(currNode.value() <= 63) {
+						//output runLen
+						if(runLen > remaining)
+							runLen = remaining;
+						remaining -= runLen;
+						// Check code
+						if(isWhiteCode) {
+							for(int k = 0; k < runLen; k++) {
+								result[j++] = 0;
+							}
+							if(remaining != 0) {
+								currNode = blackNodes;
+								isWhiteCode = false;
+							} else {
+								currNode = whiteNodes;
+								isWhiteCode = true;
+							}
+						}
+						else {
+							for(int k = 0; k < runLen; k++) {
+								result[j++] = 1;
+							}
+							currNode = whiteNodes;
+							isWhiteCode = true;
+						}
+						if(remaining == 0) {
+							remaining = imageWidth;
+							if(off != 7) {
+							i++;
+							off = 7;
+							if(i >= bytes.length ) break;
+							cur = bytes[i];}			
+						}
+						runLen = 0;
+					} else {
+						if(isWhiteCode) currNode = whiteNodes;
+						else currNode = blackNodes;
+					}
+				}
+			} else if(((cur>>off) & 0x01) == 1) {
+				if(currNode.right() != null) {
+					currNode = currNode.right();
+					off--;
+					if(off < 0) {
+						off = 7;
+						i++;
+						if(i >= bytes.length ) break;
+						cur = bytes[i];				
+					}
+				} else {
+					runLen += currNode.value();
+					if(currNode.value() <= 63) {
+						//output runLen
+						if(runLen > remaining)
+							runLen = remaining;
+						remaining -= runLen;
+						// Check code
+						if(isWhiteCode) {
+							for(int k = 0; k < runLen; k++) {
+								result[j++] = 0;
+							} 
+							if(remaining != 0) {
+								currNode = blackNodes;
+								isWhiteCode = false;
+							} else {
+								currNode = whiteNodes;
+								isWhiteCode = true;
+							}
+						}
+						else {
+							for(int k = 0; k < runLen; k++) {
+								result[j++] = 1;
+							}
+							currNode = whiteNodes;
+							isWhiteCode = true;
+						}
+						if(remaining == 0) {
+							remaining = imageWidth;
+							if(off != 7) {
+								i++;
+								off = 7;
+								if(i >= bytes.length ) break;
+								cur = bytes[i];}					
+						}
+						runLen = 0;
+					} else {
+						if(isWhiteCode) currNode = whiteNodes;
+						else currNode = blackNodes;
+					}
+				}
+			}
+		
+		}
+		
+		return ArrayUtils.packByteArray(result, imageWidth, 0, 1, result.length);
 	}
 }
