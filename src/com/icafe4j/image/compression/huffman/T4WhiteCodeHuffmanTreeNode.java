@@ -1,22 +1,23 @@
 package com.icafe4j.image.compression.huffman;
 
-import com.icafe4j.image.compression.ccitt.T4BlackCode;
 import com.icafe4j.image.compression.ccitt.T4Code;
+import com.icafe4j.image.compression.ccitt.T4WhiteCode;
 
-public class T4BlackCodeHuffmanTree extends T4CodeHuffmanTree {
-
-	public T4CodeHuffmanTreeNode generate() {
-		
-		T4CodeHuffmanTreeNode root = new T4CodeHuffmanTreeNode();
+public class T4WhiteCodeHuffmanTreeNode extends T4CodeHuffmanTreeNode {
+	// Single instance
+	private static T4CodeHuffmanTreeNode root;
+	
+	static {
+		root = new T4WhiteCodeHuffmanTreeNode();
 		T4CodeHuffmanTreeNode curr = root;
 		
-		for(T4Code code : T4BlackCode.values()) {
-			if(code == T4BlackCode.UNKNOWN) continue;
+		for(T4Code code : T4WhiteCode.values()) {
+			if(code == T4WhiteCode.UNKNOWN) continue;
 			curr = root;			
 			int len = code.getCodeLen();
 			short value = code.getCode();
 			for(int i = 0; i < len; i++) {
-				T4CodeHuffmanTreeNode newNode = new T4CodeHuffmanTreeNode();
+				T4CodeHuffmanTreeNode newNode = new T4WhiteCodeHuffmanTreeNode();
 				if(((value>>(16 - i - 1))&0x01) == 0) {
 					if(curr.left() == null) {
 						curr.setLeft(newNode);
@@ -33,7 +34,11 @@ public class T4BlackCodeHuffmanTree extends T4CodeHuffmanTree {
 			}
 			curr.setValue(code.getRunLen());
 		}
-		
+	}
+	
+	private T4WhiteCodeHuffmanTreeNode() {} // Prevent from instantiation
+
+	public static T4CodeHuffmanTreeNode getInstance() {		
 		return root;
 	}
 }

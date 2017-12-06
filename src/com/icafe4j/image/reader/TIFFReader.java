@@ -71,9 +71,9 @@ import com.icafe4j.image.color.CMYKColorSpace;
 import com.icafe4j.image.color.Int32ComponentColorModel;
 import com.icafe4j.image.compression.ImageDecoder;
 import com.icafe4j.image.compression.deflate.DeflateDecoder;
-import com.icafe4j.image.compression.huffman.T4BlackCodeHuffmanTree;
+import com.icafe4j.image.compression.huffman.T4BlackCodeHuffmanTreeNode;
 import com.icafe4j.image.compression.huffman.T4CodeHuffmanTreeNode;
-import com.icafe4j.image.compression.huffman.T4WhiteCodeHuffmanTree;
+import com.icafe4j.image.compression.huffman.T4WhiteCodeHuffmanTreeNode;
 import com.icafe4j.image.compression.lzw.LZWTreeDecoder;
 import com.icafe4j.image.compression.packbits.Packbits;
 import com.icafe4j.image.tiff.ASCIIField;
@@ -1678,8 +1678,8 @@ public class TIFFReader extends ImageReader {
 	
 	// This is to be moved to G31DDecoder
 	private byte[] decodeCode(byte[] bytes, int imageWidth, int imageHeight) {
-		T4CodeHuffmanTreeNode blackNodes = new T4BlackCodeHuffmanTree().generate();
-		T4CodeHuffmanTreeNode whiteNodes = new T4WhiteCodeHuffmanTree().generate();
+		T4CodeHuffmanTreeNode blackNodes = T4BlackCodeHuffmanTreeNode.getInstance();
+		T4CodeHuffmanTreeNode whiteNodes = T4WhiteCodeHuffmanTreeNode.getInstance();
 		T4CodeHuffmanTreeNode currNode = whiteNodes;
 		int totalBytes = imageWidth*imageHeight;
 		byte[] result = new byte[totalBytes];

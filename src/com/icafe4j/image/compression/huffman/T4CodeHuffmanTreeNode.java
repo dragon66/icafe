@@ -1,6 +1,6 @@
 package com.icafe4j.image.compression.huffman;
 
-public class T4CodeHuffmanTreeNode {
+public abstract class T4CodeHuffmanTreeNode {
 	
 	private int value;
 	
