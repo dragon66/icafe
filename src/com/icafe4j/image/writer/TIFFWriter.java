@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    06Dec2017  Remove unnecessary T4Options for G3/1D and G4/2D
  * WY    23Nov2017  Fix bug with gray-scale image byte packing
  * WY    22Oct2017  Added compression type check
  * WY    11Dec2016  Added byte order support to TiffOptions
@@ -526,19 +527,18 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		
 		switch(compression) {
 			case CCITTRLE:
-				tiffField = new LongField(TiffTag.T4_OPTIONS.getValue(), new int[] {0});				
 				ImageEncoder encoder = new G31DEncoder(randomOS, imageWidth, 1024, this);
 				ccittCompress(ArrayUtils.packByteArray(pixels, 0, 1, pixels.length), imageWidth, imageHeight, encoder);
 				break;
 			case CCITTFAX3:
 				encoder = new G32DEncoder(randomOS, imageWidth, 1024, 4, this);
 				ccittCompress(ArrayUtils.packByteArray(pixels, 0, 1, pixels.length), imageWidth, imageHeight, encoder);
-				tiffField = new LongField(TiffTag.T4_OPTIONS.getValue(), new int[] {1});
+				tiffField = new LongField(TiffTag.T4_OPTIONS.getValue(), new int[] {1}); // 2D coding
+				ifd.addField(tiffField);
 				break;
 			case CCITTFAX4:
 				encoder = new G42DEncoder(randomOS, imageWidth, 1024, this);
 				ccittCompress(ArrayUtils.packByteArray(pixels, 0, 1, pixels.length), imageWidth, imageHeight, encoder);
-				tiffField = new LongField(TiffTag.T4_OPTIONS.getValue(), new int[] {1});
 				break;
 			case LZW:
 			case DEFLATE:
@@ -550,8 +550,6 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 				packbitsCompress(pixels, 1, imageWidth, imageHeight);
 				break;
 		}
-		
-		ifd.addField(tiffField);	
 		
 		tiffField = new ShortField(TiffTag.COMPRESSION.getValue(), new short[]{(short)compression.getValue()});
 		ifd.addField(tiffField);	
