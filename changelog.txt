@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/06/2017
+Last modified on 12/07/2017
 ***************************
+07Dec2017  Added CCITTRLE compression support to TIFFReader
 06Dec2017  Removed TIFFWriter unnecessary T4Options for G3/1D and G4/2D
 28Nov2017  Added TIFFReader support for gray-scale alpha channel
 23Nov2017  Added TIFFReader support for 16 bit gray-scale

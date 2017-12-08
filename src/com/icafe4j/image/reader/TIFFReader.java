@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    07Dec2017  Added support for CCITTRLE compression
  * WY    28Nov2017  Added gray-scale alpha support
  * WY    23Nov2017  Added support for 16 bits gray-scale
  * WY    22Nov2017  Added support for BlackIsZero and WhiteIsZero
@@ -888,14 +889,7 @@ public class TIFFReader extends ImageReader {
 						}						
 						break;
 					case CCITTRLE:
-						temp = new byte[imageWidth*imageHeight];
-						for(int i = 0; i < stripByteCounts.length; i++) {
-							int bytes2Read = stripByteCounts[i];
-							randIS.seek(stripOffsets[i]);
-							randIS.readFully(temp, offset, stripByteCounts[i]);
-							offset += bytes2Read;
-						}
-						pixels = G31DDecoder.decodeCode(temp, imageWidth, imageHeight);
+						decoder = new G31DDecoder(imageWidth);
 						break;
 					case LZW:
 						decoder = new LZWTreeDecoder(8, true);
