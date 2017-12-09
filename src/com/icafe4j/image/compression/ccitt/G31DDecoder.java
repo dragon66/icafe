@@ -15,46 +15,41 @@ import com.icafe4j.image.compression.ImageDecoder;
 import com.icafe4j.image.compression.huffman.T4BlackCodeHuffmanTreeNode;
 import com.icafe4j.image.compression.huffman.T4CodeHuffmanTreeNode;
 import com.icafe4j.image.compression.huffman.T4WhiteCodeHuffmanTreeNode;
-import com.icafe4j.util.ArrayUtils;
 
 public class G31DDecoder implements ImageDecoder {
 
 	private byte[] input;
 	
 	public G31DDecoder(int scanLineWidth) {
-		this(null, scanLineWidth);
+		this.scanLineWidth = scanLineWidth;
 	}
 	
 	public G31DDecoder(byte[] input, int scanLineWidth) {
 		this.input = input;
 		this.scanLineWidth = scanLineWidth;
-		reset((input == null)? 0: input.length, 0, 7);
+		reset(0, input.length, 7);
 	}
 
 	public int decode(byte[] pix, int offset, int len) throws Exception {
 		T4CodeHuffmanTreeNode blackNodes = T4BlackCodeHuffmanTreeNode.getInstance();
 		T4CodeHuffmanTreeNode whiteNodes = T4WhiteCodeHuffmanTreeNode.getInstance();
 		T4CodeHuffmanTreeNode currNode = whiteNodes;
-		int totalBytes = scanLineWidth; // Will use len later
-		byte[] result = new byte[totalBytes];
 		byte cur = input[byteOffset];
-		int lineOffset = 0;
-		int count = 0;
+		int endOffset = byteOffset + this.len;
 		
-		boolean isWhiteCode = true;
 		int runLen = 0;
 		int remaining = scanLineWidth;
+		boolean isWhiteCode = true;
 		
 		while(true) {
 			if(((cur>>bitOffset) & 0x01) == 0) {
 				if(currNode.left() != null) {
-					//System.out.println("0");
 					currNode = currNode.left();
 					bitOffset--;
 					if(bitOffset < 0) {
 						bitOffset = 7;
 						byteOffset++;
-						if(byteOffset >= input.length ) break;
+						if(byteOffset >= endOffset) break;
 						cur = input[byteOffset];				
 					}
 				} else {
@@ -66,9 +61,7 @@ public class G31DDecoder implements ImageDecoder {
 						remaining -= runLen;
 						// Check code
 						if(isWhiteCode) {
-							for(int k = 0; k < runLen; k++) {
-								result[lineOffset++] = 0;
-							}
+							destByteOffset = outputRunLen(pix, destByteOffset, runLen,  scanLineWidth, 0, len);
 							if(remaining != 0) {
 								currNode = blackNodes;
 								isWhiteCode = false;
@@ -78,24 +71,16 @@ public class G31DDecoder implements ImageDecoder {
 							}
 						}
 						else {
-							for(int k = 0; k < runLen; k++) {
-								result[lineOffset++] = 1;
-							}
+							destByteOffset = outputRunLen(pix, destByteOffset, runLen,  scanLineWidth, 1, len);
 							currNode = whiteNodes;
 							isWhiteCode = true;
 						}
 						if(remaining == 0) {
 							remaining = scanLineWidth;
-							result =  ArrayUtils.packByteArray(result, scanLineWidth, 0, 1, result.length);
-							System.arraycopy(result, 0, pix, offset, result.length);
-							offset += result.length;
-							count += result.length;
-							result = new byte[scanLineWidth];
-							lineOffset = 0;
 							if(bitOffset != 7) {
 								byteOffset++;
 								bitOffset = 7;
-								if(byteOffset >= input.length ) break;
+								if(byteOffset >= endOffset) break;
 								cur = input[byteOffset];								
 							}			
 						}
@@ -112,7 +97,7 @@ public class G31DDecoder implements ImageDecoder {
 					if(bitOffset < 0) {
 						bitOffset = 7;
 						byteOffset++;
-						if(byteOffset >= input.length ) break;
+						if(byteOffset >= endOffset) break;
 						cur = input[byteOffset];				
 					}
 				} else {
@@ -124,9 +109,7 @@ public class G31DDecoder implements ImageDecoder {
 						remaining -= runLen;
 						// Check code
 						if(isWhiteCode) {
-							for(int k = 0; k < runLen; k++) {
-								result[lineOffset++] = 0;
-							} 
+							destByteOffset = outputRunLen(pix, destByteOffset, runLen,  scanLineWidth, 0, len);
 							if(remaining != 0) {
 								currNode = blackNodes;
 								isWhiteCode = false;
@@ -136,24 +119,16 @@ public class G31DDecoder implements ImageDecoder {
 							}
 						}
 						else {
-							for(int k = 0; k < runLen; k++) {
-								result[lineOffset++] = 1;
-							}
+							destByteOffset = outputRunLen(pix, destByteOffset, runLen,  scanLineWidth, 1, len);
 							currNode = whiteNodes;
 							isWhiteCode = true;
 						}
 						if(remaining == 0) {
 							remaining = scanLineWidth;
-							result =  ArrayUtils.packByteArray(result, scanLineWidth, 0, 1, result.length);
-							System.arraycopy(result, 0, pix, offset, result.length);
-							offset += result.length;
-							count += result.length;
-							result = new byte[scanLineWidth];
-							lineOffset = 0;
 							if(bitOffset != 7) {
 								byteOffset++;
 								bitOffset = 7;
-								if(byteOffset >= input.length ) break;
+								if(byteOffset >= endOffset) break;
 								cur = input[byteOffset];}					
 						}
 						runLen = 0;
@@ -165,13 +140,33 @@ public class G31DDecoder implements ImageDecoder {
 			}		
 		}		
 		
-		return count; 
+		return uncompressedBytes; 
 	}
 	
-	private void reset(int len, int byteOffset, int bitOffset) {
-		this.len = len;
+	private int outputRunLen(byte[] input, int offset, int runLen,  int stride, int color, int len) {
+	
+		for(int i = 0; i < runLen; i++) {
+			if(empty_bits >= 1) {
+				input[offset] |= (color<<(empty_bits-1));
+				empty_bits--;
+			} 
+			// Check to see if we need to move to next byte
+			if(++lineOffset%stride == 0 || empty_bits == 0) {
+				offset++;
+				uncompressedBytes++;
+				empty_bits = 8;
+				if(uncompressedBytes >= len) break;			
+			}
+		}
+		
+		return offset;
+	}
+	
+	private void reset(int byteOffset, int len, int bitOffset) {
 		this.byteOffset = byteOffset;
+		this.len = len;
 		this.bitOffset = bitOffset;
+		this.uncompressedBytes = 0;
 	}
 
 	public void setInput(byte[] input) {
@@ -180,11 +175,15 @@ public class G31DDecoder implements ImageDecoder {
 
 	public void setInput(byte[] input, int offset, int len) {
 		this.input = input;
-		reset(len, offset, 7);	
+		reset(offset, len, 7);	
 	}
 	
-	private int len; // Will be used later by decode
-	private int scanLineWidth;
+	private int len = 0;
+	private int scanLineWidth = 0;
 	private int byteOffset = 0;
 	private int bitOffset = 7;
+	private int empty_bits = 8;
+	private int lineOffset = 0;
+	private int destByteOffset = 0;
+	private int uncompressedBytes = 0;
 }
