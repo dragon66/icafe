@@ -20,7 +20,6 @@ public class G31DDecoder implements ImageDecoder {
 	
 	private int empty_bits = 8;
 	private int lineOffset = 0;
-	private byte[] input;
 	
 	public G31DDecoder(int scanLineWidth) {
 		this.scanLineWidth = scanLineWidth;
@@ -180,6 +179,7 @@ public class G31DDecoder implements ImageDecoder {
 		reset(offset, len, 7);	
 	}
 	
+	protected byte[] input;
 	protected int len = 0;
 	protected int scanLineWidth = 0;
 	protected int byteOffset = 0;
