@@ -17,7 +17,9 @@ import com.icafe4j.image.compression.huffman.T4CodeHuffmanTreeNode;
 import com.icafe4j.image.compression.huffman.T4WhiteCodeHuffmanTreeNode;
 
 public class G31DDecoder implements ImageDecoder {
-
+	
+	private int empty_bits = 8;
+	private int lineOffset = 0;
 	private byte[] input;
 	
 	public G31DDecoder(int scanLineWidth) {
@@ -143,7 +145,7 @@ public class G31DDecoder implements ImageDecoder {
 		return uncompressedBytes; 
 	}
 	
-	private int outputRunLen(byte[] input, int offset, int runLen,  int stride, int color, int len) {
+	protected int outputRunLen(byte[] input, int offset, int runLen,  int stride, int color, int len) {
 	
 		for(int i = 0; i < runLen; i++) {
 			if(empty_bits >= 1) {
@@ -162,7 +164,7 @@ public class G31DDecoder implements ImageDecoder {
 		return offset;
 	}
 	
-	private void reset(int byteOffset, int len, int bitOffset) {
+	protected void reset(int byteOffset, int len, int bitOffset) {
 		this.byteOffset = byteOffset;
 		this.len = len;
 		this.bitOffset = bitOffset;
@@ -178,12 +180,10 @@ public class G31DDecoder implements ImageDecoder {
 		reset(offset, len, 7);	
 	}
 	
-	private int len = 0;
-	private int scanLineWidth = 0;
-	private int byteOffset = 0;
-	private int bitOffset = 7;
-	private int empty_bits = 8;
-	private int lineOffset = 0;
-	private int destByteOffset = 0;
-	private int uncompressedBytes = 0;
+	protected int len = 0;
+	protected int scanLineWidth = 0;
+	protected int byteOffset = 0;
+	protected int bitOffset = 7;
+	protected int destByteOffset = 0;
+	protected int uncompressedBytes = 0;
 }
