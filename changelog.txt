@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/07/2017
+Last modified on 12/13/2017
 ***************************
+13Dec2017  Replace TIFFTweaker e.printStackTrace() with logging and/or RuntimeException
 07Dec2017  Added CCITTRLE compression support to TIFFReader
 06Dec2017  Removed TIFFWriter unnecessary T4Options for G3/1D and G4/2D
 28Nov2017  Added TIFFReader support for gray-scale alpha channel

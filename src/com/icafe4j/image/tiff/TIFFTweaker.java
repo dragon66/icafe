@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    13Dec2017  Replace e.printStackTrace() with logging and/or RuntimeException
  * WY    20Nov2017  Added re-factored merge() method
  * WY    09Sep2017  Added split a multiple page TIFF into smaller multiple page TIFF
  * SV    05Sep2017  Added split a multiple page TIFF into single page TIFFs byte arrays
@@ -1396,8 +1397,9 @@ public class TIFFTweaker {
 		try {
 			writeOffset = writer.writePage(image, pageNumber, ifds.size(), rout, writeOffset);
 			ifds.add(pageNumber, writer.getIFD());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e) { // Log and throw RuntimeException
+			LOGGER.error("Failed inserting page " + pageNumber, e);
+			throw new RuntimeException("Failed inserting page " + pageNumber);
 		}	
 		
 		return writeOffset;
@@ -1455,7 +1457,8 @@ public class TIFFTweaker {
 				writeOffset = writer.writePage(frame, pageNumber++, maxPageNumber, rout, writeOffset);
 				insertedList.add(writer.getIFD());
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error("Failed inserting page " + pageNumber, e);
+				throw new RuntimeException("Failed inserting page " + pageNumber);
 			}
 		}
 		
@@ -1553,7 +1556,8 @@ public class TIFFTweaker {
 				writeOffset = writer.writePage(images[i], pageNumber++, maxPageNumber, rout, writeOffset);
 				insertedList.add(writer.getIFD());
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error("Failed inserting page " + pageNumber, e);
+				throw new RuntimeException("Failed inserting page " + pageNumber);
 			}
 		}
 		
@@ -1815,7 +1819,8 @@ public class TIFFTweaker {
 								try {
 									bytesDecompressed = decoder.decode(decompressed, 0, uncompressedStripByteCounts[k]);
 								} catch (Exception e) {
-									e.printStackTrace();
+									LOGGER.error("Failed decoding image", e);
+									throw new RuntimeException("Failed decoding image");
 								}
 								buf = ArrayUtils.flipEndian(decompressed, 0, bytesDecompressed, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
 								// Compress the data
@@ -1824,7 +1829,8 @@ public class TIFFTweaker {
 									encoder.encode(buf, 0, buf.length);
 									encoder.finish();
 								} catch (Exception e) {
-									e.printStackTrace();
+									LOGGER.error("Failed encoding image", e);
+									throw new RuntimeException("Failed encoding image");
 								}
 								temp[k] = offset;
 								offset += encoder.getCompressedDataLen(); // DONE!
@@ -2081,7 +2087,8 @@ public class TIFFTweaker {
 										try {
 											bytesDecompressed = decoder.decode(decompressed, 0, uncompressedStripByteCounts[k]);
 										} catch (Exception e) {
-											e.printStackTrace();
+											LOGGER.error("Failed decoding image", e);
+											throw new RuntimeException("Failed decoding image");
 										}
 										buf = ArrayUtils.flipEndian(decompressed, 0, bytesDecompressed, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
 										// Compress the data
@@ -2090,7 +2097,8 @@ public class TIFFTweaker {
 											encoder.encode(buf, 0, buf.length);
 											encoder.finish();
 										} catch (Exception e) {
-											e.printStackTrace();
+											LOGGER.error("Failed encoding image", e);
+											throw new RuntimeException("Failed encoding image");
 										}
 										temp[k] = offset;
 										offset += encoder.getCompressedDataLen(); // DONE!
@@ -2314,9 +2322,9 @@ public class TIFFTweaker {
 		try {
 			method = tagClass.getDeclaredMethod("fromShort", short.class);
 		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
+			throw new RuntimeException("Method 'fromShort' is not defined for class " + tagClass);
 		} catch (SecurityException e) {
-			e.printStackTrace();
+			throw new RuntimeException("The operation is not allowed by the current security setup");
 		}
 		Collection<TiffField<?>> fields = currIFD.getFields();
 		int i = 0;
@@ -2333,11 +2341,11 @@ public class TIFFTweaker {
 				try {
 					ftag = (Tag)method.invoke(null, tag);
 				} catch (IllegalAccessException e) {
-					LOGGER.error("IllegalAcessException", e);
+					throw new RuntimeException("Illegal access for method: " + method);
 				} catch (IllegalArgumentException e) {
-					LOGGER.error("IllegalArgumentException", e);
+					throw new RuntimeException("Illegal argument for method:  " + method);
 				} catch (InvocationTargetException e) {
-					LOGGER.error("InvocationTargetException", e);
+					throw new RuntimeException("Incorrect invocation target");
 				}
 			}	
 			if (ftag == TiffTag.UNKNOWN) {
@@ -2422,7 +2430,7 @@ public class TIFFTweaker {
 		try {
 			method = tagClass.getDeclaredMethod("fromShort", short.class);
 		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("The static method 'fromShort' doesn't exist");
+			throw new RuntimeException("Method 'fromShort' is not defined for class " + tagClass);
 		} catch (SecurityException e) {
 			throw new RuntimeException("Current security doesn't allow this operation");
 		}
@@ -2438,11 +2446,11 @@ public class TIFFTweaker {
 			try {
 				ftag = (Tag)method.invoke(null, tag);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				throw new RuntimeException("Illegal access for method: " + method);
 			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
+				throw new RuntimeException("Illegal argument for method:  " + method);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				throw new RuntimeException("Incorrect invocation target");
 			}
 			offset += 2;
 			rin.seek(offset);
@@ -2537,21 +2545,21 @@ public class TIFFTweaker {
 							readIFD(rin, null, ldata[0], ExifTag.class, tiffIFD, TiffTag.EXIF_SUB_IFD);
 						} catch(Exception e) {
 							tiffIFD.removeField(TiffTag.EXIF_SUB_IFD);
-							e.printStackTrace();
+							LOGGER.error("Unable to read TiffTag.EXIF_SUB_IFD", e);
 						}
 					} else if ((ftag == TiffTag.GPS_SUB_IFD) && (ldata[0] != 0)) {
 						try {
 							readIFD(rin, null, ldata[0], GPSTag.class, tiffIFD, TiffTag.GPS_SUB_IFD);
 						} catch(Exception e) {
 							tiffIFD.removeField(TiffTag.GPS_SUB_IFD);
-							e.printStackTrace();
+							LOGGER.error("Unable to read TiffTag.GPS_SUB_IFD", e);
 						}
 					} else if((ftag == ExifTag.EXIF_INTEROPERABILITY_OFFSET) && (ldata[0] != 0)) {
 						try {
 							readIFD(rin, null, ldata[0], InteropTag.class, tiffIFD, ExifTag.EXIF_INTEROPERABILITY_OFFSET);
 						} catch(Exception e) {
 							tiffIFD.removeField(ExifTag.EXIF_INTEROPERABILITY_OFFSET);
-							e.printStackTrace();
+							LOGGER.error("Unable to read ExifTag.EXIF_INTEROPERABILITY_OFFSET", e);
 						}
 					} else if (ftag == TiffTag.SUB_IFDS) {						
 						for(int ifd = 0; ifd < ldata.length; ifd++) {
@@ -2559,7 +2567,7 @@ public class TIFFTweaker {
 								readIFD(rin, null, ldata[0], TiffTag.class, tiffIFD, TiffTag.SUB_IFDS);
 							} catch(Exception e) {
 								tiffIFD.removeField(TiffTag.SUB_IFDS);
-								e.printStackTrace();
+								LOGGER.error("Unable to read TiffTag.SUB_IFDS", e);
 							}
 						}
 					}				
@@ -3355,7 +3363,8 @@ public class TIFFTweaker {
 				writeOffset = writer.writePage(frame, pageNumber++, maxPageNumber, rout, writeOffset);
 				list.add(writer.getIFD());
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error("Failed writing page " + pageNumber, e);
+				throw new RuntimeException("Failed writing page " + pageNumber);
 			}
 		}
 		
@@ -3397,7 +3406,8 @@ public class TIFFTweaker {
 				writeOffset = writer.writePage(images[i], pageNumber++, maxPageNumber, rout, writeOffset);
 				list.add(writer.getIFD());
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error("Failed writing page " + pageNumber, e);
+				throw new RuntimeException("Failed writing page " + pageNumber);
 			}
 		}
 		
@@ -3416,7 +3426,8 @@ public class TIFFTweaker {
 			writeOffset = writer.writePage(image, 0, 0, rout, writeOffset);
 			ifds.add(writer.getIFD());
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Failed writing page", e);
+			throw new RuntimeException("Failed writing page");
 		}	
 	
 		return writeOffset;
