@@ -9,11 +9,9 @@
  * Any modifications to this file must keep this entire header intact.
  */
 
-package com.icafe4j.image.tiff;
+package com.icafe4j.image.compression;
 
 /**
- * UnsupportedCompressionException.
- * 
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 10/22/2017
  */

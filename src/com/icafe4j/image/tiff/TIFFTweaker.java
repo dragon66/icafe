@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    14Dec2017  Replace some of the RuntimeException with customized exception
  * WY    13Dec2017  Replace e.printStackTrace() with logging and/or RuntimeException
  * WY    20Nov2017  Added re-factored merge() method
  * WY    09Sep2017  Added split a multiple page TIFF into smaller multiple page TIFF
@@ -108,6 +109,7 @@ import com.icafe4j.image.ImageFrame;
 import com.icafe4j.image.ImageIO;
 import com.icafe4j.image.ImageParam;
 import com.icafe4j.image.ImageType;
+import com.icafe4j.image.compression.CodecException;
 import com.icafe4j.image.compression.ImageDecoder;
 import com.icafe4j.image.compression.ImageEncoder;
 import com.icafe4j.image.compression.deflate.DeflateDecoder;
@@ -1399,7 +1401,7 @@ public class TIFFTweaker {
 			ifds.add(pageNumber, writer.getIFD());
 		} catch (Exception e) { // Log and throw RuntimeException
 			LOGGER.error("Failed inserting page " + pageNumber, e);
-			throw new RuntimeException("Failed inserting page " + pageNumber);
+			throw new PageWritingException("Failed inserting page " + pageNumber, e);
 		}	
 		
 		return writeOffset;
@@ -1458,7 +1460,7 @@ public class TIFFTweaker {
 				insertedList.add(writer.getIFD());
 			} catch (Exception e) {
 				LOGGER.error("Failed inserting page " + pageNumber, e);
-				throw new RuntimeException("Failed inserting page " + pageNumber);
+				throw new PageWritingException("Failed inserting page " + pageNumber, e);
 			}
 		}
 		
@@ -1557,7 +1559,7 @@ public class TIFFTweaker {
 				insertedList.add(writer.getIFD());
 			} catch (Exception e) {
 				LOGGER.error("Failed inserting page " + pageNumber, e);
-				throw new RuntimeException("Failed inserting page " + pageNumber);
+				throw new PageWritingException("Failed inserting page " + pageNumber, e);
 			}
 		}
 		
@@ -1820,7 +1822,7 @@ public class TIFFTweaker {
 									bytesDecompressed = decoder.decode(decompressed, 0, uncompressedStripByteCounts[k]);
 								} catch (Exception e) {
 									LOGGER.error("Failed decoding image", e);
-									throw new RuntimeException("Failed decoding image");
+									throw new CodecException("Failed decoding image", e);
 								}
 								buf = ArrayUtils.flipEndian(decompressed, 0, bytesDecompressed, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
 								// Compress the data
@@ -1830,7 +1832,7 @@ public class TIFFTweaker {
 									encoder.finish();
 								} catch (Exception e) {
 									LOGGER.error("Failed encoding image", e);
-									throw new RuntimeException("Failed encoding image");
+									throw new CodecException("Failed encoding image", e);
 								}
 								temp[k] = offset;
 								offset += encoder.getCompressedDataLen(); // DONE!
@@ -2088,7 +2090,7 @@ public class TIFFTweaker {
 											bytesDecompressed = decoder.decode(decompressed, 0, uncompressedStripByteCounts[k]);
 										} catch (Exception e) {
 											LOGGER.error("Failed decoding image", e);
-											throw new RuntimeException("Failed decoding image");
+											throw new CodecException("Failed decoding image", e);
 										}
 										buf = ArrayUtils.flipEndian(decompressed, 0, bytesDecompressed, bitsPerSample, scanLineStride, readEndian == IOUtils.BIG_ENDIAN);
 										// Compress the data
@@ -2098,7 +2100,7 @@ public class TIFFTweaker {
 											encoder.finish();
 										} catch (Exception e) {
 											LOGGER.error("Failed encoding image", e);
-											throw new RuntimeException("Failed encoding image");
+											throw new CodecException("Failed encoding image", e);
 										}
 										temp[k] = offset;
 										offset += encoder.getCompressedDataLen(); // DONE!
@@ -3364,7 +3366,7 @@ public class TIFFTweaker {
 				list.add(writer.getIFD());
 			} catch (Exception e) {
 				LOGGER.error("Failed writing page " + pageNumber, e);
-				throw new RuntimeException("Failed writing page " + pageNumber);
+				throw new PageWritingException("Failed writing page " + pageNumber, e);
 			}
 		}
 		
@@ -3407,7 +3409,7 @@ public class TIFFTweaker {
 				list.add(writer.getIFD());
 			} catch (Exception e) {
 				LOGGER.error("Failed writing page " + pageNumber, e);
-				throw new RuntimeException("Failed writing page " + pageNumber);
+				throw new PageWritingException("Failed writing page " + pageNumber, e);
 			}
 		}
 		
@@ -3427,7 +3429,7 @@ public class TIFFTweaker {
 			ifds.add(writer.getIFD());
 		} catch (Exception e) {
 			LOGGER.error("Failed writing page", e);
-			throw new RuntimeException("Failed writing page");
+			throw new PageWritingException("Failed writing page", e);
 		}	
 	
 		return writeOffset;
