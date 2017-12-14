@@ -11,11 +11,13 @@
 
 package com.icafe4j.image.compression;
 
+import java.io.IOException;
+
 /**
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 12/14/2017
  */
-public class CodecException extends RuntimeException {
+public class CodecException extends IOException {
 
 	private static final long serialVersionUID = 6061713580330905476L;
 

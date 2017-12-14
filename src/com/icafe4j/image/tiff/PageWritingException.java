@@ -11,11 +11,13 @@
 
 package com.icafe4j.image.tiff;
 
+import java.io.IOException;
+
 /**
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 12/14/2017
  */
-public class PageWritingException extends RuntimeException {
+public class PageWritingException extends IOException {
 
 	private static final long serialVersionUID = 2704889922336376975L;
 
