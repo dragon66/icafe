@@ -31,7 +31,7 @@ Image convertion and management:
 - Image conversion to any of the supported format
 - Multipage TIFF support
   * Create multiple page TIFF from a series of BufferedImages.
-  * Split multipage TIFF image into individual TIFF images without decompression the images.
+  * Split multipage TIFF image into individual TIFF images without decompressing the images.
   * Insert into or remove pages from multipage TIFF images.
   * Merge multipage TIFF images togeter without decompressing (Support for any BitsPerSample TIFF).
 - Animated GIF support
