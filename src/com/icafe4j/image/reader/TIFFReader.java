@@ -201,8 +201,15 @@ public class TIFFReader extends ImageReader {
 		// Forget about tiled TIFF for now
 		TiffField<?> f_stripOffsets = ifd.getField(TiffTag.STRIP_OFFSETS);
 		TiffField<?> f_stripByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS);
+		if(f_stripOffsets == null) throw new RuntimeException("Missing required field stripOffsets");
 		int[] stripOffsets = f_stripOffsets.getDataAsLong();
-		int[] stripByteCounts = f_stripByteCounts.getDataAsLong();
+		int[] stripByteCounts = null;
+		if(f_stripByteCounts == null) {
+			if(stripOffsets.length == 1) {
+				stripByteCounts = new int[]{0};
+			} else throw new RuntimeException("Missing required field stripByteCounts");
+		} else
+			stripByteCounts = f_stripByteCounts.getDataAsLong();
 		int imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH).getDataAsLong()[0];
 		int imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH).getDataAsLong()[0];
 		LOGGER.info("Image width: {}", imageWidth);
@@ -325,9 +332,14 @@ public class TIFFReader extends ImageReader {
 				}
 				if(decoder != null) {
 					for(int i = 0; i < stripByteCounts.length; i++) {
-						byte[] temp = new byte[stripByteCounts[i]];
+						byte[] temp = null;
 						randIS.seek(stripOffsets[i]);
-						randIS.readFully(temp);
+						if(stripByteCounts[i] == 0){
+							temp = IOUtils.readFully(randIS, 4096);
+						} else {
+							temp = new byte[stripByteCounts[i]];
+							randIS.readFully(temp);
+						}
 						decoder.setInput(temp);
 						int numOfBytes = decoder.decode(pixels, offset, stripBytes[i]);
 						offset += numOfBytes;
@@ -379,12 +391,16 @@ public class TIFFReader extends ImageReader {
 				}
 				if(decoder != null) {
 					for(int i = 0; i < stripByteCounts.length; i++) {
-						int bytes2Read = stripBytes[i];
-						byte[] temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
-						randIS.readFully(temp);
+						byte[] temp = null;
+						if(stripByteCounts[i] == 0){
+							temp = IOUtils.readFully(randIS, 4096);
+						} else {
+							temp = new byte[stripByteCounts[i]];
+							randIS.readFully(temp);
+						}
 						decoder.setInput(temp);
-						int numOfBytes = decoder.decode(pixels, offset, bytes2Read);							
+						int numOfBytes = decoder.decode(pixels, offset, stripBytes[i]);							
 						offset += numOfBytes;
 					}
 				}
@@ -514,11 +530,13 @@ public class TIFFReader extends ImageReader {
 						case NONE:
 							for(int i = 0; i < stripByteCounts.length; i++) {
 								randIS.seek(stripOffsets[i]);
-								int len = stripByteCounts[i];
-								temp = new byte[len];
-								randIS.readFully(temp);
-								
-								int numOfDataUnit = len/bytesPerDataUnit;
+								if(stripByteCounts[i] == 0){
+									temp = IOUtils.readFully(randIS, 4096);
+								} else {
+									temp = new byte[stripByteCounts[i]];
+									randIS.readFully(temp);
+								}
+								int numOfDataUnit = temp.length/bytesPerDataUnit;
 								
 								offsetY = upsampling(offsetY, numOfDataUnit, bytesPerUnitY, samplingFactor, referenceBlackY, referenceWhiteY, referenceBlackCb,
 										referenceWhiteCb, referenceBlackCr, referenceWhiteCr, codingRangeY, codingRangeCbCr, lumaRed, lumaGreen, lumaBlue, temp,
@@ -529,9 +547,12 @@ public class TIFFReader extends ImageReader {
 						case LZW:
 							for(int i = 0; i < stripByteCounts.length; i++) {
 								randIS.seek(stripOffsets[i]);
-								int len = stripByteCounts[i];
-								temp = new byte[len];
-								randIS.readFully(temp);
+								if(stripByteCounts[i] == 0){
+									temp = IOUtils.readFully(randIS, 4096);
+								} else {
+									temp = new byte[stripByteCounts[i]];
+									randIS.readFully(temp);
+								}
 								temp2 = new byte[stripBytes[i]];
 								decoder = new LZWTreeDecoder(8, true);
 								decoder.setInput(temp);
@@ -548,9 +569,12 @@ public class TIFFReader extends ImageReader {
 						case PACKBITS:
 							for(int i = 0; i < stripByteCounts.length; i++) {
 								randIS.seek(stripOffsets[i]);
-								int len = stripByteCounts[i];
-								temp = new byte[len];
-								randIS.readFully(temp);
+								if(stripByteCounts[i] == 0){
+									temp = IOUtils.readFully(randIS, 4096);
+								} else {
+									temp = new byte[stripByteCounts[i]];
+									randIS.readFully(temp);
+								}
 								temp2 = new byte[stripBytes[i]];
 								Packbits.unpackbits(temp, temp2);
 								
@@ -568,6 +592,9 @@ public class TIFFReader extends ImageReader {
 					}				
 				} else {
 					// Planar configuration
+					if(stripByteCounts.length == 1 && samplesPerPixel != 1)
+							throw new RuntimeException("stripByteCounts length 1 is not consistent with samplesPerPixel " + samplesPerPixel);
+											
 					bytesPerScanLine = (expandedImageWidth*bitsPerSample + 7)/8;
 								
 					switch(compression) {
@@ -579,8 +606,12 @@ public class TIFFReader extends ImageReader {
 								for(int j = 0; j < stripsPerSample; j++, index++) {
 									randIS.seek(stripOffsets[index]);
 									int len = stripByteCounts[index];
-									temp = new byte[len];
-									randIS.readFully(temp);
+									if(len == 0) {
+										temp = IOUtils.readFully(randIS, 4096);
+									} else {
+										temp = new byte[len];
+										randIS.readFully(temp);
+									}
 									bout.write(temp);
 								}
 								buf[i] = bout.toByteArray();
@@ -682,9 +713,13 @@ public class TIFFReader extends ImageReader {
 				if(decoder != null) {					
 					pixels = new byte[stripOffsets.length*stripBytes[0]];
 					for(int i = 0; i < stripByteCounts.length; i++) {
-						temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
-						randIS.readFully(temp);
+						if(stripByteCounts[i] == 0){
+							temp = IOUtils.readFully(randIS, 4096);
+						} else {
+							temp = new byte[stripByteCounts[i]];
+							randIS.readFully(temp);
+						}
 						decoder.setInput(temp);
 						int numOfBytes = decoder.decode(pixels, offset, stripBytes[i]);							
 						offset += numOfBytes;
@@ -909,9 +944,13 @@ public class TIFFReader extends ImageReader {
 				}
 				if(decoder != null) {
 					for(int i = 0; i < stripByteCounts.length; i++) {
-						temp = new byte[stripByteCounts[i]];
 						randIS.seek(stripOffsets[i]);
-						randIS.readFully(temp);
+						if(stripByteCounts[i] == 0){
+							temp = IOUtils.readFully(randIS, 4096);
+						} else {
+							temp = new byte[stripByteCounts[i]];
+							randIS.readFully(temp);
+						}
 						decoder.setInput(temp);
 						int numOfBytes = decoder.decode(pixels, offset, stripBytes[i]);
 						offset += numOfBytes;
@@ -966,13 +1005,17 @@ public class TIFFReader extends ImageReader {
 		
 		TiffField<?> f_tileOffsets = ifd.getField(TiffTag.TILE_OFFSETS);
 		if(f_tileOffsets == null) f_tileOffsets = ifd.getField(TiffTag.STRIP_OFFSETS);
-		
+		if(f_tileOffsets == null) throw new RuntimeException("Missing required field tileOffsets");
+		int[] tileOffsets = f_tileOffsets.getDataAsLong();
 		TiffField<?> f_tileByteCounts = ifd.getField(TiffTag.TILE_BYTE_COUNTS);
 		if(f_tileByteCounts == null) f_tileByteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS);
-		
-		int[] tileOffsets = f_tileOffsets.getDataAsLong();
-		int[] tileByteCounts = f_tileByteCounts.getDataAsLong();
-		
+		int[] tileByteCounts = null;
+		if(f_tileByteCounts == null) {
+			if(tileOffsets.length == 1) {
+				tileByteCounts = new int[]{0};
+			} else throw new RuntimeException("Missing required field tileByteCounts");
+		} else
+			tileByteCounts = f_tileByteCounts.getDataAsLong();
 		int imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH).getDataAsLong()[0];
 		int imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH).getDataAsLong()[0];
 		LOGGER.info("Image width: {}", imageWidth);
@@ -1601,9 +1644,14 @@ public class TIFFReader extends ImageReader {
 	
 	// Unpack PACKBITS encoded strips
 	private void unpackStrip(byte[] pixels, int offset, int bytes2Read, int stripOffset, int stripByteCount) throws IOException {
-		byte[] temp = new byte[stripByteCount];
 		randIS.seek(stripOffset);
-		randIS.readFully(temp);
+		byte[] temp = null;
+		if(stripByteCount == 0) {
+			temp = IOUtils.readFully(randIS, 4096);
+		} else {
+			temp = new byte[stripByteCount];
+			randIS.readFully(temp);
+		}		
 		byte[] temp2 = new byte[bytes2Read];
 		Packbits.unpackbits(temp, temp2);
 		System.arraycopy(temp2, 0, pixels, offset, bytes2Read);			
