@@ -137,6 +137,7 @@ import com.icafe4j.image.meta.iptc.IPTCDataSet;
 import com.icafe4j.image.meta.tiff.TiffExif;
 import com.icafe4j.image.meta.tiff.TiffXMP;
 import com.icafe4j.image.meta.xmp.XMP;
+import com.icafe4j.image.tiff.TiffFieldEnum.PhotoMetric;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.image.writer.TIFFWriter;
 import com.icafe4j.string.StringUtils;
@@ -812,7 +813,12 @@ public class TIFFTweaker {
 		int horizontalSampleFactor = 2; // Default 2X2
 		int verticalSampleFactor = 2; // Not 1X1
 		
-		int photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION).getDataAsLong()[0];
+		tiffField = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION);
+		
+		int photoMetric = PhotoMetric.WHITE_IS_ZERO.getValue();
+		
+		if(tiffField != null)
+			photoMetric = tiffField.getDataAsLong()[0];
 		
 		// Correction for imageWidth and imageHeight for YCbCr image
 		if(photoMetric == TiffFieldEnum.PhotoMetric.YCbCr.getValue()) {

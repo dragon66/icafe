@@ -192,10 +192,10 @@ public class TIFFReader extends ImageReader {
 	
 	private BufferedImage decodeStrippedTiff(IFD ifd) throws Exception {
 		// Grab some of the TIFF fields we are interested in
-		TiffField<?> field = ifd.getField(TiffTag.COMPRESSION);
+		TiffField<?> f_compression = ifd.getField(TiffTag.COMPRESSION);
 		short[] data = new short[]{1}; // Default no compression
-		if(field != null)
-			data = (short[])field.getData();
+		if(f_compression != null)
+			data = (short[])f_compression.getData();
 		TiffFieldEnum.Compression compression = TiffFieldEnum.Compression.fromValue(data[0]&0xffff);
 		LOGGER.info("Compression type: {}", compression.getDescription());
 		// Forget about tiled TIFF for now
@@ -220,14 +220,20 @@ public class TIFFReader extends ImageReader {
 			rowsPerStrip = f_rowsPerStrip.getDataAsLong()[0];
 		LOGGER.info("Rows per strip: {}", rowsPerStrip);		
 		TiffField<?> f_photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION);
-		int photoMetric = f_photoMetric.getDataAsLong()[0];
+		int photoMetric = PhotoMetric.WHITE_IS_ZERO.getValue();
+		if(f_photoMetric != null)
+			photoMetric = f_photoMetric.getDataAsLong()[0];
 		TiffFieldEnum.PhotoMetric e_photoMetric = TiffFieldEnum.PhotoMetric.fromValue(photoMetric);
 		LOGGER.info("PhotoMetric: {}", e_photoMetric);
 		TiffField<?> f_bitsPerSample = ifd.getField(TiffTag.BITS_PER_SAMPLE);
-		int bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
+		int bitsPerSample = 1;
+		if(f_bitsPerSample != null)
+			bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
 		LOGGER.info("Bits per sample: {}", bitsPerSample);
 		TiffField<?> f_samplesPerPixel = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
-		int samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
+		int samplesPerPixel = 1;
+		if(f_samplesPerPixel != null)
+			samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
 		LOGGER.info("Samples per pixel: {}", samplesPerPixel);
 		TiffField<?> f_predictor = ifd.getField(TiffTag.PREDICTOR);
 		int predictor = 0;
@@ -1031,16 +1037,28 @@ public class TIFFReader extends ImageReader {
 		if(f_tileLength != null) tileLength = f_tileLength.getDataAsLong()[0];
 		
 		TiffField<?> f_photoMetric = ifd.getField(TiffTag.PHOTOMETRIC_INTERPRETATION);
-		int photoMetric = f_photoMetric.getDataAsLong()[0];
-		TiffFieldEnum.PhotoMetric e_photoMetric = TiffFieldEnum.PhotoMetric.fromValue(photoMetric);
+		
+		int photoMetric = PhotoMetric.WHITE_IS_ZERO.getValue();
+		
+		if(f_photoMetric != null)
+			photoMetric = f_photoMetric.getDataAsLong()[0];		
+		TiffFieldEnum.PhotoMetric e_photoMetric = TiffFieldEnum.PhotoMetric.fromValue(photoMetric);		
 		LOGGER.info("PhotoMetric: {}", e_photoMetric);
 		
 		TiffField<?> f_bitsPerSample = ifd.getField(TiffTag.BITS_PER_SAMPLE);
-		int bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
+		
+		int bitsPerSample = 1;
+		
+		if(f_bitsPerSample != null)
+			bitsPerSample = f_bitsPerSample.getDataAsLong()[0];
 		LOGGER.info("Bits per sample: {}", bitsPerSample);
 		
 		TiffField<?> f_samplesPerPixel = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
-		int samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
+		
+		int samplesPerPixel = 1;
+		
+		if(f_samplesPerPixel != null)
+			samplesPerPixel = f_samplesPerPixel.getDataAsLong()[0];
 		LOGGER.info("Samples per pixel: {}", samplesPerPixel);
 		
 		TiffField<?> f_predictor = ifd.getField(TiffTag.PREDICTOR);
