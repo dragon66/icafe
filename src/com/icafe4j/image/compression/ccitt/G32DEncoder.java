@@ -61,13 +61,13 @@ public class G32DEncoder extends G31DEncoder implements ImageEncoder {
 			}			
 		}		
 		
-		// Now send RTC(Return To Control) - 6 consecutive EOLs to output
-		send_code_to_buffer(T4Code.EOL, 12);
-		send_code_to_buffer(T4Code.EOL, 12);
-		send_code_to_buffer(T4Code.EOL, 12);
-		send_code_to_buffer(T4Code.EOL, 12);
-		send_code_to_buffer(T4Code.EOL, 12);
-		send_code_to_buffer(T4Code.EOL, 12);
+		// Now send RTC(Return To Control) - 6 consecutive EOL + plus 1 to output
+		send_code_to_buffer(T4Code.EOL_PLUS_ONE, 13);
+		send_code_to_buffer(T4Code.EOL_PLUS_ONE, 13);
+		send_code_to_buffer(T4Code.EOL_PLUS_ONE, 13);
+		send_code_to_buffer(T4Code.EOL_PLUS_ONE, 13);
+		send_code_to_buffer(T4Code.EOL_PLUS_ONE, 13);
+		send_code_to_buffer(T4Code.EOL_PLUS_ONE, 13);
 		
 		// We need to flush the last buffer
 		setExtraFlush(true);		
