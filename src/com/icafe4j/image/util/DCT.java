@@ -59,8 +59,7 @@ public class DCT {
     /*
      * Fast DCT algorithm due to Arai, Agui, Nakajima
      */
-    public static float[][] forwardDCT(float input[][])
-    {
+    public static float[][] forwardDCT(float input[][]) {
         float tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
         float tmp10, tmp11, tmp12, tmp13;
         float z1, z2, z3, z4, z5, z11, z13;
@@ -150,15 +149,12 @@ public class DCT {
         return input;
     }
     
-    public static float[][] inverseDCT(float input[][])
-	{
-		for (int i=0 ; i<8 ; i++)
-		{
+    public static float[][] inverseDCT(float input[][])	{
+		for (int i=0 ; i<8 ; i++) {
 			inverseDCT_col(input, i*8);
 		}
 		
-		for (int i=0 ; i<8 ; i++)
-		{
+		for (int i=0 ; i<8 ; i++) {
 			inverseDCT_row(input, i++);
 		}
 		
@@ -166,8 +162,7 @@ public class DCT {
 	}
    
 	//perform column transform
-	private static void inverseDCT_col(float input[][], int offset)
-	{
+	private static void inverseDCT_col(float input[][], int offset)	{
 		float tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
 		float temp0, temp1, temp2, temp3, temp5;
 		float temp;
@@ -216,8 +211,7 @@ public class DCT {
 	}
 	
 	// Perform row transform
-	private static void inverseDCT_row(float input[][], int offset)
-	{
+	private static void inverseDCT_row(float input[][], int offset)	{
 		float tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
 		float temp0, temp1, temp2, temp3, temp5;
 		float temp;
