@@ -163,7 +163,7 @@ public class G31DDecoder implements ImageDecoder {
 		return offset;
 	}
 	
-	protected void reset(int byteOffset, int len, int bitOffset) {
+	private void reset(int byteOffset, int len, int bitOffset) {
 		this.byteOffset = byteOffset;
 		this.len = len;
 		this.bitOffset = bitOffset;
