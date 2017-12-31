@@ -130,7 +130,8 @@ public class G31DDecoder implements ImageDecoder {
 								byteOffset++;
 								bitOffset = 7;
 								if(byteOffset >= endOffset) break;
-								cur = input[byteOffset];}					
+								cur = input[byteOffset];
+							}					
 						}
 						runLen = 0;
 					} else {
