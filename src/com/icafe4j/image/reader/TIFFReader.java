@@ -133,7 +133,6 @@ public class TIFFReader extends ImageReader {
 	
 	private static int GROUP3OPT_2DENCODING = 1;
 	private static int GROUP3OPT_UNCOMPRESSED = 2;
-	private static int GROUP3OPT_FILLBITS = 4;
 
 	static {
 		for(int i = 0; i < 256; i++)

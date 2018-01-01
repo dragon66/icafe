@@ -130,7 +130,11 @@ public enum T4BlackCode implements T4Code {
 	// Unknown code
 	UNKNOWN(9999, 12, (short)0x0000),
 	// Special codes
-	EOL(-1, 12, (short)0x0010);
+	EOL(-1, 12, (short)0x0010),
+	FILL_4_EOL(-2, 16, (short)0x0001),
+	FILL_3_EOL(-3, 15, (short)0x0002),
+	FILL_2_EOL(-4, 14, (short)0x0004),
+	FILL_1_EOL(-5, 13, (short)0x0008);
 	 
 	private T4BlackCode(int runLen, int codeLen, short code) {
 		this.runLen = runLen;
