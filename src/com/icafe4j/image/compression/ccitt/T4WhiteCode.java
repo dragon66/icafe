@@ -128,7 +128,9 @@ public enum T4WhiteCode implements T4Code {
 	CODE2496(2496, 12, (short)0x01e0),
 	CODE2560(2560, 12, (short)0x01f0),
 	// Unknown code
-	UNKNOWN(9999, 12, (short)0x0000);
+	UNKNOWN(9999, 12, (short)0x0000),
+	// Special codes
+	EOL(-1, 12, (short)0x0010);
  	
 	private T4WhiteCode(int runLen, int codeLen, short code) {
 		this.runLen = runLen;

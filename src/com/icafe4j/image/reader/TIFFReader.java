@@ -72,6 +72,7 @@ import com.icafe4j.image.color.CMYKColorSpace;
 import com.icafe4j.image.color.Int32ComponentColorModel;
 import com.icafe4j.image.compression.ImageDecoder;
 import com.icafe4j.image.compression.ccitt.G31DDecoder;
+import com.icafe4j.image.compression.ccitt.G32DDecoder;
 import com.icafe4j.image.compression.deflate.DeflateDecoder;
 import com.icafe4j.image.compression.lzw.LZWTreeDecoder;
 import com.icafe4j.image.compression.packbits.Packbits;
@@ -129,7 +130,11 @@ public class TIFFReader extends ImageReader {
 													   0xFF111111, 0xFF000000};
 	private static final int[] EIGHT_BIT_COLOR_PALETTE = new int[256];
 	private static final int[] EIGHT_BIT_COLOR_PALETTE_WHITE_IS_ZERO = new int[256];
-	 
+	
+	private static int GROUP3OPT_2DENCODING = 1;
+	private static int GROUP3OPT_UNCOMPRESSED = 2;
+	private static int GROUP3OPT_FILLBITS = 4;
+
 	static {
 		for(int i = 0; i < 256; i++)
 			EIGHT_BIT_COLOR_PALETTE[i] = 0xFF000000|(i<<16)|(i<<8)|(i&0xff);
@@ -931,6 +936,18 @@ public class TIFFReader extends ImageReader {
 						break;
 					case CCITTRLE:
 						decoder = new G31DDecoder(imageWidth);
+						break;
+					case CCITTFAX3:
+						TiffField<?> f_t4Options = ifd.getField(TiffTag.T4_OPTIONS);						
+						int t4Options = 0;
+						if(f_t4Options != null) t4Options = f_t4Options.getDataAsLong()[0];
+						if ((t4Options & GROUP3OPT_UNCOMPRESSED) == GROUP3OPT_UNCOMPRESSED) {
+							throw new UnsupportedOperationException("Group 3 Uncompressed mode is not supported");
+						} else if((t4Options & GROUP3OPT_2DENCODING) != GROUP3OPT_2DENCODING) {
+							decoder = new G32DDecoder(imageWidth, true); // 1D encoding, need to take care of fill bit
+						} else {
+							decoder = new G32DDecoder(imageWidth); // 2D encoding, need to take care of fill bit
+						}
 						break;
 					case LZW:
 						decoder = new LZWTreeDecoder(8, true);
