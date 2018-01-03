@@ -37,6 +37,7 @@ public class G31DDecoder implements ImageDecoder {
 		T4CodeHuffmanTreeNode currNode = whiteNodes;
 		byte cur = input[byteOffset];
 		int endOffset = byteOffset + this.len;
+		destByteOffset = offset;
 		
 		int runLen = 0;
 		int remaining = scanLineWidth;
