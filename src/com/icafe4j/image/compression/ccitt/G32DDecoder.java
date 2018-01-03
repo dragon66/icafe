@@ -50,6 +50,7 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 		T4CodeHuffmanTreeNode currNode = whiteNodes;
 		byte cur = input[byteOffset];
 		int endOffset = byteOffset + this.len;
+		destByteOffset = offset;
 		
 		int runLen = 0;
 		int remaining = scanLineWidth;
@@ -97,6 +98,11 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 						else currNode = blackNodes;
 					}
 				} else {
+					if(remaining != scanLineWidth) {
+						destByteOffset = outputRunLen(pix, destByteOffset, remaining, scanLineWidth, 0, len);
+						remaining = scanLineWidth;
+					}
+					isWhiteCode = true;
 					currNode = whiteNodes;
 				}
 			} else if(((cur>>bitOffset) & 0x01) == 1) {
@@ -140,6 +146,11 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 						else currNode = blackNodes;
 					}
 				} else {
+					if(remaining != scanLineWidth) {
+						destByteOffset = outputRunLen(pix, destByteOffset, remaining, scanLineWidth, 0, len);
+						remaining = scanLineWidth;
+					}
+					isWhiteCode = true;
 					currNode = whiteNodes;
 				}
 			}
