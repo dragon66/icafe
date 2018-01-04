@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    ============================================================
+ * WY    03Jan2018  Fix issue with fillOrder 2
  * WY    07Dec2017  Added support for CCITTRLE compression
  * WY    28Nov2017  Added gray-scale alpha support
  * WY    23Nov2017  Added support for 16 bits gray-scale
@@ -702,7 +703,9 @@ public class TIFFReader extends ImageReader {
 							randIS.seek(stripOffsets[i]);
 							randIS.readFully(pixels, offset, bytes2Read);
 							offset += bytes2Read;
-						}		
+						}
+						// Deals with LSB2MSB fill order (rare and erroneous)
+						if(fillOrder == 2) ArrayUtils.reverseBits(pixels);
 						break;
 					case PACKBITS:
 						for(int i = 0; i < stripByteCounts.length; i++) {
@@ -730,6 +733,8 @@ public class TIFFReader extends ImageReader {
 							temp = new byte[stripByteCounts[i]];
 							randIS.readFully(temp);
 						}
+						// Deals with LSB2MSB fill order (rare and erroneous)
+						if(fillOrder == 2) ArrayUtils.reverseBits(temp);
 						decoder.setInput(temp);
 						int numOfBytes = decoder.decode(pixels, offset, stripBytes[i]);							
 						offset += numOfBytes;
@@ -747,9 +752,6 @@ public class TIFFReader extends ImageReader {
 						}						
 					}						
 				}
-				
-				// Deals with LSB2MSB fill order (rare and erroneous)
-				if(fillOrder == 2) ArrayUtils.reverseBits(pixels);
 				
 				cm = null;
 				raster  = null;
@@ -931,7 +933,9 @@ public class TIFFReader extends ImageReader {
 							randIS.seek(stripOffsets[i]);
 							randIS.readFully(pixels, offset, bytes2Read);
 							offset += bytes2Read;
-						}						
+						}
+						// Deals with LSB2MSB fill order (rare and erroneous)
+						if(fillOrder == 2) ArrayUtils.reverseBits(pixels);
 						break;
 					case CCITTRLE:
 						decoder = new G31DDecoder(imageWidth);
@@ -973,6 +977,8 @@ public class TIFFReader extends ImageReader {
 							temp = new byte[stripByteCounts[i]];
 							randIS.readFully(temp);
 						}
+						// Deals with LSB2MSB fill order (rare and erroneous)
+						if(fillOrder == 2) ArrayUtils.reverseBits(temp);
 						decoder.setInput(temp);
 						int numOfBytes = decoder.decode(pixels, offset, stripBytes[i]);
 						offset += numOfBytes;

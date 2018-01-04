@@ -1,6 +1,7 @@
 ***************************
-Last modified on 12/14/2017
+Last modified on 01/03/2018
 ***************************
+03Jan2018  Fix TIFFReader issue with fillOrder 2
 14Dec2017  Replace some of the RuntimeException with customized exception in TIFFTweaker
 13Dec2017  Replace TIFFTweaker e.printStackTrace() with logging and/or RuntimeException
 07Dec2017  Added CCITTRLE compression support to TIFFReader
