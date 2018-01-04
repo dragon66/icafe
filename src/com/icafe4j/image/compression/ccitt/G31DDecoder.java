@@ -146,12 +146,12 @@ public class G31DDecoder implements ImageDecoder {
 		return uncompressedBytes; 
 	}
 	
-	protected int outputRunLen(byte[] input, int offset, int runLen,  int stride, int color, int len) {
+	protected int outputRunLen(byte[] output, int offset, int runLen,  int stride, int color, int len) {
 	
 		for(int i = 0; i < runLen; i++) {
 			if(uncompressedBytes >= len) break;			
 			if(empty_bits >= 1) {
-				input[offset] |= (color<<(empty_bits-1));
+				output[offset] |= (color<<(empty_bits-1));
 				empty_bits--;
 			} 
 			// Check to see if we need to move to next byte
