@@ -72,6 +72,7 @@ import org.slf4j.LoggerFactory;
 import com.icafe4j.image.color.CMYKColorSpace;
 import com.icafe4j.image.color.Int32ComponentColorModel;
 import com.icafe4j.image.compression.ImageDecoder;
+import com.icafe4j.image.compression.UnsupportedCompressionException;
 import com.icafe4j.image.compression.ccitt.G31DDecoder;
 import com.icafe4j.image.compression.ccitt.G32DDecoder;
 import com.icafe4j.image.compression.deflate.DeflateDecoder;
@@ -945,11 +946,11 @@ public class TIFFReader extends ImageReader {
 						int t4Options = 0;
 						if(f_t4Options != null) t4Options = f_t4Options.getDataAsLong()[0];
 						if ((t4Options & GROUP3OPT_UNCOMPRESSED) == GROUP3OPT_UNCOMPRESSED) {
-							throw new UnsupportedOperationException("Group 3 Uncompressed mode is not supported");
-						} else if((t4Options & GROUP3OPT_2DENCODING) != GROUP3OPT_2DENCODING) {
-							decoder = new G32DDecoder(imageWidth, true); // 1D encoding, need to take care of fill bit
-						} else {
+							throw new UnsupportedCompressionException("Group 3 Uncompressed mode is not supported");
+						} else if((t4Options & GROUP3OPT_2DENCODING) == GROUP3OPT_2DENCODING) {
 							decoder = new G32DDecoder(imageWidth); // 2D encoding, need to take care of fill bit
+						} else {
+							decoder = new G32DDecoder(imageWidth, true); // 1D encoding, need to take care of fill bit							
 						}
 						break;
 					case LZW:
