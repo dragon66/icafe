@@ -20,21 +20,21 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 	
 	private boolean is1DEncoding;
 	
-	public G32DDecoder(int scanLineWidth) {
-		this(scanLineWidth, false);
+	public G32DDecoder(int scanLineWidth, int rowsPerStrip) {
+		this(scanLineWidth, rowsPerStrip, false);
 	}
 	
-	public G32DDecoder(int scanLineWidth, boolean is1DEncoding) {
-		super(scanLineWidth);
+	public G32DDecoder(int scanLineWidth, int rowsPerStrip, boolean is1DEncoding) {
+		super(scanLineWidth, rowsPerStrip);
 		this.is1DEncoding = is1DEncoding;
 	}
 	
-	public G32DDecoder(byte[] input, int scanLineWidth) {
-		this(input, scanLineWidth, false);
+	public G32DDecoder(byte[] input, int scanLineWidth, int rowsPerStrip) {
+		this(input, scanLineWidth, rowsPerStrip, false);
 	}
 	
-	public G32DDecoder(byte[] input, int scanLineWidth, boolean is1DEncoding) {
-		super(input, scanLineWidth);
+	public G32DDecoder(byte[] input, int scanLineWidth, int rowsPerStrip, boolean is1DEncoding) {
+		super(input, scanLineWidth, rowsPerStrip);
 		this.is1DEncoding = is1DEncoding;
 	}
 	
@@ -155,7 +155,8 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 				}
 			}
 		}		
-		
+		if(totalRunLen < (scanLineWidth*rowsPerStrip))
+			destByteOffset = outputRunLen(pix, destByteOffset, scanLineWidth*rowsPerStrip - totalRunLen, scanLineWidth, 0, len);
 		return uncompressedBytes; 
 	}
 }

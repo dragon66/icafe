@@ -939,7 +939,7 @@ public class TIFFReader extends ImageReader {
 						if(fillOrder == 2) ArrayUtils.reverseBits(pixels);
 						break;
 					case CCITTRLE:
-						decoder = new G31DDecoder(imageWidth);
+						decoder = new G31DDecoder(imageWidth, rowsPerStrip);
 						break;
 					case CCITTFAX3:
 						TiffField<?> f_t4Options = ifd.getField(TiffTag.T4_OPTIONS);						
@@ -948,9 +948,9 @@ public class TIFFReader extends ImageReader {
 						if ((t4Options & GROUP3OPT_UNCOMPRESSED) == GROUP3OPT_UNCOMPRESSED) {
 							throw new UnsupportedCompressionException("Group 3 Uncompressed mode is not supported");
 						} else if((t4Options & GROUP3OPT_2DENCODING) == GROUP3OPT_2DENCODING) {
-							decoder = new G32DDecoder(imageWidth); // 2D encoding, need to take care of fill bit
+							decoder = new G32DDecoder(imageWidth, rowsPerStrip); // 2D encoding, need to take care of fill bit
 						} else {
-							decoder = new G32DDecoder(imageWidth, true); // 1D encoding, need to take care of fill bit							
+							decoder = new G32DDecoder(imageWidth, rowsPerStrip, true); // 1D encoding, need to take care of fill bit							
 						}
 						break;
 					case LZW:

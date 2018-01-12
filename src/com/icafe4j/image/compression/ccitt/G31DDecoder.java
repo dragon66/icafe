@@ -21,13 +21,15 @@ public class G31DDecoder implements ImageDecoder {
 	private int empty_bits = 8;
 	private int lineOffset = 0;
 	
-	public G31DDecoder(int scanLineWidth) {
+	public G31DDecoder(int scanLineWidth, int rowsPerStrip) {
 		this.scanLineWidth = scanLineWidth;
+		this.rowsPerStrip = rowsPerStrip;
 	}
 	
-	public G31DDecoder(byte[] input, int scanLineWidth) {
+	public G31DDecoder(byte[] input, int scanLineWidth, int rowsPerStrip) {
 		this.input = input;
 		this.scanLineWidth = scanLineWidth;
+		this.rowsPerStrip = rowsPerStrip;
 		reset(0, input.length, 7);
 	}
 
@@ -141,14 +143,18 @@ public class G31DDecoder implements ImageDecoder {
 					}
 				}
 			}		
-		}		
+		}
+		
+		if(totalRunLen < (scanLineWidth*rowsPerStrip))
+			destByteOffset = outputRunLen(pix, destByteOffset, scanLineWidth*rowsPerStrip - totalRunLen, scanLineWidth, 0, len);
 		
 		return uncompressedBytes; 
 	}
 	
 	protected int outputRunLen(byte[] output, int offset, int runLen,  int stride, int color, int len) {
-	
-		for(int i = 0; i < runLen; i++) {
+		int i = 0;
+		
+		for(i = 0; i < runLen; i++) {
 			if(uncompressedBytes >= len) break;			
 			if(empty_bits >= 1) {
 				output[offset] |= (color<<(empty_bits-1));
@@ -162,6 +168,8 @@ public class G31DDecoder implements ImageDecoder {
 			}
 		}
 		
+		totalRunLen += i;
+		
 		return offset;
 	}
 	
@@ -170,6 +178,7 @@ public class G31DDecoder implements ImageDecoder {
 		this.len = len;
 		this.bitOffset = bitOffset;
 		this.uncompressedBytes = 0;
+		this.totalRunLen = 0;
 	}
 
 	public void setInput(byte[] input) {
@@ -182,10 +191,12 @@ public class G31DDecoder implements ImageDecoder {
 	}
 	
 	protected byte[] input;
-	protected int len = 0;
-	protected int scanLineWidth = 0;
-	protected int byteOffset = 0;
+	protected int len;
+	protected int scanLineWidth;
+	protected int totalRunLen;
+	protected int rowsPerStrip;
+	protected int byteOffset;
 	protected int bitOffset = 7;
-	protected int destByteOffset = 0;
-	protected int uncompressedBytes = 0;
+	protected int destByteOffset;
+	protected int uncompressedBytes;
 }
