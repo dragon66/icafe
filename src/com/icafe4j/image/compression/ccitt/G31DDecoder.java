@@ -73,8 +73,7 @@ public class G31DDecoder implements ImageDecoder {
 								currNode = whiteNodes;
 								isWhiteCode = true;
 							}
-						}
-						else {
+						} else {
 							destByteOffset = outputRunLen(pix, destByteOffset, runLen,  scanLineWidth, 1, len);
 							currNode = whiteNodes;
 							isWhiteCode = true;
@@ -121,8 +120,7 @@ public class G31DDecoder implements ImageDecoder {
 								currNode = whiteNodes;
 								isWhiteCode = true;
 							}
-						}
-						else {
+						} else {
 							destByteOffset = outputRunLen(pix, destByteOffset, runLen,  scanLineWidth, 1, len);
 							currNode = whiteNodes;
 							isWhiteCode = true;

@@ -56,6 +56,13 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 		int remaining = scanLineWidth;
 		boolean isWhiteCode = true;
 		
+		// Used to fix wrong byte alignment
+		int markByteOffset = offset;
+		int markBitOffset = 7;
+		boolean markIsWhiteCode = true;
+		T4CodeHuffmanTreeNode markCurrNode = whiteNodes;
+		boolean expectEOL = true;
+		
 		while(true) {
 			if(((cur>>bitOffset) & 0x01) == 0) {
 				if(currNode.left() != null) {
@@ -67,9 +74,24 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 						if(byteOffset >= endOffset) break;
 						cur = input[byteOffset];				
 					}
-				} else if (currNode.value() >= 0) {
+				} else if (currNode.value() >= 0) {					
 					runLen += currNode.value();			
 					if(currNode.value() <= 63) {
+						if(expectEOL) {
+							currNode = markCurrNode;
+							byteOffset = markByteOffset;
+							bitOffset = markBitOffset;
+							isWhiteCode = markIsWhiteCode;
+							if(bitOffset != 7) {
+								byteOffset++;
+								bitOffset = 7;
+								if(byteOffset >= endOffset) break;
+							}
+							cur = input[byteOffset];
+							runLen = 0;
+							expectEOL = false;
+							continue;
+						}
 						//output runLen
 						if(runLen > remaining)
 							runLen = remaining;
@@ -84,14 +106,24 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 								currNode = whiteNodes;
 								isWhiteCode = true;
 							}
-						}
-						else {
+						} else {
 							destByteOffset = outputRunLen(pix, destByteOffset, runLen,  scanLineWidth, 1, len);
 							currNode = whiteNodes;
 							isWhiteCode = true;
 						}
-						if(remaining == 0)
+						if(remaining == 0) {
 							remaining = scanLineWidth;
+							markByteOffset = byteOffset;
+							markBitOffset = bitOffset;
+							if(isWhiteCode) {
+								markCurrNode = whiteNodes; 
+								markIsWhiteCode = true;
+							} else {
+								markCurrNode = blackNodes;
+								markIsWhiteCode = false;
+							}
+							expectEOL = true;
+						}
 						runLen = 0;
 					} else {
 						if(isWhiteCode) currNode = whiteNodes;
@@ -102,6 +134,7 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 						destByteOffset = outputRunLen(pix, destByteOffset, remaining, scanLineWidth, 0, len);
 						remaining = scanLineWidth;
 					}
+					expectEOL = false;
 					isWhiteCode = true;
 					currNode = whiteNodes;
 				}
@@ -115,9 +148,25 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 						if(byteOffset >= endOffset) break;
 						cur = input[byteOffset];				
 					}
-				} else if (currNode.value() >= 0) {
+				} else if (currNode.value() >= 0) {					
 					runLen += currNode.value();
 					if(currNode.value() <= 63) {
+						if(expectEOL) {
+							currNode = markCurrNode;
+							isWhiteCode = markIsWhiteCode;
+							byteOffset = markByteOffset;
+							bitOffset = markBitOffset;
+							if(bitOffset != 7) {
+								byteOffset++;
+								bitOffset = 7;
+								if(byteOffset >= endOffset) break;
+							}
+							cur = input[byteOffset];
+							runLen = 0;
+							expectEOL = false;
+
+							continue;
+						}
 						//output runLen
 						if(runLen > remaining)
 							runLen = remaining;
@@ -132,14 +181,24 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 								currNode = whiteNodes;
 								isWhiteCode = true;
 							}
-						}
-						else {
+						} else {
 							destByteOffset = outputRunLen(pix, destByteOffset, runLen,  scanLineWidth, 1, len);
 							currNode = whiteNodes;
 							isWhiteCode = true;
 						}
-						if(remaining == 0)
+						if(remaining == 0) {
 							remaining = scanLineWidth;
+							markByteOffset = byteOffset;
+							markBitOffset = bitOffset;
+							if(isWhiteCode) {
+								markCurrNode = whiteNodes; 
+								markIsWhiteCode = true;
+							} else {
+								markCurrNode = blackNodes;
+								markIsWhiteCode = false;
+							}
+							expectEOL = true;
+						}
 						runLen = 0;
 					} else {
 						if(isWhiteCode) currNode = whiteNodes;
@@ -150,6 +209,7 @@ public class G32DDecoder extends G31DDecoder implements ImageDecoder {
 						destByteOffset = outputRunLen(pix, destByteOffset, remaining, scanLineWidth, 0, len);
 						remaining = scanLineWidth;
 					}
+					expectEOL = false;
 					isWhiteCode = true;
 					currNode = whiteNodes;
 				}
