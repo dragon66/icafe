@@ -2369,13 +2369,15 @@ public class TIFFTweaker {
 			ifds.append("Field length: " + field_length + "\n");
 			ifds.append(indent);			
 			
-			String suffix = null;
+			String tagString = null;
 			if(ftype == FieldType.SHORT || ftype == FieldType.SSHORT)
-				suffix = ftag.getFieldAsString(field.getDataAsLong());
+				tagString = ftag.getFieldAsString(field.getDataAsLong());
 			else
-				suffix = ftag.getFieldAsString(field.getData());			
-			
-			ifds.append("Field value: " + field.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix) + "\n");
+				tagString = ftag.getFieldAsString(field.getData());
+			if(StringUtils.isNullOrEmpty(tagString))
+				ifds.append("Field value: " + field.getDataAsString() + "\n");
+			else
+				ifds.append("Field value: " + tagString + "\n");
 			
 			i++;
 		}
