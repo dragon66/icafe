@@ -39,6 +39,7 @@
 <li><a href="com/icafe4j/image/png/ChunkType.html" title="enum in com.icafe4j.image.png">ChunkType</a></li>
 <li><a href="com/icafe4j/image/png/ChunkType.Attribute.html" title="enum in com.icafe4j.image.png">ChunkType.Attribute</a></li>
 <li><a href="com/icafe4j/image/color/CMYKColorSpace.html" title="class in com.icafe4j.image.color">CMYKColorSpace</a></li>
+<li><a href="com/icafe4j/image/compression/CodecException.html" title="class in com.icafe4j.image.compression">CodecException</a></li>
 <li><a href="com/icafe4j/util/CollectionUtils.html" title="class in com.icafe4j.util">CollectionUtils</a></li>
 <li><a href="com/icafe4j/image/meta/adobe/ColorSpaceID.html" title="enum in com.icafe4j.image.meta.adobe">ColorSpaceID</a></li>
 <li><a href="com/icafe4j/image/png/ColorType.html" title="enum in com.icafe4j.image.png">ColorType</a></li>
@@ -72,6 +73,7 @@
 <li><a href="com/icafe4j/image/meta/exif/ExifThumbnail.html" title="class in com.icafe4j.image.meta.exif">ExifThumbnail</a></li>
 <li><a href="com/icafe4j/util/ExternalChainingHashTable.html" title="class in com.icafe4j.util">ExternalChainingHashTable</a></li>
 <li><a href="com/icafe4j/image/tiff/FieldType.html" title="enum in com.icafe4j.image.tiff">FieldType</a></li>
+<li><a href="com/icafe4j/io/File2RandomInputStreamAdaptor.html" title="class in com.icafe4j.io">File2RandomInputStreamAdaptor</a></li>
 <li><a href="com/icafe4j/io/FileCacheRandomAccessInputStream.html" title="class in com.icafe4j.io">FileCacheRandomAccessInputStream</a></li>
 <li><a href="com/icafe4j/io/FileCacheRandomAccessOutputStream.html" title="class in com.icafe4j.io">FileCacheRandomAccessOutputStream</a></li>
 <li><a href="com/icafe4j/io/FileCacheSeekableStream.html" title="class in com.icafe4j.io">FileCacheSeekableStream</a></li>
@@ -81,7 +83,9 @@
 <li><a href="com/icafe4j/image/tiff/FloatField.html" title="class in com.icafe4j.image.tiff">FloatField</a></li>
 <li><a href="com/icafe4j/io/ForwardSeekableStream.html" title="class in com.icafe4j.io">ForwardSeekableStream</a></li>
 <li><a href="com/icafe4j/image/gif/FrameReader.html" title="class in com.icafe4j.image.gif">FrameReader</a></li>
+<li><a href="com/icafe4j/image/compression/ccitt/G31DDecoder.html" title="class in com.icafe4j.image.compression.ccitt">G31DDecoder</a></li>
 <li><a href="com/icafe4j/image/compression/ccitt/G31DEncoder.html" title="class in com.icafe4j.image.compression.ccitt">G31DEncoder</a></li>
+<li><a href="com/icafe4j/image/compression/ccitt/G32DDecoder.html" title="class in com.icafe4j.image.compression.ccitt">G32DDecoder</a></li>
 <li><a href="com/icafe4j/image/compression/ccitt/G32DEncoder.html" title="class in com.icafe4j.image.compression.ccitt">G32DEncoder</a></li>
 <li><a href="com/icafe4j/image/compression/ccitt/G42DEncoder.html" title="class in com.icafe4j.image.compression.ccitt">G42DEncoder</a></li>
 <li><a href="com/icafe4j/image/gif/GIFFrame.html" title="class in com.icafe4j.image.gif">GIFFrame</a></li>
@@ -178,6 +182,7 @@
 <li><a href="com/icafe4j/image/quant/NQCanvas.html" title="class in com.icafe4j.image.quant">NQCanvas</a></li>
 <li><a href="com/icafe4j/util/NumberUtils.html" title="class in com.icafe4j.util">NumberUtils</a></li>
 <li><a href="com/icafe4j/image/compression/packbits/Packbits.html" title="class in com.icafe4j.image.compression.packbits">Packbits</a></li>
+<li><a href="com/icafe4j/image/tiff/PageWritingException.html" title="class in com.icafe4j.image.tiff">PageWritingException</a></li>
 <li><a href="com/icafe4j/image/reader/PCXReader.html" title="class in com.icafe4j.image.reader">PCXReader</a></li>
 <li><a href="com/icafe4j/io/PeekHeadInputStream.html" title="class in com.icafe4j.io">PeekHeadInputStream</a></li>
 <li><a href="com/icafe4j/image/png/PLTEBuilder.html" title="class in com.icafe4j.image.png">PLTEBuilder</a></li>
@@ -199,6 +204,7 @@
 <li><a href="com/icafe4j/image/quant/QuantQuality.html" title="enum in com.icafe4j.image.quant">QuantQuality</a></li>
 <li><a href="com/icafe4j/io/RandomAccessInputStream.html" title="class in com.icafe4j.io">RandomAccessInputStream</a></li>
 <li><a href="com/icafe4j/io/RandomAccessOutputStream.html" title="class in com.icafe4j.io">RandomAccessOutputStream</a></li>
+<li><a href="com/icafe4j/io/RandomInputStreamAdaptor.html" title="class in com.icafe4j.io">RandomInputStreamAdaptor</a></li>
 <li><a href="com/icafe4j/image/tiff/RationalField.html" title="class in com.icafe4j.image.tiff">RationalField</a></li>
 <li><a href="com/icafe4j/util/Reader.html" title="interface in com.icafe4j.util"><span class="interfaceName">Reader</span></a></li>
 <li><a href="com/icafe4j/io/ReadStrategy.html" title="interface in com.icafe4j.io"><span class="interfaceName">ReadStrategy</span></a></li>
@@ -224,13 +230,17 @@
 <li><a href="com/icafe4j/image/png/SRGBBuilder.html" title="class in com.icafe4j.image.png">SRGBBuilder</a></li>
 <li><a href="com/icafe4j/image/png/SRGBReader.html" title="class in com.icafe4j.image.png">SRGBReader</a></li>
 <li><a href="com/icafe4j/image/tiff/SShortField.html" title="class in com.icafe4j.image.tiff">SShortField</a></li>
+<li><a href="com/icafe4j/io/Stream2RandomInputStreamAdaptor.html" title="class in com.icafe4j.io">Stream2RandomInputStreamAdaptor</a></li>
 <li><a href="com/icafe4j/string/StringSearchTool.html" title="class in com.icafe4j.string">StringSearchTool</a></li>
 <li><a href="com/icafe4j/string/StringUtils.html" title="class in com.icafe4j.string">StringUtils</a></li>
 <li><a href="com/icafe4j/image/compression/ccitt/T42DCode.html" title="enum in com.icafe4j.image.compression.ccitt">T42DCode</a></li>
 <li><a href="com/icafe4j/image/compression/ccitt/T42DCodingMode.html" title="enum in com.icafe4j.image.compression.ccitt">T42DCodingMode</a></li>
 <li><a href="com/icafe4j/image/compression/ccitt/T4BlackCode.html" title="enum in com.icafe4j.image.compression.ccitt">T4BlackCode</a></li>
+<li><a href="com/icafe4j/image/compression/huffman/T4BlackCodeHuffmanTreeNode.html" title="class in com.icafe4j.image.compression.huffman">T4BlackCodeHuffmanTreeNode</a></li>
 <li><a href="com/icafe4j/image/compression/ccitt/T4Code.html" title="interface in com.icafe4j.image.compression.ccitt"><span class="interfaceName">T4Code</span></a></li>
+<li><a href="com/icafe4j/image/compression/huffman/T4CodeHuffmanTreeNode.html" title="class in com.icafe4j.image.compression.huffman">T4CodeHuffmanTreeNode</a></li>
 <li><a href="com/icafe4j/image/compression/ccitt/T4WhiteCode.html" title="enum in com.icafe4j.image.compression.ccitt">T4WhiteCode</a></li>
+<li><a href="com/icafe4j/image/compression/huffman/T4WhiteCodeHuffmanTreeNode.html" title="class in com.icafe4j.image.compression.huffman">T4WhiteCodeHuffmanTreeNode</a></li>
 <li><a href="com/icafe4j/image/tiff/Tag.html" title="interface in com.icafe4j.image.tiff"><span class="interfaceName">Tag</span></a></li>
 <li><a href="com/icafe4j/test/TestArrayUtils.html" title="class in com.icafe4j.test">TestArrayUtils</a></li>
 <li><a href="com/icafe4j/test/TestBase.html" title="class in com.icafe4j.test">TestBase</a></li>
@@ -292,7 +302,7 @@
 <li><a href="com/icafe4j/image/png/UnknownChunkBuilder.html" title="class in com.icafe4j.image.png">UnknownChunkBuilder</a></li>
 <li><a href="com/icafe4j/image/png/UnknownChunkReader.html" title="class in com.icafe4j.image.png">UnknownChunkReader</a></li>
 <li><a href="com/icafe4j/image/jpeg/UnknownSegment.html" title="class in com.icafe4j.image.jpeg">UnknownSegment</a></li>
-<li><a href="com/icafe4j/image/tiff/UnsupportedCompressionException.html" title="class in com.icafe4j.image.tiff">UnsupportedCompressionException</a></li>
+<li><a href="com/icafe4j/image/compression/UnsupportedCompressionException.html" title="class in com.icafe4j.image.compression">UnsupportedCompressionException</a></li>
 <li><a href="com/icafe4j/util/Updatable.html" title="interface in com.icafe4j.util"><span class="interfaceName">Updatable</span></a></li>
 <li><a href="com/icafe4j/image/meta/adobe/UserMask.html" title="class in com.icafe4j.image.meta.adobe">UserMask</a></li>
 <li><a href="com/icafe4j/image/meta/adobe/VersionInfo.html" title="class in com.icafe4j.image.meta.adobe">VersionInfo</a></li>

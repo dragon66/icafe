@@ -102,16 +102,19 @@ public final class IFD {
 	 */
 	public String getFieldAsString(Tag tag) {
 		TiffField<?> field = tiffFields.get(tag.getValue());
+		
 		if(field != null) {
 			FieldType ftype = field.getType();
-			String suffix = null;
+			String tagAsString = null;
 			if(ftype == FieldType.SHORT || ftype == FieldType.SSHORT)
-				suffix = tag.getFieldAsString(field.getDataAsLong());
+				tagAsString = tag.getFieldAsString(field.getDataAsLong());
 			else
-				suffix = tag.getFieldAsString(field.getData());			
-			
-			return field.getDataAsString() + (StringUtils.isNullOrEmpty(suffix)?"":" => " + suffix);
+				tagAsString = tag.getFieldAsString(field.getData());
+			if(StringUtils.isNullOrEmpty(tagAsString))
+				return field.getDataAsString();
+			return tagAsString;
 		}
+		
 		return "";
 	}
 	
