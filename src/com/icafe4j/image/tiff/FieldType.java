@@ -35,7 +35,7 @@ public enum FieldType {
 	FLOAT("Float", (short)0x000b),
 	DOUBLE("Double", (short)0x000c),
 	IFD("IFD", (short)0x000d),
-	// This is actually not a TIFF field type, internally it is a BYTE field
+	// This is actually not a TIFF defined field type, internally it is a TIFF BYTE field
 	WINDOWSXP("WindowsXP", (short)0x000e),
 	
 	UNKNOWN("Unknown", (short)0x0000);
@@ -106,7 +106,7 @@ public enum FieldType {
     				}
     			}
     			break;
-    		case WINDOWSXP: // Not a real TIFF field type, just a convenient way to add Windows XP field as a sting
+    		case WINDOWSXP: // Not a real TIFF field type, just a convenient way to add Windows XP field as a string
     			if(typeClass == String.class) {
     				try {
 						byte[] xp = (((String)data).trim() +'\0').getBytes("UTF-16LE");
