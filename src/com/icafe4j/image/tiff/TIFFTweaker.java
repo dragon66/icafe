@@ -120,6 +120,7 @@ import com.icafe4j.image.compression.packbits.Packbits;
 import com.icafe4j.image.jpeg.Marker;
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
+import com.icafe4j.image.meta.Thumbnail;
 import com.icafe4j.image.meta.adobe.DDB;
 import com.icafe4j.image.meta.adobe.IRB;
 import com.icafe4j.image.meta.adobe.IRBThumbnail;
@@ -132,6 +133,7 @@ import com.icafe4j.image.meta.exif.GPSTag;
 import com.icafe4j.image.meta.exif.InteropTag;
 import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.meta.image.Comments;
+import com.icafe4j.image.meta.image.ImageMetadata;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
 import com.icafe4j.image.meta.tiff.TiffExif;
@@ -2721,6 +2723,12 @@ public class TIFFTweaker {
 				IPTC iptc = new IPTC(photoshop_8bim.getData());
 				metadataMap.put(MetadataType.IPTC, iptc);
 			}
+			if(irb.containsThumbnail()) {// Add thumbnail to metadata map if any
+				IRBThumbnail thumbnail = irb.getThumbnail();
+				Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>(1);
+				thumbnails.put("PHOTOSHOP_IRB", thumbnail);
+				metadataMap.put(MetadataType.IMAGE, new ImageMetadata(null, thumbnails));				
+			}		
 		}
 		field = currIFD.getField(TiffTag.IPTC);
 		if(field != null) { // We have found IPTC data
