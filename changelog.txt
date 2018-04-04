@@ -1,6 +1,7 @@
 ***************************
-Last modified on 04/01/2018
+Last modified on 04/04/2018
 ***************************
+04Apr2018  Add getAsBufferedImage() to Thumbnail
 01Apr2018  Add TIFF IRB thumbnail support to Metadata.readMetadata()
 03Jan2018  Fix TIFFReader issue with fillOrder 2
 14Dec2017  Replace some of the RuntimeException with customized exception in TIFFTweaker

@@ -14,6 +14,7 @@
  *
  * Who   Date         Description
  * ====  ==========   ==================================================
+ * WY    04Apr2018    Add getAsBufferedImage()
  * WY    27Apr2015    Make fields protected for subclass copy constructor
  * WY    10Apr2015    Changed to abstract class, added write()
  * WY    09Apr2015    Added setWriteQuality()
@@ -22,6 +23,7 @@
 package com.icafe4j.image.meta;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -56,6 +58,17 @@ public abstract class Thumbnail {
 	
 	public boolean containsImage() {
 		return thumbnail != null || compressedThumbnail != null;
+	}
+	
+	public BufferedImage getAsBufferedImage() {
+		if(dataType == Thumbnail.DATA_TYPE_KJpegRGB || dataType == Thumbnail.DATA_TYPE_TIFF)
+			try {
+				return javax.imageio.ImageIO.read(new ByteArrayInputStream(getCompressedImage()));
+			} catch (IOException e) {				
+				throw new RuntimeException("Error decoding compressed thumbnail data to BufferedImage");
+			}
+		else if(dataType == Thumbnail.DATA_TYPE_KRawRGB) return getRawImage();
+		else return null;
 	}
 	
 	public byte[] getCompressedImage() {
