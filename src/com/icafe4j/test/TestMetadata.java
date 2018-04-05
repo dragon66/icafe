@@ -10,19 +10,25 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 
+import com.icafe4j.image.ImageIO;
+import com.icafe4j.image.ImageType;
 import com.icafe4j.image.jpeg.JPEGTweaker;
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
+import com.icafe4j.image.meta.Thumbnail;
 import com.icafe4j.image.meta.adobe.IPTC_NAA;
 import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
 import com.icafe4j.image.meta.image.Comments;
+import com.icafe4j.image.meta.image.ImageMetadata;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCApplicationTag;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
@@ -34,6 +40,7 @@ import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.image.tiff.FieldType;
 import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.image.util.IMGUtils;
+import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.string.XMLUtils;
 
 public class TestMetadata extends TestBase {
@@ -68,6 +75,26 @@ public class TestMetadata extends TestBase {
 			Metadata.insertXMP(fin, fout, jpegXmp);			
 			fin.close();
 			fout.close();
+		}
+		
+		if(metadataMap.get(MetadataType.IMAGE) != null) {
+			ImageMetadata imageMeta = (ImageMetadata)metadataMap.get(MetadataType.IMAGE);
+			if(imageMeta.containsThumbnail()) {
+				Map<String, Thumbnail> thumbnails = imageMeta.getThumbnails();
+				Iterator<Entry<String, Thumbnail>> iter = thumbnails.entrySet().iterator();
+				ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
+				int counter = 0;
+				while(iter.hasNext()) {
+					Thumbnail thumbnail = iter.next().getValue();
+					BufferedImage image = thumbnail.getAsBufferedImage();
+					fout = new FileOutputStream("thumbnail" + counter++ + ".jpg");
+					try {
+						writer.write(image, fout);
+					} catch (Exception e) {
+						throw new IOException("Writing thumbnail failed!");
+					} finally {fout.close();}			
+				}
+			}
 		}
 		
 		Metadata.extractThumbnails("images/iptc-envelope.tif", "iptc-envelope");
