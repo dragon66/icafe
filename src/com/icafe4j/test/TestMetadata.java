@@ -1,6 +1,7 @@
 package com.icafe4j.test;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -42,6 +43,7 @@ import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.image.util.IMGUtils;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.string.XMLUtils;
+import com.icafe4j.util.FileUtils;
 
 public class TestMetadata extends TestBase {
 
@@ -83,16 +85,16 @@ public class TestMetadata extends TestBase {
 				Map<String, Thumbnail> thumbnails = imageMeta.getThumbnails();
 				Iterator<Entry<String, Thumbnail>> iter = thumbnails.entrySet().iterator();
 				ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
-				int counter = 0;
+				String outpath = FileUtils.getNameWithoutExtension(new File(args[0]));
 				while(iter.hasNext()) {
-					Thumbnail thumbnail = iter.next().getValue();
-					BufferedImage image = thumbnail.getAsBufferedImage();
-					fout = new FileOutputStream("thumbnail" + counter++ + ".jpg");
+					Entry<String, Thumbnail> entry = iter.next();
+					BufferedImage image = entry.getValue().getAsBufferedImage();
+					fout = new FileOutputStream(outpath + "_" + entry.getKey() + "_thumbnail" + ".jpg");
 					try {
 						writer.write(image, fout);
 					} catch (Exception e) {
 						throw new IOException("Writing thumbnail failed!");
-					} finally {fout.close();}			
+					} finally {fout.close();}
 				}
 			}
 		}
