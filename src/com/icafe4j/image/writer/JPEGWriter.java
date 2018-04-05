@@ -72,7 +72,7 @@ public class JPEGWriter extends ImageWriter {
     private byte[][][] huffman_bits = new byte[2][2][]; // AC, DC
     private byte[][][] huffman_values = new byte[2][2][]; // AC, DC
     
-	private int quality = 90; // Default image quality
+	private int quality = 100; // Default image quality
 	private boolean includeTables = true;
 	private boolean grayScale;
 	private int colorSpace = JPEGOptions.COLOR_SPACE_YCbCr;
