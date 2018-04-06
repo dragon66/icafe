@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    =====================================================================
+ * WY    06Apr2018  Added extractThumbnails(InputStream)
  * WY    02Mar2017  Added insertMetadata(Collection<Metadata>, InputStream, OutputStream)
  * WY    13Feb2017  Fixed bug with APP1 segment length too small
  * WY    06Nov2016  Added support for Cardboard Camera image and audio
@@ -356,6 +357,121 @@ public class JPEGTweaker {
 				}		
 			}
 		}	
+	}
+	
+	/**
+	 * Extracts thumbnail images from JFIF/APP0, Exif APP1 and/or Adobe APP13 segment if any.
+	 * 
+	 * @param is InputStream for the JPEG image.
+	 * @throws IOException
+	 * @return A collection of BufferedImage
+	 */
+	public static Collection<BufferedImage> extractThumbnails(InputStream is) throws IOException {
+		// Flag when we are done
+		boolean finished = false;
+		int length = 0;	
+		short marker;
+		Marker emarker;
+		
+		Collection<BufferedImage> thumbnails = new ArrayList<BufferedImage>();
+				
+		// The very first marker should be the start_of_image marker!	
+		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
+			throw new IOException("Invalid JPEG image, expected SOI marker not found!");
+		
+		marker = IOUtils.readShortMM(is);
+		
+		while (!finished) {	        
+			if (Marker.fromShort(marker) == Marker.EOI)	{
+				finished = true;
+			} else { // Read markers
+				emarker = Marker.fromShort(marker);
+		
+				switch (emarker) {
+					case JPG: // JPG and JPGn shouldn't appear in the image.
+					case JPG0:
+					case JPG13:
+				    case TEM: // The only stand alone marker besides SOI, EOI, and RSTn. 
+				    	marker = IOUtils.readShortMM(is);
+						break;
+				    case PADDING:	
+				    	int nextByte = 0;
+				    	while((nextByte = IOUtils.read(is)) == 0xff) {;}
+				    	marker = (short)((0xff<<8)|nextByte);
+				    	break;				
+				    case SOS:	
+						finished = true;
+						break;
+				    case APP0:
+				    	length = IOUtils.readUnsignedShortMM(is);
+						byte[] jfif_buf = new byte[length - 2];
+					    IOUtils.readFully(is, jfif_buf);
+					    // EXIF segment
+					    if(jfif_buf.length >= JFIF_ID.length() && new String(jfif_buf, 0, JFIF_ID.length()).equals(JFIF_ID) || jfif_buf.length >= JFXX_ID.length() && new String(jfif_buf, 0, JFXX_ID.length()).equals(JFXX_ID)) {
+					      	int thumbnailWidth = jfif_buf[12]&0xff;
+					    	int thumbnailHeight = jfif_buf[13]&0xff;
+					    	if(thumbnailWidth != 0 && thumbnailHeight != 0) { // There is a thumbnail
+					    		// Extract the thumbnail
+					    		//Create a BufferedImage
+					    		int size = 3*thumbnailWidth*thumbnailHeight;
+								DataBuffer db = new DataBufferByte(ArrayUtils.subArray(jfif_buf, 14, size), size);
+								int[] off = {0, 1, 2};//RGB band offset, we have 3 bands
+								int numOfBands = 3;
+								int trans = Transparency.OPAQUE;
+									
+								WritableRaster raster = Raster.createInterleavedRaster(db, thumbnailWidth, thumbnailHeight, 3*thumbnailWidth, numOfBands, off, null);
+								ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, trans, DataBuffer.TYPE_BYTE);
+						   		BufferedImage bi = new BufferedImage(cm, raster, false, null);
+								thumbnails.add(bi);
+					    	}
+					    }
+				    	marker = IOUtils.readShortMM(is);
+						break;
+				    case APP1:
+				    	// EXIF identifier with trailing bytes [0x00,0x00].
+						byte[] exif_buf = new byte[EXIF_ID.length()];
+						length = IOUtils.readUnsignedShortMM(is);						
+						IOUtils.readFully(is, exif_buf);						
+						// EXIF segment.
+						if (Arrays.equals(exif_buf, EXIF_ID.getBytes())) {
+							exif_buf = new byte[length - 8];
+						    IOUtils.readFully(is, exif_buf);
+						    Exif exif = new JpegExif(exif_buf);
+						    if(exif.containsThumbnail()) {
+						    	Thumbnail thumbnail = exif.getThumbnail();
+						    	thumbnails.add(thumbnail.getAsBufferedImage());
+						    }						  			
+						} else {
+							IOUtils.skipFully(is, length - 8);
+						}
+						marker = IOUtils.readShortMM(is);
+						break;
+				    case APP13:
+				    	length = IOUtils.readUnsignedShortMM(is);
+						byte[] data = new byte[length - 2];
+						IOUtils.readFully(is, data, 0, length - 2);						
+						int i = 0;
+						
+						while(data[i] != 0) i++;
+						
+						if(new String(data, 0, i++).equals("Photoshop 3.0")) {
+							IRB irb = new IRB(ArrayUtils.subArray(data, i, data.length - i));
+							if(irb.containsThumbnail()) {
+								Thumbnail thumbnail = irb.getThumbnail();
+								thumbnails.add(thumbnail.getAsBufferedImage());
+							}							
+						}				
+				    	marker = IOUtils.readShortMM(is);
+				    	break;
+				    default:
+					    length = IOUtils.readUnsignedShortMM(is);					
+					    byte[] buf = new byte[length - 2];
+					    IOUtils.readFully(is, buf);
+					    marker = IOUtils.readShortMM(is);
+				}
+			}
+	    }
+		return thumbnails;
 	}
 	
 	/**

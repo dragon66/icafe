@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================================
+ * WY    06Apr2018  Added extractThumbnails(InputStream) to extract an array of thumbnails
  * WY    02Mar2017  Added insertMetadata(Collection<Metadata>, InputStream, OutputStream)
  * WY    26Sep2015  Added insertComment(InputStream, OutputStream, String)
  * WY    06Jul2015  Added insertXMP(InputSream, OutputStream, XMP)
@@ -38,6 +39,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +81,48 @@ public abstract class Metadata implements MetadataReader {
 	protected boolean isDataRead;
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);		
+	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);
+	
+	public static Collection<BufferedImage> extractThumbnails(File image) throws IOException {
+		FileInputStream fin = new FileInputStream(image);
+		Collection<BufferedImage> thumbnails = extractThumbnails(fin);
+		fin.close();
+		
+		return thumbnails;
+	}
+	
+	public static Collection<BufferedImage> extractThumbnails(InputStream is) throws IOException {
+		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
+		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
+		ImageType imageType = IMGUtils.guessImageType(peekHeadInputStream);
+		Collection<BufferedImage> thumbnails = Collections.emptyList();
+		// Delegate thumbnail extracting to corresponding image tweaker.
+		switch(imageType) {
+			case JPG:
+				thumbnails = JPEGTweaker.extractThumbnails(peekHeadInputStream);
+				break;
+			case TIFF:
+				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
+				thumbnails = TIFFTweaker.extractThumbnails(randIS);
+				randIS.shallowClose();
+				break;
+			case PNG:
+				LOGGER.info("PNG image format does not contain any thumbnail");
+				break;
+			case GIF:
+			case PCX:
+			case TGA:
+			case BMP:
+				LOGGER.info("{} image format does not contain any thumbnails", imageType);
+				break;
+			default:
+				peekHeadInputStream.close();
+				throw new IllegalArgumentException("Thumbnail extracting is not supported for " + imageType + " image");				
+		}
+		peekHeadInputStream.shallowClose();
+		
+		return thumbnails;
+	}
 	
 	public static void  extractThumbnails(File image, String pathToThumbnail) throws IOException {
 		FileInputStream fin = new FileInputStream(image);

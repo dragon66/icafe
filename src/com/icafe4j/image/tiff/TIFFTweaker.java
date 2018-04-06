@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    06Apr2018  Added extractThumbnails(RandomAccessInputStream)
  * WY    14Dec2017  Replace some of the RuntimeException with customized exception
  * WY    13Dec2017  Replace e.printStackTrace() with logging and/or RuntimeException
  * WY    20Nov2017  Added re-factored merge() method
@@ -94,6 +95,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -591,7 +593,7 @@ public class TIFFTweaker {
 			if(irb.containsThumbnail()) {
 				IRBThumbnail thumbnail = irb.getThumbnail();
 				return thumbnail;					
-			}		
+			}
 		}
 		
 		return null;
@@ -622,6 +624,14 @@ public class TIFFTweaker {
 			}
 			fout.close();	
 		}			
+	}
+	
+	public static Collection<BufferedImage> extractThumbnails(RandomAccessInputStream rin) throws IOException {
+		Collection<BufferedImage> thumbnails = Collections.emptyList();
+		Thumbnail thumbnail = extractThumbnail(rin);		
+		if(thumbnail != null)
+			thumbnails.add(thumbnail.getAsBufferedImage());		
+		return thumbnails;
 	}
 	
 	public static void finishInsert(RandomAccessOutputStream rout, List<IFD> list) throws IOException {
