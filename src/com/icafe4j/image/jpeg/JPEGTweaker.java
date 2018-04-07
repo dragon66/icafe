@@ -360,6 +360,19 @@ public class JPEGTweaker {
 	}
 	
 	/**
+	 * Extracts a single thumbnail image from JFIF/APP0, Exif APP1 and/or Adobe APP13 segment if any.
+	 * 
+	 * @param is InputStream for the JPEG image.
+	 * @throws IOException
+	 * @return thumbnail as a BufferedImage
+	 */
+	public static BufferedImage extractThumbnail(InputStream is) throws IOException {
+		Collection<BufferedImage> thumbnails = extractThumbnails(is);
+		if(thumbnails.size() > 0) return thumbnails.iterator().next();
+		return null;
+	}
+	
+	/**
 	 * Extracts thumbnail images from JFIF/APP0, Exif APP1 and/or Adobe APP13 segment if any.
 	 * 
 	 * @param is InputStream for the JPEG image.

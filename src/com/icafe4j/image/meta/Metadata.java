@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  =====================================================================
+ * WY    07Apr2018  Added extractThumbnail(InputStream) to extract a single thumbnail
  * WY    06Apr2018  Added extractThumbnails(InputStream) to extract an array of thumbnails
  * WY    02Mar2017  Added insertMetadata(Collection<Metadata>, InputStream, OutputStream)
  * WY    26Sep2015  Added insertComment(InputStream, OutputStream, String)
@@ -82,6 +83,20 @@ public abstract class Metadata implements MetadataReader {
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);
+	
+	public static BufferedImage extractThumbnail(File image) throws IOException {
+		FileInputStream fin = new FileInputStream(image);
+	    BufferedImage thumbnail = extractThumbnail(fin);
+		fin.close();
+		
+		return thumbnail;
+	}
+	
+	public static BufferedImage extractThumbnail(InputStream is) throws IOException {
+		Collection<BufferedImage> thumbnails = extractThumbnails(is);
+		if(thumbnails.size() > 0) return thumbnails.iterator().next();
+		return null;		
+	}
 	
 	public static Collection<BufferedImage> extractThumbnails(File image) throws IOException {
 		FileInputStream fin = new FileInputStream(image);
