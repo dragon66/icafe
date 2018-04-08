@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -70,7 +69,16 @@ public class IPTC extends Metadata {
 	}
 	
 	public void addDataSet(IPTCDataSet dataSet) {
-		addDataSets(Arrays.asList(dataSet));
+		if(datasetMap != null) {
+			String name = dataSet.getName();
+			if(datasetMap.get(name) == null) {
+				List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
+				list.add(dataSet);
+				datasetMap.put(name, list);
+			} else if(dataSet.allowMultiple()) {
+				datasetMap.get(name).add(dataSet);
+			}
+		} else throw new IllegalStateException("DataSet Map is empty");
 	}
 	
 	public void addDataSets(Collection<? extends IPTCDataSet> dataSets) {
@@ -85,7 +93,7 @@ public class IPTC extends Metadata {
 					datasetMap.get(name).add(dataSet);
 				}
 			}
-		}
+		} else throw new IllegalStateException("DataSet Map is empty");
 	}
 
 	/**
