@@ -24,10 +24,10 @@ import com.icafe4j.string.StringUtils;
  * @version 1.0 07/02/2013
  */
 public enum IPTCPreObjectDataTag implements IPTCTag {
-	 SIZE_MODE(10, "SizeMode"),
-	 MAX_SUBFILE_SIZE(20, "MaxSubfileSize"),
-	 OBJECT_SIZE_ANNOUNCED(90, "ObjectSizeAnnounced"),
-	 MAXIMUM_OBJECT_SIZE(95, "MaximumObjectSize"),
+	 SIZE_MODE(10, "Size Mode"),
+	 MAX_SUBFILE_SIZE(20, "Max Subfile Size"),
+	 OBJECT_SIZE_ANNOUNCED(90, "Object Size Announced"),
+	 MAXIMUM_OBJECT_SIZE(95, "Maximum Object Size"),
 	 	 	 
 	 UNKNOWN(999, "Unknown");
 	 

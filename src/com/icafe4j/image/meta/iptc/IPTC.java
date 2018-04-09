@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    09Apr2018  Added iterator() to traverse IPTC datasets
  * WY    25Apr2015  Renamed getDataSet() to getDataSets()
  * WY    25Apr2015  Added addDataSets()
  * WY    13Apr2015  Added write()
@@ -27,11 +28,15 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataItem;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 
@@ -140,6 +145,37 @@ public class IPTC extends Metadata {
 	public Map<String, List<IPTCDataSet>> getDataSets() {
 		ensureDataRead();
 		return datasetMap;
+	}
+	
+	public Iterator<MetadataItem> iterator() {
+		ensureDataRead();
+		if(datasetMap != null){
+			// Print multiple entry IPTCDataSet
+			Set<Map.Entry<String, List<IPTCDataSet>>> entries = datasetMap.entrySet();
+			Iterator<Entry<String, List<IPTCDataSet>>> iter = entries.iterator();
+			return new Iterator<MetadataItem>() {
+				public MetadataItem next() {
+					Entry<String, List<IPTCDataSet>> entry = iter.next();
+					String key = entry.getKey();
+					String value = "";
+					
+					for(IPTCDataSet item : entry.getValue()) {
+						value += ";" + item.getDataAsString();
+					}
+					
+					return new MetadataItem(key, value.replaceFirst(";", ""));
+			    }
+
+			    public boolean hasNext() {
+			    	return iter.hasNext();
+			    }
+
+			    public void remove() {
+			    	throw new UnsupportedOperationException("Removing MetadataItem is not supported by this Iterator");
+			    }
+			};
+		}
+		return super.iterator();
 	}
 	
 	public void read() throws IOException {

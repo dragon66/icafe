@@ -24,30 +24,30 @@ import com.icafe4j.string.StringUtils;
  * @version 1.0 07/02/2013
  */
 public enum IPTCEnvelopeTag implements IPTCTag {
-	 RECORD_VERSION(0, "EnvelopeRecordVersion"),
+	 RECORD_VERSION(0, "Envelope Record Version"),
 	 DESTINATION(5, "Destination") {
 		 @Override
 		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
-	 FILE_FORMAT(20, "FileFormat"),
-	 FILE_VERSION(22, "FileVersion"),
+	 FILE_FORMAT(20, "File Format"),
+	 FILE_VERSION(22, "File Version"),
 	 SERVICE_IDENTIFIER(30, "ServiceIdentifier"),
-	 ENVELOPE_NUMBER(40, "EnvelopeNumber"),
-	 PRODUCT_ID(50, "ProductID") {
+	 ENVELOPE_NUMBER(40, "Envelope Number"),
+	 PRODUCT_ID(50, "Product ID") {
 		 @Override
 		 public boolean allowMultiple() {
 			 return true;
 		 }
 	 },
-	 ENVELOPE_PRIORITY(60, "EnvelopePriority"),
-	 DATE_SENT(70, "DateSent"),
-	 TIME_SENT(80, "TimeSent"),
-	 CODED_CHARACTER_SET(90, "CodedCharacterSet"),
-	 UNIQUE_OBJECT_NAME(100, "UniqueObjectName"),
-	 ARM_IDENTIFIER(120, "ARMIdentifier"),
-	 ARM_VERSION(122, "ARMVersion"),
+	 ENVELOPE_PRIORITY(60, "Envelope Priority"),
+	 DATE_SENT(70, "Date Sent"),
+	 TIME_SENT(80, "Time Sent"),
+	 CODED_CHARACTER_SET(90, "Coded Character Set"),
+	 UNIQUE_OBJECT_NAME(100, "Unique Object Name"),
+	 ARM_IDENTIFIER(120, "ARM Identifier"),
+	 ARM_VERSION(122, "ARM Version"),
 	 	 
 	 UNKNOWN(999, "Unknown");
 	 
