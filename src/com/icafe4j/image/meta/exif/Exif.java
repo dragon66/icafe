@@ -138,6 +138,10 @@ public abstract class Exif extends Metadata {
 		return false;
 	}
 	
+	public String getAsString(Tag tag) {
+		throw new UnsupportedOperationException("getAsString(Tag) is not yet implemented for Exif");
+	}
+	
 	public IFD getExifIFD() {
 		if(exifSubIFD != null) {
 			return new IFD(exifSubIFD);
