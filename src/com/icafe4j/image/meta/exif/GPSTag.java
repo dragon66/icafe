@@ -28,9 +28,9 @@ import com.icafe4j.string.StringUtils;
  */
 public enum GPSTag implements Tag {
 	// EXIF GPSSubIFD tags
-	GPS_VERSION_ID("GPSVersionID", (short)0x0000),
-	GPS_LATITUDE_REF("GPSLatitudeRef", (short)0x0001),
-	GPS_LATITUDE("GPSLatitude", (short)0x0002) {
+	GPS_VERSION_ID("GPS Version ID", (short)0x0000),
+	GPS_LATITUDE_REF("GPS Latitude Ref", (short)0x0001),
+	GPS_LATITUDE("GPS Latitude", (short)0x0002) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 6)
@@ -41,8 +41,8 @@ public enum GPSTag implements Tag {
 	        		+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
 		}
 	},
-	GPS_LONGITUDE_REF("GPSLongitudeRef", (short)0x0003),
-	GPS_LONGITUDE("GPSLongitude", (short)0x0004) {
+	GPS_LONGITUDE_REF("GPS Longitude Ref", (short)0x0003),
+	GPS_LONGITUDE("GPS Longitude", (short)0x0004) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 6)
@@ -53,8 +53,8 @@ public enum GPSTag implements Tag {
 	        		+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
 		}
 	},
-	GPS_ALTITUDE_REF("GPSAltitudeRef", (short)0x0005),
-	GPS_ALTITUDE("GPSAltitude", (short)0x0006) {
+	GPS_ALTITUDE_REF("GPS Altitude Ref", (short)0x0005),
+	GPS_ALTITUDE("GPS Altitude", (short)0x0006) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 2)
@@ -64,7 +64,7 @@ public enum GPSTag implements Tag {
 	        return StringUtils.rationalToString(df, true, intValues) + "m";	
 		}
 	},
-	GPS_TIME_STAMP("GPSTimeStamp", (short)0x0007) {
+	GPS_TIME_STAMP("GPS Time Stamp", (short)0x0007) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 6)
@@ -75,16 +75,16 @@ public enum GPSTag implements Tag {
 	        		+ ":" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]);	
 		}
 	},
-	GPS_SATELLITES("GPSSatellites", (short)0x0008),
-	GPS_STATUS("GPSStatus", (short)0x0009),
-	GPS_MEASURE_MODE("GPSMeasureMode", (short)0x000a),	
-	GPS_DOP("GPSDOP/ProcessingSoftware", (short)0x000b),
-	GPS_SPEED_REF("GPSSpeedRef", (short)0x000c),
-	GPSSpeed("GPSSpeed", (short)0x000d),
-	GPS_TRACK_REF("GPSTrackRef", (short)0x000e),
-	GPS_TRACK("GPSTrack", (short)0x000f),
-	GPS_IMG_DIRECTION_REF("GPSImgDirectionRef", (short)0x0010),
-	GPS_IMG_DIRECTION("GPSImgDirection", (short)0x0011) {
+	GPS_SATELLITES("GPS Satellites", (short)0x0008),
+	GPS_STATUS("GPS Status", (short)0x0009),
+	GPS_MEASURE_MODE("GPS Measure Mode", (short)0x000a),	
+	GPS_DOP("GPS DOP/Processing Software", (short)0x000b),
+	GPS_SPEED_REF("GPS Speed Ref", (short)0x000c),
+	GPSSpeed("GPS Speed", (short)0x000d),
+	GPS_TRACK_REF("GPS Track Ref", (short)0x000e),
+	GPS_TRACK("GPS Track", (short)0x000f),
+	GPS_IMG_DIRECTION_REF("GPS Img Direction Ref", (short)0x0010),
+	GPS_IMG_DIRECTION("GPS Img Direction", (short)0x0011) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 2)
@@ -94,9 +94,9 @@ public enum GPSTag implements Tag {
 	        return StringUtils.rationalToString(df, true, intValues) + '\u00B0';	
 		}
 	},
-	GPS_MAP_DATUM("GPSMapDatum", (short)0x0012),
-	GPS_DEST_LATITUDE_REF("GPSDestLatitudeRef", (short)0x0013),
-	GPS_DEST_LATITUDE("GPSDestLatitude", (short)0x0014) {
+	GPS_MAP_DATUM("GPS Map Datum", (short)0x0012),
+	GPS_DEST_LATITUDE_REF("GPS Dest Latitude Ref", (short)0x0013),
+	GPS_DEST_LATITUDE("GPS Dest Latitude", (short)0x0014) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 6)
@@ -107,8 +107,8 @@ public enum GPSTag implements Tag {
 	        		+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
 		}
 	},
-	GPS_DEST_LONGITUDE_REF("GPSDestLongitudeRef", (short)0x0015),
-	GPS_DEST_LONGITUDE("GPSDestLongitude", (short)0x0016) {
+	GPS_DEST_LONGITUDE_REF("GPS Dest Longitude Ref", (short)0x0015),
+	GPS_DEST_LONGITUDE("GPS Dest Longitude", (short)0x0016) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 6)
@@ -119,8 +119,8 @@ public enum GPSTag implements Tag {
 	        		+ "'" + StringUtils.rationalToString(df, true, intValues[4], intValues[5]) + "\"";
 		}
 	},
-	GPS_DEST_BEARING_REF("GPSDestBearingRef", (short)0x0017),
-	GPS_DEST_BEARING("GPSDestBearing", (short)0x0018) {
+	GPS_DEST_BEARING_REF("GPS Dest Bearing Ref", (short)0x0017),
+	GPS_DEST_BEARING("GPS Dest Bearing", (short)0x0018) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 2)
@@ -130,8 +130,8 @@ public enum GPSTag implements Tag {
 	        return StringUtils.rationalToString(df, true, intValues) + "m";	
 		}
 	},
-	GPS_DEST_DISTANCE_REF("GPSDestDistanceRef", (short)0x0019),
-	GPS_DEST_DISTANCE("GPSDestDistance", (short)0x001a) {
+	GPS_DEST_DISTANCE_REF("GPS Dest Distance Ref", (short)0x0019),
+	GPS_DEST_DISTANCE("GPS Dest Distance", (short)0x001a) {
 		public String getFieldAsString(Object value) {
 			int[] intValues = (int[])value;
 			if(intValues.length != 2)
@@ -141,17 +141,16 @@ public enum GPSTag implements Tag {
 	        return StringUtils.rationalToString(df, true, intValues) + "m";	
 		}
 	},
-	GPS_PROCESSING_METHOD("GPSProcessingMethod", (short)0x001b),
-	GPS_AREA_INFORMATION("GPSAreaInformation", (short)0x001c),
-	GPS_DATE_STAMP("GPSDateStamp", (short)0x001d),
-	GPS_DIFFERENTIAL("GPSDifferential", (short)0x001e),
-	GPS_HPOSITIONING_ERROR("GPSHPositioningError", (short)0x001f),
+	GPS_PROCESSING_METHOD("GPS Processing Method", (short)0x001b),
+	GPS_AREA_INFORMATION("GPS Area Information", (short)0x001c),
+	GPS_DATE_STAMP("GPS Date Stamp", (short)0x001d),
+	GPS_DIFFERENTIAL("GPS Differential", (short)0x001e),
+	GPS_HPOSITIONING_ERROR("GPS H Positioning Error", (short)0x001f),
 	// unknown tag
 	UNKNOWN("Unknown",  (short)0xffff); 
     // End of EXIF GPSSubIFD tags
 	
-	private GPSTag(String name, short value)
-	{
+	private GPSTag(String name, short value) {
 		this.name = name;
 		this.value = value;
 	}

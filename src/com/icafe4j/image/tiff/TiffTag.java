@@ -26,7 +26,7 @@ import com.icafe4j.string.StringUtils;
  */
 public enum TiffTag implements Tag {	
 	// Definition includes all baseline and extended tags.	
-	NEW_SUBFILE_TYPE("NewSubfileType", (short)0x00FE, Attribute.BASELINE) {
+	NEW_SUBFILE_TYPE("New Subfile Type", (short)0x00FE, Attribute.BASELINE) {
 		public String getFieldAsString(Object value) {
 			//
 			int intValue = ((int[])value)[0];
@@ -47,7 +47,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	SUBFILE_TYPE("SubfileType", (short)0x00FF, Attribute.BASELINE) {
+	SUBFILE_TYPE("Subfile Type", (short)0x00FF, Attribute.BASELINE) {
 		public String getFieldAsString(Object value) {
 			//
 			int intValue = ((int[])value)[0];
@@ -68,19 +68,19 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	IMAGE_WIDTH("ImageWidth", (short)0x0100, Attribute.BASELINE) {
+	IMAGE_WIDTH("Image Width", (short)0x0100, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
 	},
 	
-	IMAGE_LENGTH("ImageLength", (short)0x0101, Attribute.BASELINE) {
+	IMAGE_LENGTH("Image Length", (short)0x0101, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
 	},
 	
-	BITS_PER_SAMPLE("BitsPerSample", (short)0x0102, Attribute.BASELINE) {
+	BITS_PER_SAMPLE("Bits Per Sample", (short)0x0102, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
@@ -96,7 +96,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	PHOTOMETRIC_INTERPRETATION("PhotometricInterpretation", (short)0x0106, Attribute.BASELINE) {
+	PHOTOMETRIC_INTERPRETATION("Photometric Interpretation", (short)0x0106, Attribute.BASELINE) {
 		public String getFieldAsString(Object value) {
 			return TiffFieldEnum.PhotoMetric.fromValue(((int[])value)[0]).getDescription();
 		}
@@ -122,19 +122,19 @@ public enum TiffTag implements Tag {
 		}		
 	},
 	
-	CELL_WIDTH("CellWidth", (short)0x0108, Attribute.BASELINE) {
+	CELL_WIDTH("Cell Width", (short)0x0108, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	CELL_LENGTH("CellLength", (short)0x0109, Attribute.BASELINE) {
+	CELL_LENGTH("Cell Length", (short)0x0109, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	FILL_ORDER("FillOrder", (short)0x010A, Attribute.BASELINE) {
+	FILL_ORDER("Fill Order", (short)0x010A, Attribute.BASELINE) {
 		public String getFieldAsString(Object value) {
 			// We only has two values for this tag, so we use an array instead of a map
 			String[] values = {"Msb2Lsb", "Lsb2Msb"};
@@ -150,13 +150,13 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	DOCUMENT_NAME("DocumentName", (short)0x010D, Attribute.EXTENDED) {
+	DOCUMENT_NAME("Document Name", (short)0x010D, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.ASCII;
 		}
 	},
 	
-	IMAGE_DESCRIPTION("ImageDescription", (short)0x010E, Attribute.BASELINE) {
+	IMAGE_DESCRIPTION("Image Description", (short)0x010E, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.ASCII;
 		}
@@ -174,7 +174,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	STRIP_OFFSETS("StripOffsets", (short)0x0111, Attribute.BASELINE) {
+	STRIP_OFFSETS("Strip Offsets", (short)0x0111, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
@@ -192,31 +192,31 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	SAMPLES_PER_PIXEL("SamplesPerPixel", (short)0x0115, Attribute.BASELINE) {
+	SAMPLES_PER_PIXEL("Samples Per Pixel", (short)0x0115, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	ROWS_PER_STRIP("RowsPerStrip", (short)0x0116, Attribute.BASELINE) {
+	ROWS_PER_STRIP("Rows Per Strip", (short)0x0116, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
 	},
 	
-	STRIP_BYTE_COUNTS("StripByteCounts", (short)0x0117, Attribute.BASELINE) {
+	STRIP_BYTE_COUNTS("Strip Byte Counts", (short)0x0117, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
 	},
 	
-	MIN_SAMPLE_VALUE("MinSampleValue", (short)0x0118, Attribute.BASELINE) {
+	MIN_SAMPLE_VALUE("Min Sample Value", (short)0x0118, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	MAX_SAMPLE_VALUE("MaxSampleValue", (short)0x0119, Attribute.BASELINE) {
+	MAX_SAMPLE_VALUE("Max Sample Value", (short)0x0119, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
@@ -251,7 +251,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	PLANAR_CONFIGURATTION("PlanarConfiguration", (short)0x011C, Attribute.BASELINE) {
+	PLANAR_CONFIGURATTION("Planar Configuration", (short)0x011C, Attribute.BASELINE) {
 		public String getFieldAsString(Object value) {
 			return TiffFieldEnum.PlanarConfiguration.fromValue(((int[])value)[0]).getDescription();
 		}
@@ -261,17 +261,17 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	PAGE_NAME("	PageName", (short)0x011D, Attribute.EXTENDED),
+	PAGE_NAME("Page Name", (short)0x011D, Attribute.EXTENDED),
 	X_POSITION("XPosition", (short)0x011E, Attribute.EXTENDED),
 	Y_POSITION("YPosition", (short)0x011F, Attribute.EXTENDED),
 	
-	FREE_OFFSETS("FreeOffsets", (short)0x0120, Attribute.BASELINE) {
+	FREE_OFFSETS("Free Offsets", (short)0x0120, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
 	},
 	
-	FREE_BYTE_COUNTS("FreeByteCounts", (short)0x0121, Attribute.BASELINE) {
+	FREE_BYTE_COUNTS("Free Byte Counts", (short)0x0121, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
@@ -285,7 +285,7 @@ public enum TiffTag implements Tag {
 	 *  of a unit), and a GrayScaleResponseCurve number for gray level 4 is
 	 *  3455, then the resulting actual value is 0.3455. 
 	 */
-	GRAY_RESPONSE_UNIT("GrayResponseUnit", (short)0x0122, Attribute.BASELINE) {
+	GRAY_RESPONSE_UNIT("Gray Response Unit", (short)0x0122, Attribute.BASELINE) {
 		public String getFieldAsString(Object value) {
 			//
 			String[] values = {"Number represents tenths of a unit", "Number represents hundredths of a unit",
@@ -304,13 +304,13 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	GRAY_RESPONSE_CURVE("GrayResponseCurve", (short)0x0123, Attribute.BASELINE) {
+	GRAY_RESPONSE_CURVE("Gray Response Curve", (short)0x0123, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	T4_OPTIONS("T4Options", (short)0x0124, Attribute.EXTENDED) {
+	T4_OPTIONS("T4 Options", (short)0x0124, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
 			//
 			int intValue = ((int[])value)[0];
@@ -331,7 +331,7 @@ public enum TiffTag implements Tag {
 		}
 	}, 
 	
-	T6_OPTIONS("T6Options", (short)0x0125, Attribute.EXTENDED) {
+	T6_OPTIONS("T6 Options", (short)0x0125, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
 			//
 			int intValue = ((int[])value)[0];
@@ -350,7 +350,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	RESOLUTION_UNIT("ResolutionUnit", (short)0x0128, Attribute.BASELINE) {
+	RESOLUTION_UNIT("Resolution Unit", (short)0x0128, Attribute.BASELINE) {
 		public String getFieldAsString(Object value) {
 			// We only has three values for this tag, so we use an array instead of a map
 			String[] values = {"No absolute unit of measurement (Used for images that may have a non-square aspect ratio, but no meaningful absolute dimensions)", 
@@ -367,13 +367,13 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	PAGE_NUMBER("PageNumber", (short)0x0129, Attribute.EXTENDED) {
+	PAGE_NUMBER("Page Number", (short)0x0129, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	TRANSFER_FUNCTION("TransferFunction", (short)0x012D, Attribute.EXTENDED),
+	TRANSFER_FUNCTION("Transfer Function", (short)0x012D, Attribute.EXTENDED),
 	
 	SOFTWARE("Software", (short)0x0131, Attribute.BASELINE) {
 		public FieldType getFieldType() {
@@ -393,7 +393,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	HOST_COMPUTER("HostComputer", (short)0x013C, Attribute.BASELINE),
+	HOST_COMPUTER("Host Computer", (short)0x013C, Attribute.BASELINE),
 	
 	PREDICTOR("Predictor", (short)0x013D, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
@@ -415,7 +415,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	WHITE_POINT("WhitePoint", (short)0x013E, Attribute.EXTENDED),
+	WHITE_POINT("White Point", (short)0x013E, Attribute.EXTENDED),
 	PRIMARY_CHROMATICITIES("PrimaryChromaticities", (short)0x013F, Attribute.EXTENDED),
 	
 	COLORMAP("ColorMap", (short)0x0140, Attribute.BASELINE) {
@@ -424,43 +424,43 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	HALTONE_HINTS("HalftoneHints", (short)0x0141, Attribute.EXTENDED),
+	HALTONE_HINTS("Halftone Hints", (short)0x0141, Attribute.EXTENDED),
 	
-	TILE_WIDTH("TileWidth", (short)0x0142, Attribute.EXTENDED) {
+	TILE_WIDTH("Tile Width", (short)0x0142, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
 	},
 	
-	TILE_LENGTH("TileLength", (short)0x0143, Attribute.EXTENDED) {
+	TILE_LENGTH("Tile Length", (short)0x0143, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
 	},
 	
-	TILE_OFFSETS("TileOffsets", (short)0x0144, Attribute.EXTENDED) {
+	TILE_OFFSETS("Tile Offsets", (short)0x0144, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
 	},
 	
-	TILE_BYTE_COUNTS("TileByteCounts", (short)0x0145, Attribute.EXTENDED) {
+	TILE_BYTE_COUNTS("Tile Byte Counts", (short)0x0145, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
 	},
 	
-	BAD_FAX_LINES("BadFaxLines", (short)0x0146, Attribute.EXTENDED),
-	CLEAN_FAX_DATA("CleanFaxData", (short)0x0147, Attribute.EXTENDED),
+	BAD_FAX_LINES("Bad Fax Lines", (short)0x0146, Attribute.EXTENDED),
+	CLEAN_FAX_DATA("Clean Fax Data", (short)0x0147, Attribute.EXTENDED),
 	CONSECUTIVE_BAD_FAX_LINES("ConsecutiveBadFaxLines", (short)0x0148, Attribute.EXTENDED),
 	
-	SUB_IFDS("SubIFDs", (short)0x014A, Attribute.EXTENDED) {
+	SUB_IFDS("Sub IFDs", (short)0x014A, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or IFD
 		}
 	},
 	
-	INK_SET("InkSet", (short)0x014C, Attribute.EXTENDED) {
+	INK_SET("Ink Set", (short)0x014C, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
 			//
 			int intValue = ((int[])value)[0];
@@ -479,12 +479,12 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	INK_NAMES("InkNames", (short)0x014D, Attribute.EXTENDED),
-	NUMBER_OF_INKS("NumberOfInks", (short)0x014E, Attribute.EXTENDED),
-	DOT_RANGE("DotRange", (short)0x0150, Attribute.EXTENDED),
-	TARGET_PRINTER("TargetPrinter", (short)0x0151, Attribute.EXTENDED),
+	INK_NAMES("Ink Names", (short)0x014D, Attribute.EXTENDED),
+	NUMBER_OF_INKS("Number Of Inks", (short)0x014E, Attribute.EXTENDED),
+	DOT_RANGE("Dot Range", (short)0x0150, Attribute.EXTENDED),
+	TARGET_PRINTER("Target Printer", (short)0x0151, Attribute.EXTENDED),
 	
-	EXTRA_SAMPLES("ExtraSamples", (short)0x0152, Attribute.BASELINE) {
+	EXTRA_SAMPLES("Extra Samples", (short)0x0152, Attribute.BASELINE) {
 		public String getFieldAsString(Object value) {
 			// We only has three values for this tag, so we use an array instead of a map
 			String[] values = {"Unspecified data", "Associated alpha data (with pre-multiplied color)",
@@ -501,7 +501,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	SAMPLE_FORMAT("SampleFormat", (short)0x0153, Attribute.EXTENDED) {
+	SAMPLE_FORMAT("Sample Format", (short)0x0153, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
 			String[] values = {"Unsigned integer data", "Two's complement signed integer data",
 					"IEEE floating point data",	"Undefined data format", "Complex integer data",
@@ -514,12 +514,12 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	S_MIN_SAMPLE_VALUE("SMinSampleValue", (short)0x0154, Attribute.EXTENDED),
-	S_MAX_SAMPLE_VALUE("SMaxSampleValue", (short)0x0155, Attribute.EXTENDED),
-	TRANSFER_RANGE("TransferRange", (short)0x0156, Attribute.EXTENDED),
-	CLIP_PATH("ClipPath", (short)0x0157, Attribute.EXTENDED),
-	X_CLIP_PATH_UNITS("XClipPathUnits", (short)0x0158, Attribute.EXTENDED),
-	Y_CLIP_PATH_UNITS("YClipPathUnits", (short)0x0159, Attribute.EXTENDED),
+	S_MIN_SAMPLE_VALUE("S Min Sample Value", (short)0x0154, Attribute.EXTENDED),
+	S_MAX_SAMPLE_VALUE("S Max Sample Value", (short)0x0155, Attribute.EXTENDED),
+	TRANSFER_RANGE("Transfer Range", (short)0x0156, Attribute.EXTENDED),
+	CLIP_PATH("Clip Path", (short)0x0157, Attribute.EXTENDED),
+	X_CLIP_PATH_UNITS("X Clip Path Units", (short)0x0158, Attribute.EXTENDED),
+	Y_CLIP_PATH_UNITS("Y Clip Path Units", (short)0x0159, Attribute.EXTENDED),
 	
 	INDEXED("Indexed", (short)0x015A, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
@@ -542,11 +542,11 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	OPI_PROXY("OPIProxy", (short)0x015F, Attribute.EXTENDED),
+	OPI_PROXY("OPI Proxy", (short)0x015F, Attribute.EXTENDED),
 	
-	GLOBAL_PARAMETERS_IFD("GlobalParametersIFD", (short)0x0190, Attribute.EXTENDED),
+	GLOBAL_PARAMETERS_IFD("Global Parameters IFD", (short)0x0190, Attribute.EXTENDED),
 	
-	PROFILE_TYPE("ProfileType", (short)0x0191, Attribute.EXTENDED) {
+	PROFILE_TYPE("Profile Type", (short)0x0191, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
 			//
 			int intValue = ((int[])value)[0];
@@ -565,7 +565,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	FAX_PROFILE("FaxProfile", (short)0x0192, Attribute.EXTENDED) {
+	FAX_PROFILE("Fax Profile", (short)0x0192, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
 			String[] values = {"Does not conform to a profile defined for TIFF for facsimile", "Minimal black & white lossless, Profile S",
 					"Extended black & white lossless, Profile F",	"Lossless JBIG black & white, Profile J", "Lossy color and grayscale, Profile C",
@@ -582,7 +582,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	CODING_METHODS("CodingMethods", (short)0x0193, Attribute.EXTENDED) {
+	CODING_METHODS("Coding Methods", (short)0x0193, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
 			//
 			int intValue = ((int[])value)[0];
@@ -606,88 +606,88 @@ public enum TiffTag implements Tag {
 		}
 	},				
 	
-	VERSION_YEAR("VersionYear", (short)0x0194, Attribute.EXTENDED) {
+	VERSION_YEAR("Version Year", (short)0x0194, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.BYTE;
 		}
 	},
 	
-	MODE_NUMBER("ModeNumber", (short)0x0195, Attribute.EXTENDED) {
+	MODE_NUMBER("Mode Number", (short)0x0195, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.BYTE;
 		}
 	},
 	
 	DECODE("Decode", (short)0x01B1, Attribute.EXTENDED),
-	DEFAULT_IMAGE_COLOR("DefaultImageColor", (short)0x01B2, Attribute.EXTENDED),
+	DEFAULT_IMAGE_COLOR("Default Image Color", (short)0x01B2, Attribute.EXTENDED),
 	
-	JPEG_PROC("JPEGProc", (short)0x0200, Attribute.EXTENDED) {
+	JPEG_PROC("JPEG Proc", (short)0x0200, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	JPEG_INTERCHANGE_FORMAT("JPEGInterchangeFormat/JpegIFOffset", (short)0x0201, Attribute.EXTENDED) {
+	JPEG_INTERCHANGE_FORMAT("JPEG Interchange Format/Jpeg IF Offset", (short)0x0201, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
 	},
 	
-	JPEG_INTERCHANGE_FORMAT_LENGTH("JPEGInterchangeFormatLength/JpegIFByteCount", (short)0x0202, Attribute.EXTENDED) {
+	JPEG_INTERCHANGE_FORMAT_LENGTH("JPEG Interchange Format Length/Jpeg IF Byte Count", (short)0x0202, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
 	},
 	
-	JPEG_RESTART_INTERVAL("JPEGRestartInterval", (short)0x0203, Attribute.EXTENDED) {
+	JPEG_RESTART_INTERVAL("JPEG Restart Interval", (short)0x0203, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	JPEG_LOSSLESS_PREDICTORS("JPEGLosslessPredictors", (short)0x0205, Attribute.EXTENDED) {
+	JPEG_LOSSLESS_PREDICTORS("JPEG Lossless Predictors", (short)0x0205, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	JPEG_POINT_TRANSFORMS("JPEGPointTransforms", (short)0x0206, Attribute.EXTENDED) {
+	JPEG_POINT_TRANSFORMS("JPEG Point Transforms", (short)0x0206, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	JPEG_Q_TABLES("JPEGQTables", (short)0x0207, Attribute.EXTENDED) {
+	JPEG_Q_TABLES("JPEG Q Tables", (short)0x0207, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
 	},
 	
-	JPEG_DC_TABLES("JPEGDCTables", (short)0x0208, Attribute.EXTENDED) {
+	JPEG_DC_TABLES("JPEG DC Tables", (short)0x0208, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
 	},
 	
-	JPEG_AC_TABLES("JPEGACTables", (short)0x0209, Attribute.EXTENDED) {
+	JPEG_AC_TABLES("JPEG AC Tables", (short)0x0209, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
 	},
 	
-	YCbCr_COEFFICIENTS("YCbCrCoefficients", (short)0x0211, Attribute.EXTENDED) {
+	YCbCr_COEFFICIENTS("YCbCr Coefficients", (short)0x0211, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.RATIONAL;
 		}
 	},
 	
-	YCbCr_SUB_SAMPLING("YCbCrSubSampling", (short)0x0212, Attribute.EXTENDED) {
+	YCbCr_SUB_SAMPLING("YCbCr SubSampling", (short)0x0212, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.SHORT;
 		}
 	},
 	
-	YCbCr_POSITIONING("YCbCrPositioning", (short)0x0213, Attribute.EXTENDED) {
+	YCbCr_POSITIONING("YCbCr Positioning", (short)0x0213, Attribute.EXTENDED) {
 		public String getFieldAsString(Object value) {
 			//
 			int intValue = ((int[])value)[0];
@@ -706,13 +706,13 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	REFERENCE_BLACK_WHITE("ReferenceBlackWhite", (short)0x0214, Attribute.EXTENDED) {
+	REFERENCE_BLACK_WHITE("Reference Black White", (short)0x0214, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.RATIONAL;
 		}
 	},
 	
-	STRIP_ROW_COUNTS("StripRowCounts", (short)0x022F, Attribute.EXTENDED) {
+	STRIP_ROW_COUNTS("Strip Row Counts", (short)0x022F, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
@@ -725,9 +725,9 @@ public enum TiffTag implements Tag {
 	},
 	
 	RATING("Rating", (short)0x4746, Attribute.PRIVATE),
-	RATING_PERCENT("RatingPercent", (short)0x4749, Attribute.PRIVATE),
+	RATING_PERCENT("Rating Percent", (short)0x4749, Attribute.PRIVATE),
 	
-	IMAGE_ID("ImageID", (short)0x800D, Attribute.EXTENDED) {
+	IMAGE_ID("Image ID", (short)0x800D, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.ASCII;
 		}
@@ -742,31 +742,31 @@ public enum TiffTag implements Tag {
 	},
 	
 	// (International Press Telecommunications Council) metadata.
-	IPTC("RichTiffIPTC", (short)0x83BB, Attribute.PRIVATE) {
+	IPTC("Rich Tiff IPTC", (short)0x83BB, Attribute.PRIVATE) {
 		public FieldType getFieldType() {
 			return FieldType.UNDEFINED; // Or BYTE
 		}
 	},
 	
-	IT8_SITE("IT8Site", (short)0x84e0, Attribute.PRIVATE),
-    IT8_COLOR_SEQUENCE("IT8ColorSequence", (short)0x84e1, Attribute.PRIVATE),
-    IT8_HEADER("IT8Header", (short)0x84e2, Attribute.PRIVATE),
-    IT8_RASTER_PADDING("IT8RasterPadding", (short)0x84e3, Attribute.PRIVATE),
-    IT8_BITS_PER_RUN_LENGTH("IT8BitsPerRunLength", (short)0x84e4, Attribute.PRIVATE),
-    IT8_BITS_PER_EXTENDED_RUN_LENGTH("IT8BitsPerExtendedRunLength", (short)0x84e5, Attribute.PRIVATE),
-    IT8_COLOR_TABLE("IT8ColorTable", (short)0x84e6, Attribute.PRIVATE),
-    IT8_IMAGE_COLOR_INDICATOR("IT8ImageColorIndicator", (short)0x84e7, Attribute.PRIVATE),
-    IT8_BKG_COLOR_INDICATOR("IT8BkgColorIndicator", (short)0x84e8, Attribute.PRIVATE),
-    IT8_IMAGE_COLOR_VALUE("IT8ImageColorValue", (short)0x84e9, Attribute.PRIVATE),
-    IT8_BKG_COLOR_VALUE("IT8BkgColorValue", (short)0x84ea, Attribute.PRIVATE),
-    IT8_PIXEL_INTENSITY_RANGE("IT8PixelIntensityRange", (short)0x84eb, Attribute.PRIVATE),
-    IT8_TRANSPARENCY_INDICATOR("IT8TransparencyIndicator", (short)0x84ec, Attribute.PRIVATE),
-    IT8_COLOR_CHARACTERIZATION("IT8ColorCharacterization", (short)0x84ed, Attribute.PRIVATE),
-    IT8_HC_USAGE("IT8HCUsage", (short)0x84ee, Attribute.PRIVATE),
+	IT8_SITE("IT8 Site", (short)0x84e0, Attribute.PRIVATE),
+    IT8_COLOR_SEQUENCE("IT8 Color Sequence", (short)0x84e1, Attribute.PRIVATE),
+    IT8_HEADER("IT8 Header", (short)0x84e2, Attribute.PRIVATE),
+    IT8_RASTER_PADDING("IT8 Raster Padding", (short)0x84e3, Attribute.PRIVATE),
+    IT8_BITS_PER_RUN_LENGTH("IT8 Bits Per Run Length", (short)0x84e4, Attribute.PRIVATE),
+    IT8_BITS_PER_EXTENDED_RUN_LENGTH("IT8 Bits Per Extended Run Length", (short)0x84e5, Attribute.PRIVATE),
+    IT8_COLOR_TABLE("IT8 Color Table", (short)0x84e6, Attribute.PRIVATE),
+    IT8_IMAGE_COLOR_INDICATOR("IT8 Image Color Indicator", (short)0x84e7, Attribute.PRIVATE),
+    IT8_BKG_COLOR_INDICATOR("IT8 Bkg Color Indicator", (short)0x84e8, Attribute.PRIVATE),
+    IT8_IMAGE_COLOR_VALUE("IT8 Image Color Value", (short)0x84e9, Attribute.PRIVATE),
+    IT8_BKG_COLOR_VALUE("IT8 Bkg Color Value", (short)0x84ea, Attribute.PRIVATE),
+    IT8_PIXEL_INTENSITY_RANGE("IT8 Pixel Intensity Range", (short)0x84eb, Attribute.PRIVATE),
+    IT8_TRANSPARENCY_INDICATOR("IT8 Transparency Indicator", (short)0x84ec, Attribute.PRIVATE),
+    IT8_COLOR_CHARACTERIZATION("IT8 Color Characterization", (short)0x84ed, Attribute.PRIVATE),
+    IT8_HC_USAGE("IT8 HC Usage", (short)0x84ee, Attribute.PRIVATE),
     
-    IPTC2("RichTiffIPTC", (short)0x8568, Attribute.PRIVATE),
+    IPTC2("Rich Tiff IPTC", (short)0x8568, Attribute.PRIVATE),
     
-    FRAME_COUNT("FrameCount", (short)0x85b8, Attribute.PRIVATE),
+    FRAME_COUNT("Frame Count", (short)0x85b8, Attribute.PRIVATE),
    
     // Photoshop image resources
     PHOTOSHOP("Photoshop", (short)0x8649, Attribute.PRIVATE) {
@@ -776,13 +776,13 @@ public enum TiffTag implements Tag {
 	},
     
 	// The following tag is for ExifSubIFD
-	EXIF_SUB_IFD("ExifSubIFD", (short)0x8769, Attribute.PRIVATE) {
+	EXIF_SUB_IFD("Exif Sub IFD", (short)0x8769, Attribute.PRIVATE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
 	},
 	
-	IMAGE_LAYER("ImageLayer", (short)0x87ac, Attribute.EXTENDED) {
+	IMAGE_LAYER("Image Layer", (short)0x87ac, Attribute.EXTENDED) {
 		public FieldType getFieldType() {
 			return FieldType.LONG; // Or SHORT
 		}
@@ -795,7 +795,7 @@ public enum TiffTag implements Tag {
 	},
 	
 	// The following tag is for GPSSubIFD
-	GPS_SUB_IFD("GPSSubIFD", (short)0x8825, Attribute.PRIVATE) {
+	GPS_SUB_IFD("GPS Sub IFD", (short)0x8825, Attribute.PRIVATE) {
 		public FieldType getFieldType() {
 			return FieldType.LONG;
 		}
@@ -804,9 +804,9 @@ public enum TiffTag implements Tag {
 	/* Photoshop-specific TIFF tag. Starts with a null-terminated character
 	 * string of "Adobe Photoshop Document Data Block"
 	 */
-	IMAGE_SOURCE_DATA("ImageSourceData", (short)0x935C, Attribute.PRIVATE),
+	IMAGE_SOURCE_DATA("Image Source Data", (short)0x935C, Attribute.PRIVATE),
 	
-	WINDOWS_XP_TITLE("WindowsXPTitle", (short) 0x9c9b, Attribute.PRIVATE) {
+	WINDOWS_XP_TITLE("WindowsXP Title", (short) 0x9c9b, Attribute.PRIVATE) {
 		public String getFieldAsString(Object value) {
 			//
 			byte[] byteValue = (byte[]) value;
@@ -824,7 +824,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	WINDOWS_XP_COMMENT("WindowsXPComment", (short)0x9c9c, Attribute.PRIVATE) {
+	WINDOWS_XP_COMMENT("WindowsXP Comment", (short)0x9c9c, Attribute.PRIVATE) {
 		public String getFieldAsString(Object value) {
 			//
 			byte[] byteValue = (byte[])value;
@@ -842,7 +842,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	WINDOWS_XP_AUTHOR("WindowsXPAuthor", (short)0x9c9d, Attribute.PRIVATE) {
+	WINDOWS_XP_AUTHOR("WindowsXP Author", (short)0x9c9d, Attribute.PRIVATE) {
 		public String getFieldAsString(Object value) {
 			//
 			byte[] byteValue = (byte[])value;
@@ -860,7 +860,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	WINDOWS_XP_KEYWORDS("WindowsXPKeywords", (short)0x9c9e, Attribute.PRIVATE){
+	WINDOWS_XP_KEYWORDS("WindowsXP Keywords", (short)0x9c9e, Attribute.PRIVATE){
 		public String getFieldAsString(Object value) {
 			//
 			byte[] byteValue = (byte[])value;
@@ -878,7 +878,7 @@ public enum TiffTag implements Tag {
 		}
 	},
 	
-	WINDOWS_XP_SUBJECT("WindowsXPSubject", (short) 0x9c9f, Attribute.PRIVATE) {
+	WINDOWS_XP_SUBJECT("WindowsXP Subject", (short) 0x9c9f, Attribute.PRIVATE) {
 		public String getFieldAsString(Object value) {
 			//
 			byte[] byteValue = (byte[]) value;

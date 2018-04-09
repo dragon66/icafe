@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    09Apr2018  Added iterator interface implementation
  * WY    10Apr2015  Moved data loaded checking to ExifReader
  * WY    31Mar2015  Fixed bug with getImageIFD() etc
  * WY    17Feb2015  Added addImageField() to add TIFF image tag
@@ -32,18 +33,25 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataItem;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.Thumbnail;
 import com.icafe4j.image.tiff.FieldType;
 import com.icafe4j.image.tiff.IFD;
 import com.icafe4j.image.tiff.TIFFTweaker;
+import com.icafe4j.image.tiff.Tag;
 import com.icafe4j.image.tiff.TiffField;
 import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.io.FileCacheRandomAccessInputStream;
@@ -51,6 +59,7 @@ import com.icafe4j.io.FileCacheRandomAccessOutputStream;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.io.RandomAccessInputStream;
 import com.icafe4j.io.RandomAccessOutputStream;
+import com.icafe4j.string.StringUtils;
 
 /**
  * EXIF wrapper
@@ -162,6 +171,74 @@ public abstract class Exif extends Metadata {
 	
 	public boolean isThumbnailRequired() {
 		return isThumbnailRequired;
+	}
+	
+	public Iterator<MetadataItem> iterator() {
+		ensureDataRead();
+		List<MetadataItem> items = new ArrayList<MetadataItem>();
+		if(imageIFD != null)
+			extractMetadataItems(imageIFD, TiffTag.class, items);
+		if(containsThumbnail) {
+			items.add(new MetadataItem("Exif thumbnail format", (thumbnail.getDataType() == 1? "DATA_TYPE_JPG":"DATA_TYPE_TIFF")));
+			items.add(new MetadataItem("Exif thumbnail data length", "" + thumbnail.getCompressedImage().length));
+		}
+	
+		return items.iterator();
+	}
+	
+	private void extractMetadataItems(IFD currIFD, Class<? extends Tag> tagClass, List<MetadataItem> items) {
+		// Use reflection to invoke fromShort(short) method
+		Method method = null;
+		try {
+			method = tagClass.getDeclaredMethod("fromShort", short.class);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException("Method 'fromShort' is not defined for class " + tagClass);
+		} catch (SecurityException e) {
+			throw new RuntimeException("The operation is not allowed by the current security setup");
+		}
+		Collection<TiffField<?>> fields = currIFD.getFields();
+		
+		for(TiffField<?> field : fields) {
+			short tag = field.getTag();
+			Tag ftag = TiffTag.UNKNOWN;
+			if(tag == ExifTag.PADDING.getValue()) {
+				ftag = ExifTag.PADDING;
+			} else {
+				try {
+					ftag = (Tag)method.invoke(null, tag);
+				} catch (IllegalAccessException e) {
+					throw new RuntimeException("Illegal access for method: " + method);
+				} catch (IllegalArgumentException e) {
+					throw new RuntimeException("Illegal argument for method:  " + method);
+				} catch (InvocationTargetException e) {
+					throw new RuntimeException("Incorrect invocation target");
+				}
+			}	
+			if (ftag == TiffTag.UNKNOWN)
+				LOGGER.warn("Tag: {} [Value: 0x{}] (Unknown)", ftag, Integer.toHexString(tag&0xffff));
+			
+			FieldType ftype = field.getType();				
+						
+			String tagString = null;
+			if(ftype == FieldType.SHORT || ftype == FieldType.SSHORT)
+				tagString = ftag.getFieldAsString(field.getDataAsLong());
+			else
+				tagString = ftag.getFieldAsString(field.getData());
+			if(StringUtils.isNullOrEmpty(tagString))
+				items.add(new MetadataItem(ftag.getName(), field.getDataAsString()));
+			else
+				items.add(new MetadataItem(ftag.getName(), tagString));
+		}
+		
+		Map<Tag, IFD> children = currIFD.getChildren();
+		
+		if(children.get(TiffTag.EXIF_SUB_IFD) != null) {
+			extractMetadataItems(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, items);
+		}
+		
+		if(children.get(TiffTag.GPS_SUB_IFD) != null) {
+			extractMetadataItems(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, items);
+		}		
 	}
 	
 	public void read() throws IOException {

@@ -59,7 +59,7 @@ public class TestMetadata extends TestBase {
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
 			logger.info("Metadata entry {} - {}", i, entry.getKey());
-			if(entry.getValue() instanceof IPTC) {				
+			if(entry.getValue() instanceof IPTC || entry.getValue() instanceof Exif) {				
 				Iterator<MetadataItem> iterator = entry.getValue().iterator();
 				while(iterator.hasNext()) {
 					MetadataItem item = iterator.next();
