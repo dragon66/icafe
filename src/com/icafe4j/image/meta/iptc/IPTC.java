@@ -100,6 +100,16 @@ public class IPTC extends Metadata {
 			}
 		} else throw new IllegalStateException("DataSet Map is empty");
 	}
+	
+	/**
+	 * Get a string representation of the IPTCDataSet associated with the key
+	 *  
+	 * @param key the IPTCTag for the IPTCDataSet
+	 * @return a String representation of the IPTCDataSet, separated by ";"
+	 */	
+	public String getAsString(IPTCTag tag) {
+		return getAsString(tag.getName());
+	}
 
 	/**
 	 * Get a string representation of the IPTCDataSet associated with the key
