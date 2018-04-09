@@ -22,6 +22,7 @@ import com.icafe4j.image.ImageIO;
 import com.icafe4j.image.ImageType;
 import com.icafe4j.image.jpeg.JPEGTweaker;
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataItem;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.Thumbnail;
 import com.icafe4j.image.meta.adobe.IPTC_NAA;
@@ -57,8 +58,15 @@ public class TestMetadata extends TestBase {
 		logger.info("Total number of metadata entries: {}", metadataMap.size());
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
-			logger.info("Metadata entry {} - {}", i, entry.getKey());
-			entry.getValue().showMetadata();
+			if(entry.getValue() instanceof IPTC) {
+				logger.info("Metadata entry {} - {}", i, entry.getKey());
+				Iterator<MetadataItem> iterator = entry.getValue().iterator();
+				while(iterator.hasNext()) {
+					MetadataItem item = iterator.next();
+					logger.info(item.getKey() + ": " + item.getValue());
+				}
+			} else 
+				entry.getValue().showMetadata();
 			i++;
 			logger.info("-----------------------------------------");
 		}
