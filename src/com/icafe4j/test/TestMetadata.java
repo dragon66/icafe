@@ -58,8 +58,8 @@ public class TestMetadata extends TestBase {
 		logger.info("Total number of metadata entries: {}", metadataMap.size());
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
-			if(entry.getValue() instanceof IPTC) {
-				logger.info("Metadata entry {} - {}", i, entry.getKey());
+			logger.info("Metadata entry {} - {}", i, entry.getKey());
+			if(entry.getValue() instanceof IPTC) {				
 				Iterator<MetadataItem> iterator = entry.getValue().iterator();
 				while(iterator.hasNext()) {
 					MetadataItem item = iterator.next();
