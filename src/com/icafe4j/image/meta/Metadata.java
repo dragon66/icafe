@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -74,12 +75,13 @@ import com.icafe4j.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/12/2015
  */
-public abstract class Metadata implements MetadataReader {
+public abstract class Metadata implements MetadataReader, Iterable<MetadataItem> {
 	public static final int IMAGE_MAGIC_NUMBER_LEN = 4;
 	// Fields
 	private MetadataType type;
 	protected byte[] data;
 	protected boolean isDataRead;
+	private static final Iterator<MetadataItem> emptyIterator = new EmptyIterator();
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);
@@ -488,6 +490,10 @@ public abstract class Metadata implements MetadataReader {
 		peekHeadInputStream.shallowClose();
 	}
 	
+	public Iterator<MetadataItem> iterator() {
+		return emptyIterator;
+	}
+	
 	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
 		FileInputStream fin = new FileInputStream(image);
 		Map<MetadataType, Metadata> metadataMap = readMetadata(fin);
@@ -627,5 +633,19 @@ public abstract class Metadata implements MetadataReader {
 		byte[] data = getData();
 		if(data != null)
 			out.write(data);
-	}	
+	}
+	
+	private static class EmptyIterator implements Iterator<MetadataItem> {
+	    public MetadataItem next() {
+	    	return null;
+	    }
+
+	    public boolean hasNext() {
+	    	return false;
+	    }
+
+	    public void remove() {
+	    	throw new UnsupportedOperationException("Removing MetadataItem is not supported by this Iterator");
+	    }	  
+	}
 }
