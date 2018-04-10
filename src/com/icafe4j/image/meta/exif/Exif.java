@@ -199,7 +199,7 @@ public abstract class Exif extends Metadata {
 		if(imageIFD != null)
 			extractMetadataItems(imageIFD, TiffTag.class, items);
 		if(containsThumbnail) {
-			items.add(new MetadataItem("Exif thumbnail format", (thumbnail.getDataType() == 1? "DATA_TYPE_JPG":"DATA_TYPE_TIFF")));
+			items.add(new MetadataItem("Exif thumbnail format", (thumbnail.getDataType() == 1? "DATA_TYPE_KJpegRGB":"DATA_TYPE_TIFF")));
 			items.add(new MetadataItem("Exif thumbnail data length", "" + thumbnail.getCompressedImage().length));
 		}
 	

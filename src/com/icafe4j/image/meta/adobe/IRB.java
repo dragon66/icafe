@@ -84,10 +84,10 @@ public class IRB extends Metadata {
 			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).
 			switch (thumbnailFormat) {
 				case IRBThumbnail.DATA_TYPE_KJpegRGB:
-					items.add(new MetadataItem("Thumbnail Format: ", "KJpegRGB"));
+					items.add(new MetadataItem("Thumbnail Format: ", "DATA_TYPE_KJpegRGB"));
 					break;
 				case IRBThumbnail.DATA_TYPE_KRawRGB:
-					items.add(new MetadataItem("Thumbnail Format: ", "KRawRGB"));
+					items.add(new MetadataItem("Thumbnail Format: ", "DATA_TYPE_KRawRGB"));
 					break;
 			}
 			items.add(new MetadataItem("Thumbnail width:", "" + thumbnail.getWidth()));

@@ -1,6 +1,7 @@
 ***************************
-Last modified on 04/07/2018
+Last modified on 04/10/2018
 ***************************
+10Apr2018  Add iterator() implementation for PHOTOSHOP_IRB
 07Apr2018  Add extractThumbnail(InputStream) to Metadata
 06Apr2018  Add extractThumbnails(InputStream) to Metadata
 04Apr2018  Add getAsBufferedImage() to Thumbnail
