@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    09Apr2018  Added getAsString(Tag) to extract value by Tag
  * WY    09Apr2018  Added iterator interface implementation
  * WY    10Apr2015  Moved data loaded checking to ExifReader
  * WY    31Mar2015  Fixed bug with getImageIFD() etc
@@ -139,7 +140,22 @@ public abstract class Exif extends Metadata {
 	}
 	
 	public String getAsString(Tag tag) {
-		throw new UnsupportedOperationException("getAsString(Tag) is not yet implemented for Exif");
+		IFD ifd = null;
+		String emptyString = "";
+		
+		if(tag instanceof TiffTag) {
+			ifd = getImageIFD();
+		} else if(tag instanceof ExifTag) {
+			ifd = getExifIFD();
+		} else if(tag instanceof GPSTag) {
+			ifd = getGPSIFD();
+		} else if(tag instanceof InteropTag) {
+			throw new UnsupportedOperationException("InteropTag is not supported by Exif");
+		}
+		
+		if(ifd != null) return ifd.getFieldAsString(tag);
+		
+		return emptyString;
 	}
 	
 	public IFD getExifIFD() {
