@@ -21,10 +21,15 @@ package com.icafe4j.image.meta.adobe;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.icafe4j.image.meta.MetadataItem;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
 
@@ -54,6 +59,26 @@ public class _8BIM {
 	
 	public byte[] getData() {
 		return data.clone();
+	}
+	
+	// Default implementation to be override by sub-classes for iteration purpose
+	protected Collection<MetadataItem> getMetadataItems() {
+		
+		List<MetadataItem> items = new ArrayList<MetadataItem>();
+		
+		ImageResourceID eId  = ImageResourceID.fromShort(id);
+		
+		if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {
+			items.add(new MetadataItem("PATH_INFO [" + StringUtils.shortToHexStringMM(id) + "]", "" ));
+		} else if((id >= ImageResourceID.PLUGIN_RESOURCE0.getValue()) && (id <= ImageResourceID.PLUGIN_RESOURCE999.getValue())) {
+			items.add(new MetadataItem("PLUGIN_RESOURCE [" + StringUtils.shortToHexStringMM(id) + "]", ""));
+		} else if (eId == ImageResourceID.UNKNOWN) {
+			items.add(new MetadataItem("UNKNOWN [" + StringUtils.shortToHexStringMM(id) + "]", ""));
+		} else {
+			items.add(new MetadataItem("" + eId, ""));
+		}		
+
+		return Collections.unmodifiableList(items);
 	}
 	
 	public String getName() {

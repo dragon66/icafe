@@ -25,10 +25,15 @@ package com.icafe4j.image.meta.adobe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
+import com.icafe4j.image.meta.MetadataItem;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
 
@@ -75,6 +80,32 @@ public class IPTC_NAA extends _8BIM {
 	 */
 	public List<IPTCDataSet> getDataSet(String key) {
 		return iptc.getDataSet(key);
+	}
+	
+	protected Collection<MetadataItem> getMetadataItems() {
+		//
+		List<MetadataItem> items = new ArrayList<MetadataItem>();
+		
+		Map<String, List<IPTCDataSet>> datasetMap = this.getDataSets();
+		
+		if(datasetMap != null) {
+			// Print multiple entry IPTCDataSet
+			Set<Map.Entry<String, List<IPTCDataSet>>> entries = datasetMap.entrySet();
+			
+			for(Entry<String, List<IPTCDataSet>> entry : entries) {
+				String key = entry.getKey();
+				String value = "";
+				//
+				for(IPTCDataSet item : entry.getValue())
+					value += ";" + item.getDataAsString();
+				
+				items.add(new MetadataItem(key, value.replaceFirst(";", "")));
+		    }
+			
+			return Collections.unmodifiableList(items);
+			
+		} else 
+			return super.getMetadataItems();
 	}
 	
 	public void print() {

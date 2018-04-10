@@ -130,8 +130,7 @@ public enum ImageResourceID {
 	// unknown tag
 	UNKNOWN("Unknown",  (short)0xffff); 
   	
-	private ImageResourceID(String description, short value)
-	{
+	private ImageResourceID(String description, short value) {
 		this.description = description;
 		this.value = value;
 	}
@@ -148,7 +147,7 @@ public enum ImageResourceID {
     public String toString() {
 		if (this == UNKNOWN)
 			return name();
-		return name() + " [Value: " + StringUtils.shortToHexStringMM(value) +"] - " + description;
+		return name() + " [Value: " + StringUtils.shortToHexStringMM(value) +"]";
 	}
 	
     public static ImageResourceID fromShort(short value) {

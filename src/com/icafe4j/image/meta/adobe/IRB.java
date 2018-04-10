@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    10Apr2018  Add iterator() implementation
  * WY    16Feb2017  Fix bug with zero size 8BIM block
  * WY    14Apr2015  Added getThumbnailResource()
  * WY    10Apr2015  Added containsThumbnail() and getThumbnail()
@@ -24,14 +25,18 @@ package com.icafe4j.image.meta.adobe;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataItem;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.util.ArrayUtils;
@@ -66,6 +71,40 @@ public class IRB extends Metadata {
 	
 	public IRB(byte[] data) {
 		super(MetadataType.PHOTOSHOP_IRB, data);
+	}
+	
+	public Iterator<MetadataItem> iterator() {
+		ensureDataRead();
+		List<MetadataItem> items = new ArrayList<MetadataItem>();
+
+		for(_8BIM _8bim : _8bims.values())
+			items.addAll(_8bim.getMetadataItems());
+	
+		if(containsThumbnail) {
+			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).
+			switch (thumbnailFormat) {
+				case IRBThumbnail.DATA_TYPE_KJpegRGB:
+					items.add(new MetadataItem("Thumbnail Format: ", "KJpegRGB"));
+					break;
+				case IRBThumbnail.DATA_TYPE_KRawRGB:
+					items.add(new MetadataItem("Thumbnail Format: ", "KRawRGB"));
+					break;
+			}
+			items.add(new MetadataItem("Thumbnail width:", "" + thumbnail.getWidth()));
+			items.add(new MetadataItem("Thumbnail height: ", "" + thumbnail.getHeight()));
+			// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
+			items.add(new MetadataItem("Thumbnail Padded row bytes:  ", "" + thumbnail.getPaddedRowBytes()));
+			// Total size = widthbytes * height * planes
+			items.add(new MetadataItem("Thumbnail Total size: ", "" + thumbnail.getTotalSize()));
+			// Size after compression. Used for consistency check.
+			items.add(new MetadataItem("Thumbnail Size after compression: ", "" + thumbnail.getCompressedSize()));
+			// Bits per pixel. = 24
+			items.add(new MetadataItem("Thumbnail Bits per pixel: ", "" + thumbnail.getBitsPerPixel()));
+			// Number of planes. = 1
+			items.add(new MetadataItem("Thumbnail Number of planes: ", "" + thumbnail.getNumOfPlanes()));
+		}
+	
+		return items.iterator();
 	}
 	
 	public boolean containsThumbnail() {

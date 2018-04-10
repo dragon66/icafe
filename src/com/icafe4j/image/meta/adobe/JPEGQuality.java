@@ -21,10 +21,15 @@ package com.icafe4j.image.meta.adobe;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.icafe4j.image.meta.MetadataItem;
 import com.icafe4j.io.IOUtils;
 
 public class JPEGQuality extends _8BIM {
@@ -139,6 +144,16 @@ public class JPEGQuality extends _8BIM {
 		}
 		
 		return retVal;
+	}
+	
+	protected Collection<MetadataItem> getMetadataItems() {
+		//
+		List<MetadataItem> items = new ArrayList<MetadataItem>();
+		items.add(new MetadataItem("JPEG Quality", getQualityAsString()));
+		items.add(new MetadataItem("JPEG Format", getFormatAsString()));
+		items.add(new MetadataItem("JPEG Progressive Scans", getProgressiveScansAsString()));
+		
+		return Collections.unmodifiableList(items);
 	}
 	
 	public int getProgressiveScans() {
