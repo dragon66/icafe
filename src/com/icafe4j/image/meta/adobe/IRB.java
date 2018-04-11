@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    10Apr2018  Add getAsString(ImageResourceId)
  * WY    10Apr2018  Add iterator() implementation
  * WY    16Feb2017  Fix bug with zero size 8BIM block
  * WY    14Apr2015  Added getThumbnailResource()
@@ -26,6 +27,7 @@ package com.icafe4j.image.meta.adobe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +41,7 @@ import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataItem;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
+import com.icafe4j.string.StringUtils;
 import com.icafe4j.util.ArrayUtils;
 
 public class IRB extends Metadata {
@@ -71,6 +74,26 @@ public class IRB extends Metadata {
 	
 	public IRB(byte[] data) {
 		super(MetadataType.PHOTOSHOP_IRB, data);
+	}
+	
+	public String getAsString(ImageResourceID id) {
+		String emptyStr = "";
+		
+		short value = id.getValue();
+		_8BIM bim = _8bims.get(value);
+		
+		if(bim != null) {
+			StringBuilder strBuilder = new StringBuilder();
+			Collection<MetadataItem> items = bim.getMetadataItems();
+			for(MetadataItem item : items) {
+				strBuilder.append(item.getKey() + ":" + item.getValue() + ";");
+			}
+			// Return a string representation of the 8BIM block with ImageResourceID id 
+			// concatenated by ";" 
+			return StringUtils.replaceLast(strBuilder.toString(), ";", "");
+		}
+		
+		return emptyStr;
 	}
 	
 	public Iterator<MetadataItem> iterator() {
