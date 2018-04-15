@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.icafe4j.image.meta.Metadata;
-import com.icafe4j.image.meta.MetadataItem;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 
@@ -157,14 +157,14 @@ public class IPTC extends Metadata {
 		return datasetMap;
 	}
 	
-	public Iterator<MetadataItem> iterator() {
+	public Iterator<MetadataEntry> iterator() {
 		ensureDataRead();
 		if(datasetMap != null){
 			// Print multiple entry IPTCDataSet
 			Set<Map.Entry<String, List<IPTCDataSet>>> entries = datasetMap.entrySet();
 			Iterator<Entry<String, List<IPTCDataSet>>> iter = entries.iterator();
-			return new Iterator<MetadataItem>() {
-				public MetadataItem next() {
+			return new Iterator<MetadataEntry>() {
+				public MetadataEntry next() {
 					Entry<String, List<IPTCDataSet>> entry = iter.next();
 					String key = entry.getKey();
 					String value = "";
@@ -173,7 +173,7 @@ public class IPTC extends Metadata {
 						value += ";" + item.getDataAsString();
 					}
 					
-					return new MetadataItem(key, value.replaceFirst(";", ""));
+					return new MetadataEntry(key, value.replaceFirst(";", ""));
 			    }
 
 			    public boolean hasNext() {
@@ -181,7 +181,7 @@ public class IPTC extends Metadata {
 			    }
 
 			    public void remove() {
-			    	throw new UnsupportedOperationException("Removing MetadataItem is not supported by this Iterator");
+			    	throw new UnsupportedOperationException("Removing MetadataEntry is not supported by this Iterator");
 			    }
 			};
 		}

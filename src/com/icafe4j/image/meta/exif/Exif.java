@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
-import com.icafe4j.image.meta.MetadataItem;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.Thumbnail;
 import com.icafe4j.image.tiff.FieldType;
@@ -193,20 +193,20 @@ public abstract class Exif extends Metadata {
 		return isThumbnailRequired;
 	}
 	
-	public Iterator<MetadataItem> iterator() {
+	public Iterator<MetadataEntry> iterator() {
 		ensureDataRead();
-		List<MetadataItem> items = new ArrayList<MetadataItem>();
+		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
 		if(imageIFD != null)
 			extractMetadataItems(imageIFD, TiffTag.class, items);
 		if(containsThumbnail) {
-			items.add(new MetadataItem("Exif thumbnail format", (thumbnail.getDataType() == 1? "DATA_TYPE_KJpegRGB":"DATA_TYPE_TIFF")));
-			items.add(new MetadataItem("Exif thumbnail data length", "" + thumbnail.getCompressedImage().length));
+			items.add(new MetadataEntry("Exif thumbnail format", (thumbnail.getDataType() == 1? "DATA_TYPE_KJpegRGB":"DATA_TYPE_TIFF")));
+			items.add(new MetadataEntry("Exif thumbnail data length", "" + thumbnail.getCompressedImage().length));
 		}
 	
 		return items.iterator();
 	}
 	
-	private void extractMetadataItems(IFD currIFD, Class<? extends Tag> tagClass, List<MetadataItem> items) {
+	private void extractMetadataItems(IFD currIFD, Class<? extends Tag> tagClass, List<MetadataEntry> items) {
 		// Use reflection to invoke fromShort(short) method
 		Method method = null;
 		try {
@@ -245,9 +245,9 @@ public abstract class Exif extends Metadata {
 			else
 				tagString = ftag.getFieldAsString(field.getData());
 			if(StringUtils.isNullOrEmpty(tagString))
-				items.add(new MetadataItem(ftag.getName(), field.getDataAsString()));
+				items.add(new MetadataEntry(ftag.getName(), field.getDataAsString()));
 			else
-				items.add(new MetadataItem(ftag.getName(), tagString));
+				items.add(new MetadataEntry(ftag.getName(), tagString));
 		}
 		
 		Map<Tag, IFD> children = currIFD.getChildren();

@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
-import com.icafe4j.image.meta.MetadataItem;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
@@ -84,8 +84,8 @@ public class IRB extends Metadata {
 		
 		if(bim != null) {
 			StringBuilder strBuilder = new StringBuilder();
-			Collection<MetadataItem> items = bim.getMetadataItems();
-			for(MetadataItem item : items) {
+			Collection<MetadataEntry> items = bim.getMetadataItems();
+			for(MetadataEntry item : items) {
 				strBuilder.append(item.getKey() + ":" + item.getValue() + ";");
 			}
 			// Return a string representation of the 8BIM block with ImageResourceID id 
@@ -96,9 +96,9 @@ public class IRB extends Metadata {
 		return emptyStr;
 	}
 	
-	public Iterator<MetadataItem> iterator() {
+	public Iterator<MetadataEntry> iterator() {
 		ensureDataRead();
-		List<MetadataItem> items = new ArrayList<MetadataItem>();
+		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
 
 		for(_8BIM _8bim : _8bims.values())
 			items.addAll(_8bim.getMetadataItems());
@@ -107,24 +107,24 @@ public class IRB extends Metadata {
 			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).
 			switch (thumbnailFormat) {
 				case IRBThumbnail.DATA_TYPE_KJpegRGB:
-					items.add(new MetadataItem("Thumbnail Format: ", "DATA_TYPE_KJpegRGB"));
+					items.add(new MetadataEntry("Thumbnail Format: ", "DATA_TYPE_KJpegRGB"));
 					break;
 				case IRBThumbnail.DATA_TYPE_KRawRGB:
-					items.add(new MetadataItem("Thumbnail Format: ", "DATA_TYPE_KRawRGB"));
+					items.add(new MetadataEntry("Thumbnail Format: ", "DATA_TYPE_KRawRGB"));
 					break;
 			}
-			items.add(new MetadataItem("Thumbnail width:", "" + thumbnail.getWidth()));
-			items.add(new MetadataItem("Thumbnail height: ", "" + thumbnail.getHeight()));
+			items.add(new MetadataEntry("Thumbnail width:", "" + thumbnail.getWidth()));
+			items.add(new MetadataEntry("Thumbnail height: ", "" + thumbnail.getHeight()));
 			// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-			items.add(new MetadataItem("Thumbnail Padded row bytes:  ", "" + thumbnail.getPaddedRowBytes()));
+			items.add(new MetadataEntry("Thumbnail Padded row bytes:  ", "" + thumbnail.getPaddedRowBytes()));
 			// Total size = widthbytes * height * planes
-			items.add(new MetadataItem("Thumbnail Total size: ", "" + thumbnail.getTotalSize()));
+			items.add(new MetadataEntry("Thumbnail Total size: ", "" + thumbnail.getTotalSize()));
 			// Size after compression. Used for consistency check.
-			items.add(new MetadataItem("Thumbnail Size after compression: ", "" + thumbnail.getCompressedSize()));
+			items.add(new MetadataEntry("Thumbnail Size after compression: ", "" + thumbnail.getCompressedSize()));
 			// Bits per pixel. = 24
-			items.add(new MetadataItem("Thumbnail Bits per pixel: ", "" + thumbnail.getBitsPerPixel()));
+			items.add(new MetadataEntry("Thumbnail Bits per pixel: ", "" + thumbnail.getBitsPerPixel()));
 			// Number of planes. = 1
-			items.add(new MetadataItem("Thumbnail Number of planes: ", "" + thumbnail.getNumOfPlanes()));
+			items.add(new MetadataEntry("Thumbnail Number of planes: ", "" + thumbnail.getNumOfPlanes()));
 		}
 	
 		return items.iterator();

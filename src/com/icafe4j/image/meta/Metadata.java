@@ -75,13 +75,13 @@ import com.icafe4j.io.RandomAccessOutputStream;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/12/2015
  */
-public abstract class Metadata implements MetadataReader, Iterable<MetadataItem> {
+public abstract class Metadata implements MetadataReader, Iterable<MetadataEntry> {
 	public static final int IMAGE_MAGIC_NUMBER_LEN = 4;
 	// Fields
 	private MetadataType type;
 	protected byte[] data;
 	protected boolean isDataRead;
-	private static final Iterator<MetadataItem> emptyIterator = new EmptyIterator();
+	private static final Iterator<MetadataEntry> emptyIterator = new EmptyIterator();
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);
@@ -490,7 +490,7 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataItem>
 		peekHeadInputStream.shallowClose();
 	}
 	
-	public Iterator<MetadataItem> iterator() {
+	public Iterator<MetadataEntry> iterator() {
 		return emptyIterator;
 	}
 	
@@ -635,8 +635,8 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataItem>
 			out.write(data);
 	}
 	
-	private static class EmptyIterator implements Iterator<MetadataItem> {
-	    public MetadataItem next() {
+	private static class EmptyIterator implements Iterator<MetadataEntry> {
+	    public MetadataEntry next() {
 	    	return null;
 	    }
 
@@ -645,7 +645,7 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataItem>
 	    }
 
 	    public void remove() {
-	    	throw new UnsupportedOperationException("Removing MetadataItem is not supported by this Iterator");
+	    	throw new UnsupportedOperationException("Removing MetadataEntry is not supported by this Iterator");
 	    }	  
 	}
 }

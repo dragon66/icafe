@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import com.icafe4j.image.meta.MetadataItem;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
 import com.icafe4j.string.StringUtils;
@@ -83,9 +83,9 @@ public class IPTC_NAA extends _8BIM {
 		return iptc.getDataSet(key);
 	}
 	
-	protected Collection<MetadataItem> getMetadataItems() {
+	protected Collection<MetadataEntry> getMetadataItems() {
 		//
-		List<MetadataItem> items = new ArrayList<MetadataItem>();
+		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
 		
 		Map<String, List<IPTCDataSet>> datasetMap = this.getDataSets();
 		
@@ -102,7 +102,7 @@ public class IPTC_NAA extends _8BIM {
 				String key = entry.getKey();				
 				String value = StringUtils.replaceLast(strBuilder.toString(), ";", "");
 				
-				items.add(new MetadataItem(key, value));
+				items.add(new MetadataEntry(key, value));
 		    }
 			
 			return Collections.unmodifiableList(items);

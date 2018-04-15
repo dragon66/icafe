@@ -33,7 +33,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.icafe4j.image.meta.MetadataItem;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
 
@@ -86,14 +86,14 @@ public class VersionInfo extends _8BIM {
 		return hasRealMergedData;
 	}
 	
-	protected Collection<MetadataItem> getMetadataItems() {
+	protected Collection<MetadataEntry> getMetadataItems() {
 		//
-		List<MetadataItem> items = new ArrayList<MetadataItem>();
-		items.add(new MetadataItem("Version", "" + getVersion()));
-		items.add(new MetadataItem("Has Real Merged Data", "" + hasRealMergedData));
-		items.add(new MetadataItem("Writer name", writerName));
-		items.add(new MetadataItem("Reader name", readerName));
-		items.add(new MetadataItem("File Version", "" +  getFileVersion()));
+		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
+		items.add(new MetadataEntry("Version", "" + getVersion()));
+		items.add(new MetadataEntry("Has Real Merged Data", "" + hasRealMergedData));
+		items.add(new MetadataEntry("Writer name", writerName));
+		items.add(new MetadataEntry("Reader name", readerName));
+		items.add(new MetadataEntry("File Version", "" +  getFileVersion()));
 		
 		return Collections.unmodifiableList(items);
 	}
