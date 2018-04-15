@@ -69,13 +69,13 @@ public class _8BIM {
 		ImageResourceID eId  = ImageResourceID.fromShort(id);
 		
 		if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {
-			items.add(new MetadataEntry("PATH_INFO [" + StringUtils.shortToHexStringMM(id) + "]", "" ));
+			items.add(new MetadataEntry("PATH_INFO [" + StringUtils.shortToHexStringMM(id) + "]: ", eId.getDescription()));
 		} else if((id >= ImageResourceID.PLUGIN_RESOURCE0.getValue()) && (id <= ImageResourceID.PLUGIN_RESOURCE999.getValue())) {
-			items.add(new MetadataEntry("PLUGIN_RESOURCE [" + StringUtils.shortToHexStringMM(id) + "]", ""));
+			items.add(new MetadataEntry("PLUGIN_RESOURCE [" + StringUtils.shortToHexStringMM(id) + "]: ", eId.getDescription()));
 		} else if (eId == ImageResourceID.UNKNOWN) {
-			items.add(new MetadataEntry("UNKNOWN [" + StringUtils.shortToHexStringMM(id) + "]", ""));
+			items.add(new MetadataEntry("UNKNOWN [" + StringUtils.shortToHexStringMM(id) + "]:", eId.getDescription()));
 		} else {
-			items.add(new MetadataEntry("" + eId, ""));
+			items.add(new MetadataEntry("" + eId, eId.getDescription()));
 		}		
 
 		return Collections.unmodifiableList(items);
