@@ -21,11 +21,6 @@ package com.icafe4j.image.meta.adobe;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,23 +57,19 @@ public class _8BIM {
 	}
 	
 	// Default implementation to be override by sub-classes for iteration purpose
-	protected Collection<MetadataEntry> getMetadataItems() {
-		
-		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
-		
+	protected MetadataEntry getMetadataEntry() {
+		//	
 		ImageResourceID eId  = ImageResourceID.fromShort(id);
 		
 		if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {
-			items.add(new MetadataEntry("PATH_INFO [" + StringUtils.shortToHexStringMM(id) + "]: ", eId.getDescription()));
+			return new MetadataEntry("PATH_INFO [" + StringUtils.shortToHexStringMM(id) + "]: ", eId.getDescription());
 		} else if((id >= ImageResourceID.PLUGIN_RESOURCE0.getValue()) && (id <= ImageResourceID.PLUGIN_RESOURCE999.getValue())) {
-			items.add(new MetadataEntry("PLUGIN_RESOURCE [" + StringUtils.shortToHexStringMM(id) + "]: ", eId.getDescription()));
+			return new MetadataEntry("PLUGIN_RESOURCE [" + StringUtils.shortToHexStringMM(id) + "]: ", eId.getDescription());
 		} else if (eId == ImageResourceID.UNKNOWN) {
-			items.add(new MetadataEntry("UNKNOWN [" + StringUtils.shortToHexStringMM(id) + "]:", eId.getDescription()));
+			return new MetadataEntry("UNKNOWN [" + StringUtils.shortToHexStringMM(id) + "]:", eId.getDescription());
 		} else {
-			items.add(new MetadataEntry("" + eId, eId.getDescription()));
+			return new MetadataEntry("" + eId, eId.getDescription());
 		}		
-
-		return Collections.unmodifiableList(items);
 	}
 	
 	public String getName() {

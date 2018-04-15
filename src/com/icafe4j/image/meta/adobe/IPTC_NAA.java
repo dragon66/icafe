@@ -25,9 +25,7 @@ package com.icafe4j.image.meta.adobe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -83,9 +81,10 @@ public class IPTC_NAA extends _8BIM {
 		return iptc.getDataSet(key);
 	}
 	
-	protected Collection<MetadataEntry> getMetadataItems() {
+	protected MetadataEntry getMetadataEntry() {
 		//
-		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
+		ImageResourceID eId  = ImageResourceID.fromShort(getID());
+		MetadataEntry entry = new MetadataEntry(eId.name(), eId.getDescription(), true);
 		
 		Map<String, List<IPTCDataSet>> datasetMap = this.getDataSets();
 		
@@ -93,22 +92,22 @@ public class IPTC_NAA extends _8BIM {
 			// Print multiple entry IPTCDataSet
 			Set<Map.Entry<String, List<IPTCDataSet>>> entries = datasetMap.entrySet();
 			
-			for(Entry<String, List<IPTCDataSet>> entry : entries) {
+			for(Entry<String, List<IPTCDataSet>> entryMap : entries) {
 				StringBuilder strBuilder = new StringBuilder();
 				//
-				for(IPTCDataSet item : entry.getValue())
+				for(IPTCDataSet item : entryMap.getValue())
 					strBuilder.append(item.getDataAsString()).append(";");
 				
-				String key = entry.getKey();				
+				String key = entryMap.getKey();				
 				String value = StringUtils.replaceLast(strBuilder.toString(), ";", "");
 				
-				items.add(new MetadataEntry(key, value));
+				entry.addEntry(new MetadataEntry(key, value));
 		    }
 			
-			return Collections.unmodifiableList(items);
+			return entry;
 			
 		} else 
-			return super.getMetadataItems();
+			return super.getMetadataEntry();
 	}
 	
 	public void print() {

@@ -27,7 +27,6 @@ package com.icafe4j.image.meta.adobe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -84,9 +83,12 @@ public class IRB extends Metadata {
 		
 		if(bim != null) {
 			StringBuilder strBuilder = new StringBuilder();
-			Collection<MetadataEntry> items = bim.getMetadataItems();
-			for(MetadataEntry item : items) {
-				strBuilder.append(item.getKey() + ":" + item.getValue() + ";");
+			MetadataEntry item = bim.getMetadataEntry();
+			strBuilder.append(item.getKey() + ":" + item.getValue() + ";");
+			if(item.isMetadataEntryGroup()) {
+				for(MetadataEntry entry : item.getMetadataEntries()) {
+					strBuilder.append(entry.getKey() + ":" + entry.getValue() + ";");
+				}
 			}
 			// Return a string representation of the 8BIM block with ImageResourceID id 
 			// concatenated by ";" 
@@ -101,7 +103,7 @@ public class IRB extends Metadata {
 		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
 
 		for(_8BIM _8bim : _8bims.values())
-			items.addAll(_8bim.getMetadataItems());
+			items.add(_8bim.getMetadataEntry());
 	
 		if(containsThumbnail) {
 			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).

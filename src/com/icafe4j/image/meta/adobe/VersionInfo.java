@@ -25,11 +25,6 @@ package com.icafe4j.image.meta.adobe;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,16 +81,17 @@ public class VersionInfo extends _8BIM {
 		return hasRealMergedData;
 	}
 	
-	protected Collection<MetadataEntry> getMetadataItems() {
+	protected MetadataEntry getMetadataEntry() {
 		//
-		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
-		items.add(new MetadataEntry("Version", "" + getVersion()));
-		items.add(new MetadataEntry("Has Real Merged Data", "" + hasRealMergedData));
-		items.add(new MetadataEntry("Writer name", writerName));
-		items.add(new MetadataEntry("Reader name", readerName));
-		items.add(new MetadataEntry("File Version", "" +  getFileVersion()));
+		ImageResourceID eId  = ImageResourceID.fromShort(getID());
+		MetadataEntry entry = new MetadataEntry(eId.name(), eId.getDescription(), true);
+		entry.addEntry(new MetadataEntry("Version", "" + getVersion()));
+		entry.addEntry(new MetadataEntry("Has Real Merged Data", "" + hasRealMergedData));
+		entry.addEntry(new MetadataEntry("Writer name", writerName));
+		entry.addEntry(new MetadataEntry("Reader name", readerName));
+		entry.addEntry(new MetadataEntry("File Version", "" +  getFileVersion()));
 		
-		return Collections.unmodifiableList(items);
+		return entry;
 	}
 	
 	public String getReaderName() {

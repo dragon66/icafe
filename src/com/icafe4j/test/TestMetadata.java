@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -65,6 +66,13 @@ public class TestMetadata extends TestBase {
 				while(iterator.hasNext()) {
 					MetadataEntry item = iterator.next();
 					logger.info(item.getKey() + ": " + item.getValue());
+					if(item.isMetadataEntryGroup()) {
+						String indent = "    ";
+						Collection<MetadataEntry> entries = item.getMetadataEntries();
+						for(MetadataEntry e : entries) {
+							logger.info(indent + e.getKey() + ": " + e.getValue());
+						}			
+					}					
 				}
 			} else 
 				entry.getValue().showMetadata();
