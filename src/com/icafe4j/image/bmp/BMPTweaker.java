@@ -24,15 +24,11 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import static com.icafe4j.string.XMLUtils.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.image.ImageMetadata;
 import com.icafe4j.io.IOUtils;
@@ -64,48 +60,51 @@ public class BMPTweaker {
 	
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
-		Document doc = createDocumentNode(); // Create a document for ImageMetadata
+		ImageMetadata imageMeta = new ImageMetadata();
 		// Create a new data transfer object to hold data
 		DataTransferObject DTO = new DataTransferObject();
 		readHeader(is, DTO);
-		
-		LOGGER.info("... BMP snoop starts...");
+				
+		LOGGER.info("... BMP Image Inforamtion starts...");
 		LOGGER.info("Image signature: {}", new String(DTO.fileHeader, 0, 2));
 		LOGGER.info("File size: {} bytes", IOUtils.readInt(DTO.fileHeader, 2));
 		LOGGER.info("Reserved1 (2 bytes): {}", IOUtils.readShort(DTO.fileHeader, 6));
 		LOGGER.info("Reserved2 (2 bytes): {}", IOUtils.readShort(DTO.fileHeader, 8));
 		LOGGER.info("Data offset: {}", IOUtils.readInt(DTO.fileHeader, 10));
 		
-		Node root = createElement(doc, "bitmap");
-		Node header = createElement(doc, "header");
-		Node fileHeader = createElement(doc, "file-header");
-		Node imageSignature = createElement(doc, "image-signature");
-		Node fileSize = createElement(doc, "file-size");
-		Node reserved1 = createElement(doc, "reserved1");		
-		Node reserved2 = createElement(doc, "reserved2");
-		Node dataOffset = createElement(doc, "data-offset");
-		addText(doc, imageSignature, new String(DTO.fileHeader, 0, 2));
-		addText(doc, fileSize, IOUtils.readInt(DTO.fileHeader, 2) + " bytes");
-		addText(doc, reserved1, "" + IOUtils.readShort(DTO.fileHeader, 6));
-		addText(doc, reserved2, "" + IOUtils.readShort(DTO.fileHeader, 8));
-		addText(doc, dataOffset, "byte " + IOUtils.readInt(DTO.fileHeader, 10));
-		addChild(header, fileHeader);
-		addChild(fileHeader, imageSignature);
-		addChild(fileHeader, fileSize);
-		addChild(fileHeader, reserved1);
-		addChild(fileHeader, reserved2);
-		addChild(fileHeader, dataOffset);
+		MetadataEntry header = new MetadataEntry("BMP File Header", "Bitmap File Header", true);
+		header.addEntry(new MetadataEntry("Image signature", new String(DTO.fileHeader, 0, 2)));
+		header.addEntry(new MetadataEntry("File size", IOUtils.readInt(DTO.fileHeader, 2) + " bytes"));
+		header.addEntry(new MetadataEntry("Reserved1", IOUtils.readShort(DTO.fileHeader, 6)+""));
+		header.addEntry(new MetadataEntry("Reserved2", IOUtils.readShort(DTO.fileHeader, 8)+""));
+		header.addEntry(new MetadataEntry("Data-offset", "byte " + IOUtils.readInt(DTO.fileHeader, 10)));
 		
-		// TODO add more ImageMetadata elements to doc
+		imageMeta.addMetadataEntry(header);
+	
+		// TODO add more ImageMetadata elements
 		LOGGER.info("Info header length: {}", IOUtils.readInt(DTO.infoHeader, 0));
 		LOGGER.info("Image width: {}", IOUtils.readInt(DTO.infoHeader, 4));
-		LOGGER.info("Image heigth: {}", IOUtils.readInt(DTO.infoHeader, 8));	
+		LOGGER.info("Image heigth: {}", IOUtils.readInt(DTO.infoHeader, 8));
 		
 		String alignment = "";
 		if(IOUtils.readInt(DTO.infoHeader, 8) > 0)
 			alignment = "BOTTOM_UP" ;
 		else
 			alignment = "TOP_DOWN";
+		
+		MetadataEntry infoHeader = new MetadataEntry("BMP Info Header", "Bitmap Information Header", true);
+		infoHeader.addEntry(new MetadataEntry("Info-header-lengthen", IOUtils.readInt(DTO.infoHeader, 0) + " bytes"));
+		infoHeader.addEntry(new MetadataEntry("Image-alignment", alignment));
+		infoHeader.addEntry(new MetadataEntry("Number-of-planes", IOUtils.readShort(DTO.infoHeader, 12) + " planes"));
+		infoHeader.addEntry(new MetadataEntry("Bits-per-pixel", IOUtils.readShort(DTO.infoHeader, 14) + " bits per pixel"));
+		infoHeader.addEntry(new MetadataEntry("Compression", BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)).toString()));
+		infoHeader.addEntry(new MetadataEntry("Compessed-image-size", IOUtils.readInt(DTO.infoHeader, 20) + " bytes"));
+		infoHeader.addEntry(new MetadataEntry("Horizontal-resolution", IOUtils.readInt(DTO.infoHeader, 24) + " pixels/meter"));
+		infoHeader.addEntry(new MetadataEntry("Vertical-resolution", IOUtils.readInt(DTO.infoHeader, 28) + " pixels/meter"));
+		infoHeader.addEntry(new MetadataEntry("Colors-used", IOUtils.readInt(DTO.infoHeader, 32) + " colors used"));
+		infoHeader.addEntry(new MetadataEntry("Important-colors", IOUtils.readInt(DTO.infoHeader, 36) + " important colors"));
+	
+		imageMeta.addMetadataEntry(infoHeader);
 		
 		LOGGER.info("Image alignment: {}", alignment);
 		LOGGER.info("Number of planes: {}", IOUtils.readShort(DTO.infoHeader, 12));
@@ -115,46 +114,7 @@ public class BMPTweaker {
 		LOGGER.info("Horizontal resolution (Pixels/meter): {}", IOUtils.readInt(DTO.infoHeader, 24));
 		LOGGER.info("Vertical resolution (Pixels/meter): {}", IOUtils.readInt(DTO.infoHeader, 28));
 		LOGGER.info("Colors used (number of actually used colors): {}", IOUtils.readInt(DTO.infoHeader, 32));
-		LOGGER.info("Important colors (number of important colors): {}", IOUtils.readInt(DTO.infoHeader, 36));
-		
-		Node infoHeader = createElement(doc, "info-header");
-		Node infoHeaderLen = createElement(doc, "info-header-length");
-		Node imageAlignment = createElement(doc, "image-alignment");
-		Node numOfPlanes = createElement(doc, "number-of-planes");
-		Node bitCount = createElement(doc, "bits-per-pixel");
-		Node compression = createElement(doc, "compression");
-		Node imageSize = createElement(doc, "compessed-image-size");
-		Node horizontalResolution = createElement(doc, "horizontal-resolution");
-		Node verticalResolution = createElement(doc, "vertical-resolution");
-		Node colorsUsed = createElement(doc, "colors-used");
-		Node importantColors = createElement(doc, "important-colors");
-		
-		addText(doc, infoHeaderLen, IOUtils.readInt(DTO.infoHeader, 0) + " bytes");
-		addText(doc, imageAlignment, alignment);
-		addText(doc, numOfPlanes, IOUtils.readShort(DTO.infoHeader, 12) + " planes");
-		addText(doc, bitCount, IOUtils.readShort(DTO.infoHeader, 14) + " bits per pixel");
-		addText(doc, compression, BmpCompression.fromInt(IOUtils.readInt(DTO.infoHeader, 16)).toString());
-		addText(doc, imageSize, IOUtils.readInt(DTO.infoHeader, 20) + " bytes");
-		addText(doc, horizontalResolution, IOUtils.readInt(DTO.infoHeader, 24) + " pixels/meter");
-		addText(doc, verticalResolution, IOUtils.readInt(DTO.infoHeader, 28) + " pixels/meter");
-		addText(doc, colorsUsed, IOUtils.readInt(DTO.infoHeader, 32) + " colors used");
-		addText(doc, importantColors, IOUtils.readInt(DTO.infoHeader, 36) + " important colors");		
-		
-		addChild(infoHeader, infoHeaderLen);
-		addChild(infoHeader, imageAlignment);
-		addChild(infoHeader, numOfPlanes);
-		addChild(infoHeader, bitCount);
-		addChild(infoHeader, compression);
-		addChild(infoHeader, imageSize);
-		addChild(infoHeader, horizontalResolution);
-		addChild(infoHeader, verticalResolution);
-		addChild(infoHeader, colorsUsed);
-		addChild(infoHeader, importantColors);
-		
-		addChild(header, infoHeader);
-		
-		addChild(root, header);
-		addChild(doc, root);
+		LOGGER.info("Important colors (number of important colors): {}", IOUtils.readInt(DTO.infoHeader, 36));		
 				
 		int bitsPerPixel = IOUtils.readShort(DTO.infoHeader, 14);
 		
@@ -163,7 +123,7 @@ public class BMPTweaker {
 			LOGGER.info("Color map follows");
 		}
 		
-		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(doc));
+		metadataMap.put(MetadataType.IMAGE, imageMeta);
 		
 		return metadataMap;		
 	}

@@ -21,42 +21,44 @@
 package com.icafe4j.image.meta.image;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.Thumbnail;
-import com.icafe4j.string.XMLUtils;
 
 public class ImageMetadata extends Metadata {
-	private Document document;
 	private Map<String, Thumbnail> thumbnails;
-
+	private Collection<MetadataEntry> entries = new ArrayList<MetadataEntry>();
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageMetadata.class);
 	
-	public ImageMetadata(Document document) {
+	public ImageMetadata() {
 		super(MetadataType.IMAGE);
-		this.document = document;
 	}
 	
-	public ImageMetadata(Document document, Map<String, Thumbnail> thumbnails) {
+	public ImageMetadata(Map<String, Thumbnail> thumbnails) {
 		super(MetadataType.IMAGE);
-		this.document = document;
 		this.thumbnails = thumbnails;
+	}
+	
+	public void addMetadataEntry(MetadataEntry entry) {
+		entries.add(entry);
+	}
+	
+	public void addMetadataEntries(Collection<MetadataEntry> entries) {
+		entries.addAll(entries);
 	}
 	
 	public boolean containsThumbnail() {
 		return thumbnails != null && thumbnails.size() > 0;
-	}
-	
-	public Document getDocument() {
-		return document;
 	}
 	
 	public Map<String, Thumbnail> getThumbnails() {
@@ -69,9 +71,37 @@ public class ImageMetadata extends Metadata {
 			isDataRead = true;
 	}
 	
+	public Iterator<MetadataEntry> iterator() {
+		if(containsThumbnail()) { // We have thumbnail
+			Iterator<Map.Entry<String, Thumbnail>> mapEntries = thumbnails.entrySet().iterator();
+			entries.add(new MetadataEntry("Total number of thumbnails", "" + thumbnails.size()));
+			int i = 0;
+			while (mapEntries.hasNext()) {
+			    Map.Entry<String, Thumbnail> entry = mapEntries.next();
+			    MetadataEntry e = new MetadataEntry("Thumbnail " + i, entry.getKey(), true);
+			    Thumbnail thumbnail = entry.getValue();
+			    e.addEntry(new MetadataEntry("Thumbnail width", ((thumbnail.getWidth() < 0)? " Unavailable": ""+ thumbnail.getWidth())));
+				e.addEntry(new MetadataEntry("Thumbnail height", ((thumbnail.getHeight() < 0)? " Unavailable": "" + thumbnail.getHeight())));
+				e.addEntry(new MetadataEntry("Thumbnail data type", thumbnail.getDataTypeAsString()));
+				entries.add(e);
+				i++;
+			}
+		}		
+		return Collections.unmodifiableCollection(entries).iterator();
+	}
+	
 	@Override
 	public void showMetadata() {
-		XMLUtils.showXML(document);
+		for(MetadataEntry entry : entries) {
+			LOGGER.info(entry.getKey() + ": " + entry.getValue());
+			if(entry.isMetadataEntryGroup()) {
+				String indent = "    ";
+				Collection<MetadataEntry> entries = entry.getMetadataEntries();
+				for(MetadataEntry e : entries) {
+					LOGGER.info(indent + e.getKey() + ": " + e.getValue());
+				}			
+			}
+		}
 		// Thumbnail information
 		if(containsThumbnail()) { // We have thumbnail
 			Iterator<Map.Entry<String, Thumbnail>> entries = thumbnails.entrySet().iterator();

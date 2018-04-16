@@ -2737,7 +2737,7 @@ public class TIFFTweaker {
 				IRBThumbnail thumbnail = irb.getThumbnail();
 				Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>(1);
 				thumbnails.put("PHOTOSHOP_IRB", thumbnail);
-				metadataMap.put(MetadataType.IMAGE, new ImageMetadata(null, thumbnails));				
+				metadataMap.put(MetadataType.IMAGE, new ImageMetadata(thumbnails));				
 			}		
 		}
 		field = currIFD.getField(TiffTag.IPTC);

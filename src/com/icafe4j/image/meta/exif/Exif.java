@@ -38,6 +38,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -197,16 +198,18 @@ public abstract class Exif extends Metadata {
 		ensureDataRead();
 		List<MetadataEntry> items = new ArrayList<MetadataEntry>();
 		if(imageIFD != null)
-			extractMetadataItems(imageIFD, TiffTag.class, items);
+			getMetadataEntries(imageIFD, TiffTag.class, items);
 		if(containsThumbnail) {
-			items.add(new MetadataEntry("Exif thumbnail format", (thumbnail.getDataType() == 1? "DATA_TYPE_KJpegRGB":"DATA_TYPE_TIFF")));
-			items.add(new MetadataEntry("Exif thumbnail data length", "" + thumbnail.getCompressedImage().length));
+			MetadataEntry thumbnailEntry = new MetadataEntry("IFD1", "Thumbnail Image", true);
+			thumbnailEntry.addEntry(new MetadataEntry("Thumbnail format", (thumbnail.getDataType() == 1? "DATA_TYPE_KJpegRGB":"DATA_TYPE_TIFF")));
+			thumbnailEntry.addEntry(new MetadataEntry("Thumbnail data length", "" + thumbnail.getCompressedImage().length));
+			items.add(thumbnailEntry);
 		}
 	
-		return items.iterator();
+		return Collections.unmodifiableList(items).iterator();
 	}
 	
-	private void extractMetadataItems(IFD currIFD, Class<? extends Tag> tagClass, List<MetadataEntry> items) {
+	private void getMetadataEntries(IFD currIFD, Class<? extends Tag> tagClass, List<MetadataEntry> items) {
 		// Use reflection to invoke fromShort(short) method
 		Method method = null;
 		try {
@@ -216,7 +219,18 @@ public abstract class Exif extends Metadata {
 		} catch (SecurityException e) {
 			throw new RuntimeException("The operation is not allowed by the current security setup");
 		}
+		
 		Collection<TiffField<?>> fields = currIFD.getFields();
+		MetadataEntry entry = null;
+		
+		if(tagClass.equals(TiffTag.class)) {
+			entry = new MetadataEntry("IFD0", "Image IFD", true);
+		} else if(tagClass.equals(ExifTag.class)) {
+			entry = new MetadataEntry("EXIF", "EXIF SubIFD", true);
+		} else if(tagClass.equals(GPSTag.class)) {
+			entry = new MetadataEntry("GPS", "GPS SubIFD", true);
+		} else
+			entry = new MetadataEntry("UNKNOWN", "UNKNOWN SubIFD", true);
 		
 		for(TiffField<?> field : fields) {
 			short tag = field.getTag();
@@ -245,19 +259,21 @@ public abstract class Exif extends Metadata {
 			else
 				tagString = ftag.getFieldAsString(field.getData());
 			if(StringUtils.isNullOrEmpty(tagString))
-				items.add(new MetadataEntry(ftag.getName(), field.getDataAsString()));
+				entry.addEntry(new MetadataEntry(ftag.getName(), field.getDataAsString()));
 			else
-				items.add(new MetadataEntry(ftag.getName(), tagString));
+				entry.addEntry(new MetadataEntry(ftag.getName(), tagString));
 		}
+		
+		items.add(entry); // Add the Entry (group) into the collection
 		
 		Map<Tag, IFD> children = currIFD.getChildren();
 		
 		if(children.get(TiffTag.EXIF_SUB_IFD) != null) {
-			extractMetadataItems(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, items);
+			getMetadataEntries(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, items);
 		}
 		
 		if(children.get(TiffTag.GPS_SUB_IFD) != null) {
-			extractMetadataItems(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, items);
+			getMetadataEntries(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, items);
 		}		
 	}
 	

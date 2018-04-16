@@ -129,7 +129,7 @@ public class IRB extends Metadata {
 			items.add(new MetadataEntry("Thumbnail Number of planes: ", "" + thumbnail.getNumOfPlanes()));
 		}
 	
-		return items.iterator();
+		return Collections.unmodifiableList(items).iterator();
 	}
 	
 	public boolean containsThumbnail() {

@@ -1908,7 +1908,7 @@ public class JPEGTweaker {
 			}
 		}
 		
-		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(null, thumbnails));
+		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(thumbnails));
 		
 		return metadataMap;
 	}
