@@ -23,12 +23,18 @@ package com.icafe4j.image.meta.icc;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
+import com.icafe4j.image.meta.icc.ProfileTagTable.TagEntry;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
 
@@ -263,6 +269,50 @@ public class ICCProfile extends Metadata {
 		
 	public boolean isReflective() {
 		return (((header.deviceAttributes[0]>>7)&0x01) == 0);
+	}
+	
+	public Iterator<MetadataEntry> iterator() {
+		ensureDataRead();
+		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+		MetadataEntry header = new MetadataEntry("ICC Profile", "Header", true);
+		header.addEntry(new MetadataEntry("Profile Size", getProfileSize() + ""));
+		header.addEntry(new MetadataEntry("CMM Type", getPreferredCMMType()));
+		header.addEntry(new MetadataEntry("Version", getProfileVersionNumber() + ""));
+		header.addEntry(new MetadataEntry("Profile/Device Class", getProfileClassDescription()));
+		header.addEntry(new MetadataEntry("Color Space", getColorSpace()));
+		header.addEntry(new MetadataEntry("PCS", getPCS()));
+		header.addEntry(new MetadataEntry("Date Created", getDateTimeCreated()));
+		header.addEntry(new MetadataEntry("Profile File Signature", getProfileFileSignature()));
+		header.addEntry(new MetadataEntry("Primary Platform Signature", getPrimaryPlatformSignature()));
+		header.addEntry(new MetadataEntry("Flags", getProfileFlags()));
+		header.addEntry(new MetadataEntry("Device Manufacturer", getDeviceManufacturer()));
+		header.addEntry(new MetadataEntry("Device Model", getDeviceModel()));
+		header.addEntry(new MetadataEntry("Device Attributes", getDeviceAttributes()));
+		header.addEntry(new MetadataEntry("Rendering Intent", getRenderingIntentDescription()));
+		header.addEntry(new MetadataEntry("PCS Illuminant [X]", getPCSXYZ()[0] + ""));
+		header.addEntry(new MetadataEntry("PCS Illuminant [Y]", getPCSXYZ()[1] + ""));
+		header.addEntry(new MetadataEntry("PCS Illuminant [Z]", getPCSXYZ()[2] + ""));
+		header.addEntry(new MetadataEntry("Profile Creator", getProfileCreator()));
+		header.addEntry(new MetadataEntry("Profile Creator", getProfileCreator()));
+		header.addEntry(new MetadataEntry("Profile ID", getProfileID()));
+	
+		entries.add(header);
+		
+		MetadataEntry tagTableEntry = new MetadataEntry("ICC Profile", "Tag Table", true);
+		tagTableEntry.addEntry(new MetadataEntry("Tag Count", tagTable.getTagCount() + ""));
+		
+		List<TagEntry> tagEntries = tagTable.getTagEntries();
+		Collections.sort(tagEntries);
+		
+		for(TagEntry entry : tagEntries) {
+			tagTableEntry.addEntry(new MetadataEntry("Tag Name", ProfileTag.fromInt(entry.getProfileTag()) + ""));
+			tagTableEntry.addEntry(new MetadataEntry("Data Offset", entry.getDataOffset() + ""));
+			tagTableEntry.addEntry(new MetadataEntry("Data Length", entry.getDataLength() + ""));
+		}
+		
+		entries.add(tagTableEntry);
+	
+		return Collections.unmodifiableCollection(entries).iterator();
 	}
 	
 	public void read() throws IOException {

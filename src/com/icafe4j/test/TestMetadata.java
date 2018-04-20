@@ -31,6 +31,7 @@ import com.icafe4j.image.meta.adobe.IRB;
 import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
+import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.meta.image.ImageMetadata;
 import com.icafe4j.image.meta.iptc.IPTC;
@@ -61,7 +62,7 @@ public class TestMetadata extends TestBase {
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
 			logger.info("Metadata entry {} - {}", i, entry.getKey());
-			if(entry.getValue() instanceof IPTC || entry.getValue() instanceof Exif || entry.getValue() instanceof IRB || entry.getValue() instanceof ImageMetadata) {				
+			if(entry.getValue() instanceof IPTC || entry.getValue() instanceof Exif || entry.getValue() instanceof IRB || entry.getValue() instanceof ImageMetadata || entry.getValue() instanceof ICCProfile) {				
 				Iterator<MetadataEntry> iterator = entry.getValue().iterator();
 				while(iterator.hasNext()) {
 					MetadataEntry item = iterator.next();
