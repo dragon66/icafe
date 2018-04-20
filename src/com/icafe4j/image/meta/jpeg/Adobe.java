@@ -21,11 +21,16 @@ package com.icafe4j.image.meta.jpeg;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
@@ -67,6 +72,22 @@ public class Adobe extends Metadata {
 	
 	public int getDCTEncodeVersion() {
 		return m_DCTEncodeVersion;
+	}
+	
+	public Iterator<MetadataEntry> iterator() {
+		ensureDataRead();
+		
+		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+		MetadataEntry root = new MetadataEntry("JPEG", "APP14 (Adobe)", true);
+		String[] colorTransform = {"Unknown (RGB or CMYK)", "YCbCr", "YCCK"};
+		root.addEntry(new MetadataEntry("DCTEncodeVersion", m_DCTEncodeVersion + ""));
+		root.addEntry(new MetadataEntry("APP14Flags0", StringUtils.shortToHexStringMM((short)m_APP14Flags0)));
+		root.addEntry(new MetadataEntry("APP14Flags1", StringUtils.shortToHexStringMM((short)m_APP14Flags1)));
+		root.addEntry(new MetadataEntry("ColorTransform", (m_ColorTransform <= 2)?colorTransform[m_ColorTransform]:m_ColorTransform + ""));
+		
+		entries.add(root);
+		
+		return Collections.unmodifiableCollection(entries).iterator();
 	}
 	
 	public void read() throws IOException {

@@ -30,11 +30,16 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.util.ArrayUtils;
@@ -130,6 +135,23 @@ public class JFIF extends Metadata {
 	
 	public int getYDensity() {
 		return yDensity;
+	}
+	
+	public Iterator<MetadataEntry> iterator() {
+		ensureDataRead();
+		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+		MetadataEntry root = new MetadataEntry("JPEG", "JFIF", true);
+		String[] densityUnits = {"No units, aspect ratio only specified", "Dots per inch", "Dots per centimeter"};
+		root.addEntry(new MetadataEntry("Version", majorVersion + "." + minorVersion));
+		root.addEntry(new MetadataEntry("Density unit", (densityUnit <= 2)?densityUnits[densityUnit]:densityUnit + ""));
+		root.addEntry(new MetadataEntry("XDensity", xDensity + ""));
+		root.addEntry(new MetadataEntry("YDensity", yDensity + ""));
+		root.addEntry(new MetadataEntry("Thumbnail width", thumbnailWidth + ""));
+		root.addEntry(new MetadataEntry("Thumbnail height", thumbnailHeight + ""));
+		
+		entries.add(root);
+		
+		return Collections.unmodifiableCollection(entries).iterator();
 	}
 	
 	public void read() throws IOException {
