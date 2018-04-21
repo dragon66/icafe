@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.png.Chunk;
 import com.icafe4j.image.png.ChunkType;
@@ -78,6 +80,20 @@ public class TextualChunks extends Metadata {
 	public Map<String, String> getKeyValMap() {
 		ensureDataRead();
 		return Collections.unmodifiableMap(keyValMap);
+	}
+	
+	public Iterator<MetadataEntry> iterator() {
+		ensureDataRead();
+		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+		MetadataEntry root = new MetadataEntry("PNG", "Textual Chunks", true);
+		
+		for (Map.Entry<String, String> entry : keyValMap.entrySet()) {
+		    root.addEntry(new MetadataEntry(entry.getKey(), entry.getValue()));
+		}
+		
+		entries.add(root);
+		
+		return Collections.unmodifiableCollection(entries).iterator();
 	}
 	
 	public void addChunk(Chunk chunk) {

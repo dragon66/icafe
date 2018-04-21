@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -31,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 
 public class Comments extends Metadata {
@@ -66,6 +68,19 @@ public class Comments extends Metadata {
 	public void addComment(String comment) {
 		if(comment == null) throw new IllegalArgumentException("Input is null");
 		comments.add(comment);
+	}
+	
+	public Iterator<MetadataEntry> iterator() {
+		ensureDataRead();
+		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+		MetadataEntry root = new MetadataEntry("COMMENTS", "Image Comments", true);
+		int i = 0;
+		for (String comment : comments)
+		    root.addEntry(new MetadataEntry("Comment #" + i++, comment));
+		
+		entries.add(root);
+		
+		return Collections.unmodifiableCollection(entries).iterator();
 	}
 	
 	public void read() throws IOException {

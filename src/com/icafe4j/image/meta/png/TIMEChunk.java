@@ -13,11 +13,16 @@ package com.icafe4j.image.meta.png;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.png.Chunk;
 import com.icafe4j.image.png.ChunkType;
@@ -116,6 +121,19 @@ public class TIMEChunk extends Metadata {
 	
 	public int getYear() {
 		return year;		
+	}
+	
+	public Iterator<MetadataEntry> iterator() {
+		ensureDataRead();
+		
+		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+		MetadataEntry root = new MetadataEntry("PNG", "tIME Chunk", true);
+		
+		root.addEntry(new MetadataEntry("UTC (Time of last modification)", day + " " + ((month > 0 && month <= 12)? MONTH[month]:"()") + " " + year + ", " + hour + ":" + minute + ":" + second));
+		
+		entries.add(root);
+		
+		return Collections.unmodifiableCollection(entries).iterator();
 	}
 	
 	public void read() throws IOException {

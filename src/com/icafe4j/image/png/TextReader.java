@@ -68,6 +68,8 @@ public class TextReader implements Reader {
                   sb.append("\n");
                }                  
 			   br.close();
+			   
+			   if(sb.length() >= 1) sb.deleteCharAt(sb.length() - 1);
 	
                break;
            }
@@ -135,10 +137,10 @@ public class TextReader implements Reader {
 				   sb.append("\n");
 			   }
 			   
-			   sb.deleteCharAt(sb.length() - 1);
+			   if(sb.length() >= 1) sb.deleteCharAt(sb.length() - 1);
 			   
 			   break;
-		   }			   
+           }
 
            default:
                throw new IllegalArgumentException("Not a valid textual chunk.");
