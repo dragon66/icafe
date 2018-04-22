@@ -60,7 +60,10 @@ public class TestMetadata extends TestBase {
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
 			logger.info("Metadata entry {} - {}", i, entry.getKey());
-			if(! (entry.getValue() instanceof XMP)) {				
+			if(entry.getValue() instanceof XMP) {
+				XMP xmp = (XMP)entry.getValue();
+				XMLUtils.showXML(xmp.getMergedDocument());
+			} else {				
 				Iterator<MetadataEntry> iterator = entry.getValue().iterator();
 				while(iterator.hasNext()) {
 					MetadataEntry item = iterator.next();
@@ -71,10 +74,9 @@ public class TestMetadata extends TestBase {
 						for(MetadataEntry e : entries) {
 							logger.info(indent + e.getKey() + ": " + e.getValue());
 						}			
-					}					
+					}
 				}
-			} else
-				((XMP)(entry.getValue())).showMetadata();
+			} 
 			i++;
 			logger.info("-----------------------------------------");
 		}

@@ -159,10 +159,5 @@ public abstract class XMP extends Metadata {
 		hasExtendedXmp = true;
 	}
 	
-	public void showMetadata() {
-		ensureDataRead();
-		XMLUtils.showXML(getMergedDocument());
-	}
-	
 	public abstract void write(OutputStream os) throws IOException;
 }
