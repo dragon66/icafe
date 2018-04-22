@@ -22,28 +22,26 @@ package com.icafe4j.image.meta.adobe;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.io.ReadStrategy;
 
 public class LayerData extends DDBEntry {
 	private int layerCount;
 	private List<Channel> channels = new ArrayList<Channel>();
 		
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(LayerData.class);
-	
 	public LayerData(int size, byte[] data, ReadStrategy readStrategy) {
 		super(DataBlockType.Layr, size, data, readStrategy);
 		read();
 	}
-
-	public void print() {
-		super.print();
-		LOGGER.info("Number of layers: {}", layerCount);
-	}
 	
+	protected MetadataEntry getMetadataEntry() {
+		MetadataEntry root = new MetadataEntry(DataBlockType.Layr.name(), DataBlockType.Layr.getDescription(), true);
+		root.addEntry(new MetadataEntry("Size", getSize() +""));
+		root.addEntry(new MetadataEntry("Number of layers", layerCount +""));
+		//
+		return root;	
+	}
+
 	@SuppressWarnings("unused")
 	private void read() {
 		int i = 0;

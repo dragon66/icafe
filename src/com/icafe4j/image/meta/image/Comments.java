@@ -28,17 +28,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 
 public class Comments extends Metadata {
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(Comments.class);
-		
 	private Queue<byte[]> queue;
 	private List<String> comments;
 	
@@ -95,16 +89,4 @@ public class Comments extends Metadata {
 			queue.clear();
 		}
 	}
-	
-	@Override
-	public void showMetadata() {
-		ensureDataRead();
-		
-		LOGGER.info("Comments start =>");
-		
-		for (String comment : comments)
-		    LOGGER.info("Comment: {}", comment);
-		
-		LOGGER.info("Comments end <=");
-	}	
 }

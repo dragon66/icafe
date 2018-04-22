@@ -20,19 +20,13 @@
 package com.icafe4j.image.meta.adobe;
 
 import java.util.Arrays;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.io.ReadStrategy;
 
 public class FilterMask extends DDBEntry {
 	private int colorSpaceId;
 	private int[] colors = new int[4];
 	private int opacity;
-	
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(FilterMask.class);
 	
 	public FilterMask(int size, byte[] data, ReadStrategy readStrategy) {
 		super(DataBlockType.FMsk, size, data, readStrategy);
@@ -55,11 +49,14 @@ public class FilterMask extends DDBEntry {
 		return ColorSpaceID.fromInt(colorSpaceId);
 	}
 	
-	public void print() {
-		super.print();
-		LOGGER.info("Color space: {}", getColorSpaceID());
-		LOGGER.info("Color values: {}", Arrays.toString(colors));
-		LOGGER.info("Opacity: {}", opacity);
+	protected MetadataEntry getMetadataEntry() {
+		MetadataEntry root = new MetadataEntry(DataBlockType.FMsk.name(), DataBlockType.FMsk.getDescription(), true);
+		root.addEntry(new MetadataEntry("Size", getSize() +""));
+		root.addEntry(new MetadataEntry("Color Space", getColorSpaceID().name()));
+		root.addEntry(new MetadataEntry("Color Values", Arrays.toString(colors)));
+		root.addEntry(new MetadataEntry("Opacity", opacity +""));
+		//
+		return root;
 	}
 	
 	private void read() {

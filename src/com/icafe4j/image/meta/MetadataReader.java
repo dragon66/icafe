@@ -14,6 +14,5 @@ package com.icafe4j.image.meta;
 import com.icafe4j.util.Reader;
 
 public interface MetadataReader extends Reader {
-	public void showMetadata();
 	public boolean isDataRead();
 }

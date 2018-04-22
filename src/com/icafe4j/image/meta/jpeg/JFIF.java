@@ -35,9 +35,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
@@ -45,9 +42,6 @@ import com.icafe4j.io.IOUtils;
 import com.icafe4j.util.ArrayUtils;
 
 public class JFIF extends Metadata {
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(JFIF.class);
-		
 	private static void checkInput(int majorVersion, int minorVersion, int densityUnit, int xDensity, int yDensity) {
 		if(majorVersion < 0 || majorVersion > 0xff) throw new IllegalArgumentException("Invalid major version number: " + majorVersion);
 		if(minorVersion < 0 || minorVersion > 0xff) throw new IllegalArgumentException("Invalid minor version number: " + minorVersion);
@@ -187,20 +181,6 @@ public class JFIF extends Metadata {
 		}		
 	}
 
-	@Override
-	public void showMetadata() {
-		ensureDataRead();
-		String[] densityUnits = {"No units, aspect ratio only specified", "Dots per inch", "Dots per centimeter"};
-		LOGGER.info("JPEG JFIF output starts =>");
-		LOGGER.info("Version: {}.{}", majorVersion, minorVersion);
-		LOGGER.info("Density unit: {}", (densityUnit <= 2)?densityUnits[densityUnit]:densityUnit);
-		LOGGER.info("XDensity: {}", xDensity);
-		LOGGER.info("YDensity: {}", yDensity);
-		LOGGER.info("Thumbnail width: {}", thumbnailWidth);
-		LOGGER.info("Thumbnail height: {}", thumbnailHeight);
-		LOGGER.info("<= JPEG JFIF output ends");		
-	}
-	
 	public void write(OutputStream os) throws IOException {
 		ensureDataRead();
 		IOUtils.write(os, majorVersion);

@@ -19,10 +19,9 @@
 
 package com.icafe4j.image.meta.adobe;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.io.ReadStrategy;
+import com.icafe4j.string.StringUtils;
 
 //Building block for DDB
 public class DDBEntry {
@@ -31,9 +30,6 @@ public class DDBEntry {
 	protected byte[] data;
 	protected ReadStrategy readStrategy;
 	
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(DDBEntry.class);
-
 	public DDBEntry(DataBlockType etype, int size, byte[] data, ReadStrategy readStrategy) {
 		this(etype.getValue(), size, data, readStrategy);
 	}
@@ -47,21 +43,23 @@ public class DDBEntry {
 		this.readStrategy = readStrategy;
 	}
 
-	public void print() {
-		DataBlockType etype = getTypeEnum();
-		if(etype != DataBlockType.UNKNOWN)
-			LOGGER.info("Type: {} ({})", etype, etype.getDescription());
-		else
-			LOGGER.info("Type: Unknown (value 0x{})", Integer.toHexString(type));
-		LOGGER.info("Size: {}", size);	
-	}
-	
 	public int getType() {
 		return type;
 	}
 	
 	public DataBlockType getTypeEnum() {
 		return DataBlockType.fromInt(type);
+	}
+	
+	protected MetadataEntry getMetadataEntry() {
+		//	
+		DataBlockType eType  = DataBlockType.fromInt(type);
+		
+		if (eType == DataBlockType.UNKNOWN) {
+			return new MetadataEntry("UNKNOWN [" + StringUtils.intToHexStringMM(type) + "]:", eType.getDescription());
+		} else {
+			return new MetadataEntry("" + eType, eType.getDescription());
+		}
 	}
 	
 	public int getSize() {

@@ -29,9 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
@@ -41,9 +38,6 @@ public class Ducky extends Metadata {
 
 	private Map<DuckyTag, DuckyDataSet> datasetMap;
 	
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(Ducky.class);
-		
 	public Ducky() {
 		super(MetadataType.JPG_DUCKY);
 		datasetMap =  new EnumMap<DuckyTag, DuckyDataSet>(DuckyTag.class);
@@ -109,16 +103,6 @@ public class Ducky extends Metadata {
 		}
 	}
 
-	public void showMetadata() {
-		ensureDataRead();
-		LOGGER.info("JPEG Ducky output starts =>");
-		// Print DuckyDataSet
-		for(DuckyDataSet dataset : datasetMap.values()) {
-			dataset.print();
-		}
-		LOGGER.info("<= JPEG Ducky output ends");
-	}
-	
 	public void write(OutputStream os) throws IOException {
 		ensureDataRead();
 		for(DuckyDataSet dataset : getDataSets().values())

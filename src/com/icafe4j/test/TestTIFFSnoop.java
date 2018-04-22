@@ -2,9 +2,12 @@ package com.icafe4j.test;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.tiff.TIFFTweaker;
 import com.icafe4j.io.FileCacheRandomAccessInputStream;
@@ -24,7 +27,18 @@ public class TestTIFFSnoop extends TestBase {
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
 			logger.info("Metadata entry {} - {}", i, entry.getKey());
-			entry.getValue().showMetadata();
+			Iterator<MetadataEntry> itr = entry.getValue().iterator();
+			while(itr.hasNext()) {
+				MetadataEntry item = itr.next();
+				logger.info(item.getKey() + ": " + item.getValue());
+				if(item.isMetadataEntryGroup()) {
+					String indent = "    ";
+					Collection<MetadataEntry> entries = item.getMetadataEntries();
+					for(MetadataEntry e : entries) {
+						logger.info(indent + e.getKey() + ": " + e.getValue());
+					}			
+				}					
+			}
 			i++;
 			logger.info("-----------------------------------------");
 		}

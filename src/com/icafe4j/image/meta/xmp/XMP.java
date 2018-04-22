@@ -30,6 +30,8 @@ package com.icafe4j.image.meta.xmp;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.Iterator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -37,6 +39,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.string.XMLUtils;
 
@@ -134,6 +137,10 @@ public abstract class XMP extends Metadata {
 	
 	public boolean hasExtendedXmp() {
 		return hasExtendedXmp;
+	}
+	
+	public Iterator<MetadataEntry> iterator() {
+		return Collections.emptyIterator();
 	}
 	
 	public void read() throws IOException {

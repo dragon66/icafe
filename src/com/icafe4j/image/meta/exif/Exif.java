@@ -362,21 +362,5 @@ public abstract class Exif extends Metadata {
 		this.isThumbnailRequired = isThumbnailRequired;
 	}
 		
-	@Override
-	public void showMetadata() {
-		ensureDataRead();
-		LOGGER.info("Exif output starts =>");
-		if(imageIFD != null) {
-			LOGGER.info("<<Image IFD starts>>");
-			TIFFTweaker.printIFD(imageIFD, TiffTag.class, "");
-			LOGGER.info("<<Image IFD ends>>");
-		}
-		if(containsThumbnail) {
-			LOGGER.info("Exif thumbnail format: {}", (thumbnail.getDataType() == 1? "DATA_TYPE_JPG":"DATA_TYPE_TIFF"));
-			LOGGER.info("Exif thumbnail data length: {}", thumbnail.getCompressedImage().length);
-		}
-		LOGGER.info("<= Exif output ends");
-	}
-	
 	public abstract void write(OutputStream os) throws IOException;
 }

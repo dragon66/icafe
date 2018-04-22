@@ -27,6 +27,7 @@ package com.icafe4j.image.meta.adobe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,7 +57,18 @@ public class IRB extends Metadata {
 			IRB irb = new IRB(data);
 			try {
 				irb.read();
-				irb.showMetadata();
+				Iterator<MetadataEntry> iterator = irb.iterator();
+				while(iterator.hasNext()) {
+					MetadataEntry item = iterator.next();
+					LOGGER.info(item.getKey() + ": " + item.getValue());
+					if(item.isMetadataEntryGroup()) {
+						String indent = "    ";
+						Collection<MetadataEntry> entries = item.getMetadataEntries();
+						for(MetadataEntry e : entries) {
+							LOGGER.info(indent + e.getKey() + ": " + e.getValue());
+						}			
+					}					
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}			
@@ -212,39 +224,5 @@ public class IRB extends Metadata {
 			}
 			isDataRead = true;
 		}
-	}
-	
-	public void showMetadata() {
-		ensureDataRead();
-		LOGGER.info("<<Adobe IRB information starts>>");
-		for(_8BIM _8bim : _8bims.values()) {
-			_8bim.print();
-		}
-		if(containsThumbnail) {
-			LOGGER.info("{}", thumbnail.getResouceID());
-			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).
-			switch (thumbnailFormat) {
-				case IRBThumbnail.DATA_TYPE_KJpegRGB:
-					LOGGER.info("Thumbnail format: KJpegRGB");
-					break;
-				case IRBThumbnail.DATA_TYPE_KRawRGB:
-					LOGGER.info("Thumbnail format: KRawRGB");
-					break;
-			}
-			LOGGER.info("Thumbnail width: {}", thumbnail.getWidth());
-			LOGGER.info("Thumbnail height: {}", thumbnail.getHeight());
-			// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-			LOGGER.info("Padded row bytes: {}", thumbnail.getPaddedRowBytes());
-			// Total size = widthbytes * height * planes
-			LOGGER.info("Total size: {}", thumbnail.getTotalSize());
-			// Size after compression. Used for consistency check.
-			LOGGER.info("Size after compression: {}", thumbnail.getCompressedSize());
-			// Bits per pixel. = 24
-			LOGGER.info("Bits per pixel: {}", thumbnail.getBitsPerPixel());
-			// Number of planes. = 1
-			LOGGER.info("Number of planes: {}", thumbnail.getNumOfPlanes());
-		}
-		
-		LOGGER.info("<<Adobe IRB information ends>>");
 	}
 }

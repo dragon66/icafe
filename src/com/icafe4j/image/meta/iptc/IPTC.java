@@ -27,12 +27,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Set;
 
 import com.icafe4j.image.meta.Metadata;
@@ -41,12 +46,26 @@ import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 
 public class IPTC extends Metadata {
+	// Obtain a logger instance
+	private static final Logger LOGGER = LoggerFactory.getLogger(IPTC.class);
+	
 	public static void showIPTC(byte[] data) {
 		if(data != null && data.length > 0) {
 			IPTC iptc = new IPTC(data);
 			try {
 				iptc.read();
-				iptc.showMetadata();
+				Iterator<MetadataEntry> iterator = iptc.iterator();
+				while(iterator.hasNext()) {
+					MetadataEntry item = iterator.next();
+					LOGGER.info(item.getKey() + ": " + item.getValue());
+					if(item.isMetadataEntryGroup()) {
+						String indent = "    ";
+						Collection<MetadataEntry> entries = item.getMetadataEntries();
+						for(MetadataEntry e : entries) {
+							LOGGER.info(indent + e.getKey() + ": " + e.getValue());
+						}			
+					}					
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -185,7 +204,7 @@ public class IPTC extends Metadata {
 			    }
 			};
 		}
-		return super.iterator();
+		return Collections.emptyIterator();
 	}
 	
 	public void read() throws IOException {
@@ -223,17 +242,6 @@ public class IPTC extends Metadata {
 		}
 	}
 	
-	public void showMetadata() {
-		ensureDataRead();
-		if(datasetMap != null){
-			// Print multiple entry IPTCDataSet
-			for(List<IPTCDataSet> iptcs : datasetMap.values()) {
-				for(IPTCDataSet iptc : iptcs)
-					iptc.print();
-			}
-		}
-	}
-
 	public void write(OutputStream os) throws IOException {
 		for(List<IPTCDataSet> datasets : getDataSets().values())
 			for(IPTCDataSet dataset : datasets)

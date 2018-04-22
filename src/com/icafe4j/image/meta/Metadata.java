@@ -81,8 +81,7 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataEntry
 	private MetadataType type;
 	protected byte[] data;
 	protected boolean isDataRead;
-	private static final Iterator<MetadataEntry> emptyIterator = new EmptyIterator();
-	
+		
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(Metadata.class);
 	
@@ -490,9 +489,7 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataEntry
 		peekHeadInputStream.shallowClose();
 	}
 	
-	public Iterator<MetadataEntry> iterator() {
-		return emptyIterator;
-	}
+	public abstract Iterator<MetadataEntry> iterator();
 	
 	public static Map<MetadataType, Metadata> readMetadata(File image) throws IOException {
 		FileInputStream fin = new FileInputStream(image);
@@ -621,8 +618,6 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataEntry
 		return isDataRead;
 	}
 	
-	public abstract void showMetadata();
-	
 	/**
 	 * Writes the metadata out to the output stream
 	 * 
@@ -633,19 +628,5 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataEntry
 		byte[] data = getData();
 		if(data != null)
 			out.write(data);
-	}
-	
-	private static class EmptyIterator implements Iterator<MetadataEntry> {
-	    public MetadataEntry next() {
-	    	return null;
-	    }
-
-	    public boolean hasNext() {
-	    	return false;
-	    }
-
-	    public void remove() {
-	    	throw new UnsupportedOperationException("Removing MetadataEntry is not supported by this Iterator");
-	    }	  
 	}
 }

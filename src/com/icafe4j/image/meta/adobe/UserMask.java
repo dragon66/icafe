@@ -21,9 +21,7 @@ package com.icafe4j.image.meta.adobe;
 
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.io.ReadStrategy;
 
 public class UserMask extends DDBEntry {
@@ -32,9 +30,6 @@ public class UserMask extends DDBEntry {
 	private int opacity;
 	private int flag;
 	
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(UserMask.class);
-	
 	public UserMask(int size, byte[] data, ReadStrategy readStrategy) {
 		super(DataBlockType.LMsk, size, data, readStrategy);
 		read();
@@ -42,6 +37,17 @@ public class UserMask extends DDBEntry {
 	
 	public int[] getColors() {
 		return colors.clone();
+	}
+	
+	protected MetadataEntry getMetadataEntry() {
+		MetadataEntry root = new MetadataEntry(DataBlockType.LMsk.name(), DataBlockType.LMsk.getDescription(), true);
+		root.addEntry(new MetadataEntry("Size", getSize() +""));
+		root.addEntry(new MetadataEntry("Color Space", getColorSpaceID().name()));
+		root.addEntry(new MetadataEntry("Color Values", Arrays.toString(colors)));
+		root.addEntry(new MetadataEntry("Opacity", opacity + ""));
+		root.addEntry(new MetadataEntry("Flag", flag + ""));
+		//
+		return root;
 	}
 	
 	public int getOpacity() {
@@ -58,14 +64,6 @@ public class UserMask extends DDBEntry {
 	
 	public ColorSpaceID getColorSpaceID() {
 		return ColorSpaceID.fromInt(colorSpaceId);
-	}
-	
-	public void print() {
-		super.print();
-		LOGGER.info("Color space: {}", getColorSpaceID());
-		LOGGER.info("Color values: {}", Arrays.toString(colors));
-		LOGGER.info("Opacity: {}", opacity);
-		LOGGER.info("Flag: {}", flag);
 	}
 	
 	private void read() {

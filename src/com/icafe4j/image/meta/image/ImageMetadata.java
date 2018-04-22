@@ -27,8 +27,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
@@ -37,9 +35,6 @@ import com.icafe4j.image.meta.Thumbnail;
 public class ImageMetadata extends Metadata {
 	private Map<String, Thumbnail> thumbnails;
 	private Collection<MetadataEntry> entries = new ArrayList<MetadataEntry>();
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(ImageMetadata.class);
-	
 	public ImageMetadata() {
 		super(MetadataType.IMAGE);
 	}
@@ -88,34 +83,5 @@ public class ImageMetadata extends Metadata {
 			}
 		}		
 		return Collections.unmodifiableCollection(entries).iterator();
-	}
-	
-	@Override
-	public void showMetadata() {
-		for(MetadataEntry entry : entries) {
-			LOGGER.info(entry.getKey() + ": " + entry.getValue());
-			if(entry.isMetadataEntryGroup()) {
-				String indent = "    ";
-				Collection<MetadataEntry> entries = entry.getMetadataEntries();
-				for(MetadataEntry e : entries) {
-					LOGGER.info(indent + e.getKey() + ": " + e.getValue());
-				}			
-			}
-		}
-		// Thumbnail information
-		if(containsThumbnail()) { // We have thumbnail
-			Iterator<Map.Entry<String, Thumbnail>> entries = thumbnails.entrySet().iterator();
-			LOGGER.info("Total number of thumbnails: {}", thumbnails.size());
-			int i = 0;
-			while (entries.hasNext()) {
-			    Map.Entry<String, Thumbnail> entry = entries.next();
-			    LOGGER.info("Thumbnail #{}: {} thumbnail:", i, entry.getKey());
-			    Thumbnail thumbnail = entry.getValue();
-			    LOGGER.info("Thumbnail width: {}", ((thumbnail.getWidth() < 0)? " Unavailable": thumbnail.getWidth()));
-				LOGGER.info("Thumbnail height: {}", ((thumbnail.getHeight() < 0)? " Unavailable": thumbnail.getHeight()));
-				LOGGER.info("Thumbnail data type: {}", thumbnail.getDataTypeAsString());
-				i++;
-			}
-		}		
-	}
+	}	
 }

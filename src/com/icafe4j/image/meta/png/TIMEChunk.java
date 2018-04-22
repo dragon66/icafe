@@ -18,9 +18,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
@@ -30,9 +27,6 @@ import com.icafe4j.image.png.TIMEBuilder;
 import com.icafe4j.image.png.TIMEReader;
 
 public class TIMEChunk extends Metadata {
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(TIMEChunk.class);
-
 	private static MetadataType validate(ChunkType chunkType) {
 		if(chunkType == null) throw new IllegalArgumentException("ChunkType is null");
 		if(chunkType == ChunkType.TIME)
@@ -149,13 +143,6 @@ public class TIMEChunk extends Metadata {
 		}
 	}
 
-	@Override
-	public void showMetadata() {
-		LOGGER.info("PNG tIME chunk starts =>");
-		LOGGER.info("{} {} {}, {}:{}:{} UTC (Time of last modification)", day, (month > 0 && month <= 12)? MONTH[month]:"()", year, hour, minute, second);
-		LOGGER.info("PNG tIME chunk ends <=");
-	}
-	
 	public void write(OutputStream os) throws IOException {
 		getChunk().write(os);
 	}

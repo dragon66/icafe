@@ -26,9 +26,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
@@ -36,9 +33,6 @@ import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
 
 public class Adobe extends Metadata {
-	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(Adobe.class);
-
 	private int m_DCTEncodeVersion;
 	private int m_APP14Flags0;
 	private int m_APP14Flags1;
@@ -107,18 +101,6 @@ public class Adobe extends Metadata {
 			
 		    isDataRead = true;
 		}
-	}
-
-	@Override
-	public void showMetadata() {
-		ensureDataRead();
-		String[] colorTransform = {"Unknown (RGB or CMYK)", "YCbCr", "YCCK"};
-		LOGGER.info("JPEG Adobe output starts =>");
-		LOGGER.info("DCTEncodeVersion: {}", m_DCTEncodeVersion);
-		LOGGER.info("APP14Flags0: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags0));
-		LOGGER.info("APP14Flags1: {}", StringUtils.shortToHexStringMM((short)m_APP14Flags1));
-		LOGGER.info("ColorTransform: {}", (m_ColorTransform <= 2)?colorTransform[m_ColorTransform]:m_ColorTransform);
-		LOGGER.info("<= JPEG Adobe output ends");
 	}
 
 	public void write(OutputStream os) throws IOException {

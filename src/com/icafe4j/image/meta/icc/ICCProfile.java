@@ -24,6 +24,7 @@ package com.icafe4j.image.meta.icc;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -76,7 +77,18 @@ public class ICCProfile extends Metadata {
 			ICCProfile icc_profile = new ICCProfile(data);
 			try {
 				icc_profile.read();
-				icc_profile.showMetadata();
+				Iterator<MetadataEntry> iterator = icc_profile.iterator();
+				while(iterator.hasNext()) {
+					MetadataEntry item = iterator.next();
+					LOGGER.info(item.getKey() + ": " + item.getValue());
+					if(item.isMetadataEntryGroup()) {
+						String indent = "    ";
+						Collection<MetadataEntry> entries = item.getMetadataEntries();
+						for(MetadataEntry e : entries) {
+							LOGGER.info(indent + e.getKey() + ": " + e.getValue());
+						}			
+					}					
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}			
@@ -348,38 +360,5 @@ public class ICCProfile extends Metadata {
 	
 	private void readTagTable(byte[] data) {
 		tagTable.read(data);
-	}
-	
-	private void showHeader() {
-		LOGGER.info("*** Start of ICC_Profile Header ***");
-		LOGGER.info("Profile Size: {}", getProfileSize());
-		LOGGER.info("CMM Type: {}", getPreferredCMMType());
-		LOGGER.info("Version: {}", getProfileVersionNumber());
-		LOGGER.info("Profile/Device Class: {}", getProfileClassDescription());
-		LOGGER.info("Color Space: {}", getColorSpace());
-		LOGGER.info("PCS: {}", getPCS());
-		LOGGER.info("Date Created: {}", getDateTimeCreated());
-		LOGGER.info("Profile File Signature: {}", getProfileFileSignature());
-		LOGGER.info("Primary Platform Signature: {}", getPrimaryPlatformSignature());
-		LOGGER.info("Flags: {}", getProfileFlags());
-		LOGGER.info("Device Manufacturer: {}", getDeviceManufacturer());
-		LOGGER.info("Device Model: {}", getDeviceModel());
-		LOGGER.info("Device Attributes: {}", getDeviceAttributes());
-		LOGGER.info("Rendering Intent: {}", getRenderingIntentDescription());		
-		LOGGER.info("PCS Illuminant: X = {}, Y = {}, Z = {}", getPCSXYZ()[0], getPCSXYZ()[1], getPCSXYZ()[2]);
-		LOGGER.info("Profile Creator: {}", getProfileCreator());
-		LOGGER.info("Profile ID: {}", getProfileID());
-		LOGGER.info("*** End of ICC_Profile Header ***");
-	}
-	
-	@Override
-	public void showMetadata() {
-		ensureDataRead();
-		showHeader();
-		showTagTable();
-	}
-
-	private void showTagTable() {
-		tagTable.showTable();
 	}
 }

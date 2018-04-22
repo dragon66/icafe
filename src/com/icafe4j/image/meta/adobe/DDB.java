@@ -21,14 +21,19 @@ package com.icafe4j.image.meta.adobe;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.io.ReadStrategy;
@@ -48,7 +53,18 @@ public class DDB extends Metadata {
 			DDB ddb = new DDB(data, readStrategy);
 			try {
 				ddb.read();
-				ddb.showMetadata();
+				Iterator<MetadataEntry> iterator = ddb.iterator();
+				while(iterator.hasNext()) {
+					MetadataEntry item = iterator.next();
+					LOGGER.info(item.getKey() + ": " + item.getValue());
+					if(item.isMetadataEntryGroup()) {
+						String indent = "    ";
+						Collection<MetadataEntry> entries = item.getMetadataEntries();
+						for(MetadataEntry e : entries) {
+							LOGGER.info(indent + e.getKey() + ": " + e.getValue());
+						}			
+					}					
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}			
@@ -71,6 +87,16 @@ public class DDB extends Metadata {
 	
 	public Map<Integer, DDBEntry> getEntries() {
 		return Collections.unmodifiableMap(entries);
+	}
+	
+	public Iterator<MetadataEntry> iterator() {
+		ensureDataRead();
+		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+
+		for(DDBEntry entry : this.entries.values())
+			entries.add(entry.getMetadataEntry());
+		
+		return Collections.unmodifiableCollection(entries).iterator();
 	}
 	
 	public void read() throws IOException {
@@ -107,14 +133,5 @@ public class DDB extends Metadata {
 			}
 			isDataRead = true;
 		}
-	}
-	
-	public void showMetadata() {
-		ensureDataRead();
-		LOGGER.info("<<Adobe DDB information starts>>");
-		for(DDBEntry entry : entries.values()) {
-			entry.print();
-		}
-		LOGGER.info("<<Adobe DDB information ends>>");
-	}
+	}	
 }

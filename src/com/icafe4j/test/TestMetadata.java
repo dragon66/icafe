@@ -73,8 +73,8 @@ public class TestMetadata extends TestBase {
 						}			
 					}					
 				}
-			} else 
-				entry.getValue().showMetadata();
+			} else
+				((XMP)(entry.getValue())).showMetadata();
 			i++;
 			logger.info("-----------------------------------------");
 		}
