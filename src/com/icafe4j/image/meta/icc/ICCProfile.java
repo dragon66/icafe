@@ -119,6 +119,10 @@ public class ICCProfile extends Metadata {
 		return (((header.profileFlags[0]>>6)&0x01) == 0);
 	}
 	
+	public String getAsString(ProfileTag tag) {
+		throw new UnsupportedOperationException("getAsString() is not implemented for ICCProfile");
+	}
+	
 	public String getBytesReserved() {
 		return StringUtils.byteArrayToHexString(header.bytesReserved);
 	}

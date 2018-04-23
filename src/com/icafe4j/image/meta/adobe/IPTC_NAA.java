@@ -110,14 +110,6 @@ public class IPTC_NAA extends _8BIM {
 			return super.getMetadataEntry();
 	}
 	
-	public void print() {
-		super.print();
-		// Print multiple entry IPTCDataSet
-		for(List<IPTCDataSet> datasets : iptc.getDataSets().values())
-			for(IPTCDataSet dataset : datasets)
-				dataset.print();			
-	}
-	
 	public void write(OutputStream os) throws IOException {
 		if(data == null) {			
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();

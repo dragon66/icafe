@@ -2,7 +2,6 @@ package com.icafe4j.test;
 
 import java.util.List;
 import java.util.Map;
-
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.iptc.IPTC;
@@ -22,8 +21,13 @@ public class TestIPTC extends TestBase {
 			// Retrieve a list of Keywords Dataset
 			List<IPTCDataSet> keywords = iptc.getDataSet("Keywords");
 			//List<IPTCDataset> keywords = iptc.getDataSet(IPTCEnvelopeTag.KEY_WORDS.getName());
-			for(IPTCDataSet keyword : keywords)
-				keyword.print();
+			String value = "";
+				
+			for(IPTCDataSet item : keywords) {
+				value += ";" + item.getDataAsString();
+			}
+				
+			logger.info("Keywords: " + value.replaceFirst(";", ""));
 		}
 	}
 }
