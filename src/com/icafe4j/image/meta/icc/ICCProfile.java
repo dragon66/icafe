@@ -305,7 +305,6 @@ public class ICCProfile extends Metadata {
 		header.addEntry(new MetadataEntry("PCS Illuminant [Y]", getPCSXYZ()[1] + ""));
 		header.addEntry(new MetadataEntry("PCS Illuminant [Z]", getPCSXYZ()[2] + ""));
 		header.addEntry(new MetadataEntry("Profile Creator", getProfileCreator()));
-		header.addEntry(new MetadataEntry("Profile Creator", getProfileCreator()));
 		header.addEntry(new MetadataEntry("Profile ID", getProfileID()));
 	
 		entries.add(header);
