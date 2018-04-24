@@ -593,7 +593,7 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataEntry
 		
 	}
 	
-	protected void ensureDataRead() {
+	public void ensureDataRead() {
 		if(!isDataRead) {
 			try {
 				read();
