@@ -44,6 +44,7 @@ import com.icafe4j.image.tiff.FieldType;
 import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.image.util.IMGUtils;
 import com.icafe4j.image.writer.ImageWriter;
+import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.FileUtils;
 
@@ -59,24 +60,16 @@ public class TestMetadata extends TestBase {
 		logger.info("Total number of metadata entries: {}", metadataMap.size());
 		int i = 0;
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
+			//
 			logger.info("Metadata entry {} - {}", i, entry.getKey());
-			if(entry.getValue() instanceof XMP) {
-				XMP xmp = (XMP)entry.getValue();
-				XMLUtils.showXML(xmp.getMergedDocument());
-			} else {				
-				Iterator<MetadataEntry> iterator = entry.getValue().iterator();
-				while(iterator.hasNext()) {
-					MetadataEntry item = iterator.next();
-					logger.info(item.getKey() + ": " + item.getValue());
-					if(item.isMetadataEntryGroup()) {
-						String indent = "    ";
-						Collection<MetadataEntry> entries = item.getMetadataEntries();
-						for(MetadataEntry e : entries) {
-							logger.info(indent + e.getKey() + ": " + e.getValue());
-						}			
-					}
-				}
-			} 
+			
+			Iterator<MetadataEntry> iterator = entry.getValue().iterator();
+			
+			while(iterator.hasNext()) {
+				MetadataEntry item = iterator.next();
+				printMetadata(item, "", "     ");
+			}
+			
 			i++;
 			logger.info("-----------------------------------------");
 		}
@@ -276,5 +269,16 @@ public class TestMetadata extends TestBase {
 		exif.setThumbnailRequired(true);
 		
 		return exif;
+	}
+	
+	private void printMetadata(MetadataEntry entry, String indent, String increment) {
+		logger.info(indent + entry.getKey() + (StringUtils.isNullOrEmpty(entry.getValue())? "" : ": " + entry.getValue()));
+		if(entry.isMetadataEntryGroup()) {
+			indent += increment;
+			Collection<MetadataEntry> entries = entry.getMetadataEntries();
+			for(MetadataEntry e : entries) {
+				printMetadata(e, indent, increment);
+			}			
+		}
 	}
 }
