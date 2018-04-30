@@ -30,8 +30,6 @@ package com.icafe4j.image.meta.xmp;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 
 import org.w3c.dom.CDATASection;
