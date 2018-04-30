@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
@@ -199,6 +200,15 @@ public abstract class XMP extends Metadata {
 		        case Node.PROCESSING_INSTRUCTION_NODE: {
 		            ProcessingInstruction pi = (ProcessingInstruction)node;
 		            entry.addEntry(new MetadataEntry("?" + pi.getTarget(), pi.getData() + "?"));
+		            break;
+		        }
+		        case Node.ENTITY_REFERENCE_NODE: {
+		        	entry.addEntry(new MetadataEntry("&" + node.getNodeName() + ";", ""));
+		            break;
+		        }
+		        case Node.CDATA_SECTION_NODE: { // Output CDATA sections
+		            CDATASection cdata = (CDATASection)node;
+		            entry.addEntry(new MetadataEntry("![CDATA[" + cdata.getData() + "]]", ""));
 		            break;
 		        }
 		        case Node.COMMENT_NODE: {
