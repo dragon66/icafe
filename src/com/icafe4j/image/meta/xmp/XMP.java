@@ -149,10 +149,10 @@ public abstract class XMP extends Metadata {
 	public Iterator<MetadataEntry> iterator() {
 		Document doc = getMergedDocument();
 		
-		MetadataEntry root = new MetadataEntry("XMP Document", "", true);
-		addNodeToEntry(doc, root);
+		MetadataEntry dummy = new MetadataEntry("XMP", " Document", true);
+		addNodeToEntry(doc, dummy);
 		
-		return Collections.unmodifiableCollection(Arrays.asList(root)).iterator();
+		return dummy.getMetadataEntries().iterator();
 	}
 	
 	private void addNodeToEntry(Node node, MetadataEntry entry) {
