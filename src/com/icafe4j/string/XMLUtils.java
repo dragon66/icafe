@@ -263,7 +263,7 @@ public class XMLUtils {
 		            stringBuilder.append(indent + "&" + node.getNodeName() + ";\n");
 		            break;
 		        }
-		        case Node.CDATA_SECTION_NODE: {           // Output CDATA sections
+		        case Node.CDATA_SECTION_NODE: { // Output CDATA sections
 		            CDATASection cdata = (CDATASection)node;
 		            stringBuilder.append(indent + "<" + "![CDATA[" + cdata.getData() +
 		                        "]]" + ">\n");

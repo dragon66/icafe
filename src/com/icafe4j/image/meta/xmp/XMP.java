@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
@@ -194,7 +193,7 @@ public abstract class XMP extends Metadata {
 		            Text textNode = (Text)node;
 		            String text = textNode.getData().trim();
 		            if ((text != null) && text.length() > 0)
-		                entry.addEntry(new MetadataEntry(XMLUtils.escapeXML(text), ""));
+		                entry.addEntry(new MetadataEntry(text, ""));
 		            break;
 		        }
 		        case Node.PROCESSING_INSTRUCTION_NODE: {
@@ -202,18 +201,9 @@ public abstract class XMP extends Metadata {
 		            entry.addEntry(new MetadataEntry("?" + pi.getTarget(), pi.getData() + "?"));
 		            break;
 		        }
-		        case Node.ENTITY_REFERENCE_NODE: {
-		        	entry.addEntry(new MetadataEntry("&" + node.getNodeName() + ";", ""));
-		            break;
-		        }
-		        case Node.CDATA_SECTION_NODE: { // Output CDATA sections
-		            CDATASection cdata = (CDATASection)node;
-		            entry.addEntry(new MetadataEntry("![CDATA[" + cdata.getData() + "]]", ""));
-		            break;
-		        }
 		        case Node.COMMENT_NODE: {
 		        	Comment c = (Comment)node;
-		        	entry.addEntry(new MetadataEntry("<!--" + c.getData() + "-->", ""));
+		        	entry.addEntry(new MetadataEntry("!--" + c.getData() + "--", ""));
 		            break;
 		        }
 		        default:
