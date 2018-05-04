@@ -64,6 +64,7 @@ import java.awt.image.WritableRaster;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -112,7 +113,7 @@ import com.icafe4j.util.ArrayUtils;
 public class TIFFReader extends ImageReader {
 	private RandomAccessInputStream randIS = null;
 	private List<IFD> list = new ArrayList<IFD>();
-	private List<BufferedImage> frames = new ArrayList<BufferedImage>();
+	private List<BufferedImage> frames;
 	private int endian = IOUtils.BIG_ENDIAN;
 	private static final int[] redMask =   {0x00, 0x04, 0x30, 0x1c0, 0xf00};
 	private static final int[] greenMask = {0x00, 0x02, 0x0c, 0x038, 0x0f0};
@@ -154,6 +155,8 @@ public class TIFFReader extends ImageReader {
 	public BufferedImage read(InputStream is) throws Exception {
 		randIS = new FileCacheRandomAccessInputStream(is, bufLen);
 		if(!readHeader(randIS)) return null;
+		
+		frames = new ArrayList<BufferedImage>();
 		 
 		int offset = randIS.readInt();
 		
@@ -1457,8 +1460,10 @@ public class TIFFReader extends ImageReader {
 	}
 	 
 	public int getFrameCount() {
-    	return frames.size();
-    }
+		if(frames != null) // We have already read the image
+			return frames.size();
+		return super.getFrameCount(); // We haven't read the image yet
+	}
 	
 	public BufferedImage getFrame(int i) {
 		if(frames == null) return null;
@@ -1469,7 +1474,9 @@ public class TIFFReader extends ImageReader {
 	}
     
     public List<BufferedImage> getFrames() {
-    	return frames;
+		if(frames != null)
+			return Collections.unmodifiableList(frames);
+		return Collections.emptyList();
     }
     
 	private boolean readHeader(RandomAccessInputStream randIS) throws IOException {
