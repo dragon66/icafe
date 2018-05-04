@@ -1016,9 +1016,14 @@ public class TIFFReader extends ImageReader {
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
 					raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
 					raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);					
-				} else {
-					throw new UnsupportedOperationException("bitsPerSample (" + bitsPerSample + ")" + " > 16 is not supported for grayscale image");
-				}
+				} else if(bitsPerSample == 64) { // We can't user ColorSpace.CS_GRAY for some reason. Use CS_sRGB instead
+					double[] tempArray = ArrayUtils.toDoubleArray(pixels, endian == IOUtils.BIG_ENDIAN);
+					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), null, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_DOUBLE);
+					db = new DataBufferDouble(tempArray, tempArray.length);
+					SampleModel sampleModel = new PixelInterleavedSampleModel(DataBuffer.TYPE_DOUBLE, imageWidth, imageHeight, samplesPerPixel, imageWidth*samplesPerPixel, new int[]{0, 0, 0});
+					raster = Raster.createWritableRaster(sampleModel, db, null);
+				} else
+					throw new UnsupportedOperationException("Unsupported bit depth: " + bitsPerSample);
 				return new BufferedImage(cm, raster, false, null);
 			default:
 		 		break;
@@ -1454,6 +1459,14 @@ public class TIFFReader extends ImageReader {
 	public int getFrameCount() {
     	return frames.size();
     }
+	
+	public BufferedImage getFrame(int i) {
+		if(frames == null) return null;
+		if(i >= 0 && i < frames.size()) {
+			return frames.get(i);
+		} else 
+			throw new IllegalArgumentException("Frame index " + i + " out of bounds");
+	}
     
     public List<BufferedImage> getFrames() {
     	return frames;
