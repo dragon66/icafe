@@ -1003,7 +1003,7 @@ public class TIFFReader extends ImageReader {
 						cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_BYTE);
 						raster = Raster.createInterleavedRaster(db, imageWidth, imageHeight, imageWidth*numOfBands, numOfBands, bandOffsets, null);
 					}
-				} else { // Assume bitsPerSample <= 16
+				} else if(bitsPerSample <= 16) { // Assume bitsPerSample <= 16
 					short[] tempArray = (short[])ArrayUtils.toNBits(bitsPerSample, pixels, samplesPerPixel*imageWidth, (bitsPerSample%8 == 0)?endian == IOUtils.BIG_ENDIAN:true);
 					if(predictor == 2 && planaryConfiguration == 1)
 						tempArray = applyDePredictor(samplesPerPixel, tempArray, imageWidth, imageHeight);								
@@ -1016,7 +1016,9 @@ public class TIFFReader extends ImageReader {
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
 					raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
 					raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);					
-				} 
+				} else {
+					throw new UnsupportedOperationException("bitsPerSample (" + bitsPerSample + ")" + " > 16 is not supported for grayscale image");
+				}
 				return new BufferedImage(cm, raster, false, null);
 			default:
 		 		break;
