@@ -251,9 +251,10 @@ public class GIFReader extends ImageReader {
 	
 	public BufferedImage getFrame(int i) {
 		if(frames == null) return null;
-		if(i < 0 || i >= frames.size())
-			throw new IndexOutOfBoundsException("Index: " + i);
-		return frames.get(i);
+		if(i >= 0 && i < frames.size()) {
+			return frames.get(i);
+		} else 
+			throw new IllegalArgumentException("Frame index " + i + " out of bounds");
 	}
 	
 	/**

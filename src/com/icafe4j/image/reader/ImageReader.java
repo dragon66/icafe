@@ -48,6 +48,10 @@ public abstract class ImageReader {
     	return 0;
     }
     
+    public BufferedImage getFrame(int i) {
+    	return null;
+	}
+    
     // Return empty list instead of null
     public List<BufferedImage> getFrames() {
     	return Collections.emptyList();
