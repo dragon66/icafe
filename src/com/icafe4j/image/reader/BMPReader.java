@@ -121,7 +121,7 @@ public class BMPReader extends ImageReader {
 			nindex += 4;
 		}
 		// There may be some extra bytes between colorPalette and actual image data
-		IOUtils.skipFully(is, bitmapHeader.dataOffSet - numOfColors*4 - 54);
+		IOUtils.skipFully(is, bitmapHeader.dataOffSet - numOfColors*4 - bitmapHeader.infoHeaderLen - 14);
     }
 
     private BufferedImage read24bitTrueColorBitmap(InputStream is) throws Exception {
@@ -617,9 +617,9 @@ public class BMPReader extends ImageReader {
     
 	    void readHeader(InputStream is) throws Exception {
 	    	int nindex = 0;
-	    	byte bhdr[] = new byte[54];
+	    	byte bhdr[] = new byte[18];
 				  
-	    	IOUtils.readFully(is,bhdr,0,54);
+	    	IOUtils.readFully(is, bhdr, 0, 18);
 	    	
 	    	signiture = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
 	    	fileSize = (bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8)|((bhdr[nindex++]&0xff)<<16)|((bhdr[nindex++]&0xff)<<24);
@@ -627,6 +627,9 @@ public class BMPReader extends ImageReader {
 	    	reserved2 = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
 	    	dataOffSet = (bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8)|((bhdr[nindex++]&0xff)<<16)|((bhdr[nindex++]&0xff)<<24);
 	    	infoHeaderLen = (bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8)|((bhdr[nindex++]&0xff)<<16)|((bhdr[nindex++]&0xff)<<24);
+	    	bhdr = new byte[infoHeaderLen - 4]; // infoHeaderLen is different for different bitmap versions
+	    	IOUtils.readFully(is, bhdr, 0, infoHeaderLen - 4);
+	    	nindex = 0;
 	    	imageWidth = (bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8)|((bhdr[nindex++]&0xff)<<16)|((bhdr[nindex++]&0xff)<<24);
 	    	imageHeight = (bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8)|((bhdr[nindex++]&0xff)<<16)|((bhdr[nindex++]&0xff)<<24);
 	    	planes = (short)((bhdr[nindex++]&0xff)|((bhdr[nindex++]&0xff)<<8));
