@@ -1019,7 +1019,7 @@ public class TIFFReader extends ImageReader {
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_USHORT);
 					raster = cm.createCompatibleWritableRaster(imageWidth, imageHeight);
 					raster.setDataElements(0, 0, imageWidth, imageHeight, tempArray);					
-				} else if(bitsPerSample == 64) { // We can't user ColorSpace.CS_GRAY for some reason. Use CS_sRGB instead
+				} else if(bitsPerSample == 64) { // We can't use ColorSpace.CS_GRAY for some reason. Use CS_sRGB instead
 					double[] tempArray = ArrayUtils.toDoubleArray(pixels, endian == IOUtils.BIG_ENDIAN);
 					cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), null, transparent, isAssociatedAlpha, trans, DataBuffer.TYPE_DOUBLE);
 					db = new DataBufferDouble(tempArray, tempArray.length);
