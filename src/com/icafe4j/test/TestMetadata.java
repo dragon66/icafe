@@ -147,7 +147,10 @@ public class TestMetadata extends TestBase {
 		fin = new FileInputStream("images/exif.tif");
 		fout = new FileOutputStream("exif-exif-inserted.tif");
 		
-		Metadata.insertExif(fin, fout, populateExif(TiffExif.class), true);
+		// Create a TIFF EXIF wrapper
+		Exif exif = new TiffExif();
+		
+		Metadata.insertExif(fin, fout, populateExif(exif), true);
 		
 		fin.close();
 		fout.close();
@@ -156,7 +159,8 @@ public class TestMetadata extends TestBase {
 		fout = new FileOutputStream("exif-exif-iptc-comment-inserted.tif");
 
 		List<Metadata> metaList = new ArrayList<Metadata>();
-		metaList.add(populateExif(TiffExif.class));
+		exif = new TiffExif();
+		metaList.add(populateExif(exif));
 		metaList.add(createIPTC());
 		metaList.add(new Comments(Arrays.asList("Comment1", "Comment2")));
 		
@@ -165,13 +169,17 @@ public class TestMetadata extends TestBase {
 		fin = new FileInputStream("images/12.jpg");
 		fout = new FileOutputStream("12-exif-inserted.jpg");
 
-		Metadata.insertExif(fin, fout, populateExif(JpegExif.class), true);
+		exif = new JpegExif();
+		
+		Metadata.insertExif(fin, fout, populateExif(exif), true);
 		
 		fin = new FileInputStream("images/12.jpg");
 		fout = new FileOutputStream("12-exif-iptc-inserted.jpg");
 		
+		exif = new JpegExif();
+		
 		metaList.clear();
-		metaList.add(populateExif(JpegExif.class));
+		metaList.add(populateExif(exif));
 		metaList.add(createIPTC());
 		metaList.add(new JFIF(new byte[]{}));
 		
@@ -250,9 +258,7 @@ public class TestMetadata extends TestBase {
 	}
 	
 	// This method is for testing only
-	private static Exif populateExif(Class<?> exifClass) throws IOException {
-		// Create an EXIF wrapper
-		Exif exif = exifClass == (TiffExif.class)?new TiffExif() : new JpegExif();
+	private static Exif populateExif(Exif exif) throws IOException {
 		exif.addImageField(TiffTag.WINDOWS_XP_AUTHOR, FieldType.WINDOWSXP, "Author");
 		exif.addImageField(TiffTag.WINDOWS_XP_KEYWORDS, FieldType.WINDOWSXP, "Copyright;Author");
 		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");

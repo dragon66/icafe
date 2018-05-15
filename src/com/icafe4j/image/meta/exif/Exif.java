@@ -224,11 +224,11 @@ public abstract class Exif extends Metadata {
 		MetadataEntry entry = null;
 		
 		if(tagClass.equals(TiffTag.class)) {
-			entry = new MetadataEntry("IFD0", "Image IFD", true);
+			entry = new MetadataEntry("IFD0", "General Image Info", true);
 		} else if(tagClass.equals(ExifTag.class)) {
-			entry = new MetadataEntry("EXIF", "EXIF SubIFD", true);
+			entry = new MetadataEntry("EXIF", "EXIF Specific Info", true);
 		} else if(tagClass.equals(GPSTag.class)) {
-			entry = new MetadataEntry("GPS", "GPS SubIFD", true);
+			entry = new MetadataEntry("GPS", "GPS Specific Info", true);
 		} else
 			entry = new MetadataEntry("UNKNOWN", "UNKNOWN SubIFD", true);
 		
