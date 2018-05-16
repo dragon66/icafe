@@ -103,8 +103,7 @@ public abstract class RandomAccessOutputStream extends OutputStream implements D
 	
 	public abstract void seek(long pos) throws IOException;
 	
-	public void setWriteStrategy(WriteStrategy strategy) 
-	{
+	public void setWriteStrategy(WriteStrategy strategy) {
 		this.strategy = strategy;
 	}
 	

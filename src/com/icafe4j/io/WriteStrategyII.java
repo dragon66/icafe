@@ -22,12 +22,11 @@ public class WriteStrategyII implements WriteStrategy {
 
 	private static final WriteStrategyII instance = new WriteStrategyII();	
 	 
-	public static WriteStrategyII getInstance() 
-	{
+	public static WriteStrategyII getInstance() {
 		return instance;
 	}
 	 
-	private WriteStrategyII(){}
+	private WriteStrategyII() { }
 	
 	public void writeInt(byte[] buf, int start_idx, int value)
 			throws IOException {

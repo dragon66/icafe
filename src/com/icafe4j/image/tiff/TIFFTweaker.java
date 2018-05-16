@@ -1398,6 +1398,8 @@ public class TIFFTweaker {
 	
 	/**
 	 * Insert a single page into a TIFF image
+	 * <p>This method is supposed to be used along with the {@link #prepareForInsert(RandomAccessInputStream, RandomAccessOutputStream, List) prepareForInsert} method
+	 * and the {@link #finishInsert(RandomAccessOutputStream, List) finishInsert} method.
 	 * 
 	 * @param image a BufferedImage to insert
 	 * @param pageNumber page number (relative to the existing pages) to insert the page
@@ -3449,6 +3451,11 @@ public class TIFFTweaker {
 		}		
 	}
 	
+	/**
+	 * Write a single page to a multi-page TIFF 
+	 * <p>This method is supposed to be used along with the {@link #prepareForWrite(RandomAccessOutputStream) prepareForWrite} method
+	 * and the {@link #finishWrite(RandomAccessOutputStream, List) finishWrite} method.
+	 */
 	public static int writePage(BufferedImage image, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
 		try {
 			writeOffset = writer.writePage(image, 0, 0, rout, writeOffset);
