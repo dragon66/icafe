@@ -2296,6 +2296,14 @@ public class TIFFTweaker {
 		}
 	}
 	
+	/**
+	 * Copy the header and pages of the input TIFF and prepare for inserting new pages one at a time
+	 * 
+	 * @param rin RandomAccessInputStream for the input TIFF
+	 * @param rout RandomAccessOutputStream for the output TIFF
+	 * @return the offset to insert first page
+	 * @throws IOException
+	 */
 	public static int prepareForInsert(RandomAccessInputStream rin, RandomAccessOutputStream rout, List<IFD> ifds) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
@@ -2317,6 +2325,13 @@ public class TIFFTweaker {
 		return writeOffset;
 	}
 	
+	/**
+	 * Write TIFF header and get ready for writing pages one at a time
+	 * 
+	 * @param rout RandomAccessOutputStream for the output TIFF
+	 * @return the offset to write first page
+	 * @throws IOException
+	 */
 	public static int prepareForWrite(RandomAccessOutputStream rout) throws IOException {
 		return writeHeader(rout);
 	}
@@ -3455,6 +3470,18 @@ public class TIFFTweaker {
 	 * Write a single page to a multi-page TIFF 
 	 * <p>This method is supposed to be used along with the {@link #prepareForWrite(RandomAccessOutputStream) prepareForWrite} method
 	 * and the {@link #finishWrite(RandomAccessOutputStream, List) finishWrite} method.
+	 * <pre>
+	 * {@code
+	 * List<IFD> list = new ArrayList<IFD>();
+	 * RandomOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOuputStream("out.tif"));;
+	 * BufferedImage bi = getBufferedImageSomeWay();
+	 * int offset = TIFFTweaker.prepareForWrite(rout);
+	 * TIFFWriter writer = new TIFFWriter();
+	 * offset = TIFFTweaker.writePage(bi, rout, list, offset, writer);
+	 * //keep adding pages until finish, then call
+	 * TIFFTweaker.finishWrite(rout, list);
+	 * }
+	 * </pre>
 	 */
 	public static int writePage(BufferedImage image, RandomAccessOutputStream rout, List<IFD> ifds, int writeOffset, TIFFWriter writer) throws IOException {
 		try {
