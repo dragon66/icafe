@@ -1401,6 +1401,20 @@ public class TIFFTweaker {
 	 * <p>This method is supposed to be used along with the {@link #prepareForInsert(RandomAccessInputStream, RandomAccessOutputStream, List) prepareForInsert} method
 	 * and the {@link #finishInsert(RandomAccessOutputStream, List) finishInsert} method.
 	 * 
+	 * <pre>
+	 * {@code
+	 * List<IFD> list = new ArrayList<IFD>();
+	 * RandomAccessInputStream rin = new FileCacheRandomAccessInputStream(new FileInputStream("in.tif"));
+	 * RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOuputStream("out.tif"));
+	 * BufferedImage bi = getBufferedImageSomeWay();
+	 * int offset = TIFFTweaker.prepareForInsert(rin, rout, list);
+	 * TIFFWriter writer = new TIFFWriter();
+	 * offset = TIFFTweaker.winsertPage(bi, pageNumber, rout, list, offset, writer);
+	 * //keep inserting pages until finish, then call
+	 * TIFFTweaker.finishInsert(rout, list);
+	 * }
+	 * </pre>
+	 * 
 	 * @param image a BufferedImage to insert
 	 * @param pageNumber page number (relative to the existing pages) to insert the page
 	 * @param rout RandomAccessOutputStream to write new image
@@ -3470,10 +3484,11 @@ public class TIFFTweaker {
 	 * Write a single page to a multi-page TIFF 
 	 * <p>This method is supposed to be used along with the {@link #prepareForWrite(RandomAccessOutputStream) prepareForWrite} method
 	 * and the {@link #finishWrite(RandomAccessOutputStream, List) finishWrite} method.
+	 * 
 	 * <pre>
 	 * {@code
 	 * List<IFD> list = new ArrayList<IFD>();
-	 * RandomOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOuputStream("out.tif"));;
+	 * RandomAccessOutputStream rout = new FileCacheRandomAccessOutputStream(new FileOuputStream("out.tif"));;
 	 * BufferedImage bi = getBufferedImageSomeWay();
 	 * int offset = TIFFTweaker.prepareForWrite(rout);
 	 * TIFFWriter writer = new TIFFWriter();
