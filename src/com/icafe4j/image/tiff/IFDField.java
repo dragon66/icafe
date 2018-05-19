@@ -26,6 +26,6 @@ public final class IFDField extends AbstractLongField {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.longArrayToString(data, 0, 10, true);
+		return StringUtils.longArrayToString(data, 0, TiffField.MAX_STRING_REPR_LEN, true);
 	}
 }

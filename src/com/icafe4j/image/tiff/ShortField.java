@@ -37,6 +37,6 @@ public final class ShortField extends AbstractShortField {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.shortArrayToString(data, 0, 10, true);
+		return StringUtils.shortArrayToString(data, 0, TiffField.MAX_STRING_REPR_LEN, true);
 	}
 }
