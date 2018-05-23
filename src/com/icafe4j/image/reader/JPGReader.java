@@ -215,8 +215,7 @@ public class JPGReader extends ImageReader {
 			qtTables.append("Quantization table #" + table.getID() + ":\n");
 			
 		   	if(QT_precision == 0) {
-				for (int j = 0; j < 64; j++)
-			    {
+				for (int j = 0; j < 64; j++) {
 					if (j != 0 && j%8 == 0) {
 						qtTables.append("\n");
 					}
@@ -273,8 +272,7 @@ public class JPGReader extends ImageReader {
 		
 		hufTable.append("Huffman table information =>:\n");
 		
-		for(HTable table : hTables )
-		{
+		for(HTable table : hTables)	{
 			hufTable.append("Class: " + table.getClazz() + " (" + HT_class_table[table.getClazz()] + ")\n");
 			hufTable.append("Huffman table #: " + table.getID() + "\n");
 			
@@ -283,8 +281,7 @@ public class JPGReader extends ImageReader {
 			
 		    int count = 0;
 			
-			for (int i = 0; i < bits.length; i++)
-			{
+			for (int i = 0; i < bits.length; i++) {
 				count += (bits[i]&0xff);
 			}
 			

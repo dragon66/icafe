@@ -56,8 +56,7 @@ import java.nio.ShortBuffer;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 09/18/2012
  */
-public class ArrayUtils 
-{
+public class ArrayUtils {
 	// Bit mask 0 - 32 bits (inclusive)
 	private static final int[] MASK = { 0x000,
 					    0x1, 0x3, 0x7, 0xf,
@@ -107,8 +106,7 @@ public class ArrayUtils
 	};
 	
 	// From Effective Java 2nd Edition. 
-   	public static List<Integer> asList(final int[] a) 
-   	{
+   	public static List<Integer> asList(final int[] a) {
    		if (a == null)
    			throw new NullPointerException();
    		return new AbstractList<Integer>() {// Concrete implementation built atop skeletal implementation
@@ -365,8 +363,7 @@ public class ArrayUtils
 			else				
 				value = (temp_byte & MASK[bits_remain]); 
 				
-			while (bits > bits_remain)
-			{
+			while (bits > bits_remain) {
 				if(offset >= end) {
 					break loop;
 				}
@@ -391,8 +388,7 @@ public class ArrayUtils
 	    		temp = bits-empty_bits;
 	    		output[bufIndex] |= ((value>>temp)&MASK[empty_bits]);
 	    		
-	    		while(temp > 8)
-				{
+	    		while(temp > 8)	{
 					output[++bufIndex] |= ((value>>(temp-8))&MASK[8]);
 					temp -= 8;
 				} 
@@ -413,8 +409,7 @@ public class ArrayUtils
 					temp -= 8;
 				}
 				
-		        if(temp > 0)
-				{
+		        if(temp > 0) {
 		        	output[++bufIndex] |= (value&MASK[temp]);
 	    			temp -= 8;
 				}
@@ -433,16 +428,15 @@ public class ArrayUtils
 	
 	// From http://stackoverflow.com/questions/6162651/half-precision-floating-point-in-java
    	// returns all higher 16 bits as 0 for all results
-   	public static int fromFloat(float fval)
-   	{
+   	public static int fromFloat(float fval)	{
    	    int fbits = Float.floatToIntBits(fval);
    	    int sign = fbits >>> 16 & 0x8000; // sign only
    	    int val = (fbits & 0x7fffffff) + 0x1000; // rounded value
 
-   	    if(val >= 0x47800000) // might be or become NaN/Inf
-   	    {                     // avoid Inf due to rounding
-   	        if( (fbits & 0x7fffffff) >= 0x47800000)
-   	        {                        // is or must become NaN/Inf
+   	    if(val >= 0x47800000) { // might be or become NaN/Inf
+   	    						// avoid Inf due to rounding
+   	        if( (fbits & 0x7fffffff) >= 0x47800000) {
+   	        	// is or must become NaN/Inf
    	            if(val < 0x7f800000) // was value but too large
    	                return sign | 0x7c00;  // make it +/-Inf
    	            return sign | 0x7c00 |  // remains +/-Inf or NaN
@@ -478,8 +472,7 @@ public class ArrayUtils
 	public static void insertionsort(int[] array, int start, int end) {
 	   int j;
 
-	   for (int i = start + 1; i < end + 1; i++)
-	   {
+	   for (int i = start + 1; i < end + 1; i++) {
 		   
 		   int temp = array[i];
 		   for ( j = i; j > start && temp <= array[j-1]; j-- )
@@ -498,8 +491,7 @@ public class ArrayUtils
     public static <T extends Comparable<? super T>> void insertionsort(T[] array, int start, int end) {
 	   int j;
 
-	   for (int i = start + 1; i < end + 1; i++)
-	   {
+	   for (int i = start + 1; i < end + 1; i++) {
 		   T temp = array[i];
 		   for ( j = i; j > start && temp.compareTo(array[j-1]) <= 0; j-- )
 		       array[j] = array[j-1];
@@ -792,7 +784,7 @@ public class ArrayUtils
      */
     public static int[] removeDuplicates(int[] input) {
         //return if the array length is less than 2
-        if(input.length < 2){
+        if(input.length < 2) {
             return input;
         }
       
@@ -802,8 +794,8 @@ public class ArrayUtils
     	int j = 0;
         int i = 1;
               
-        while(i < input.length){
-            if(input[i] == input[j]){
+        while(i < input.length) {
+            if(input[i] == input[j]) {
                 i++;
             } else{
                 input[++j] = input[i++];
@@ -860,15 +852,12 @@ public class ArrayUtils
     	int len = end - start + 1;
  	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
     	while(gap < len) gap = 3*gap + 1;
-    	while ( gap > 0 )
-    	{
+    	while ( gap > 0 ) {
     		int begin = start + gap;
-    		for (int i = begin; i <= end; i++)
-    		{
+    		for (int i = begin; i <= end; i++) {
     			int temp = array[i];
     			int j = i;
-    			while ( j >= begin && temp <= array[j - gap])
-    			{
+    			while ( j >= begin && temp <= array[j - gap]) {
     				array[j] = array[j - gap];
     				j -= gap;
     			}
@@ -890,15 +879,12 @@ public class ArrayUtils
 	   	int len = end - start + 1;
   	    // Generate Knuth sequence 1, 4, 13, 40, 121, 364,1093, 3280, 9841 ...
 	   	while(gap < len) gap = 3*gap + 1;
-	   	while ( gap > 0 )
-	   	{
+	   	while ( gap > 0 ) {
 	   		int begin = start + gap;
-	   		for (int i = begin; i <= end; i++)
-	   		{
+	   		for (int i = begin; i <= end; i++) {
 	   			T temp = array[i];
 	   			int j = i;
-	   			while ( j >= begin && temp.compareTo(array[j - gap]) <= 0)
-	   			{
+	   			while ( j >= begin && temp.compareTo(array[j - gap]) <= 0) {
 	   				array[j] = array[j - gap];
 	   				j -= gap;
 	   			}
@@ -1236,8 +1222,7 @@ public class ArrayUtils
 			else				
 				value = (temp_byte & MASK[bits_remain]); 
 				
-			while (nBits > bits_remain)
-			{
+			while (nBits > bits_remain) {
 				if(offset >= input.length) {
 					break loop;
 				}
