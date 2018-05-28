@@ -1409,7 +1409,7 @@ public class TIFFTweaker {
 	 * BufferedImage bi = getBufferedImageSomeWay();
 	 * int offset = TIFFTweaker.prepareForInsert(rin, rout, list);
 	 * TIFFWriter writer = new TIFFWriter();
-	 * offset = TIFFTweaker.winsertPage(bi, pageNumber, rout, list, offset, writer);
+	 * offset = TIFFTweaker.insertPage(bi, pageNumber, rout, list, offset, writer);
 	 * //keep inserting pages until finish, then call
 	 * TIFFTweaker.finishInsert(rout, list);
 	 * }
