@@ -112,7 +112,7 @@ import com.icafe4j.util.ArrayUtils;
  */
 public class TIFFReader extends ImageReader {
 	private RandomAccessInputStream randIS = null;
-	private List<IFD> list = new ArrayList<IFD>();
+	protected List<IFD> ifds;
 	private List<BufferedImage> frames;
 	private int endian = IOUtils.BIG_ENDIAN;
 	private static final int[] redMask =   {0x00, 0x04, 0x30, 0x1c0, 0xf00};
@@ -151,46 +151,8 @@ public class TIFFReader extends ImageReader {
 	
 	// Obtain a logger instance
 	private static final Logger LOGGER = LoggerFactory.getLogger(TIFFReader.class);		
-		 
-	public BufferedImage read(InputStream is) throws Exception {
-		randIS = new FileCacheRandomAccessInputStream(is, bufLen);
-		if(!readHeader(randIS)) return null;
-		
-		frames = new ArrayList<BufferedImage>();
-		 
-		int offset = randIS.readInt();
-		
-		int ifd = 0;
-				
-		while (offset != 0)	{
-			try {
-				offset = readIFD(ifd++, offset);
-			} catch(Exception ex) {
-				ex.printStackTrace();
-				break;
-			}
-		}
-		
-		BufferedImage frame = null;
-		
-		for(IFD page : list) {
-			try {
-				frame = decode(page);
-			} catch(Exception ex) {
-				ex.printStackTrace();
-				continue;
-			}
-			if(frame != null)
-				frames.add(frame);
-		}		
-		
-		randIS.shallowClose();
-		if(frames.size() > 0)
-			return frames.get(0);
-		return null;
-	}
-	 
-	private BufferedImage decode(IFD ifd) throws Exception {
+	
+	protected BufferedImage decode(IFD ifd) throws Exception {
 		// Grab some of the TIFF fields we are interested in
 		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH);
 		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH);
@@ -1479,12 +1441,34 @@ public class TIFFReader extends ImageReader {
 		return Collections.emptyList();
     }
     
+    public BufferedImage read(InputStream is) throws Exception {
+		
+		if(!readIFDs(is)) return null;
+		
+		BufferedImage frame = null;
+		
+		for(IFD page : ifds) {
+			try {
+				frame = decode(page);
+			} catch(Exception ex) {
+				ex.printStackTrace();
+				continue;
+			}
+			if(frame != null)
+				frames.add(frame);
+		}
+		
+		randIS.shallowClose();
+		if(frames.size() > 0)
+			return frames.get(0);
+		return null;
+	}
+	
 	private boolean readHeader(RandomAccessInputStream randIS) throws IOException {
 		// First 2 bytes determine the byte order of the file
 		endian = randIS.readShort();
 		
-		if(endian == IOUtils.BIG_ENDIAN)
-		{
+		if(endian == IOUtils.BIG_ENDIAN) {
 			LOGGER.info("Byte order: Motorola BIG_ENDIAN");
 			this.randIS.setReadStrategy(ReadStrategyMM.getInstance());
 		} else if(endian == IOUtils.LITTLE_ENDIAN) {
@@ -1665,10 +1649,33 @@ public class TIFFReader extends ImageReader {
 					break;					
 			  }	
 		}
-		list.add(tiffIFD);
+		ifds.add(tiffIFD);
 		LOGGER.info("********************************");
 		randIS.seek(offset);
 		return randIS.readInt();
+	}
+	
+	protected boolean readIFDs(InputStream is) throws Exception {
+		// Wrap the input stream with RandomInputStream
+		randIS = new FileCacheRandomAccessInputStream(is, bufLen);
+		if(!readHeader(randIS)) return false;
+		
+		frames = new ArrayList<BufferedImage>();
+		ifds = new ArrayList<IFD>();
+		
+		int offset = randIS.readInt();
+		int ifd = 0;
+		
+		while (offset != 0)	{
+			try {
+				offset = readIFD(ifd++, offset);
+			} catch(Exception ex) {
+				ex.printStackTrace();
+				break;
+			}
+		}
+		
+		return true;
 	}
 	
 	// De-predictor for PLANARY_CONFIGURATION value 1
