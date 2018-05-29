@@ -42,8 +42,7 @@ public class TestPNGEncoder extends TestBase {
 		 new TestPNGEncoder().test();
 	 }
 	 
-	 public void test(String ... args)
-	 {
+	 public void test(String ... args) {
 		 int i;
 
 		 PNGEncoder te = new PNGEncoder("Test PNG Alpha/Filter Encoder");
@@ -52,61 +51,44 @@ public class TestPNGEncoder extends TestBase {
 		 te.filter = 0;
 		 te.pixelDepth = 24;
 		 te.compressionLevel = 1;
-		 while (i < args.length)
-		 {
-			 if (args[i].equals("-alpha"))
-			 {
+		 while (i < args.length) {
+			 if (args[i].equals("-alpha")) {
 				 te.encodeAlpha = true;
 				 i++;
-			 }
-			 else if (args[i].equals("-filter"))
-			 {
-				 if (i != args.length-1)
-				 {
-					 try
-					 {
+			 } else if (args[i].equals("-filter")) {
+				 if (i != args.length-1) {
+					 try {
 						 te.filter = Integer.parseInt(args[i+1]);
-					 }
-					 catch (Exception e)
-					 {
+					 } catch (Exception e) {
 						 PNGEncoder.usage();
 						 break;
 					 }
 				 }
 				 i += 2;
 			 }
-			 else if (args[i].equals("-compress"))
-			 {
-				 if (i != args.length-1)
-				 {
-					 try
-					 {
+			 else if (args[i].equals("-compress")) {
+				 if (i != args.length-1) {
+					 try {
 						 te.compressionLevel = Integer.parseInt(args[i+1]);
-					 }	
-					 catch (Exception e)
-					 {
+					 } catch (Exception e) {
 						 PNGEncoder.usage();
 						 break;
 					 }
 				 }
 				 i += 2;
-			 }
-			 else
-			 {
+			 } else {
 				 PNGEncoder.usage();
 				 break;
 			 }
 		 }
-		 if (te.pixelDepth == 8)
-		 {
+		 if (te.pixelDepth == 8) {
 			 te.encodeAlpha = false;
 		 }
 		 te.doYourThing();
 	 }
 }
 
-class PNGEncoder extends Frame
-{
+class PNGEncoder extends Frame {
 	private static final long serialVersionUID = -8226940088303427275L;
 	String          message;
     String          timeStr;
@@ -119,14 +101,12 @@ class PNGEncoder extends Frame
     String          filename;
     boolean         fileSaved = false;
 
-    public PNGEncoder(String s)
-    {
+    public PNGEncoder(String s) {
         super(s);
         setSize(200,200);
     }
     
-    public void drawClockImage(int hour, int minute)
-    {
+    public void drawClockImage(int hour, int minute) {
         // variables used for drawing hands of clock
         Graphics g;
         Font smallFont = new Font("Helvetica", Font.PLAIN, 9 );
@@ -140,12 +120,9 @@ class PNGEncoder extends Frame
         fm = g.getFontMetrics();
 
         // draw the clock face; yellow for AM, blue for PM
-        if (hour < 12)
-        {
+        if (hour < 12) {
             g.setColor( new Color( 255, 255, 192 ) );
-        }
-        else
-        {
+        } else {
             g.setColor( new Color( 192, 192, 255) );
         }
         g.fillOval(10, 10, 80, 80);
@@ -180,8 +157,7 @@ class PNGEncoder extends Frame
         g.drawLine( x0, y0, x1, y1 );
     }
 
-    public void addAlphaToImage()
-    {
+    public void addAlphaToImage() {
         int width=100;
         int height=100;
         int alphaMask = 0;
@@ -200,14 +176,11 @@ class PNGEncoder extends Frame
             System.err.println("image fetch aborted or errored");
             return;
         }
-        for (int i=0; i<width*height; i++)
-        {
-            if ((i % width) == 0)
-            {
+        for (int i=0; i<width*height; i++) {
+            if ((i % width) == 0) {
                 alphaMask = (alphaMask >> 24) & 0xff;
                 alphaMask += 2;
-                if (alphaMask > 255)
-                {
+                if (alphaMask > 255) {
                     alphaMask = 255;
                 }
                 alphaMask = (alphaMask << 24) & 0xff000000;
@@ -218,16 +191,12 @@ class PNGEncoder extends Frame
             0, width));
     }
 
-    public void paint( Graphics g )
-    {
-        if (clockImage == null)
-        {
+    public void paint(Graphics g) {
+        if (clockImage == null) {
             clockImage = createImage( 100, 100 );
         }
-        if (clockImage != null)
-        {
-            if (!fileSaved)
-            {
+        if (clockImage != null) {
+            if (!fileSaved) {
                 drawClockImage(hour, minute);
                 if (encodeAlpha) { addAlphaToImage(); }
                 saveClockImage();
@@ -235,14 +204,12 @@ class PNGEncoder extends Frame
             }
             g.drawImage( clockImage, 50, 20, null );
         }
-        if (message != null)
-        {
+        if (message != null) {
             g.drawString( message, 10, 140 );
         }
     }
 
-    protected static void usage()
-    {
+    protected static void usage() {
         System.out.print("Usage: TestPNGEncoder -alpha -filter n -compress c");
         System.out.println("-alpha means to use alpha encoding (default none)");
         System.out.println("n is filter number 0=none (default), 1=sub, 2=up");
@@ -250,15 +217,13 @@ class PNGEncoder extends Frame
         System.exit(0);
     }
     
-    public void doYourThing()
-    {
+    public void doYourThing() {
         // The resultant PNG data will go into this array...
         
         Calendar cal = Calendar.getInstance();  
 
         hour = cal.get(Calendar.HOUR);
-        if (cal.get(Calendar.AM_PM) == 1)
-        {
+        if (cal.get(Calendar.AM_PM) == 1) {
             hour += 12;
         }
         hour %= 24;
@@ -271,13 +236,11 @@ class PNGEncoder extends Frame
          */
         
         timeStr = Integer.toString( minute );
-        if (minute < 10)
-        {
+        if (minute < 10) {
             timeStr = "0" + timeStr;
         }
         timeStr = Integer.toString( hour ) + timeStr;
-        if (hour < 10)
-        {
+        if (hour < 10) {
             timeStr = "0" + timeStr;
         }
 
@@ -297,8 +260,7 @@ class PNGEncoder extends Frame
         setVisible(true);
     }
     
-    public void saveClockImage()
-    {
+    public void saveClockImage() {
     	try {
     		ImageIO.getWriter(ImageType.PNG).write(clockImage, new FileOutputStream("clock.png"));
     	} catch (Exception e) {}        
