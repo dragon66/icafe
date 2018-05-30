@@ -1445,6 +1445,8 @@ public class TIFFReader extends ImageReader {
 		
 		if(!readIFDs(is)) return null;
 		
+		frames = new ArrayList<BufferedImage>();
+		
 		BufferedImage frame = null;
 		
 		for(IFD page : ifds) {
@@ -1660,7 +1662,6 @@ public class TIFFReader extends ImageReader {
 		randIS = new FileCacheRandomAccessInputStream(is, bufLen);
 		if(!readHeader(randIS)) return false;
 		
-		frames = new ArrayList<BufferedImage>();
 		ifds = new ArrayList<IFD>();
 		
 		int offset = randIS.readInt();
