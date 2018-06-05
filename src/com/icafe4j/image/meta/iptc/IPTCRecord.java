@@ -51,8 +51,7 @@ public enum IPTCRecord {
 	
 	private static final Map<Integer, IPTCRecord> recordMap = new HashMap<Integer, IPTCRecord>();
 	   
-	static
-	{
+	static {
 		for(IPTCRecord record : values()) {
 			recordMap.put(record.getRecordNumber(), record);
 		}

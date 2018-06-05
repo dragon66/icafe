@@ -70,8 +70,7 @@ public enum IPTCObjectDataTag implements IPTCTag {
   
 	 private static final Map<Integer, IPTCObjectDataTag> recordMap = new HashMap<Integer, IPTCObjectDataTag>();
    
-	 static
-	 {
+	 static {
 		 for(IPTCObjectDataTag record : values()) {
 			 recordMap.put(record.getTag(), record);
 		 }

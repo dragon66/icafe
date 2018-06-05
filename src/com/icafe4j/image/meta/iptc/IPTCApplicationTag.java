@@ -27,7 +27,7 @@ public enum IPTCApplicationTag implements IPTCTag {
 	 RECORD_VERSION(0, "Application Record Version") {
 		 public String getDataAsString(byte[] data) {
 			 // Hex representation of the data
-			 return StringUtils.byteArrayToHexString(data, 0, 10);
+			 return StringUtils.byteArrayToHexString(data);
 		 }
 	 },
 	 OBJECT_TYPE_REF(3, "Object Type Ref"),
@@ -223,8 +223,7 @@ public enum IPTCApplicationTag implements IPTCTag {
    
     private static final Map<Integer, IPTCApplicationTag> recordMap = new HashMap<Integer, IPTCApplicationTag>();
     
-    static
-    {
+    static {
       for(IPTCApplicationTag record : values()) {
           recordMap.put(record.getTag(), record);
       }

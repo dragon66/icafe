@@ -91,8 +91,7 @@ public enum IPTCEnvelopeTag implements IPTCTag {
   
 	 private static final Map<Integer, IPTCEnvelopeTag> recordMap = new HashMap<Integer, IPTCEnvelopeTag>();
    
-	 static
-	 {
+	 static {
 		 for(IPTCEnvelopeTag record : values()) {
 			 recordMap.put(record.getTag(), record);
 		 }

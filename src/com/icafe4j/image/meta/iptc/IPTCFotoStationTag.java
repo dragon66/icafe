@@ -69,8 +69,7 @@ public enum IPTCFotoStationTag implements IPTCTag  {
 	 
 	private static final Map<Integer, IPTCFotoStationTag> recordMap = new HashMap<Integer, IPTCFotoStationTag>();
 	  
-	static
-	{
+	static {
 	    for(IPTCFotoStationTag record : values()) {
 	        recordMap.put(record.getTag(), record);
 	    }

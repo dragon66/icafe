@@ -95,8 +95,7 @@ public enum IPTCNewsPhotoTag implements IPTCTag {
   
 	 private static final Map<Integer, IPTCNewsPhotoTag> recordMap = new HashMap<Integer, IPTCNewsPhotoTag>();
    
-	 static
-	 {
+	 static {
 		 for(IPTCNewsPhotoTag record : values()) {
 			 recordMap.put(record.getTag(), record);
 		 }

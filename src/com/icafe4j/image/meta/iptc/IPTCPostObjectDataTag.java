@@ -70,8 +70,7 @@ public enum IPTCPostObjectDataTag implements IPTCTag {
   
 	 private static final Map<Integer, IPTCPostObjectDataTag> recordMap = new HashMap<Integer, IPTCPostObjectDataTag>();
    
-	 static
-	 {
+	 static {
 		 for(IPTCPostObjectDataTag record : values()) {
 			 recordMap.put(record.getTag(), record);
 		 }
