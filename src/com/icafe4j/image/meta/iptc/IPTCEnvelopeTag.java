@@ -76,6 +76,10 @@ public enum IPTCEnvelopeTag implements IPTCTag {
 		 return name;
 	 }
 	 
+	 public int getRecordNumber() {
+		 return IPTCRecord.ENVELOP.getRecordNumber();
+	 }
+	 
 	 public int getTag() { return tag; }
 	 
 	 public static IPTCEnvelopeTag fromTag(int value) {

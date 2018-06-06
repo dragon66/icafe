@@ -12,6 +12,7 @@
 package com.icafe4j.image.meta.iptc;
 
 public interface IPTCTag {
+	public int getRecordNumber();
 	public int getTag();
 	public String getName();
 	public boolean allowMultiple();

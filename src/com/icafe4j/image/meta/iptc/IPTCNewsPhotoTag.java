@@ -78,6 +78,10 @@ public enum IPTCNewsPhotoTag implements IPTCTag {
 		 return name;
 	 }
 	 
+	 public int getRecordNumber() {
+		 return IPTCRecord.NEWSPHOTO.getRecordNumber();
+	 }
+	 
 	 public int getTag() {
 		 return tag;
 	 }

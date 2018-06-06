@@ -60,6 +60,10 @@ public enum IPTCObjectDataTag implements IPTCTag {
 		 return name;
 	 }
 	 
+	 public int getRecordNumber() {
+		 return IPTCRecord.OBJECTDATA.getRecordNumber();
+	 }
+	 
 	 public int getTag() {
 		 return tag;
 	 }

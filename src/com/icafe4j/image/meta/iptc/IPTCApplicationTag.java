@@ -202,6 +202,10 @@ public enum IPTCApplicationTag implements IPTCTag {
 		 return StringUtils.byteArrayToHexString(data, 0, IPTCTag.MAX_STRING_REPR_LEN);
 	 }
 	 
+	 public int getRecordNumber() {
+		 return IPTCRecord.APPLICATION.getRecordNumber();
+	 }
+	 
 	 public String getName() {
 		 return name;
 	 }

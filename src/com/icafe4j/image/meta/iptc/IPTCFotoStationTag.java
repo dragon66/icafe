@@ -61,7 +61,11 @@ public enum IPTCFotoStationTag implements IPTCTag  {
 	
 	public int getTag() {
 		return tag;
-	}	
+	}
+	
+	public int getRecordNumber() {
+		return IPTCRecord.FOTOSTATION.getRecordNumber();
+	}
  
 	@Override public String toString() {
 		return name;

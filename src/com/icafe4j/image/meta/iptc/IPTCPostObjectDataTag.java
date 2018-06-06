@@ -53,6 +53,10 @@ public enum IPTCPostObjectDataTag implements IPTCTag {
 		return name; 
 	 }
 	 
+	 public int getRecordNumber() {
+	 	return IPTCRecord.POST_OBJECTDATA.getRecordNumber();
+	 }
+	 
 	 public int getTag() {
 		 return tag;
 	 }
