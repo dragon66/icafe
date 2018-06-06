@@ -16,4 +16,6 @@ public interface IPTCTag {
 	public String getName();
 	public boolean allowMultiple();
 	public String getDataAsString(byte[] data);
+	
+	public static final int MAX_STRING_REPR_LEN = 10;
 }

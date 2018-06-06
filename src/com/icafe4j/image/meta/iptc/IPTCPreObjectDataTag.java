@@ -40,7 +40,7 @@ public enum IPTCPreObjectDataTag implements IPTCTag {
 		 return false;
 	 }
 	 
-	 // Default implementation. Could be replaced by individual ENUM
+	// Default implementation. Could be replaced by individual ENUM
 	 public String getDataAsString(byte[] data) {
 		 try {
 			 String strVal = new String(data, "UTF-8").trim();
@@ -49,7 +49,7 @@ public enum IPTCPreObjectDataTag implements IPTCTag {
 			 e.printStackTrace();
 		 }
 		 // Hex representation of the data
-		 return StringUtils.byteArrayToHexString(data, 0, 10);
+		 return StringUtils.byteArrayToHexString(data, 0, IPTCTag.MAX_STRING_REPR_LEN);
 	 }
 	 
 	 public String getName() {
