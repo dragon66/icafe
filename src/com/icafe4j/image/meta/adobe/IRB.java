@@ -175,7 +175,7 @@ public class IRB extends Metadata {
 			while((i+4) < data.length) {
 				String _8bim = new String(data, i, 4);
 				i += 4;			
-				if(_8bim.equals("8BIM")) {
+				if(_8bim.equals("8BIM") || _8bim.equals("PHUT")) {
 					short id = IOUtils.readShortMM(data, i);
 					i += 2;
 					// Pascal string for name follows

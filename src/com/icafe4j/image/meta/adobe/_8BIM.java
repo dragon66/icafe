@@ -62,11 +62,11 @@ public class _8BIM {
 		ImageResourceID eId  = ImageResourceID.fromShort(id);
 		
 		if((id >= ImageResourceID.PATH_INFO0.getValue()) && (id <= ImageResourceID.PATH_INFO998.getValue())) {
-			return new MetadataEntry("PATH_INFO [" + StringUtils.shortToHexStringMM(id) + "]: ", eId.getDescription());
+			return new MetadataEntry("PATH_INFO [" + StringUtils.shortToHexStringMM(id) + "]", eId.getDescription());
 		} else if((id >= ImageResourceID.PLUGIN_RESOURCE0.getValue()) && (id <= ImageResourceID.PLUGIN_RESOURCE999.getValue())) {
-			return new MetadataEntry("PLUGIN_RESOURCE [" + StringUtils.shortToHexStringMM(id) + "]: ", eId.getDescription());
+			return new MetadataEntry("PLUGIN_RESOURCE [" + StringUtils.shortToHexStringMM(id) + "]", eId.getDescription());
 		} else if (eId == ImageResourceID.UNKNOWN) {
-			return new MetadataEntry("UNKNOWN [" + StringUtils.shortToHexStringMM(id) + "]:", eId.getDescription());
+			return new MetadataEntry("UNKNOWN [" + StringUtils.shortToHexStringMM(id) + "]", eId.getDescription());
 		} else {
 			return new MetadataEntry("" + eId, eId.getDescription());
 		}		
