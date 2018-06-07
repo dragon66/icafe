@@ -301,13 +301,15 @@ public abstract class Exif extends Metadata {
 		    	field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT);
 		    	if(field != null) { // JPEG format, save as JPEG
 		    		int thumbnailOffset = field.getDataAsLong()[0];
+		    		exifIn.seek(thumbnailOffset);
 		    		field = thumbnailIFD.getField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
 		    		int thumbnailLen = field.getDataAsLong()[0];
-		    		exifIn.seek(thumbnailOffset);
-		    		byte[] thumbnailData = new byte[thumbnailLen];
-		    		exifIn.readFully(thumbnailData);
-		    		thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
-		    		containsThumbnail = true;				    
+		    		if(thumbnailLen > 0) {			    		
+			    		byte[] thumbnailData = new byte[thumbnailLen];
+			    		exifIn.readFully(thumbnailData);
+			    		thumbnail = new ExifThumbnail(width, height, Thumbnail.DATA_TYPE_KJpegRGB, thumbnailData, thumbnailIFD);
+			    		containsThumbnail = true;
+		    		}
 		    	} else { // Uncompressed TIFF
 		    		field = thumbnailIFD.getField(TiffTag.STRIP_OFFSETS);
 		    		if(field == null) 
