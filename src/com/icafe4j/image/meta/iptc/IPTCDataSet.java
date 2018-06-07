@@ -38,7 +38,7 @@ import com.icafe4j.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 06/10/2013
  */
-public class IPTCDataSet {
+public class IPTCDataSet implements Comparable<IPTCDataSet> {
 	// Fields
 	private int recordNumber; // Corresponds to IPTCRecord enumeration recordNumber 
 	private int tag; // Corresponds to IPTC tag enumeration tag field
@@ -93,6 +93,25 @@ public class IPTCDataSet {
 	
 	public boolean allowMultiple() {
 		return tagEnum.allowMultiple();
+	}
+	
+	@Override
+	public int compareTo(IPTCDataSet other) {
+		final int BEFORE = -1;
+	    final int EQUAL = 0;
+	    final int AFTER = 1;
+	    
+	    if(this == other) return EQUAL;
+	    
+	    if (this.getRecordNumber() < other.getRecordNumber()) return BEFORE;
+	    if (this.getRecordNumber() > other.getRecordNumber()) return AFTER;
+	    if(this.getRecordNumber() == other.getRecordNumber()) {
+	    	if (this.getTag() < other.getTag()) return BEFORE;
+		    if (this.getTag() > other.getTag()) return AFTER;
+		    return EQUAL;
+	    }
+	
+		return EQUAL;
 	}
 	
 	@Override

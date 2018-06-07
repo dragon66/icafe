@@ -89,6 +89,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1009,7 +1010,7 @@ public class JPEGTweaker {
 						Map<IPTCTag, List<IPTCDataSet>> dataSetMap = new HashMap<IPTCTag, List<IPTCDataSet>>(iptc.getDataSets());
 						for(IPTCDataSet set : iptcs)
 							if(!set.allowMultiple())
-								dataSetMap.remove(set.getName());
+								dataSetMap.remove(set.getTagEnum());
 						for(List<IPTCDataSet> iptcList : dataSetMap.values())
 							iptcs.addAll(iptcList);
 					}
@@ -1019,8 +1020,11 @@ public class JPEGTweaker {
 				for(int i = 0; i <= index; i++)
 					segments.get(i).write(os);
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				// Sort the IPTCDataSet collection
+				List<IPTCDataSet> iptcList = new ArrayList<IPTCDataSet>(iptcs);
+				Collections.sort(iptcList);
 				// Insert IPTC data as one of IRB 8BIM block
-				for(IPTCDataSet iptc : iptcs)
+				for(IPTCDataSet iptc : iptcList)
 					iptc.write(bout);
 				// Create 8BIM for IPTC
 				_8BIM newBIM = new _8BIM(ImageResourceID.IPTC_NAA.getValue(), "iptc", bout.toByteArray());

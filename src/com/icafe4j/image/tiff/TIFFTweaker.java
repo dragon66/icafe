@@ -245,7 +245,7 @@ public class TIFFTweaker {
 		Map<IPTCTag, List<IPTCDataSet>> dataSetMap = new HashMap<IPTCTag, List<IPTCDataSet>>(iptc.getDataSets());
 		for(IPTCDataSet set : iptcs)
 			if(!set.allowMultiple())
-				dataSetMap.remove(set.getName());
+				dataSetMap.remove(set.getTagEnum());
 		for(List<IPTCDataSet> iptcList : dataSetMap.values())
 			iptcs.addAll(iptcList);
 		
@@ -1180,8 +1180,11 @@ public class TIFFTweaker {
 					iptcs = new ArrayList<IPTCDataSet>(new HashSet<IPTCDataSet>(iptcs));
 				}
 			}
+			// Sort the IPTCDataSet collection
+			List<IPTCDataSet> iptcList = new ArrayList<IPTCDataSet>(iptcs);
+			Collections.sort(iptcList);
 			// Create IPTC 8BIM
-			for(IPTCDataSet dataset : iptcs) {
+			for(IPTCDataSet dataset : iptcList) {
 				dataset.write(bout);
 			}
 			_8BIM iptc_bim = new _8BIM(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());
@@ -1200,7 +1203,11 @@ public class TIFFTweaker {
 					data = (byte[])f_iptc.getData();
 				copyIPTCDataSet(iptcs, data);
 			}
-			for(IPTCDataSet dataset : iptcs) {
+			// Sort the IPTCDataSet collection
+			List<IPTCDataSet> iptcList = new ArrayList<IPTCDataSet>(iptcs);
+			Collections.sort(iptcList);
+			// Write IPTCDataSet collection
+			for(IPTCDataSet dataset : iptcList) {
 				dataset.write(bout);
 			}
 			workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
