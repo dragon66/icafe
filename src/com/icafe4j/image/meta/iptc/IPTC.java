@@ -28,7 +28,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
+import java.util.TreeMap;
 
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
@@ -79,11 +79,11 @@ public class IPTC extends Metadata {
 		}
 	}
 	
-	private Map<String, List<IPTCDataSet>> datasetMap;
+	private Map<IPTCTag, List<IPTCDataSet>> datasetMap;
 	
 	public IPTC() {
 		super(MetadataType.IPTC);
-		datasetMap =  new HashMap<String, List<IPTCDataSet>>();
+		datasetMap =  new TreeMap<IPTCTag, List<IPTCDataSet>>(new IPTCTagComparator());
 		isDataRead = true;
 	}
 	
@@ -94,13 +94,13 @@ public class IPTC extends Metadata {
 	
 	public void addDataSet(IPTCDataSet dataSet) {
 		if(datasetMap != null) {
-			String name = dataSet.getName();
-			if(datasetMap.get(name) == null) {
+			IPTCTag tag = dataSet.getTagEnum();
+			if(datasetMap.get(tag) == null) {
 				List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
 				list.add(dataSet);
-				datasetMap.put(name, list);
+				datasetMap.put(tag, list);
 			} else if(dataSet.allowMultiple()) {
-				datasetMap.get(name).add(dataSet);
+				datasetMap.get(tag).add(dataSet);
 			}
 		} else throw new IllegalStateException("DataSet Map is empty");
 	}
@@ -108,13 +108,13 @@ public class IPTC extends Metadata {
 	public void addDataSets(Collection<? extends IPTCDataSet> dataSets) {
 		if(datasetMap != null) {
 			for(IPTCDataSet dataSet: dataSets) {
-				String name = dataSet.getName();
-				if(datasetMap.get(name) == null) {
+				IPTCTag tag = dataSet.getTagEnum();
+				if(datasetMap.get(tag) == null) {
 					List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
 					list.add(dataSet);
-					datasetMap.put(name, list);
+					datasetMap.put(tag, list);
 				} else if(dataSet.allowMultiple()) {
-					datasetMap.get(name).add(dataSet);
+					datasetMap.get(tag).add(dataSet);
 				}
 			}
 		} else throw new IllegalStateException("DataSet Map is empty");
@@ -126,17 +126,7 @@ public class IPTC extends Metadata {
 	 * @param key the IPTCTag for the IPTCDataSet
 	 * @return a String representation of the IPTCDataSet, separated by ";"
 	 */	
-	public String getAsString(IPTCTag tag) {
-		return getAsString(tag.getName());
-	}
-
-	/**
-	 * Get a string representation of the IPTCDataSet associated with the key
-	 *  
-	 * @param key the name for the IPTCDataSet
-	 * @return a String representation of the IPTCDataSet, separated by ";"
-	 */
-	public String getAsString(String key) {
+	public String getAsString(IPTCTag key) {
 		// Retrieve the IPTCDataSet list associated with this key
 		// Most of the time the list will only contain one item
 		List<IPTCDataSet> list = getDataSet(key);
@@ -159,19 +149,19 @@ public class IPTC extends Metadata {
 	/**
 	 * Get a list of IPTCDataSet associated with a key
 	 * 
-	 * @param key name of the data set
+	 * @param key IPTCTag of the DataSet
 	 * @return a list of IPTCDataSet associated with the key
 	 */
-	public List<IPTCDataSet> getDataSet(String key) {
+	public List<IPTCDataSet> getDataSet(IPTCTag key) {
 		return getDataSets().get(key);
 	}
 	
 	/**
 	 * Get all the IPTCDataSet as a map for this IPTC data
 	 * 
-	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
+	 * @return a map with the key for the IPTCDataSet tag and a list of IPTCDataSet as the value
 	 */
-	public Map<String, List<IPTCDataSet>> getDataSets() {
+	public Map<IPTCTag, List<IPTCDataSet>> getDataSets() {
 		ensureDataRead();
 		return datasetMap;
 	}
@@ -180,12 +170,12 @@ public class IPTC extends Metadata {
 		ensureDataRead();
 		if(datasetMap != null){
 			// Print multiple entry IPTCDataSet
-			Set<Map.Entry<String, List<IPTCDataSet>>> entries = datasetMap.entrySet();
-			Iterator<Entry<String, List<IPTCDataSet>>> iter = entries.iterator();
+			Set<Map.Entry<IPTCTag, List<IPTCDataSet>>> entries = datasetMap.entrySet();
+			Iterator<Entry<IPTCTag, List<IPTCDataSet>>> iter = entries.iterator();
 			return new Iterator<MetadataEntry>() {
 				public MetadataEntry next() {
-					Entry<String, List<IPTCDataSet>> entry = iter.next();
-					String key = entry.getKey();
+					Entry<IPTCTag, List<IPTCDataSet>> entry = iter.next();
+					String key = entry.getKey().getName();
 					String value = "";
 					
 					for(IPTCDataSet item : entry.getValue()) {
@@ -211,30 +201,33 @@ public class IPTC extends Metadata {
 		if(!isDataRead) {
 			int i = 0;
 			int tagMarker = data[i];
-			datasetMap = new HashMap<String, List<IPTCDataSet>>();
+			datasetMap = new TreeMap<IPTCTag, List<IPTCDataSet>>(new IPTCTagComparator());
 			while (tagMarker == 0x1c) {
 				i++;
 				int recordNumber = data[i++]&0xff;
 				int tag = data[i++]&0xff;
 				int recordSize = IOUtils.readUnsignedShortMM(data, i);
 				i += 2;
+				
 				if(recordSize > 0) {
 					IPTCDataSet dataSet = new IPTCDataSet(recordNumber, tag, recordSize, data, i);
-					String name = dataSet.getName();
-					if(datasetMap.get(name) == null) {
+					
+					IPTCTag tagEnum = dataSet.getTagEnum();
+					if(datasetMap.get(tagEnum) == null) {
 						List<IPTCDataSet> list = new ArrayList<IPTCDataSet>();
 						list.add(dataSet);
-						datasetMap.put(name, list);
+						datasetMap.put(tagEnum, list);
 					} else
-						datasetMap.get(name).add(dataSet);
+						datasetMap.get(tagEnum).add(dataSet);
 				}
+			
 				i += recordSize;
 				// Sanity check
 				if(i >= data.length) break;	
 				tagMarker = data[i];							
 			}
 			// Remove possible duplicates
-			for (Map.Entry<String, List<IPTCDataSet>> entry : datasetMap.entrySet()){
+			for (Map.Entry<IPTCTag, List<IPTCDataSet>> entry : datasetMap.entrySet()){
 			    entry.setValue(new ArrayList<IPTCDataSet>(new LinkedHashSet<IPTCDataSet>(entry.getValue())));
 			}
 			

@@ -34,6 +34,7 @@ import java.util.Map.Entry;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
+import com.icafe4j.image.meta.iptc.IPTCTag;
 import com.icafe4j.string.StringUtils;
 
 public class IPTC_NAA extends _8BIM {
@@ -67,7 +68,7 @@ public class IPTC_NAA extends _8BIM {
 	 * 
 	 * @return a map with the key for the IPTCDataSet name and a list of IPTCDataSet as the value
 	 */
-	public Map<String, List<IPTCDataSet>> getDataSets() {
+	public Map<IPTCTag, List<IPTCDataSet>> getDataSets() {
 		return iptc.getDataSets();			
 	}
 	
@@ -77,7 +78,7 @@ public class IPTC_NAA extends _8BIM {
 	 * @param key name of the data set
 	 * @return a list of IPTCDataSet associated with the key
 	 */
-	public List<IPTCDataSet> getDataSet(String key) {
+	public List<IPTCDataSet> getDataSet(IPTCTag key) {
 		return iptc.getDataSet(key);
 	}
 	
@@ -86,19 +87,19 @@ public class IPTC_NAA extends _8BIM {
 		ImageResourceID eId  = ImageResourceID.fromShort(getID());
 		MetadataEntry entry = new MetadataEntry(eId.name(), eId.getDescription(), true);
 		
-		Map<String, List<IPTCDataSet>> datasetMap = this.getDataSets();
+		Map<IPTCTag, List<IPTCDataSet>> datasetMap = this.getDataSets();
 		
 		if(datasetMap != null) {
 			// Print multiple entry IPTCDataSet
-			Set<Map.Entry<String, List<IPTCDataSet>>> entries = datasetMap.entrySet();
+			Set<Map.Entry<IPTCTag, List<IPTCDataSet>>> entries = datasetMap.entrySet();
 			
-			for(Entry<String, List<IPTCDataSet>> entryMap : entries) {
+			for(Entry<IPTCTag, List<IPTCDataSet>> entryMap : entries) {
 				StringBuilder strBuilder = new StringBuilder();
 				//
 				for(IPTCDataSet item : entryMap.getValue())
 					strBuilder.append(item.getDataAsString()).append(";");
 				
-				String key = entryMap.getKey();				
+				String key = entryMap.getKey().getName();				
 				String value = StringUtils.replaceLast(strBuilder.toString(), ";", "");
 				
 				entry.addEntry(new MetadataEntry(key, value));

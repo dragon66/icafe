@@ -5,6 +5,7 @@ import java.util.Map;
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.iptc.IPTC;
+import com.icafe4j.image.meta.iptc.IPTCApplicationTag;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
 
 public class TestIPTC extends TestBase {
@@ -19,7 +20,7 @@ public class TestIPTC extends TestBase {
 		IPTC iptc = (IPTC)metadataMap.get(MetadataType.IPTC);
 		if(iptc != null) {
 			// Retrieve a list of Keywords Dataset
-			List<IPTCDataSet> keywords = iptc.getDataSet("Keywords");
+			List<IPTCDataSet> keywords = iptc.getDataSet(IPTCApplicationTag.KEY_WORDS);
 			//List<IPTCDataset> keywords = iptc.getDataSet(IPTCEnvelopeTag.KEY_WORDS.getName());
 			String value = "";
 				

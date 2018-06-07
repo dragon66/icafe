@@ -117,6 +117,7 @@ import com.icafe4j.image.meta.image.Comments;
 import com.icafe4j.image.meta.image.ImageMetadata;
 import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.meta.iptc.IPTCDataSet;
+import com.icafe4j.image.meta.iptc.IPTCTag;
 import com.icafe4j.image.meta.jpeg.Adobe;
 import com.icafe4j.image.meta.jpeg.Ducky;
 import com.icafe4j.image.meta.jpeg.JFIF;
@@ -1005,7 +1006,7 @@ public class JPEGTweaker {
 					if(iptcBIM != null && update) { // Keep the original values
 						IPTC iptc = new IPTC(iptcBIM.getData());
 						// Shallow copy the map
-						Map<String, List<IPTCDataSet>> dataSetMap = new HashMap<String, List<IPTCDataSet>>(iptc.getDataSets());
+						Map<IPTCTag, List<IPTCDataSet>> dataSetMap = new HashMap<IPTCTag, List<IPTCDataSet>>(iptc.getDataSets());
 						for(IPTCDataSet set : iptcs)
 							if(!set.allowMultiple())
 								dataSetMap.remove(set.getName());

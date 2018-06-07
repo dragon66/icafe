@@ -188,8 +188,32 @@ public class IPTCDataSet {
 			case PRE_OBJECTDATA:
 				tagEnum = IPTCPreObjectDataTag.fromTag(tag);
 				break;
-			default:
-				tagEnum = IPTCApplicationTag.UNKNOWN;
+			case UNKNOWN:
+				switch(IPTCRecord.fromRecordNumber(recordNumber)) {
+					case APPLICATION:
+						tagEnum = IPTCApplicationTag.UNKNOWN;
+						break;
+					case ENVELOP:
+						tagEnum = IPTCEnvelopeTag.UNKNOWN;
+						break;
+					case NEWSPHOTO:
+						tagEnum = IPTCNewsPhotoTag.UNKNOWN;
+						break;
+					case PRE_OBJECTDATA:
+						tagEnum = IPTCPreObjectDataTag.UNKNOWN;
+						break;
+					case OBJECTDATA:
+						tagEnum = IPTCObjectDataTag.UNKNOWN;
+						break;
+					case POST_OBJECTDATA:
+						tagEnum = IPTCPostObjectDataTag.UNKNOWN;
+						break;
+					case FOTOSTATION:
+						tagEnum = IPTCFotoStationTag.UNKNOWN;
+						break;
+					case UNKNOWN:
+						throw new RuntimeException("Unknown IPTC record"); 
+				}
 		}
 		
 		return tagEnum.getName();
