@@ -128,7 +128,7 @@ public enum ImageResourceID {
 	PRINT_FLAGS_INFO("Print flags information. 2 bytes version (=1), 1 byte center crop marks, 1 byte (=0), 4 bytes bleed width value, 2 bytes bleed width scale.", (short)0x2710),
 	
 	// unknown tag
-	UNKNOWN("Unknown ImageResource ID",  (short)0xffff); 
+	UNKNOWN("Unknown ImageResourceID",  (short)0xffff); 
   	
 	private ImageResourceID(String description, short value) {
 		this.description = description;
