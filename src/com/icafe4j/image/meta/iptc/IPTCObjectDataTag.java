@@ -26,7 +26,7 @@ import com.icafe4j.string.StringUtils;
 public enum IPTCObjectDataTag implements IPTCTag {
 	 SUB_FILE(10, "SubFile"),
 		 	 	 
-	 UNKNOWN(999, "Unknown");
+	 UNKNOWN(999, "Unknown ObjectDataTag");
 	 
 	 private IPTCObjectDataTag(int tag, String name) {
 		 this.tag = tag;

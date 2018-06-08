@@ -23,7 +23,7 @@ import java.util.Map;
 public enum IPTCRecord {
 	ENVELOP(1, "Envelop"), APPLICATION(2, "Application"), NEWSPHOTO(3, "NewsPhoto"),
 	PRE_OBJECTDATA(7, "PreObjectData"), OBJECTDATA(8, "ObjectData"), POST_OBJECTDATA(9, "PostObjectData"),
-	FOTOSTATION(240, "FotoStation"), UNKNOWN(999, "Unknown");	
+	FOTOSTATION(240, "FotoStation"), UNKNOWN(999, "Unknown IPTC Record");	
 	
 	private IPTCRecord(int recordNumber, String name) {
 		this.recordNumber = recordNumber;

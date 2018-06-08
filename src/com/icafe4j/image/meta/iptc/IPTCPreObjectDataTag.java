@@ -29,7 +29,7 @@ public enum IPTCPreObjectDataTag implements IPTCTag {
 	 OBJECT_SIZE_ANNOUNCED(90, "Object Size Announced"),
 	 MAXIMUM_OBJECT_SIZE(95, "Maximum Object Size"),
 	 	 	 
-	 UNKNOWN(999, "Unknown");
+	 UNKNOWN(999, "Unknown IPTCPreObjectDataTag");
 	 
 	 private IPTCPreObjectDataTag(int tag, String name) {
 		 this.tag = tag;

@@ -25,7 +25,7 @@ import com.icafe4j.string.StringUtils;
  */
 public enum IPTCFotoStationTag implements IPTCTag  {
 	// No record available
-	UNKNOWN(999, "Unknown");
+	UNKNOWN(999, "Unknown IPTCFotoStationTag");
 	 
 	private IPTCFotoStationTag(int tag, String name) {
 		this.tag = tag;

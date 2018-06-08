@@ -51,7 +51,7 @@ public enum IPTCNewsPhotoTag implements IPTCTag {
 	 MAXIMUM_DENSITY_RANGE(140, "Maximum Density Range"),
 	 GAMMA_COMPENSATED_VALUE(145, "Gamma Compensated Value"),
 	 	 
-	 UNKNOWN(999, "Unknown");
+	 UNKNOWN(999, "Unknown IPTCNewsPhotoTag");
 	 
 	 private IPTCNewsPhotoTag(int tag, String name) {
 		 this.tag = tag;

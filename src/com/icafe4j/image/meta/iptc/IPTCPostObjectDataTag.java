@@ -26,7 +26,7 @@ import com.icafe4j.string.StringUtils;
 public enum IPTCPostObjectDataTag implements IPTCTag {
 	 CONFIRMED_OBJECT_SIZE(10, "ConfirmedObjectSize"),
 		 	 	 
-	 UNKNOWN(999, "Unknown");
+	 UNKNOWN(999, "Unknown IPTCPostObjectDataTag");
 	 
 	 private IPTCPostObjectDataTag(int tag, String name) {
 		 this.tag = tag;

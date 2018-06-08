@@ -179,7 +179,7 @@ public enum IPTCApplicationTag implements IPTCTag {
 		 }
 	 },
 	  
-	 UNKNOWN(999, "Unknown");
+	 UNKNOWN(999, "Unknown IPTCApplicationTag");
 	 
 	 private IPTCApplicationTag(int tag, String name) {
 		 this.tag = tag;

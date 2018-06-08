@@ -49,7 +49,7 @@ public enum IPTCEnvelopeTag implements IPTCTag {
 	 ARM_IDENTIFIER(120, "ARM Identifier"),
 	 ARM_VERSION(122, "ARM Version"),
 	 	 
-	 UNKNOWN(999, "Unknown");
+	 UNKNOWN(999, "Unknown IPTCEnvelopeTag");
 	 
 	 private IPTCEnvelopeTag(int tag, String name) {
 		 this.tag = tag;
