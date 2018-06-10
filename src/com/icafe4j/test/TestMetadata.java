@@ -62,14 +62,16 @@ public class TestMetadata extends TestBase {
 		for(Map.Entry<MetadataType, Metadata> entry : metadataMap.entrySet()) {
 			//
 			logger.info("Metadata entry {} - {}", i, entry.getKey());
-			
-			Iterator<MetadataEntry> iterator = entry.getValue().iterator();
-			
-			while(iterator.hasNext()) {
-				MetadataEntry item = iterator.next();
-				printMetadata(item, "", "     ");
-			}
-			
+			Metadata meta = entry.getValue();
+			if(meta instanceof XMP) XMP.showXMP((XMP)meta);
+			else {
+				Iterator<MetadataEntry> iterator = entry.getValue().iterator();
+				
+				while(iterator.hasNext()) {
+					MetadataEntry item = iterator.next();
+					printMetadata(item, "", "     ");
+				}
+			}			
 			i++;
 			logger.info("-----------------------------------------");
 		}

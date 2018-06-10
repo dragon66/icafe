@@ -200,22 +200,23 @@ public class XMLUtils {
 	    doc.appendChild(pi);
 	}
 	
-	public static void printNode(Node node, String indent) {
+	public static void printNode(Node node, String increment) {
 		StringBuilder xmlTree = new StringBuilder();
+		String indent = "";
 		// Construct the XML tree
-		print(node, indent, xmlTree);
+		print(node, indent, increment, xmlTree);
 		// Log the XML tree
 		LOGGER.info("\n{}", xmlTree);
 	}
 	
-	private static void print(Node node, String indent, StringBuilder stringBuilder) {
+	private static void print(Node node, String indent, String increment, StringBuilder stringBuilder) {
 		if(node != null) {
 			if(indent == null) indent = "";  
 			switch(node.getNodeType()) {
 		        case Node.DOCUMENT_NODE: {
 		            Node child = node.getFirstChild();
 		            while(child != null) {
-		            	print(child, indent, stringBuilder);
+		            	print(child, indent, increment, stringBuilder);
 		            	child = child.getNextSibling();
 		            }
 		            break;
@@ -236,10 +237,9 @@ public class XMLUtils {
 		            }
 		            stringBuilder.append(">\n");
 	
-		            String newindent = indent + "    ";
 		            Node child = ele.getFirstChild();
 		            while(child != null) {
-		            	print(child, newindent, stringBuilder);
+		            	print(child, indent + increment, increment, stringBuilder);
 		            	child = child.getNextSibling();
 		            }
 	
@@ -416,6 +416,6 @@ public class XMLUtils {
 	}
 	
 	public static void showXML(Document document) {
-		printNode(document,"");
+		printNode(document, "     ");
 	}
 }

@@ -58,6 +58,10 @@ public abstract class XMP extends Metadata {
 	private byte[] extendedXmpData;
 	
 	private String xmp;
+	
+	public static void showXMP(XMP xmp) {
+		XMLUtils.showXML(xmp.getMergedDocument());
+	}
 		
 	public XMP(byte[] data) {
 		super(MetadataType.XMP, data);
