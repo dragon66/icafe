@@ -72,14 +72,11 @@ public class Adobe extends Metadata {
 		ensureDataRead();
 		
 		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
-		MetadataEntry root = new MetadataEntry("JPEG", "APP14 (Adobe)", true);
 		String[] colorTransform = {"Unknown (RGB or CMYK)", "YCbCr", "YCCK"};
-		root.addEntry(new MetadataEntry("DCTEncodeVersion", m_DCTEncodeVersion + ""));
-		root.addEntry(new MetadataEntry("APP14Flags0", StringUtils.shortToHexStringMM((short)m_APP14Flags0)));
-		root.addEntry(new MetadataEntry("APP14Flags1", StringUtils.shortToHexStringMM((short)m_APP14Flags1)));
-		root.addEntry(new MetadataEntry("ColorTransform", (m_ColorTransform <= 2)?colorTransform[m_ColorTransform]:m_ColorTransform + ""));
-		
-		entries.add(root);
+		entries.add(new MetadataEntry("DCTEncodeVersion", m_DCTEncodeVersion + ""));
+		entries.add(new MetadataEntry("APP14Flags0", StringUtils.shortToHexStringMM((short)m_APP14Flags0)));
+		entries.add(new MetadataEntry("APP14Flags1", StringUtils.shortToHexStringMM((short)m_APP14Flags1)));
+		entries.add(new MetadataEntry("ColorTransform", (m_ColorTransform <= 2)?colorTransform[m_ColorTransform]:m_ColorTransform + ""));
 		
 		return Collections.unmodifiableCollection(entries).iterator();
 	}

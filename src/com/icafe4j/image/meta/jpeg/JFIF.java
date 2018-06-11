@@ -134,16 +134,13 @@ public class JFIF extends Metadata {
 	public Iterator<MetadataEntry> iterator() {
 		ensureDataRead();
 		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
-		MetadataEntry root = new MetadataEntry("JPEG", "JFIF", true);
 		String[] densityUnits = {"No units, aspect ratio only specified", "Dots per inch", "Dots per centimeter"};
-		root.addEntry(new MetadataEntry("Version", majorVersion + "." + minorVersion));
-		root.addEntry(new MetadataEntry("Density unit", (densityUnit <= 2)?densityUnits[densityUnit]:densityUnit + ""));
-		root.addEntry(new MetadataEntry("XDensity", xDensity + ""));
-		root.addEntry(new MetadataEntry("YDensity", yDensity + ""));
-		root.addEntry(new MetadataEntry("Thumbnail width", thumbnailWidth + ""));
-		root.addEntry(new MetadataEntry("Thumbnail height", thumbnailHeight + ""));
-		
-		entries.add(root);
+		entries.add(new MetadataEntry("Version", majorVersion + "." + minorVersion));
+		entries.add(new MetadataEntry("Density unit", (densityUnit <= 2)?densityUnits[densityUnit]:densityUnit + ""));
+		entries.add(new MetadataEntry("XDensity", xDensity + ""));
+		entries.add(new MetadataEntry("YDensity", yDensity + ""));
+		entries.add(new MetadataEntry("Thumbnail width", thumbnailWidth + ""));
+		entries.add(new MetadataEntry("Thumbnail height", thumbnailHeight + ""));
 		
 		return Collections.unmodifiableCollection(entries).iterator();
 	}

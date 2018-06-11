@@ -72,13 +72,10 @@ public class Ducky extends Metadata {
 		ensureDataRead();
 		
 		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
-		MetadataEntry root = new MetadataEntry("JPEG", "Ducky", true);
-		
+			
 		for(DuckyDataSet dataset : datasetMap.values()) {
-			root.addEntry(dataset.getMetadataEntry());
+			entries.add(dataset.getMetadataEntry());
 		}
-		
-		entries.add(root);
 		
 		return Collections.unmodifiableCollection(entries).iterator();
 	}

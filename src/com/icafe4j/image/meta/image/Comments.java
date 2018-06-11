@@ -67,12 +67,9 @@ public class Comments extends Metadata {
 	public Iterator<MetadataEntry> iterator() {
 		ensureDataRead();
 		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
-		MetadataEntry root = new MetadataEntry("COMMENTS", "Image Comments", true);
-		int i = 0;
+			
 		for (String comment : comments)
-		    root.addEntry(new MetadataEntry("Comment #" + i++, comment));
-		
-		entries.add(root);
+		    entries.add(new MetadataEntry(comment, "")); // For comments, we set the value to empty string
 		
 		return Collections.unmodifiableCollection(entries).iterator();
 	}

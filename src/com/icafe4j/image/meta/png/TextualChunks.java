@@ -79,13 +79,10 @@ public class TextualChunks extends Metadata {
 	public Iterator<MetadataEntry> iterator() {
 		ensureDataRead();
 		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
-		MetadataEntry root = new MetadataEntry("PNG", "Textual Chunks", true);
-		
+			
 		for (Map.Entry<String, String> entry : keyValMap.entrySet()) {
-		    root.addEntry(new MetadataEntry(entry.getKey(), entry.getValue()));
+		    entries.add(new MetadataEntry(entry.getKey(), entry.getValue()));
 		}
-		
-		entries.add(root);
 		
 		return Collections.unmodifiableCollection(entries).iterator();
 	}

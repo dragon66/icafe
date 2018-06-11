@@ -121,11 +121,8 @@ public class TIMEChunk extends Metadata {
 		ensureDataRead();
 		
 		List<MetadataEntry> entries = new ArrayList<MetadataEntry>();
-		MetadataEntry root = new MetadataEntry("PNG", "tIME Chunk", true);
-		
-		root.addEntry(new MetadataEntry("UTC (Time of last modification)", day + " " + ((month > 0 && month <= 12)? MONTH[month]:"()") + " " + year + ", " + hour + ":" + minute + ":" + second));
-		
-		entries.add(root);
+				
+		entries.add(new MetadataEntry("UTC (Time of last modification)", day + " " + ((month > 0 && month <= 12)? MONTH[month]:"()") + " " + year + ", " + hour + ":" + minute + ":" + second));
 		
 		return Collections.unmodifiableCollection(entries).iterator();
 	}
