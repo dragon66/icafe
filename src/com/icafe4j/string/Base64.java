@@ -23,11 +23,9 @@ import com.icafe4j.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.01 04/18/2012
  */
-public final class Base64
-{
-	private static final char[] base64Map =  // base64 character table
-    {
-		'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
+public final class Base64 {
+	private static final char[] base64Map = { // base64 character table
+   		'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
 		'O','P','Q','R','S','T','U','V','W','X','Y','Z','a','b',
 		'c','d','e','f','g','h','i','j','k','l','m','n','o','p',
 		'q','r','s','t','u','v','w','x','y','z','0','1','2','3',
@@ -79,23 +77,18 @@ public final class Base64
 		if( buf.length == 0 )  return "" ; 
        
 		// Cope with less than 3 bytes conditions at the end of buf 
-		switch(buf.length%3)
-		{
+		switch(buf.length%3) {
 			case 1: 
-         	{ 
          		padding += base64Map[((buf[buf.length-1] >>> 2) & 63)];
          		padding += base64Map[((buf[buf.length-1] << 4) & 63)];     
          		padding += "==";
          		break;
-         	}      
          	case 2:
-         	{
-         		padding += base64Map[( buf[buf.length-2] >>> 2) & 63];
+        		padding += base64Map[( buf[buf.length-2] >>> 2) & 63];
          		padding += base64Map[(((buf[buf.length-2] << 4)&63)) | (((buf[buf.length-1] >>>4) & 63))];          
          		padding += base64Map[( buf[buf.length-1] << 2) & 63];          
          		padding += "=";
          		break;
-         	}
          	default:
          		break;
 		}     
@@ -104,8 +97,7 @@ public final class Base64
 		int index = 0;
           
 		// Encode buf.length-buf.length%3 bytes which must be a multiply of 3
-		for( int i = 0; i < (buf.length-(buf.length % 3)) ;)
-		{
+		for( int i = 0; i < (buf.length-(buf.length % 3)) ;) {
 			// Get three bytes and encode them to four base64 characters
 			temp = ((buf[i++] << 16)&0xFF0000)|((buf[i++] << 8)&0xFF00)|(buf[i++]&0xFF) ;
 			index = (temp >> 18) & 63 ;        
