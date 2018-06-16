@@ -159,7 +159,7 @@ public final class Base64 {
 			} else { // Discard line breaks and other non-significant characters
 				if(buf[i] == '\n' || buf[i] == '\r' || buf[i] == ' ' || buf[i] == '\t')
 					continue;
-				throw new RuntimeException("Illegal character found in encoded string!");
+				else continue; // Ignore all the other characters not in the base64Map too
 			}
              
 			if(index == 4) { 
