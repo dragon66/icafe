@@ -35,6 +35,7 @@ import com.icafe4j.image.meta.Thumbnail;
 public class ImageMetadata extends Metadata {
 	private Map<String, Thumbnail> thumbnails;
 	private Collection<MetadataEntry> entries = new ArrayList<MetadataEntry>();
+	
 	public ImageMetadata() {
 		super(MetadataType.IMAGE);
 	}
