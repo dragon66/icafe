@@ -44,27 +44,25 @@ public class CollectionUtils {
 	     return keys;
 	}
 
-	public static int[] integerListToIntArray(List<Integer> integers)
-	{
+	public static int[] integerListToIntArray(List<Integer> integers) {
 	    int[] ret = new int[integers.size()];
 	    Iterator<Integer> iterator = integers.iterator();
 	    
-	    for (int i = 0; i < ret.length; i++)
-	    {
+	    for (int i = 0; i < ret.length; i++) {
 	        ret[i] = iterator.next().intValue();
 	    }
 	    
 	    return ret;
 	}
 	
-	public static <T> LinkedList<T> reverseLinkedList(LinkedList<T> list){
+	public static <T> LinkedList<T> reverseLinkedList(LinkedList<T> list) {
 
         if(list == null)
             return null;
 
         int size = list.size();
         
-        for(int i = 0; i < size; i++){
+        for(int i = 0; i < size; i++) {
             list.add(i, list.removeLast());
         }
 
