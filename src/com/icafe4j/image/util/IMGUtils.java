@@ -120,8 +120,7 @@ public class IMGUtils {
 	 * @param colorPalette the color map for the image
 	 * @return an int array holding the color depth and the transparent color index if any
 	 */
-	public static int[] checkColorDepth(int[] rgbTriplets, byte[] newPixels, final int[] colorPalette)
-	{
+	public static int[] checkColorDepth(int[] rgbTriplets, byte[] newPixels, final int[] colorPalette) {
 		int index = 0;
 		int temp = 0;
 		int bitsPerPixel = 1;
@@ -131,14 +130,11 @@ public class IMGUtils {
 		
 		IntHashtable<Integer> rgbHash = new IntHashtable<Integer>(1023);
 				
-		for (int i = 0; i < rgbTriplets.length; i++)
-		{
+		for (int i = 0; i < rgbTriplets.length; i++) {
 			temp = (rgbTriplets[i]&0x00ffffff);
 
-            if((rgbTriplets[i] >>> 24) < 0x80 )// Transparent
-			{
-				if (transparent_index < 0)
-				{
+            if((rgbTriplets[i] >>> 24) < 0x80 ) {// Transparent
+				if (transparent_index < 0) {
 					transparent_index = index;
 				    transparent_color = temp;// Remember transparent color
 				}

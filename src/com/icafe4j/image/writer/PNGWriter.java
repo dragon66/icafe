@@ -79,8 +79,7 @@ public class PNGWriter extends ImageWriter {
 		byte[] tempRow = new byte[bytesPerScanLine];
 		byte[] filteredRow = new byte[bytesPerScanLine];
 		
-		for (int j = height - 1, offset = pixBytes.length - bytesPerScanLine; j >= 0; j--, offset -= bytesPerScanLine)
-		{
+		for (int j = height - 1, offset = pixBytes.length - bytesPerScanLine; j >= 0; j--, offset -= bytesPerScanLine) {
 			System.arraycopy(pixBytes, offset, tempRow, 0, bytesPerScanLine);
 			
 			Filter.filter_sub(bytesPerPixel, bytesPerScanLine, pixBytes, offset);
@@ -125,8 +124,7 @@ public class PNGWriter extends ImageWriter {
 	// Apply filter using the predefined filter type array
 	private static void apply_filter(int[] filter_type, byte[] pixBytes, int height, int bytesPerPixel, int bytesPerScanLine) {
 		//
-		for (int j = height - 1, offset = pixBytes.length - bytesPerScanLine; j >= 0; j--, offset -= bytesPerScanLine)
-		{
+		for (int j = height - 1, offset = pixBytes.length - bytesPerScanLine; j >= 0; j--, offset -= bytesPerScanLine) {
 			switch (filter_type[j]) {
 		  		case Filter.NONE:
 		  			break;
@@ -211,8 +209,7 @@ public class PNGWriter extends ImageWriter {
 		compressionLevel = 4;	
 	}
 	
-	protected void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception 
-    {	
+	protected void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {	
 		IOUtils.writeLongMM(os, SIGNATURE);
 		
 		reset(); // Reset writer in case we are going to write multiple images
@@ -361,7 +358,7 @@ public class PNGWriter extends ImageWriter {
 		int[] colorInfo = IMGUtils.checkColorDepth(pixels, bytePixels, colorPalette);
 		int bitsPerPixel = colorInfo[0];
 		
-		if(colorInfo[0]>0x08) {
+		if(bitsPerPixel>0x08) {
 			bitsPerPixel = 8;
 			if(param.isApplyDither()) {
 				if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)

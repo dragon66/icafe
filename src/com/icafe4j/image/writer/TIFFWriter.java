@@ -702,7 +702,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		int[] colorInfo = IMGUtils.checkColorDepth(pixels, newPixels, colorPalette);
 		int bitsPerPixel = colorInfo[0];
 		ImageParam param = getImageParam();
-		if(colorInfo[0]>0x08) {
+		if(bitsPerPixel>0x08) {
 			bitsPerPixel = 8;
 			if(param.isApplyDither()) {
 				if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
