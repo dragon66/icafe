@@ -471,7 +471,9 @@ public class GIFWriter extends ImageWriter {
 	    colorInfo = IMGUtils.checkColorDepth(pixels, newPixels, colorPalette);
 		
 	    if(colorInfo[0] > 0x08) {
-	    	bitsPerPixel = 8;
+			bitsPerPixel = param.getBitsPerPixel();
+			if(bitsPerPixel <= 0 || bitsPerPixel > 8)
+				bitsPerPixel = 8;
 	    	if(param.isApplyDither()) {
 	    		if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
 	        		colorInfo = IMGUtils.reduceColorsDiffusionDither(param.getQuantMethod(), pixels, imageWidth, imageHeight, bitsPerPixel, newPixels, colorPalette);	        		

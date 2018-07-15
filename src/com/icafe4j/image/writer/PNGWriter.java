@@ -359,7 +359,9 @@ public class PNGWriter extends ImageWriter {
 		int bitsPerPixel = colorInfo[0];
 		
 		if(bitsPerPixel>0x08) {
-			bitsPerPixel = 8;
+			bitsPerPixel = param.getBitsPerPixel();
+			if(bitsPerPixel <= 0 || bitsPerPixel > 8)
+				bitsPerPixel = 8;
 			if(param.isApplyDither()) {
 				if(param.getDitherMethod() == DitherMethod.FLOYD_STEINBERG)
 					colorInfo = IMGUtils.reduceColorsDiffusionDither(param.getQuantMethod(), pixels, imageWidth, imageHeight, bitsPerPixel, bytePixels, colorPalette);
