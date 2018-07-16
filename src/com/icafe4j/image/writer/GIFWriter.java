@@ -626,8 +626,7 @@ public class GIFWriter extends ImageWriter {
         int index = 0;
         byte colors[] = new byte[num_of_color*3];
         
-        for (int i=0; i<num_of_color; i++)
-	    {
+        for (int i=0; i<num_of_color; i++) {
 		  colors[index++] = (byte)(((colorPalette[i]>>16)&0xff));
 		  colors[index++] = (byte)(((colorPalette[i]>>8)&0xff));
 		  colors[index++] = (byte)(colorPalette[i]&0xff);

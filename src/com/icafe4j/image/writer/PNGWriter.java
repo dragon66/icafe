@@ -354,11 +354,12 @@ public class PNGWriter extends ImageWriter {
 		int bytesPerScanLine = imageWidth * 1;
 		byte[] bytePixels = new byte[imageHeight * bytesPerScanLine];
 
+		int bitsPerPixel = 8;
+		
 		int[] colorPalette = new int[256];
 		int[] colorInfo = IMGUtils.checkColorDepth(pixels, bytePixels, colorPalette);
-		int bitsPerPixel = colorInfo[0];
-		
-		if(bitsPerPixel>0x08) {
+				
+		if(colorInfo[0]>0x08) {
 			bitsPerPixel = param.getBitsPerPixel();
 			if(bitsPerPixel <= 0 || bitsPerPixel > 8)
 				bitsPerPixel = 8;
@@ -370,6 +371,8 @@ public class PNGWriter extends ImageWriter {
 			} else
 	    		colorInfo = IMGUtils.reduceColors(param.getQuantMethod(), pixels, bitsPerPixel, bytePixels, colorPalette);
 		}
+		
+		bitsPerPixel = colorInfo[0];
 		
 		switch(bitsPerPixel) {
 			case 3:

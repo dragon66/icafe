@@ -33,8 +33,7 @@ public class BMPWriter extends ImageWriter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BMPWriter.class);
 	
 	// Image header
-	private static class BitmapHeader
-	{
+	private static class BitmapHeader {
 		// Bitmap file header, 14 bytes
 		final byte signature[] = {'B','M'};// always "BM", decimal 19778, hex 0x4d42
 		int   fileSize = 0x36; // Total size of file in bytes, to be set
@@ -87,8 +86,7 @@ public class BMPWriter extends ImageWriter {
 		int   colorsUsed; // To be set    
 		int   colorsImportant; // Number of important colors (0 = all), to be set
 
-		void writeHeader(OutputStream os) throws Exception
-		{
+		void writeHeader(OutputStream os) throws Exception {
 			byte bhdr[]=new byte[54];
 			// Bitmap file header
 			// signature
@@ -243,8 +241,7 @@ public class BMPWriter extends ImageWriter {
     		IMGUtils.reduceColors(param.getQuantMethod(), pixels, 8, newPixels, colorPalette);
 		
 		// Write out the color palette
-		for (int i=0; i<256; i++)
-		{
+		for (int i=0; i<256; i++) {
 			brgb[nindex++] = (byte)(colorPalette[i]&0xff);
 			brgb[nindex++] = (byte)(((colorPalette[i]>>8)&0xff));
 			brgb[nindex++] = (byte)(((colorPalette[i]>>16)&0xff));
@@ -255,13 +252,11 @@ public class BMPWriter extends ImageWriter {
 		// Write out the color index of the raster data
 		brgb = new byte[bytePerScanLine];
 
-		for(int i=1; i<=imageHeight; i++)
-		{		
+		for(int i=1; i<=imageHeight; i++) {		
 			nindex = 0;
 			index = imageWidth*(imageHeight-i);
 		  
-			for(int j=0; j<imageWidth; j++)
-			{
+			for(int j=0; j<imageWidth; j++) {
 				brgb[nindex++] = newPixels[index++];
 			}
 		  
@@ -301,13 +296,11 @@ public class BMPWriter extends ImageWriter {
 		// Write bitmap image header
 		bitmapHeader.writeHeader(os);
 		// Write raster data
-		for(int i=1; i<=imageHeight; i++)
-		{
+		for(int i=1; i<=imageHeight; i++) {
 			nindex = 0;
 			index = imageWidth*(imageHeight-i);
 		  
-			for(int j=0; j<imageWidth; j++)
-			{
+			for(int j=0; j<imageWidth; j++)	{
 				brgb[nindex++] = (byte)(pixels[index]&0xff);
 				brgb[nindex++] = (byte)((pixels[index]>>8)&0xff);
 				brgb[nindex++] = (byte)((pixels[index++]>>16)&0xff);

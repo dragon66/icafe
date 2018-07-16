@@ -696,13 +696,17 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		
 		if(!supportedCompressionTypes.contains(compression)) throw new UnsupportedCompressionException("Indexed Image only supports the following compression types: " + supportedCompressionTypes);
 		
+		ImageParam param = getImageParam();
+		
 		// Create data for the strip
 		byte[] newPixels = new byte[imageWidth*imageHeight];
+		
+		int bitsPerPixel = 8;
+		
 		int[] colorPalette = new int[256];
 		int[] colorInfo = IMGUtils.checkColorDepth(pixels, newPixels, colorPalette);
-		int bitsPerPixel = colorInfo[0];
-		ImageParam param = getImageParam();
-		if(bitsPerPixel>0x08) {
+	
+		if(colorInfo[0]>0x08) {
 			bitsPerPixel = param.getBitsPerPixel();
 			if(bitsPerPixel <= 0 || bitsPerPixel > 8)
 				bitsPerPixel = 8;
@@ -714,6 +718,8 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 			} else
 	    		colorInfo = IMGUtils.reduceColors(param.getQuantMethod(), pixels, bitsPerPixel, newPixels, colorPalette);
 		}
+		
+		bitsPerPixel = colorInfo[0];
 		
 		switch(bitsPerPixel) {
 			case 3:
