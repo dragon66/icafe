@@ -133,7 +133,7 @@ public class IMGUtils {
 		for (int i = 0; i < rgbTriplets.length; i++) {
 			temp = (rgbTriplets[i]&0x00ffffff);
 
-            if((rgbTriplets[i] >>> 24) < 0x80 ) {// Transparent
+            if((rgbTriplets[i] >>> 24) == 0 ) {// Transparent
 				if (transparent_index < 0) {
 					transparent_index = index;
 				    transparent_color = temp;// Remember transparent color
@@ -156,10 +156,10 @@ public class IMGUtils {
 				colorPalette[index++] = ((0xff<<24)|temp);
 			}
 		}
-		if(transparent_index>=0)// This line could be used to set a different background color
+		if(transparent_index >= 0)// This line could be used to set a different background color
 			colorPalette[transparent_index] = transparent_color;
 		// Return the actual bits per pixel and the transparent color index if any
-		while ((1<<bitsPerPixel)<index)  bitsPerPixel++;
+		while ((1<<bitsPerPixel) < index)  bitsPerPixel++;
 		
 		colorInfo[0] = bitsPerPixel;
 		colorInfo[1] = transparent_index;
@@ -1081,36 +1081,39 @@ public class IMGUtils {
 		if(colorDepth > 8 || colorDepth < 1) 
 			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
 		int no_of_color = 1<<colorDepth;
-		int[] colorFreq = new int[4096];
-		int[] indexColor = new int[4096];
-	    int[] clrPalRed = new int[no_of_color];
+		int[] colorFreq = new int[65536];
+		int[] indexColor = new int[65536];
+		int[] clrPalRed = new int[no_of_color];
         int[] clrPalGreen = new int[no_of_color];
 	    int[] clrPalBlue = new int[no_of_color];
+	    int[] clrPalAlpha = new int[no_of_color];
 		int[] colorInfo = new int[2];// Return value
 		int[] colorIndex;
 		int bitsPerPixel = 1;
 		int transparent_color = -1;// Transparent color 
 		int transparent_index = -1;// Transparent color index
 		
-		int red, green, blue, index, colorCount, temp, temp1, err1, err2;
-        // Get the 4 most significant bits of red, green and blue to
-        // form a 12 bits integer and determine the frequencies of different 
+		int red, green, blue, alpha, index, colorCount, temp, temp1, err1, err2;
+        // Get the 4 most significant bits of red, green, blue, and alpha to
+        // form a 16 bits integer and determine the frequencies of different 
         // values
 		for (int i = 0; i < rgbTriplets.length; i++) {
-			if((rgbTriplets[i] >>> 24) < 0x80) { // Transparent
+			if((rgbTriplets[i] >>> 24) == 0) { // Transparent
 				if (transparent_color < 0)	// Find the transparent color	
 					transparent_color = rgbTriplets[i];			
 			}
 			red = ((rgbTriplets[i]&0xf00000)>>>20);
 			green = ((rgbTriplets[i]&0x00f000)>>>8);
 			blue = ((rgbTriplets[i]&0x0000f0)<<4);
-			index = (red|green|blue);
+			alpha = ((rgbTriplets[i]&0xf0000000)>>>16);
+			
+			index = (alpha|red|green|blue);
 			colorFreq[index]++;
 		}
-        // Throw away the zero items
+        // Throw away the zero frequency items and/or transparent items
         colorCount = 0;
-        for (int i = 0; i < 4096; i++ ) {
-			if (colorFreq[i] != 0) {
+        for (int i = 0; i < 65536; i++ ) {
+			if (colorFreq[i] != 0 && (i&0xf000) != 0) {
 				colorFreq[colorCount] = colorFreq[i];
 				indexColor[colorCount++] = i;
 			}
@@ -1141,8 +1144,9 @@ public class IMGUtils {
             clrPalBlue[i]  = ((indexColor[i]&0xf00)>>>4);
 			clrPalGreen[i] =(indexColor[i]&0x0f0);
 			clrPalRed[i]  = ((indexColor[i]&0x00f)<<4);
-
-			colorPalette[i] = ((0xff<<24)|(clrPalRed[i]<<16)|(clrPalGreen[i]<<8)|clrPalBlue[i]);
+			clrPalAlpha[i] = ((indexColor[i]&0xf000)>>>8);
+	
+			colorPalette[i] = ((clrPalAlpha[i]<<24)|(clrPalRed[i]<<16)|(clrPalGreen[i]<<8)|clrPalBlue[i]);
 			colorIndex[i] = i;
 		}
 		if(transparent_color >= 0)// There is a transparent color
@@ -1155,13 +1159,14 @@ public class IMGUtils {
 				blue   = ((indexColor[i]&0xf00)>>>4);
 				green = (indexColor[i]&0x0f0);
 				red  = ((indexColor[i]&0x00f)<<4);
+				alpha = ((indexColor[i]&0xf000)>>>8);
 
 				err1 =  (red-clrPalRed[0])*(red-clrPalRed[0])+(green-clrPalGreen[0])*(green-clrPalGreen[0])+
-					    (blue-clrPalBlue[0])*(blue-clrPalBlue[0]);
+					    (blue-clrPalBlue[0])*(blue-clrPalBlue[0]) + (alpha - clrPalAlpha[0])*(alpha - clrPalAlpha[0]);
                 
 				for (int j = 1; j < no_of_color; j++) {
 					err2 = (red-clrPalRed[j])*(red-clrPalRed[j])+(green-clrPalGreen[j])*(green-clrPalGreen[j])+
-					       (blue-clrPalBlue[j])*(blue-clrPalBlue[j]);
+					       (blue-clrPalBlue[j])*(blue-clrPalBlue[j]) + (alpha - clrPalAlpha[j])*(alpha - clrPalAlpha[j]);
 					if (err2 < err1) {
 						err1 = err2;
                         index = j;
@@ -1193,18 +1198,21 @@ public class IMGUtils {
 			red = ((rgbTriplets[i]&0xf00000)>>>20);
 			green = ((rgbTriplets[i]&0x00f000)>>>8);
 			blue = ((rgbTriplets[i]&0x0000f0)<<4);
-
-			index = (red|green|blue);
+			alpha = ((rgbTriplets[i]&0xf0000000)>>>16);
+			
+			index = (alpha|red|green|blue);
 			
 		    // Write the color index of different pixels to a new data array
-			newPixels[i] = (byte)colorIndex[colorFreq[index]];
-			if((rgbTriplets[i] >>> 24) < 0x80) { //Transparent
+			if((index&0xf000) != 0) { // Non-transparent pixel
+				newPixels[i] = (byte)colorIndex[colorFreq[index]];
+			} else { // Transparent pixel
 				newPixels[i] = (byte)transparent_index;	
 			}
 	    }
 		// Return the actual bits per pixel and the transparent color index if any
 		colorInfo[0] = bitsPerPixel;
 		colorInfo[1] = transparent_index;
+		
 		return colorInfo;
 	}
 	
