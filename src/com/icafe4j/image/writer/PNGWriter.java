@@ -419,7 +419,6 @@ public class PNGWriter extends ImageWriter {
 			Arrays.fill(alpha, (byte)255);
 			for(int i = 0; i < numOfColors; i++) {
 				alpha[i] = (byte)(colorPalette[i]>>>24);
-				System.out.println(alpha[i]);
 			}
 			chunks.add(tBuilder.alpha(alpha).build());
 		}
