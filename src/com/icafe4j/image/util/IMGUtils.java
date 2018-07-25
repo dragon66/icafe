@@ -1075,9 +1075,10 @@ public class IMGUtils {
 	 * @param colorDepth the desired color depth - actual value might be smaller
 	 * @param newPixels a byte array to hold the color map indexes for the image
 	 * @param colorPalette the color map for the image
+	 * @param fullAlpha whether or not to keep full alpha or single color transparency
 	 * @return a two element int array holding the color depth and the transparent color index if any
 	 */
-	private static int[] reduceColorsPopularity(int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
+	private static int[] reduceColorsPopularity(int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette, boolean fullAlpha)	{
 		if(colorDepth > 8 || colorDepth < 1) 
 			throw new IllegalArgumentException("Invalid color depth " + colorDepth);
 		int no_of_color = 1<<colorDepth;
@@ -1098,7 +1099,8 @@ public class IMGUtils {
         // form a 16 bits integer and determine the frequencies of different 
         // values
 		for (int i = 0; i < rgbTriplets.length; i++) {
-			if((rgbTriplets[i] >>> 24) == 0) { // Transparent
+			boolean trans = (fullAlpha? (rgbTriplets[i] >>> 24) == 0 : (rgbTriplets[i] >>> 24) < 0x80);
+			if(trans) { // Transparent
 				if (transparent_color < 0)	// Find the transparent color	
 					transparent_color = rgbTriplets[i];			
 			}
@@ -1202,11 +1204,14 @@ public class IMGUtils {
 			
 			index = (alpha|red|green|blue);
 			
+			boolean trans = (fullAlpha? (rgbTriplets[i] >>> 24) == 0 || (index&0xf000) == 0 : (rgbTriplets[i] >>> 24) < 0x80);
+			
 		    // Write the color index of different pixels to a new data array
-			if((index&0xf000) != 0) { // Non-transparent pixel
-				newPixels[i] = (byte)colorIndex[colorFreq[index]];
-			} else { // Transparent pixel
+			if(trans) { // Transparent pixel
 				newPixels[i] = (byte)transparent_index;	
+	
+			} else { // Non-transparent pixel
+				newPixels[i] = (byte)colorIndex[colorFreq[index]];
 			}
 	    }
 		// Return the actual bits per pixel and the transparent color index if any
@@ -1217,14 +1222,14 @@ public class IMGUtils {
 	}
 	
 	// Color quantization
-	public static int[] reduceColors(QuantMethod quantMethod, int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette)	{
+	public static int[] reduceColors(QuantMethod quantMethod, int[] rgbTriplets, int colorDepth, byte[] newPixels, final int[] colorPalette, boolean fullAlpha)	{
 		int[] colorInfo = new int[2];
 		if(quantMethod == QuantMethod.WU_QUANT)
 			new WuQuant(rgbTriplets, 1<<colorDepth).quantize(newPixels, colorPalette, colorInfo);
 		else if(quantMethod == QuantMethod.NEU_QUANT)
 			new NeuQuant(rgbTriplets).quantize(newPixels, colorPalette, colorInfo);
 		else
-			colorInfo = reduceColorsPopularity(rgbTriplets, colorDepth, newPixels, colorPalette);
+			colorInfo = reduceColorsPopularity(rgbTriplets, colorDepth, newPixels, colorPalette, fullAlpha);
 		
 		return colorInfo;
 	}
