@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    09Aug2018  Add ByteOrder support to writeMultipageTIFF
  * WY    06Apr2018  Added extractThumbnails(RandomAccessInputStream)
  * WY    14Dec2017  Replace some of the RuntimeException with customized exception
  * WY    13Dec2017  Replace e.printStackTrace() with logging and/or RuntimeException
@@ -142,6 +143,7 @@ import com.icafe4j.image.meta.iptc.IPTCTag;
 import com.icafe4j.image.meta.tiff.TiffExif;
 import com.icafe4j.image.meta.tiff.TiffXMP;
 import com.icafe4j.image.meta.xmp.XMP;
+import com.icafe4j.image.options.TIFFOptions;
 import com.icafe4j.image.tiff.TiffFieldEnum.PhotoMetric;
 import com.icafe4j.image.writer.ImageWriter;
 import com.icafe4j.image.writer.TIFFWriter;
@@ -3414,6 +3416,22 @@ public class TIFFTweaker {
 	 * @throws IOException
 	 */
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageFrame ... frames) throws IOException {
+		// Sanity check
+		if(frames == null || frames.length == 0) throw new IllegalArgumentException("Input ImageFrame array is null or empty");
+		// Grab ByteOrder from the first ImageFrame
+		ImageParam param = frames[0].getFrameParam();
+		if(param != null) {
+			TIFFOptions options = (TIFFOptions)param.getImageOptions();	
+			// Set ByteOrder
+			if(options != null) {
+				ByteOrder byteOrder = options.getByteOrder();			
+				if(byteOrder == ByteOrder.BIG_ENDIAN) {
+					rout.setWriteStrategy(WriteStrategyMM.getInstance());
+				} else {
+					rout.setWriteStrategy(WriteStrategyII.getInstance());
+				}
+			}
+		}
 		// Write header first
 		int writeOffset = writeHeader(rout);
 		// Write pages
@@ -3424,7 +3442,7 @@ public class TIFFTweaker {
 		// Write image frames
 		for(int i = 0; i < frames.length; i++) {
 			BufferedImage frame = frames[i].getFrame();
-			ImageParam param = frames[i].getFrameParam();
+			param = frames[i].getFrameParam();
 			try {
 				writer.setImageParam(param);
 				writeOffset = writer.writePage(frame, pageNumber++, maxPageNumber, rout, writeOffset);
@@ -3433,8 +3451,7 @@ public class TIFFTweaker {
 				LOGGER.error("Failed writing page " + pageNumber, e);
 				throw new PageWritingException("Failed writing page " + pageNumber, e);
 			}
-		}
-		
+		}		
 		// Link the IFDs
 		for(int i = 0; i < list.size() - 1; i++)
 			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
@@ -3445,39 +3462,47 @@ public class TIFFTweaker {
 		}		
 	}
 	
-	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageParam[] imageParam, BufferedImage ... images) throws IOException {
+	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageParam[] imageParams, BufferedImage ... images) throws IOException {
+		// Collect and fix missing ImageParam
+		ImageParam[] params = null;		
+		if(imageParams == null || imageParams.length == 0) {
+			params = new ImageParam[images.length];
+			Arrays.fill(params, ImageParam.DEFAULT_IMAGE_PARAM);
+		} else if(images.length > imageParams.length && imageParams.length > 0) {
+				params = new ImageParam[images.length];
+				System.arraycopy(imageParams, 0, params, 0, imageParams.length);
+				Arrays.fill(params, imageParams.length, images.length, imageParams[imageParams.length - 1]);
+		} else {
+			params = imageParams;
+		}
+		TIFFOptions options = (TIFFOptions)params[0].getImageOptions();
+		if(options != null) {
+			// Set ByteOrder
+			ByteOrder byteOrder = options.getByteOrder();
+			if(byteOrder == ByteOrder.BIG_ENDIAN) {
+				rout.setWriteStrategy(WriteStrategyMM.getInstance());
+			} else {
+				rout.setWriteStrategy(WriteStrategyII.getInstance());
+			}
+		}			
 		// Write header first
 		int writeOffset = writeHeader(rout);
 		// Write pages
 		int pageNumber = 0;
 		int maxPageNumber = images.length;
 		List<IFD> list = new ArrayList<IFD>(images.length);
-		TIFFWriter writer = new TIFFWriter();
-		ImageParam[] param = null;
-		
-		if(imageParam == null) {
-			param = new ImageParam[images.length];
-			Arrays.fill(param, ImageParam.DEFAULT_IMAGE_PARAM);
-		} else if(images.length > imageParam.length && imageParam.length > 0) {
-				param = new ImageParam[images.length];
-				System.arraycopy(imageParam, 0, param, 0, imageParam.length);
-				Arrays.fill(param, imageParam.length, images.length, imageParam[imageParam.length - 1]);
-		} else {
-			param = imageParam;
-		}
-		
+		TIFFWriter writer = new TIFFWriter();		
 		// Write image frames
 		for(int i = 0; i < images.length; i++) {
 			try {
-				writer.setImageParam(param[i]);
+				writer.setImageParam(params[i]);
 				writeOffset = writer.writePage(images[i], pageNumber++, maxPageNumber, rout, writeOffset);
 				list.add(writer.getIFD());
 			} catch (Exception e) {
 				LOGGER.error("Failed writing page " + pageNumber, e);
 				throw new PageWritingException("Failed writing page " + pageNumber, e);
 			}
-		}
-		
+		}		
 		// Link the IFDs
 		for(int i = 0; i < list.size() - 1; i++)
 			list.get(i).setNextIFDOffset(rout, list.get(i+1).getStartOffset());
