@@ -27,6 +27,7 @@ import com.icafe4j.image.tiff.IFD;
 import com.icafe4j.image.tiff.TIFFTweaker;
 import com.icafe4j.image.tiff.TiffFieldEnum.Compression;
 import com.icafe4j.image.writer.TIFFWriter;
+import com.icafe4j.io.ByteOrder;
 import com.icafe4j.io.FileCacheRandomAccessInputStream;
 import com.icafe4j.io.FileCacheRandomAccessOutputStream;
 import com.icafe4j.io.RandomAccessInputStream;
@@ -114,7 +115,7 @@ public class TestTIFFTweaker extends TestBase {
 					//TIFFTweaker.writeMultipageTIFF(rout, frames);
 					TIFFWriter writer = new TIFFWriter();
 					List<IFD> ifds = new ArrayList<IFD>();
-					int writeOffset = TIFFTweaker.prepareForWrite(rout);
+					int writeOffset = TIFFTweaker.prepareForWrite(rout, ByteOrder.LITTLE_ENDIAN);
 					for(int i = 0; i < frames.length; i++) {
 						writeOffset = TIFFTweaker.writePage(frames[i], rout, ifds, writeOffset, writer);
 					}
