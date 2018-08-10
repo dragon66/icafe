@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    09Aug2018  Add prepareForWrite(RandomAccessOutputStream, ByteOrder)
  * WY    09Aug2018  Add ByteOrder support to writeMultipageTIFF
  * WY    06Apr2018  Added extractThumbnails(RandomAccessInputStream)
  * WY    14Dec2017  Replace some of the RuntimeException with customized exception
@@ -2357,6 +2358,24 @@ public class TIFFTweaker {
 	 * @throws IOException
 	 */
 	public static int prepareForWrite(RandomAccessOutputStream rout) throws IOException {
+		return prepareForWrite(rout, ByteOrder.BIG_ENDIAN);
+	}
+	
+	/**
+	 * Write TIFF header and get ready for writing pages one at a time
+	 * 
+	 * @param rout RandomAccessOutputStream for the output TIFF
+	 * @param byteOrder ByteOrder for the output TIFF
+	 * @return the offset to write first page
+	 * @throws IOException
+	 */
+	public static int prepareForWrite(RandomAccessOutputStream rout, ByteOrder byteOrder) throws IOException {
+		if(byteOrder == null) throw new IllegalArgumentException("Input ByteOrder is null");
+		if(byteOrder == ByteOrder.BIG_ENDIAN) {
+			rout.setWriteStrategy(WriteStrategyMM.getInstance());
+		} else {
+			rout.setWriteStrategy(WriteStrategyII.getInstance());
+		}
 		return writeHeader(rout);
 	}
 	
