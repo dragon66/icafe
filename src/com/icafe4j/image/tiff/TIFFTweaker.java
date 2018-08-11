@@ -3423,7 +3423,7 @@ public class TIFFTweaker {
 	}
 	
 	public static void writeMultipageTIFF(RandomAccessOutputStream rout, BufferedImage ... images) throws IOException {
-		writeMultipageTIFF(rout, null, images);
+		writeMultipageTIFF(rout, images, (ImageParam[])null);
 	}
 	
 	/**
@@ -3481,7 +3481,7 @@ public class TIFFTweaker {
 		}		
 	}
 	
-	public static void writeMultipageTIFF(RandomAccessOutputStream rout, ImageParam[] imageParams, BufferedImage ... images) throws IOException {
+	public static void writeMultipageTIFF(RandomAccessOutputStream rout, BufferedImage[] images, ImageParam ... imageParams) throws IOException {
 		// Collect and fix missing ImageParam
 		ImageParam[] params = null;		
 		if(imageParams == null || imageParams.length == 0) {
