@@ -1676,7 +1676,6 @@ public class JPEGTweaker {
 		// Create a map to hold all the metadata and thumbnails
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 		Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
-		
 		// Need to wrap the input stream with a BufferedInputStream to
 		// speed up reading SOS
 		if(!(is instanceof BufferedInputStream))
@@ -1718,12 +1717,12 @@ public class JPEGTweaker {
 		
 		marker = IOUtils.readShortMM(is);
 		
-		while (!finished) {	        
+		while (!finished) {
 			if (Marker.fromShort(marker) == Marker.EOI)	{
 				finished = true;
 			} else {// Read markers
 				emarker = Marker.fromShort(marker);
-	
+				
 				switch (emarker) {
 					case APP0:
 					case APP1:
@@ -1793,7 +1792,7 @@ public class JPEGTweaker {
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);
 					    IOUtils.skipFully(is, length - 2);
-					    marker = IOUtils.readShortMM(is);			    
+					    marker = IOUtils.readShortMM(is);
 				}
 			}
 	    }
@@ -1956,7 +1955,7 @@ public class JPEGTweaker {
 				nextByte = IOUtils.read(is);
 				
 				if (nextByte == -1) {
-					throw new IOException("Premature end of SOS segment!");					
+					return Marker.EOI.getValue();
 				}								
 				
 				if (nextByte != 0x00) {
@@ -1980,8 +1979,10 @@ public class JPEGTweaker {
 		}
 		
 		if (nextByte == -1) {
-			throw new IOException("Premature end of SOS segment!");
+			return Marker.EOI.getValue();
 		}
+
+		if(Marker.fromShort(marker) == Marker.UNKNOWN) return Marker.EOI.getValue();
 
 		return marker;
 	}
