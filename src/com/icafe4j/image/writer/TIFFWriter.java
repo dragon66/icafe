@@ -848,7 +848,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		String softWare = "ICAFE - https://github.com/dragon66/icafe\0";
 		tiffField = new ASCIIField(TiffTag.SOFTWARE.getValue(), softWare);
 		ifd.addField(tiffField);
-		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss z");
+		DateFormat formatter = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
 		tiffField = new ASCIIField(TiffTag.DATETIME.getValue(), formatter.format(new Date()) + '\0');
 		ifd.addField(tiffField);
 		int xResolution = 72;
