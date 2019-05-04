@@ -1,6 +1,7 @@
 ***************************
-Last modified on 08/09/2018
+Last modified on 05/04/2019
 ***************************
+04May2019  Write IPTC to normal TIFF IPTC tag instead of PhotoShop IRB block
 09Aug2018  Add prepareForWrite(RandomAccessOutputStream, ByteOrder) to TIFFTweaker
 09Aug2018  Add ByteOrder support to TIFFTweaker.writeMultipageTIFF
 07Jun2018  Order IPTCDataSet with respect to record number and tag

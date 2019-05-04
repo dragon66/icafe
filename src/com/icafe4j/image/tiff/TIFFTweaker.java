@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    04May2019  Write IPTC to normal TIFF IPTC tag instead of PhotoShop IRB block
  * WY    09Aug2018  Add prepareForWrite(RandomAccessOutputStream, ByteOrder)
  * WY    09Aug2018  Add ByteOrder support to writeMultipageTIFF
  * WY    06Apr2018  Added extractThumbnails(RandomAccessInputStream)
@@ -1183,21 +1184,11 @@ public class TIFFTweaker {
 					iptcs = new ArrayList<IPTCDataSet>(new HashSet<IPTCDataSet>(iptcs));
 				}
 			}
-			// Sort the IPTCDataSet collection
-			List<IPTCDataSet> iptcList = new ArrayList<IPTCDataSet>(iptcs);
-			Collections.sort(iptcList);
-			// Create IPTC 8BIM
-			for(IPTCDataSet dataset : iptcList) {
-				dataset.write(bout);
-			}
-			_8BIM iptc_bim = new _8BIM(ImageResourceID.IPTC_NAA, "iptc", bout.toByteArray());
-			bout.reset();
-			iptc_bim.write(bout); // Write the IPTC 8BIM first
 			for(_8BIM bim : bims.values()) // Copy the other 8BIMs if any
 				bim.write(bout);
 			// Add a new Photoshop tag field to TIFF
 			workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
-		} else { // We don't have photoshop, add IPTC to regular IPTC tag field
+		} else { // We don't have photoshop, copy the old IPTC data in the IPTC tag is any
 			if(f_iptc != null && update) {
 				byte[] data = null;
 				if(f_iptc.getType() == FieldType.LONG)
@@ -1205,16 +1196,19 @@ public class TIFFTweaker {
 				else
 					data = (byte[])f_iptc.getData();
 				copyIPTCDataSet(iptcs, data);
-			}
-			// Sort the IPTCDataSet collection
-			List<IPTCDataSet> iptcList = new ArrayList<IPTCDataSet>(iptcs);
-			Collections.sort(iptcList);
-			// Write IPTCDataSet collection
-			for(IPTCDataSet dataset : iptcList) {
-				dataset.write(bout);
-			}
-			workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
-		}		
+			}			
+		}
+		
+		// Sort the IPTCDataSet collection
+		List<IPTCDataSet> iptcList = new ArrayList<IPTCDataSet>(iptcs);
+		Collections.sort(iptcList);
+		// Write IPTCDataSet collection
+		bout.reset();
+		for(IPTCDataSet dataset : iptcList) {
+			dataset.write(bout);
+		}
+		// Add IPTC to regular IPTC tag field
+		workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
 		
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
