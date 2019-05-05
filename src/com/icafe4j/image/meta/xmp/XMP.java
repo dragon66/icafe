@@ -48,6 +48,7 @@ import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.string.XMLUtils;
+import com.icafe4j.util.ArrayUtils;
 
 public abstract class XMP extends Metadata {
 	// Fields
@@ -65,7 +66,7 @@ public abstract class XMP extends Metadata {
 	}
 		
 	public XMP(byte[] data) {
-		super(MetadataType.XMP, data);
+		super(MetadataType.XMP, ArrayUtils.trim(data));
 	}
 	
 	public XMP(String xmp) {

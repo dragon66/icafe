@@ -40,6 +40,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.util.AbstractList;
@@ -1330,6 +1331,15 @@ public class ArrayUtils {
 		shortBuf.get(array);
 		
 		return array;
+	}
+	
+	// Assuming input represents UTF-8 string
+	public static byte[] trim(byte[] input) {
+		try {
+			return new String(input, "UTF-8").trim().getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			return input;
+		}
 	}
    	
    	private ArrayUtils(){} // Prevents instantiation
