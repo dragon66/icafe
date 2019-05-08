@@ -67,7 +67,7 @@ public class IRB extends Metadata {
 						for(MetadataEntry e : entries) {
 							LOGGER.info(indent + e.getKey() + ": " + e.getValue());
 						}			
-					}					
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -121,24 +121,24 @@ public class IRB extends Metadata {
 			int thumbnailFormat = thumbnail.getDataType(); //1 = kJpegRGB. Also supports kRawRGB (0).
 			switch (thumbnailFormat) {
 				case IRBThumbnail.DATA_TYPE_KJpegRGB:
-					items.add(new MetadataEntry("Thumbnail Format: ", "DATA_TYPE_KJpegRGB"));
+					items.add(new MetadataEntry("Thumbnail Format", "DATA_TYPE_KJpegRGB"));
 					break;
 				case IRBThumbnail.DATA_TYPE_KRawRGB:
-					items.add(new MetadataEntry("Thumbnail Format: ", "DATA_TYPE_KRawRGB"));
+					items.add(new MetadataEntry("Thumbnail Format", "DATA_TYPE_KRawRGB"));
 					break;
 			}
-			items.add(new MetadataEntry("Thumbnail width:", "" + thumbnail.getWidth()));
-			items.add(new MetadataEntry("Thumbnail height: ", "" + thumbnail.getHeight()));
+			items.add(new MetadataEntry("Thumbnail width", "" + thumbnail.getWidth()));
+			items.add(new MetadataEntry("Thumbnail height", "" + thumbnail.getHeight()));
 			// Padded row bytes = (width * bits per pixel + 31) / 32 * 4.
-			items.add(new MetadataEntry("Thumbnail Padded row bytes:  ", "" + thumbnail.getPaddedRowBytes()));
+			items.add(new MetadataEntry("Thumbnail Padded row bytes", "" + thumbnail.getPaddedRowBytes()));
 			// Total size = widthbytes * height * planes
-			items.add(new MetadataEntry("Thumbnail Total size: ", "" + thumbnail.getTotalSize()));
+			items.add(new MetadataEntry("Thumbnail Total size", "" + thumbnail.getTotalSize()));
 			// Size after compression. Used for consistency check.
-			items.add(new MetadataEntry("Thumbnail Size after compression: ", "" + thumbnail.getCompressedSize()));
+			items.add(new MetadataEntry("Thumbnail Size after compression", "" + thumbnail.getCompressedSize()));
 			// Bits per pixel. = 24
-			items.add(new MetadataEntry("Thumbnail Bits per pixel: ", "" + thumbnail.getBitsPerPixel()));
+			items.add(new MetadataEntry("Thumbnail Bits per pixel", "" + thumbnail.getBitsPerPixel()));
 			// Number of planes. = 1
-			items.add(new MetadataEntry("Thumbnail Number of planes: ", "" + thumbnail.getNumOfPlanes()));
+			items.add(new MetadataEntry("Thumbnail Number of planes", "" + thumbnail.getNumOfPlanes()));
 		}
 	
 		return Collections.unmodifiableList(items).iterator();
