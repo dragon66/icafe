@@ -1196,7 +1196,7 @@ public class TIFFTweaker {
 				else
 					data = (byte[])f_iptc.getData();
 				copyIPTCDataSet(iptcs, data);
-			}			
+			}
 		}
 		
 		// Sort the IPTCDataSet collection
