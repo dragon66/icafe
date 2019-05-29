@@ -2113,11 +2113,8 @@ public class JPEGTweaker {
 							length = IOUtils.readUnsignedShortMM(is);
 						    byte[] temp = new byte[length - 2];
 						    IOUtils.readFully(is, temp);
-							//byte[] temp = new byte[JFIF_ID.length()];
-							// JFIF segment
-							if (temp.length >= JFIF_ID.length() && new String(temp, 0, JFIF_ID.length()).equals(JFIF_ID)) {
-								;
-							} else {
+							// Not JFIF segment
+							if (temp.length < JFIF_ID.length() || ! JFIF_ID.equals(new String(temp, 0, JFIF_ID.length()))) {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp);
@@ -2132,15 +2129,12 @@ public class JPEGTweaker {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);
-							// XMP segment.
-							if(metadataTypes.contains(MetadataType.XMP) && temp.length >= XMP_EXT_ID.length() && new String(temp, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
-								;
-							} else if(metadataTypes.contains(MetadataType.XMP) && temp.length >= XMP_ID.length() && new String(temp, 0, XMP_ID.length()).equals(XMP_ID)) {
-								;
-							} else if(metadataTypes.contains(MetadataType.XMP) && temp.length >= NON_STANDARD_XMP_ID.length() && new String(temp, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID)) {
-								;
-							} else if(metadataTypes.contains(MetadataType.EXIF) && temp.length >= EXIF_ID.length() && new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID)) { // EXIF
-								;
+							// XMP or EXIF segment
+							if((metadataTypes.contains(MetadataType.XMP) && temp.length >= XMP_EXT_ID.length() && new String(temp, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID))
+								|| (metadataTypes.contains(MetadataType.XMP) && temp.length >= XMP_ID.length() && new String(temp, 0, XMP_ID.length()).equals(XMP_ID))
+								|| (metadataTypes.contains(MetadataType.XMP) && temp.length >= NON_STANDARD_XMP_ID.length() && new String(temp, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID))
+								|| (metadataTypes.contains(MetadataType.EXIF) && temp.length >= EXIF_ID.length() && new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID))) { // EXIF
+								// We don't need to do anything
 							} else { // We don't want to remove any of them
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
@@ -2155,10 +2149,8 @@ public class JPEGTweaker {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);	
-							// ICC_Profile segment
-							if (temp.length >= ICC_PROFILE_ID.length() && new String(temp, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
-								;
-							} else {
+							// Not ICC_Profile segment
+							if (temp.length < ICC_PROFILE_ID.length() || ! ICC_PROFILE_ID.equals(new String(temp, 0, ICC_PROFILE_ID.length()))) {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp);
@@ -2172,10 +2164,8 @@ public class JPEGTweaker {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);	
-							// Ducky segment
-							if (temp.length >= DUCKY_ID.length() && new String(temp, 0, DUCKY_ID.length()).equals(DUCKY_ID)) {
-								;
-							} else {
+							// Not Ducky segment
+							if (temp.length < DUCKY_ID.length() || ! DUCKY_ID.equals(new String(temp, 0, DUCKY_ID.length()))) {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp);
@@ -2226,10 +2216,8 @@ public class JPEGTweaker {
 							length = IOUtils.readUnsignedShortMM(is);
 							byte[] temp = new byte[length - 2];
 							IOUtils.readFully(is, temp);	
-							// Adobe segment
-							if (temp.length >= ADOBE_ID.length() && new String(temp, 0, ADOBE_ID.length()).equals(ADOBE_ID)) {
-								;
-							} else {
+							// Not Adobe segment
+							if (temp.length < ADOBE_ID.length() || ! ADOBE_ID.equals(new String(temp, 0, ADOBE_ID.length()))) {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp);
