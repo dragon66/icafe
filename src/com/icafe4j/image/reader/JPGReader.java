@@ -393,8 +393,9 @@ public class JPGReader extends ImageReader {
 		return marker;
 	}
 	   
+	@Override
 	public BufferedImage read(InputStream is) throws Exception {
-		//return javax.imageio.ImageIO.read(is);
-		return read1(is);
+		return javax.imageio.ImageIO.read(is);
+		//return read1(is);
 	}
 }
