@@ -15,7 +15,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 import com.icafe4j.image.compression.ImageEncoder;
-import com.icafe4j.image.jpeg.JPEGConsts;
+import com.icafe4j.image.jpeg.JPGConsts;
 
 /**
  * @author Wen Yu, yuwen_66@yahoo.com
@@ -46,7 +46,7 @@ public class HuffmanEncoder implements ImageEncoder {
 		0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff, 0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff
 	};
 	
-	private static final int[] ZIGZAG_TRAVERSE_ORDER = JPEGConsts.getZigzagMatrix();
+	private static final int[] ZIGZAG_TRAVERSE_ORDER = JPGConsts.getZigzagMatrix();
 	
 	public HuffmanEncoder(OutputStream os, int buf_length) {
 		this.os = os;
@@ -58,13 +58,13 @@ public class HuffmanEncoder implements ImageEncoder {
 		// Create default Huffman tables
 		HuffmanTbl huffTbl = new HuffmanTbl();
 		// DC first
-		huffTbl.setBits(JPEGConsts.getDCLuminanceBits());
-		huffTbl.setValues(JPEGConsts.getDCLuminanceValues());
+		huffTbl.setBits(JPGConsts.getDCLuminanceBits());
+		huffTbl.setValues(JPGConsts.getDCLuminanceValues());
 		huffTbl.generateEncoderTables();
 		DC_EHUFCO[0] = huffTbl.getEncoderCodeTable();
 		DC_EHUFSI[0] = huffTbl.getEncoderSizeTable();
-		huffTbl.setBits(JPEGConsts.getDCChrominanceBits());
-		huffTbl.setValues(JPEGConsts.getDCChrominanceValues());
+		huffTbl.setBits(JPGConsts.getDCChrominanceBits());
+		huffTbl.setValues(JPGConsts.getDCChrominanceValues());
 		huffTbl.generateEncoderTables();
 		DC_EHUFCO[1] = huffTbl.getEncoderCodeTable();
 		DC_EHUFSI[1] = huffTbl.getEncoderSizeTable();
@@ -73,13 +73,13 @@ public class HuffmanEncoder implements ImageEncoder {
 		DC_EHUFCO[3] = huffTbl.getEncoderCodeTable();
 		DC_EHUFSI[3] = huffTbl.getEncoderSizeTable();
 		// Then AC
-		huffTbl.setBits(JPEGConsts.getACLuminanceBits());
-		huffTbl.setValues(JPEGConsts.getACLuminanceValues());
+		huffTbl.setBits(JPGConsts.getACLuminanceBits());
+		huffTbl.setValues(JPGConsts.getACLuminanceValues());
 		huffTbl.generateEncoderTables();
 		AC_EHUFCO[0] = huffTbl.getEncoderCodeTable();
 		AC_EHUFSI[0] = huffTbl.getEncoderSizeTable();
-		huffTbl.setBits(JPEGConsts.getACChrominanceBits());
-		huffTbl.setValues(JPEGConsts.getACChrominanceValues());
+		huffTbl.setBits(JPGConsts.getACChrominanceBits());
+		huffTbl.setValues(JPGConsts.getACChrominanceValues());
 		huffTbl.generateEncoderTables();
 		AC_EHUFCO[1] = huffTbl.getEncoderCodeTable();
 		AC_EHUFSI[1] = huffTbl.getEncoderSizeTable();

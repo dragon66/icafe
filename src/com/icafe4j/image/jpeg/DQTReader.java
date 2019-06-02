@@ -51,7 +51,7 @@ public class DQTReader implements Reader {
 		
 		int offset = 0;
 		
-	  	int[] de_zig_zag_order = JPEGConsts.getDeZigzagMatrix();
+	  	int[] de_zig_zag_order = JPGConsts.getDeZigzagMatrix();
 		  
 		while(len > 0)
 		{

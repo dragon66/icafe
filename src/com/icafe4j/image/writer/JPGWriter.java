@@ -39,7 +39,7 @@ import com.icafe4j.image.ImageParam;
 import com.icafe4j.image.ImageType;
 import com.icafe4j.image.compression.huffman.HuffmanEncoder;
 import com.icafe4j.image.jpeg.HTable;
-import com.icafe4j.image.jpeg.JPEGConsts;
+import com.icafe4j.image.jpeg.JPGConsts;
 import com.icafe4j.image.jpeg.Marker;
 import com.icafe4j.image.jpeg.QTable;
 import com.icafe4j.image.jpeg.Segment;
@@ -188,16 +188,16 @@ public class JPGWriter extends ImageWriter {
 	// May need to change HuffmanEncoder accordingly.
 	private void setDefaultTables(int quality) {
 		// Set default quantization and Huffman tables
-		quant_table[0] = JPEGConsts.getDefaultLuminanceMatrix(quality);
-		quant_table[1] = JPEGConsts.getDefaultChrominanceMatrix(quality);			
-		huffman_bits[0][0] = JPEGConsts.getDCLuminanceBits();
-		huffman_bits[0][1] = JPEGConsts.getDCChrominanceBits();
-		huffman_bits[1][0] = JPEGConsts.getACLuminanceBits();
-		huffman_bits[1][1] = JPEGConsts.getACChrominanceBits();	
-		huffman_values[0][0] = JPEGConsts.getDCLuminanceValues();
-		huffman_values[0][1] = JPEGConsts.getDCChrominanceValues();
-		huffman_values[1][0] = JPEGConsts.getACLuminanceValues();
-		huffman_values[1][1] = JPEGConsts.getACChrominanceValues();	
+		quant_table[0] = JPGConsts.getDefaultLuminanceMatrix(quality);
+		quant_table[1] = JPGConsts.getDefaultChrominanceMatrix(quality);			
+		huffman_bits[0][0] = JPGConsts.getDCLuminanceBits();
+		huffman_bits[0][1] = JPGConsts.getDCChrominanceBits();
+		huffman_bits[1][0] = JPGConsts.getACLuminanceBits();
+		huffman_bits[1][1] = JPGConsts.getACChrominanceBits();	
+		huffman_values[0][0] = JPGConsts.getDCLuminanceValues();
+		huffman_values[0][1] = JPGConsts.getDCChrominanceValues();
+		huffman_values[1][0] = JPGConsts.getACLuminanceValues();
+		huffman_values[1][1] = JPGConsts.getACChrominanceValues();	
 	}
 	
 	protected void write(int[] pixels, int imageWidth, int imageHeight, OutputStream os) throws Exception {	
@@ -326,7 +326,7 @@ public class JPGWriter extends ImageWriter {
 		int precision = table.getPrecision();
 		int index     = table.getID();
 		int[] data    = table.getData();
-		int[] zigzagOrder = JPEGConsts.getZigzagMatrix(); 
+		int[] zigzagOrder = JPGConsts.getZigzagMatrix(); 
 		byte[] dqt;
 		
 		if(precision == 0) { // 8 bits
