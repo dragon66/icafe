@@ -16,9 +16,9 @@ import com.icafe4j.image.meta.jpeg.JpegExif;
 import com.icafe4j.image.tiff.FieldType;
 import com.icafe4j.image.util.IMGUtils;
 
-public class TestJPEGTweaker extends TestBase {
+public class TestJPGTweaker extends TestBase {
 	public static void main(String[] args) throws Exception {
-		new TestJPEGTweaker().test(args);
+		new TestJPGTweaker().test(args);
 	}
 	
 	public void test(String ... args) throws Exception {
