@@ -10,7 +10,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * JPEGQuality.java
+ * JPGQuality.java
  *
  * Who   Date       Description
  * ====  =========  ==================================================
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.io.IOUtils;
 
-public class JPEGQuality extends _8BIM {
+public class JPGQuality extends _8BIM {
 	public enum Format {
 		FORMAT_STANDARD(0x0000),
 		FORMAT_OPTIMISED(0x0001),
@@ -89,26 +89,26 @@ public class JPEGQuality extends _8BIM {
 	private byte trailer = 0x01;
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGQuality.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JPGQuality.class);
 	
-	public JPEGQuality() {
-		this("JPEGQuality");
+	public JPGQuality() {
+		this("JPGQuality");
 	}
 	
-	public JPEGQuality(String name) {
+	public JPGQuality(String name) {
 		super(ImageResourceID.JPEG_QUALITY, name, null);
 	}
 	
-	public JPEGQuality(String name, byte[] data) {
+	public JPGQuality(String name, byte[] data) {
 		super(ImageResourceID.JPEG_QUALITY, name, data);
 		read();
 	}
 	
-	public JPEGQuality(Quality quality, Format format, ProgressiveScans progressiveScans) {
-		this("JPEGQuality", quality, format, progressiveScans);
+	public JPGQuality(Quality quality, Format format, ProgressiveScans progressiveScans) {
+		this("JPGQuality", quality, format, progressiveScans);
 	}
 	
-	public JPEGQuality(String name, Quality quality, Format format, ProgressiveScans progressiveScans) {
+	public JPGQuality(String name, Quality quality, Format format, ProgressiveScans progressiveScans) {
 		super(ImageResourceID.JPEG_QUALITY, name, null);
 		// Null check
 		if(quality == null || format == null || progressiveScans == null)

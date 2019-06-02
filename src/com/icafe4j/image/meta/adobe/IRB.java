@@ -194,7 +194,7 @@ public class IRB extends Metadata {
 					
 					switch(eId) {
 						case JPEG_QUALITY:
-							_8bims.put(id, new JPEGQuality(name, ArrayUtils.subArray(data, i, size)));
+							_8bims.put(id, new JPGQuality(name, ArrayUtils.subArray(data, i, size)));
 							break;
 						case VERSION_INFO:
 							_8bims.put(id, new VersionInfo(name, ArrayUtils.subArray(data, i, size)));
