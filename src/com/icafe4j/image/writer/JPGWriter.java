@@ -10,7 +10,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * JPEGWriter.java
+ * JPGWriter.java
  *
  * Who   Date       Description
  * ====  =======    =================================================
@@ -55,7 +55,7 @@ import com.icafe4j.io.IOUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 12/02/2013
  */
-public class JPEGWriter extends ImageWriter { 
+public class JPGWriter extends ImageWriter { 
 	// The image width and height after image expansion 
   	private int newHeight;
 	private int newWidth; 
@@ -84,9 +84,9 @@ public class JPEGWriter extends ImageWriter {
 		
     private static final String comment = "Created by ICAFE - https://github.com/dragon66/icafe";
 		   
-	public JPEGWriter() {}
+	public JPGWriter() {}
 	
-	public JPEGWriter(ImageParam param) {
+	public JPGWriter(ImageParam param) {
 		super(param);
 	}
    	

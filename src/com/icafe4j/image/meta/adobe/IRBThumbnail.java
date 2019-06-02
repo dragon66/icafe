@@ -66,7 +66,7 @@ public class IRBThumbnail extends Thumbnail {
 		} else if(getDataType() == Thumbnail.DATA_TYPE_KRawRGB) {
 			BufferedImage thumbnail = getRawImage();
 			if(thumbnail == null) throw new IllegalArgumentException("Expected raw data thumbnail does not exist!");
-			// Create a JPEGWriter to write the image
+			// Create a JPGWriter to write the image
 			ImageWriter jpgWriter = ImageIO.getWriter(ImageType.JPG);
 			// Create a ImageParam builder
 			ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();

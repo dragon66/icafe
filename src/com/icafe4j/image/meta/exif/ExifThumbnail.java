@@ -155,7 +155,7 @@ public class ExifThumbnail extends Thumbnail {
 			// Write the thumbnail IFD
 			// This line is very important!!!
 			randOS.seek(thumbnailIFD.write(randOS, offset));
-			// Create a JPEGWriter to write the image
+			// Create a JPGWriter to write the image
 			ImageWriter jpgWriter = ImageIO.getWriter(ImageType.JPG);
 			// Create a ImageParam builder
 			ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();
@@ -166,7 +166,7 @@ public class ExifThumbnail extends Thumbnail {
 			// Set ImageParam to the writer
 			jpgWriter.setImageParam(builder.build());
 			// This is amazing. We can actually keep track of how many bytes have been written to
-			// the underlying stream by JPEGWriter
+			// the underlying stream by JPGWriter
 			long startOffset = randOS.getStreamPointer();
 			try {
 				jpgWriter.write(thumbnail, randOS);

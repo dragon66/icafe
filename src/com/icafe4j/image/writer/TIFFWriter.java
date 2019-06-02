@@ -289,7 +289,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		ifd.addField(new ShortField(TiffTag.SAMPLES_PER_PIXEL.getValue(), new short[]{(short)numOfSamples}));		
 		ifd.addField(new ShortField(TiffTag.BITS_PER_SAMPLE.getValue(), bitsPerSample));		
 		
-		JPEGWriter jpgWriter = new JPEGWriter();
+		JPGWriter jpgWriter = new JPGWriter();
 		
 		ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();
 		
@@ -301,7 +301,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		jpegOptions.setQuality(jpegQuality);
 		jpegOptions.setColorSpace(photoMetric.getValue());
 		jpegOptions.setTiffFlavor(true);
-		// Tell the JPEGWriter to skip tables (We are going to write them separately)
+		// Tell the JPGWriter to skip tables (We are going to write them separately)
 		jpegOptions.setIncludeTables(false); 
 		
 		builder.imageOptions(jpegOptions);
@@ -314,7 +314,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		ifd.addField(new UndefinedField(TiffTag.JPEG_TABLES.getValue(), bout.toByteArray()));
 		
 		// This is amazing. We can actually keep track of how many bytes have been
-		// written to the underlying stream by JPEGWriter
+		// written to the underlying stream by JPGWriter
 		long startOffset = randomOS.getStreamPointer();
 		jpgWriter.write(Arrays.copyOfRange(pixels, 0, imageWidth*(imageHeight/2 + 1)), imageWidth, imageHeight/2 + 1, randomOS);
 		long finishOffset = randomOS.getStreamPointer();

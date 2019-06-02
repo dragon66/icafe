@@ -19,7 +19,7 @@ public class JPEGOptions extends ImageOptions {
 	public static final int COLOR_SPACE_RGB   = PhotoMetric.RGB.getValue(); // RGB
 	public static final int COLOR_SPACE_YCbCr = PhotoMetric.YCbCr.getValue(); // YCbCr
 	public static final int COLOR_SPACE_CMYK  = PhotoMetric.SEPARATED.getValue(); // CMYK
-	public static final int COLOR_SPACE_YCCK  = PhotoMetric.UNKNOWN.getValue(); // JPEGWriter will interpret this as YCCK
+	public static final int COLOR_SPACE_YCCK  = PhotoMetric.UNKNOWN.getValue(); // JPGWriter will interpret this as YCCK
 	
 	private int quality = 80;
 	private boolean includeTables = true;

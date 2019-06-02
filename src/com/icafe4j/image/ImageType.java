@@ -68,7 +68,7 @@ public enum ImageType {
 		}
 		@Override
 		public ImageWriter getWriter() { 
-			return new JPEGWriter(); 
+			return new JPGWriter(); 
 		}
 	},
 	
