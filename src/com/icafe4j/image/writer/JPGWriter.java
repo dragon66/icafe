@@ -44,7 +44,7 @@ import com.icafe4j.image.jpeg.Marker;
 import com.icafe4j.image.jpeg.QTable;
 import com.icafe4j.image.jpeg.Segment;
 import com.icafe4j.image.options.ImageOptions;
-import com.icafe4j.image.options.JPEGOptions;
+import com.icafe4j.image.options.JPGOptions;
 import com.icafe4j.image.util.DCT;
 import com.icafe4j.image.util.IMGUtils;
 import com.icafe4j.io.IOUtils;
@@ -61,7 +61,7 @@ public class JPGWriter extends ImageWriter {
 	private int newWidth; 
 	
 	private ImageParam imageParam;
-    private JPEGOptions jpegOptions;
+    private JPGOptions jpegOptions;
     
     private int numOfComponents = 3; // Default number of components (3): YCrCb
     private int numOfQTables = 2; // Default number of quantization tables
@@ -75,7 +75,7 @@ public class JPGWriter extends ImageWriter {
 	private int quality = 100; // Default image quality
 	private boolean includeTables = true;
 	private boolean grayScale;
-	private int colorSpace = JPEGOptions.COLOR_SPACE_YCbCr;
+	private int colorSpace = JPGOptions.COLOR_SPACE_YCbCr;
 	
 	private static final String pathToCMYKProfile = "/resources/CMYK Profiles/USWebCoatedSWOP.icc";
 	private ICC_ColorSpace cmykColorSpace;
@@ -144,15 +144,15 @@ public class JPGWriter extends ImageWriter {
 		grayScale = imageParam.getColorType() == ImageColorType.GRAY_SCALE;
 		ImageOptions options = imageParam.getImageOptions();
 		// Read and set options if any
-		if(options instanceof JPEGOptions) {
-			jpegOptions = (JPEGOptions)options;
+		if(options instanceof JPGOptions) {
+			jpegOptions = (JPGOptions)options;
 			quality = jpegOptions.getQuality();
 			includeTables = jpegOptions.includeTables();
 			colorSpace = jpegOptions.getColorSpace();
 			isTiffFlavor = jpegOptions.isTiffFlavor();
 			writeICCProfile = jpegOptions.writeICCProfile();
 		}
-		if(colorSpace == JPEGOptions.COLOR_SPACE_CMYK || colorSpace == JPEGOptions.COLOR_SPACE_YCCK) {
+		if(colorSpace == JPGOptions.COLOR_SPACE_CMYK || colorSpace == JPGOptions.COLOR_SPACE_YCCK) {
 			numOfComponents = 4;
 			if(cmykColorSpace == null)
 				cmykColorSpace = IMGUtils.getICCColorSpace(pathToCMYKProfile);
@@ -205,11 +205,11 @@ public class JPGWriter extends ImageWriter {
 		processImageMeta();	
 		// Start of image marker
 		writeSOI(os);
-		if(colorSpace == JPEGOptions.COLOR_SPACE_YCbCr)			
+		if(colorSpace == JPGOptions.COLOR_SPACE_YCbCr)			
 			writeJFIF(os);// JFIF segment
 		else
 			writeAdobeApp14(os);
-		if(colorSpace == JPEGOptions.COLOR_SPACE_CMYK || colorSpace == JPEGOptions.COLOR_SPACE_YCCK) {
+		if(colorSpace == JPGOptions.COLOR_SPACE_CMYK || colorSpace == JPGOptions.COLOR_SPACE_YCCK) {
 			if(writeICCProfile)
 				writeICCProfile(os);// Write ICC_Profile as APP2
 		}		
@@ -260,9 +260,9 @@ public class JPGWriter extends ImageWriter {
 		app14[14] = 0x00;
 		app14[15] = 0x00;
 		
-		if(colorSpace == JPEGOptions.COLOR_SPACE_YCbCr)
+		if(colorSpace == JPGOptions.COLOR_SPACE_YCbCr)
 			app14[15] = 0x01;
-		else if(colorSpace == JPEGOptions.COLOR_SPACE_YCCK)
+		else if(colorSpace == JPGOptions.COLOR_SPACE_YCCK)
 			app14[15] = 0x02;
 		
 		os.write(app14);
@@ -416,18 +416,18 @@ public class JPGWriter extends ImageWriter {
 		// Create arrays according to number of color components
 		float[][][] c = new float[numOfComponents][imageHeight][imageWidth];		
 		// Determine the color space to use
-		if(colorSpace == JPEGOptions.COLOR_SPACE_YCbCr) {
+		if(colorSpace == JPGOptions.COLOR_SPACE_YCbCr) {
 			// RGB to YCbCr transform
 			IMGUtils.RGB2YCbCr(pixels, c[0], c[1], c[2], imageWidth, imageHeight);
-		} else if(colorSpace == JPEGOptions.COLOR_SPACE_RGB) {
+		} else if(colorSpace == JPGOptions.COLOR_SPACE_RGB) {
 			// RGB to separate R, G, B transform with level shifting
 			RGB2RGB(pixels, c[0], c[1], c[2], imageWidth, imageHeight);
-		} else if(colorSpace == JPEGOptions.COLOR_SPACE_CMYK) {
+		} else if(colorSpace == JPGOptions.COLOR_SPACE_CMYK) {
 			if(!isTiffFlavor) // All the software tends to believe JPEG CMYK is inverted!
 				IMGUtils.RGB2CMYK_Inverted(cmykColorSpace, pixels, c[0], c[1], c[2], c[3], imageWidth, imageHeight);
 			else
 				IMGUtils.RGB2CMYK(cmykColorSpace, pixels, c[0], c[1], c[2], c[3], imageWidth, imageHeight);
-		} else if(colorSpace == JPEGOptions.COLOR_SPACE_YCCK) {
+		} else if(colorSpace == JPGOptions.COLOR_SPACE_YCCK) {
 			if(!isTiffFlavor) // All the software tends to believe JPEG YCCK is inverted!
 				IMGUtils.RGB2YCCK_Inverted(cmykColorSpace, pixels, c[0], c[1], c[2], c[3], imageWidth, imageHeight);
 			else

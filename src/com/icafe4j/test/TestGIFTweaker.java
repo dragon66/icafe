@@ -11,7 +11,7 @@ import com.icafe4j.image.ImageParam;
 import com.icafe4j.image.ImageType;
 import com.icafe4j.image.gif.GIFFrame;
 import com.icafe4j.image.gif.GIFTweaker;
-import com.icafe4j.image.options.JPEGOptions;
+import com.icafe4j.image.options.JPGOptions;
 import com.icafe4j.image.options.PNGOptions;
 import com.icafe4j.image.options.TIFFOptions;
 import com.icafe4j.image.png.Filter;
@@ -81,7 +81,7 @@ public class TestGIFTweaker extends TestBase {
 		  		builder.imageOptions(pngOptions);
 		  		break;
 		  	case JPG:
-		  		JPEGOptions jpegOptions = new JPEGOptions();
+		  		JPGOptions jpegOptions = new JPGOptions();
 		  		jpegOptions.setQuality(90);
 		  		builder.imageOptions(jpegOptions);
 		  		break;

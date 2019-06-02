@@ -14,7 +14,7 @@ package com.icafe4j.image.options;
 import com.icafe4j.image.ImageType;
 import com.icafe4j.image.tiff.TiffFieldEnum.PhotoMetric;
 
-public class JPEGOptions extends ImageOptions {
+public class JPGOptions extends ImageOptions {
 	// Color space constants
 	public static final int COLOR_SPACE_RGB   = PhotoMetric.RGB.getValue(); // RGB
 	public static final int COLOR_SPACE_YCbCr = PhotoMetric.YCbCr.getValue(); // YCbCr

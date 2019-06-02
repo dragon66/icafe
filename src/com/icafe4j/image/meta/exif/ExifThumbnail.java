@@ -33,7 +33,7 @@ import com.icafe4j.image.ImageIO;
 import com.icafe4j.image.ImageParam;
 import com.icafe4j.image.ImageType;
 import com.icafe4j.image.meta.Thumbnail;
-import com.icafe4j.image.options.JPEGOptions;
+import com.icafe4j.image.options.JPGOptions;
 import com.icafe4j.image.tiff.IFD;
 import com.icafe4j.image.tiff.LongField;
 import com.icafe4j.image.tiff.RationalField;
@@ -159,8 +159,8 @@ public class ExifThumbnail extends Thumbnail {
 			ImageWriter jpgWriter = ImageIO.getWriter(ImageType.JPG);
 			// Create a ImageParam builder
 			ImageParam.ImageParamBuilder builder = ImageParam.getBuilder();
-			// Create JPEGOptions		
-			JPEGOptions jpegOptions = new JPEGOptions();			
+			// Create JPGOptions		
+			JPGOptions jpegOptions = new JPGOptions();			
 			jpegOptions.setQuality(writeQuality);
 			builder.imageOptions(jpegOptions);
 			// Set ImageParam to the writer

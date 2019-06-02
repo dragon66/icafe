@@ -60,7 +60,7 @@ import com.icafe4j.image.compression.deflate.DeflateEncoder;
 import com.icafe4j.image.compression.lzw.LZWTreeEncoder;
 import com.icafe4j.image.compression.packbits.Packbits;
 import com.icafe4j.image.options.ImageOptions;
-import com.icafe4j.image.options.JPEGOptions;
+import com.icafe4j.image.options.JPGOptions;
 import com.icafe4j.image.options.TIFFOptions;
 import com.icafe4j.image.quant.DitherMethod;
 import com.icafe4j.image.tiff.ASCIIField;
@@ -296,7 +296,7 @@ public class TIFFWriter extends ImageWriter implements Updatable<Integer> {
 		if(grayscale)
 			builder.colorType(ImageColorType.GRAY_SCALE);
 		
-		JPEGOptions jpegOptions = new JPEGOptions();
+		JPGOptions jpegOptions = new JPGOptions();
 		
 		jpegOptions.setQuality(jpegQuality);
 		jpegOptions.setColorSpace(photoMetric.getValue());
