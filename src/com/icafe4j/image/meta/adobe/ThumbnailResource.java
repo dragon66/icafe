@@ -37,9 +37,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.icafe4j.image.ImageIO;
+import com.icafe4j.image.ImageType;
 import com.icafe4j.image.meta.Thumbnail;
 import com.icafe4j.image.writer.ImageWriter;
-import com.icafe4j.image.writer.JPEGWriter;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.util.ArrayUtils;
 
@@ -116,7 +117,7 @@ public class ThumbnailResource extends _8BIM {
 		// Create memory buffer to write data
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		// Compress the thumbnail
-		ImageWriter writer = new JPEGWriter();
+		ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
 		try {
 			writer.write(thumbnail, bout);
 		} catch (Exception e) {
