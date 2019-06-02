@@ -6,10 +6,10 @@ import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.xmp.XMP;
 
-public class TestJPEGSnoop extends TestBase {
+public class TestJPGSnoop extends TestBase {
 
 	public static void main(String[] args) throws Exception {
-		new TestJPEGSnoop().test(args);
+		new TestJPGSnoop().test(args);
 	}
 	
 	public void test(String ... args) throws Exception {
