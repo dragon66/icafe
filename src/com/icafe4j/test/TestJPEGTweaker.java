@@ -7,7 +7,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.icafe4j.image.jpeg.JPEGTweaker;
+import com.icafe4j.image.jpeg.JPGTweaker;
 import com.icafe4j.image.meta.MetadataType;
 import com.icafe4j.image.meta.exif.Exif;
 import com.icafe4j.image.meta.exif.ExifTag;
@@ -23,26 +23,26 @@ public class TestJPEGTweaker extends TestBase {
 	
 	public void test(String ... args) throws Exception {
 		FileInputStream fin = new FileInputStream(args[0]);
-		byte[] iccpBytes = JPEGTweaker.extractICCProfile(fin);
+		byte[] iccpBytes = JPGTweaker.extractICCProfile(fin);
 		ICCProfile.showProfile(iccpBytes);
 		fin.close();
 		fin = new FileInputStream(args[1]);
 		FileOutputStream fout = new FileOutputStream("icc_profile_inserted.jpg");
 		ICC_Profile icc_profile = IMGUtils.getICCProfile("/resources/CMYK Profiles/USWebCoatedSWOP.icc");
-		JPEGTweaker.insertICCProfile(fin, fout, icc_profile);
+		JPGTweaker.insertICCProfile(fin, fout, icc_profile);
 		fin.close();
 		fout.close();
 		fin = new FileInputStream(args[2]);
-		JPEGTweaker.extractThumbnails(fin, "thumbnail");
+		JPGTweaker.extractThumbnails(fin, "thumbnail");
 		fin.close();
 		fin = new FileInputStream(args[2]);
 		fout = new FileOutputStream("metadata_removed.jpg");
-		JPEGTweaker.removeMetadata(fin, fout, MetadataType.XMP, MetadataType.EXIF, MetadataType.IPTC, MetadataType.ICC_PROFILE);
+		JPGTweaker.removeMetadata(fin, fout, MetadataType.XMP, MetadataType.EXIF, MetadataType.IPTC, MetadataType.ICC_PROFILE);
 		fin.close();
 		fout.close();
 		fin = new FileInputStream(args[0]);
 		fout = new FileOutputStream("exif_inserted.jpg");
-		JPEGTweaker.insertExif(fin, fout, populateExif(), true);
+		JPGTweaker.insertExif(fin, fout, populateExif(), true);
 		fin.close();
 		fout.close();
 	}

@@ -21,7 +21,7 @@ import org.w3c.dom.Document;
 
 import com.icafe4j.image.ImageIO;
 import com.icafe4j.image.ImageType;
-import com.icafe4j.image.jpeg.JPEGTweaker;
+import com.icafe4j.image.jpeg.JPGTweaker;
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataEntry;
 import com.icafe4j.image.meta.MetadataType;
@@ -207,7 +207,7 @@ public class TestMetadata extends TestBase {
 		fout.close();
 		
 		fin = new FileInputStream("images/table.jpg");
-		JPEGTweaker.extractDepthMap(fin, "table");		
+		JPGTweaker.extractDepthMap(fin, "table");		
 		
 		fin.close();
 		

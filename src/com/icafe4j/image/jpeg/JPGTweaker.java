@@ -10,7 +10,7 @@
  *
  * Change History - most recent changes go on top of previous changes
  *
- * JPEGTweaker.java
+ * JPGTweaker.java
  *
  * Who   Date       Description
  * ====  =======    =====================================================================
@@ -143,7 +143,7 @@ import com.icafe4j.util.ArrayUtils;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/25/2013
  */
-public class JPEGTweaker {
+public class JPGTweaker {
 	// Constants
 	public static final String XMP_ID = "http://ns.adobe.com/xap/1.0/\0";
 	// This is a non_standard XMP identifier which sometimes found in images from GettyImages
@@ -165,7 +165,7 @@ public class JPEGTweaker {
 	private static final EnumSet<Marker> APPnMarkers = EnumSet.range(Marker.APP0, Marker.APP15);
 	
 	// Obtain a logger instance
-	private static final Logger LOGGER = LoggerFactory.getLogger(JPEGTweaker.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JPGTweaker.class);
 	
 	private static short copySegment(short marker, InputStream is, OutputStream os) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
@@ -2332,5 +2332,5 @@ public class JPEGTweaker {
 	}
 	
 	// Prevent from instantiation
-	private JPEGTweaker() {}
+	private JPGTweaker() {}
 }
