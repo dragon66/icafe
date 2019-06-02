@@ -73,7 +73,6 @@ import com.icafe4j.image.quant.NeuQuant;
 import com.icafe4j.image.quant.QuantMethod;
 import com.icafe4j.image.quant.WuQuant;
 import com.icafe4j.image.writer.ImageWriter;
-import com.icafe4j.image.writer.JPEGWriter;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.io.PeekHeadInputStream;
 import com.icafe4j.io.RandomAccessInputStream;
@@ -242,7 +241,7 @@ public class IMGUtils {
 		// Create memory buffer to write data
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		// Compress the thumbnail
-		ImageWriter writer = new JPEGWriter();
+		ImageWriter writer = ImageIO.getWriter(ImageType.JPG);
 		try {
 			writer.write(thumbnail, bout);
 		} catch (Exception e) {
