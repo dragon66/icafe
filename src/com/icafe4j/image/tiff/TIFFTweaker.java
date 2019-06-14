@@ -287,7 +287,7 @@ public class TIFFTweaker {
 		return new LongField(TiffTag.JPEG_DC_TABLES.getValue(), tmp);
 	}
 	
-	private static void copyJPEGIFByteCount(RandomAccessInputStream rin, RandomAccessOutputStream rout, int offset, int outOffset) throws IOException {		
+	private static void copyJpegIFByteCount(RandomAccessInputStream rin, RandomAccessOutputStream rout, int offset, int outOffset) throws IOException {		
 		boolean finished = false;
 		int length = 0;	
 		short marker;
@@ -497,7 +497,7 @@ public class TIFFTweaker {
 					ifd.addField(jpegIFByteCount);
 				} else {
 					long startOffset = rout.getStreamPointer();
-					copyJPEGIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
+					copyJpegIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
 					long endOffset = rout.getStreamPointer();
 					ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{(int)(endOffset - startOffset)}));
 				}
