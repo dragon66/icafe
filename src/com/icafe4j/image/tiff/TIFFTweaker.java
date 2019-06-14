@@ -256,7 +256,7 @@ public class TIFFTweaker {
 		return iptcs;
 	}
 	
-	private static TiffField<?> copyJPEGHufTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException	{
+	private static TiffField<?> copyJpegHufTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException	{
 		int[] data = field.getDataAsLong();
 		int[] tmp = new int[data.length];
 	
@@ -319,7 +319,7 @@ public class TIFFTweaker {
 				    	marker = IOUtils.readShortMM(rin);
 				    	break;
 				    case SOS:						
-						marker = copyJPEGSOS(rin, rout);
+						marker = copyJpegSOS(rin, rout);
 						break;
 				    case PADDING:	
 				    	int nextByte = 0;
@@ -339,7 +339,7 @@ public class TIFFTweaker {
 	    }
 	}
 	
-	private static TiffField<?> copyJPEGQTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException {
+	private static TiffField<?> copyJpegQTable(RandomAccessInputStream rin, RandomAccessOutputStream rout, TiffField<?> field, int curPos) throws IOException {
 		byte[] qtable = new byte[64];
 		int[] data = field.getDataAsLong();
 		int[] tmp = new int[data.length];
@@ -355,7 +355,7 @@ public class TIFFTweaker {
 		return new LongField(TiffTag.JPEG_Q_TABLES.getValue(), tmp);
 	}
 	
-	private static short copyJPEGSOS(RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException	{
+	private static short copyJpegSOS(RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException	{
 		int len = IOUtils.readUnsignedShortMM(rin);
 		byte buf[] = new byte[len - 2];
 		IOUtils.readFully(rin, buf);
@@ -485,7 +485,7 @@ public class TIFFTweaker {
 		/* The following are added to work with old-style JPEG compression (type 6) */		
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
 		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT);
-		if(jpegIFOffset != null) {
+		if(jpegIFOffset != null && jpegIFOffset.getDataAsLong()[0] != stripOffSets.getDataAsLong()[0]) {
 			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);			
 			try {
 				if(jpegIFByteCount != null) {
@@ -509,21 +509,21 @@ public class TIFFTweaker {
 		TiffField<?> jpegTable = ifd.removeField(TiffTag.JPEG_DC_TABLES);
 		if(jpegTable != null) {
 			try {
-				ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+				ifd.addField(copyJpegHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
 			} catch(EOFException ex) {;}
 		}
 		
 		jpegTable = ifd.removeField(TiffTag.JPEG_AC_TABLES);
 		if(jpegTable != null) {
 			try {
-				ifd.addField(copyJPEGHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+				ifd.addField(copyJpegHufTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
 			} catch(EOFException ex) {;}
 		}
 	
 		jpegTable = ifd.removeField(TiffTag.JPEG_Q_TABLES);
 		if(jpegTable != null) {
 			try {
-				ifd.addField(copyJPEGQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
+				ifd.addField(copyJpegQTable(rin, rout, jpegTable, (int)rout.getStreamPointer()));
 			} catch(EOFException ex) {;}
 		}
 		/* End of code to work with old-style JPEG compression */
