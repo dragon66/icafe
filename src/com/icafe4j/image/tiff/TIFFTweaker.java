@@ -485,7 +485,7 @@ public class TIFFTweaker {
 		/* The following are added to work with old-style JPEG compression (type 6) */		
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
 		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT);
-		if(jpegIFOffset != null && jpegIFOffset.getDataAsLong()[0] != stripOffSets.getDataAsLong()[0]) {
+		if(jpegIFOffset != null) {
 			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);			
 			try {
 				if(jpegIFByteCount != null) {
