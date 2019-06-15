@@ -411,8 +411,11 @@ public class TIFFTweaker {
 	 * @return the position where to write the IFD for the current image page
 	 */
 	private static int copyPageData(IFD ifd, int offset, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		int writeOffset = offset; // We copy the offset to a local variable to keep the original value
+		int writeByteCount = 0; // To fix JPEG data double copy issue
+		
 		// Move stream pointer to the right place
-		rout.seek(offset);
+		rout.seek(writeOffset);
 
 		// Original image data start from these offsets.
 		TiffField<?> stripOffSets = ifd.removeField(TiffTag.STRIP_OFFSETS);
@@ -449,8 +452,7 @@ public class TIFFTweaker {
 				if(tiffField != null) samplesPerPixel = tiffField.getDataAsLong()[0];
 				
 				// If there is only one strip/samplesPerPixel strips for PlanaryConfiguration = 2
-				if((planaryConfiguration == 1 && off.length == 1) || (planaryConfiguration == 2 && off.length == samplesPerPixel))
-				{
+				if((planaryConfiguration == 1 && off.length == 1) || (planaryConfiguration == 2 && off.length == samplesPerPixel)) {
 					int[] totalBytes2Read = getBytes2Read(ifd);
 				
 					for(int i = 0; i < off.length; i++)
@@ -458,24 +460,25 @@ public class TIFFTweaker {
 				}				
 			} // End of bug fix
 			
+			writeByteCount = counts[0];
+			
 			// We are going to write the image data first
-			rout.seek(offset);
-		
+			rout.seek(writeOffset);
+			
 			// Copy image data from offset
 			for(int i = 0; i < off.length; i++) {
 				rin.seek(off[i]);
 				byte[] buf = new byte[counts[i]];
 				rin.readFully(buf);
 				rout.write(buf);
-				temp[i] = offset;
-				offset += buf.length;
+				temp[i] = writeOffset;
+				writeOffset += buf.length;
 			}
 						
 			if(ifd.getField(TiffTag.STRIP_BYTE_COUNTS) != null)
-				stripOffSets = new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp);
+				ifd.addField(new LongField(TiffTag.STRIP_OFFSETS.getValue(), temp));
 			else
-				stripOffSets = new LongField(TiffTag.TILE_OFFSETS.getValue(), temp);		
-			ifd.addField(stripOffSets);		
+				ifd.addField(new LongField(TiffTag.TILE_OFFSETS.getValue(), temp));		
 		}
 		
 		// Add software field.
@@ -486,24 +489,29 @@ public class TIFFTweaker {
 		/* One of the flavors (found in JPEG EXIF thumbnail IFD - IFD1) of the old JPEG compression contains this field */
 		TiffField<?> jpegIFOffset = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT);
 		if(jpegIFOffset != null) {
-			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);			
-			try {
-				if(jpegIFByteCount != null) {
-					rin.seek(jpegIFOffset.getDataAsLong()[0]);
-					byte[] bytes2Read = new byte[jpegIFByteCount.getDataAsLong()[0]];
-					rin.readFully(bytes2Read);
-					rout.seek(offset);
-					rout.write(bytes2Read);
-					ifd.addField(jpegIFByteCount);
-				} else {
-					long startOffset = rout.getStreamPointer();
-					copyJpegIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], offset);
-					long endOffset = rout.getStreamPointer();
-					ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{(int)(endOffset - startOffset)}));
-				}
-				jpegIFOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{offset});
-				ifd.addField(jpegIFOffset);
-			} catch (EOFException ex) {;};
+			TiffField<?> jpegIFByteCount = ifd.removeField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH);
+			if(jpegIFOffset.getDataAsLong()[0] != stripOffSets.getDataAsLong()[0]) {
+				try {
+					if(jpegIFByteCount != null) {
+						rin.seek(jpegIFOffset.getDataAsLong()[0]);
+						byte[] bytes2Read = new byte[jpegIFByteCount.getDataAsLong()[0]];
+						rin.readFully(bytes2Read);
+						rout.seek(writeOffset);
+						rout.write(bytes2Read);
+						ifd.addField(jpegIFByteCount);
+					} else {
+						long startOffset = rout.getStreamPointer();					
+						copyJpegIFByteCount(rin, rout, jpegIFOffset.getDataAsLong()[0], writeOffset);
+						long endOffset = rout.getStreamPointer();
+						ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{(int)(endOffset - startOffset)}));
+					}
+					jpegIFOffset = new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{writeOffset});
+					ifd.addField(jpegIFOffset);
+				} catch (EOFException ex) {;};
+			} else { // To fix the issue of double copy the JPEG data, we can safely re-assign the pointers.
+				ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT.getValue(), new int[]{offset}));
+				ifd.addField(new LongField(TiffTag.JPEG_INTERCHANGE_FORMAT_LENGTH.getValue(), new int[]{writeByteCount}));
+			}
 		}		
 		/* Another flavor of the old style JPEG compression type 6 contains separate tables */
 		TiffField<?> jpegTable = ifd.removeField(TiffTag.JPEG_DC_TABLES);
