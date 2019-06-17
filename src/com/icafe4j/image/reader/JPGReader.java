@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,9 @@ import com.icafe4j.image.jpeg.QTable;
 import com.icafe4j.image.jpeg.SOFReader;
 import com.icafe4j.image.jpeg.SOSReader;
 import com.icafe4j.image.jpeg.Segment;
+import com.icafe4j.image.meta.Metadata;
+import com.icafe4j.image.meta.MetadataType;
+import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.jpeg.Component;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
@@ -59,8 +63,14 @@ public class JPGReader extends ImageReader {
 	//"Adobe" no trailing NULL
 	public static final byte[] ADOBE_ID = {0x41, 0x64, 0x6f, 0x62, 0x65};
 	public static final String ICC_PROFILE_ID = "ICC_PROFILE\0";
-
-	private SOFReader sofReader;
+	
+	// Create a map to hold all the metadata and thumbnails
+	private Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+	// Used to read multiple segment ICCProfile
+	ByteArrayOutputStream iccProfileStream = null;
+	
+	// Used to read multiple segment Adobe APP13
+	ByteArrayOutputStream eightBIMStream = null;
 	
 	// Tables definition
 	// For JFIF there are normally two quantization tables, but for
@@ -80,7 +90,11 @@ public class JPGReader extends ImageReader {
 		short marker;
 		Marker emarker;
 		
-		ByteArrayOutputStream bo = new ByteArrayOutputStream();
+		/* Each SOFReader is associated with a single SOF segment
+		 * Usually there is only one SOF segment, but for hierarchical
+		 * JPEG, there could be more than one SOF
+		 */
+		List<SOFReader> readers = new ArrayList<SOFReader>();
 				
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
@@ -114,14 +128,16 @@ public class JPGReader extends ImageReader {
 				    	marker = IOUtils.readShortMM(is);
 						break;
 				    case SOS:
-				    	readSOS(is, sofReader);
-						marker = IOUtils.readShortMM(is);
+				    	SOFReader reader = readers.get(readers.size() - 1);
+						marker = readSOS(is, reader);
+						LOGGER.info("\n{}", sofToString(reader));
 						break;
 				    case SOF0:
 	                case SOF1:
 	                case SOF2:
-	                	readSOF(is, emarker);
-	                	// Read actual image data
+	                	readers.add(readSOF(is, emarker));
+						marker = IOUtils.readShortMM(is);
+			           	break;
 				    case SOF3:
 	                case SOF5:
 	                case SOF6:
@@ -133,12 +149,13 @@ public class JPGReader extends ImageReader {
 	                    throw new Exception("Arithmetic encoded Jpeg is not supported yet");
 				    case APP2:
 				    	// Read ICC_Profile data
-				    	readAPP2(is, bo);
+				    	readAPP2(is, iccProfileStream);
 						marker = IOUtils.readShortMM(is);
 						break;
 				    case APP14:
-				    	// Read APP14 data
 				    	readAPP14(is);
+				    	marker = IOUtils.readShortMM(is);
+				    	break;
 				    default:
 				    	length = IOUtils.readUnsignedShortMM(is);					
 				    	byte[] buf = new byte[length - 2];					   
@@ -148,10 +165,16 @@ public class JPGReader extends ImageReader {
 			}				
 		}
 		
+		// Now it's time to join multiple segments ICC_PROFILE and/or XMP		
+		if(iccProfileStream != null) { // We have ICCProfile data
+			ICCProfile icc_profile = new ICCProfile(iccProfileStream.toByteArray());
+			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
+		}
+		
 		return null;
    	}
 	
-	private static void readAPP2(InputStream is, OutputStream os) throws IOException {
+	private void readAPP2(InputStream is, OutputStream os) throws IOException {
 		byte[] icc_profile_buf = new byte[12];
 		int length = IOUtils.readUnsignedShortMM(is);
 		IOUtils.readFully(is, icc_profile_buf);
@@ -159,13 +182,15 @@ public class JPGReader extends ImageReader {
 		if (Arrays.equals(icc_profile_buf, ICC_PROFILE_ID.getBytes())) {
 			icc_profile_buf = new byte[length - 14];
 		    IOUtils.readFully(is, icc_profile_buf);
-		    os.write(icc_profile_buf, 2, length - 16);
+		    if(iccProfileStream == null)
+				iccProfileStream = new ByteArrayOutputStream();
+			iccProfileStream.write(ArrayUtils.subArray(icc_profile_buf, 2, length - 16));
 		} else {
   			IOUtils.skipFully(is, length - 14);
   		}
 	}
 	
-	private static void readAPP14(InputStream is) throws IOException {	
+	private void readAPP14(InputStream is) throws IOException {	
 		String[] app14Info = {"DCTEncodeVersion: ", "APP14Flags0: ", "APP14Flags1: ", "ColorTransform: "};		
 		int expectedLen = 14; // Expected length of this segment is 14.
 		int length = IOUtils.readUnsignedShortMM(is);
@@ -346,6 +371,8 @@ public class JPGReader extends ImageReader {
 		return sof.toString();
 	}
 	
+	// This method is very slow if not wrapped in some kind of cache stream but it works for multiple
+	// SOSs in case of progressive JPEG
 	private short readSOS(InputStream is, SOFReader sofReader) throws IOException {
 		int len = IOUtils.readUnsignedShortMM(is);
 		byte buf[] = new byte[len - 2];
@@ -363,7 +390,7 @@ public class JPGReader extends ImageReader {
 				nextByte = IOUtils.read(is);
 				
 				if (nextByte == -1) {
-					throw new IOException("Premature end of SOS segment!");					
+					return Marker.EOI.getValue();
 				}								
 				
 				if (nextByte != 0x00) {
@@ -387,8 +414,10 @@ public class JPGReader extends ImageReader {
 		}
 		
 		if (nextByte == -1) {
-			throw new IOException("Premature end of SOS segment!");
+			return Marker.EOI.getValue();
 		}
+
+		if(Marker.fromShort(marker) == Marker.UNKNOWN) return Marker.EOI.getValue();
 
 		return marker;
 	}
