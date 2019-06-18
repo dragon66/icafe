@@ -277,7 +277,7 @@ public class JPGTweaker {
 				    default:
 					    length = IOUtils.readUnsignedShortMM(is);					
 					    byte[] buf = new byte[length - 2];					   
-					    IOUtils.readFully(is, buf);				
+					    IOUtils.readFully(is, buf);
 					    marker = IOUtils.readShortMM(is);
 				}
 			}
@@ -1626,7 +1626,7 @@ public class JPGTweaker {
 	private static void readAPP13(InputStream is, OutputStream os) throws IOException {
 		int length = IOUtils.readUnsignedShortMM(is);
 		byte[] temp = new byte[length - 2];
-		IOUtils.readFully(is, temp, 0, length - 2);
+		IOUtils.readFully(is, temp);
 	
 		if (new String(temp, 0, PHOTOSHOP_IRB_ID.length()).equals(PHOTOSHOP_IRB_ID)) {
 			os.write(ArrayUtils.subArray(temp, PHOTOSHOP_IRB_ID.length(), temp.length - PHOTOSHOP_IRB_ID.length()));	
@@ -1634,16 +1634,16 @@ public class JPGTweaker {
 	}
 	
 	private static void readAPP2(InputStream is, OutputStream os) throws IOException {
-		byte[] icc_profile_buf = new byte[12];
+		byte[] icc_profile_buf = new byte[ICC_PROFILE_ID.length()];
 		int length = IOUtils.readUnsignedShortMM(is);
 		IOUtils.readFully(is, icc_profile_buf);
 		// ICC_PROFILE segment.
 		if (Arrays.equals(icc_profile_buf, ICC_PROFILE_ID.getBytes())) {
-			icc_profile_buf = new byte[length - 14];
+			icc_profile_buf = new byte[length - ICC_PROFILE_ID.length() - 2];
 		    IOUtils.readFully(is, icc_profile_buf);
-		    os.write(icc_profile_buf, 2, length - 16);
+		    os.write(icc_profile_buf, 2, length - ICC_PROFILE_ID.length() - 4); // Skip extra 2 bytes segment number
 		} else {
-  			IOUtils.skipFully(is, length - 14);
+  			IOUtils.skipFully(is, length - ICC_PROFILE_ID.length() - 2);
   		}
 	}
 	
