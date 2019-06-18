@@ -26,7 +26,7 @@ import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
 
-import static com.icafe4j.image.jpeg.JPGTweaker.*;
+import static com.icafe4j.image.jpeg.JPGConsts.*;
 
 public class JpegXMP extends XMP {
 	
