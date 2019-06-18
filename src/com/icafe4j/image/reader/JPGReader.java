@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    18Jun2019  Added code to read APP2/APP13
  * WY    12Jan2016  Cleaned up stale code
  */
 /** 
@@ -32,7 +33,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,7 +53,11 @@ import com.icafe4j.image.jpeg.SOSReader;
 import com.icafe4j.image.jpeg.Segment;
 import com.icafe4j.image.meta.Metadata;
 import com.icafe4j.image.meta.MetadataType;
+import com.icafe4j.image.meta.adobe.IRB;
+import com.icafe4j.image.meta.adobe.ImageResourceID;
+import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.icc.ICCProfile;
+import com.icafe4j.image.meta.iptc.IPTC;
 import com.icafe4j.image.jpeg.Component;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
@@ -61,16 +65,18 @@ import com.icafe4j.util.ArrayUtils;
 
 public class JPGReader extends ImageReader {
 	//"Adobe" no trailing NULL
-	public static final byte[] ADOBE_ID = {0x41, 0x64, 0x6f, 0x62, 0x65};
+	public static final String ADOBE_ID = "Adobe";
 	public static final String ICC_PROFILE_ID = "ICC_PROFILE\0";
+	public static final String PHOTOSHOP_IRB_ID = "Photoshop 3.0\0";
 	
 	// Create a map to hold all the metadata and thumbnails
 	private Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+	
 	// Used to read multiple segment ICCProfile
-	ByteArrayOutputStream iccProfileStream = null;
+	private ByteArrayOutputStream iccProfileStream = null;
 	
 	// Used to read multiple segment Adobe APP13
-	ByteArrayOutputStream eightBIMStream = null;
+	private ByteArrayOutputStream eightBIMStream = null;
 	
 	// Tables definition
 	// For JFIF there are normally two quantization tables, but for
@@ -78,6 +84,7 @@ public class JPGReader extends ImageReader {
 	private int quant_tbl[][] = new int[4][];
 	private HuffmanTbl dc_hufftbl[] = new HuffmanTbl[4];
 	private HuffmanTbl ac_hufftbl[] = new HuffmanTbl[4];
+	
 	@SuppressWarnings("unused")
 	private Map<Integer, Component> components = new HashMap<Integer, Component>(4);
 	
@@ -148,10 +155,13 @@ public class JPGReader extends ImageReader {
 	                case SOF11:
 	                    throw new Exception("Arithmetic encoded Jpeg is not supported yet");
 				    case APP2:
-				    	// Read ICC_Profile data
-				    	readAPP2(is, iccProfileStream);
+				    	readAPP2(is);
 						marker = IOUtils.readShortMM(is);
 						break;
+				    case APP13:
+				    	readAPP13(is);			    	
+				    	marker = IOUtils.readShortMM(is);
+				    	break;
 				    case APP14:
 				    	readAPP14(is);
 				    	marker = IOUtils.readShortMM(is);
@@ -169,24 +179,53 @@ public class JPGReader extends ImageReader {
 		if(iccProfileStream != null) { // We have ICCProfile data
 			ICCProfile icc_profile = new ICCProfile(iccProfileStream.toByteArray());
 			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
+			ICCProfile.showProfile(iccProfileStream.toByteArray());
+		}
+		
+		if(eightBIMStream != null) {
+			IRB irb = new IRB(eightBIMStream.toByteArray());	
+			metadataMap.put(MetadataType.PHOTOSHOP_IRB, irb);
+			_8BIM iptc = irb.get8BIM(ImageResourceID.IPTC_NAA.getValue());
+			// Extract IPTC as stand-alone meta
+			if(iptc != null) {
+				metadataMap.put(MetadataType.IPTC, new IPTC(iptc.getData()));
+			}
+			IRB.showIRB(eightBIMStream.toByteArray());
 		}
 		
 		return null;
    	}
 	
-	private void readAPP2(InputStream is, OutputStream os) throws IOException {
-		byte[] icc_profile_buf = new byte[12];
+	private void readAPP2(InputStream is) throws IOException {
+		int len = ICC_PROFILE_ID.length();
+		byte[] temp = new byte[len];
 		int length = IOUtils.readUnsignedShortMM(is);
-		IOUtils.readFully(is, icc_profile_buf);
+		IOUtils.readFully(is, temp);
 		// ICC_PROFILE segment.
-		if (Arrays.equals(icc_profile_buf, ICC_PROFILE_ID.getBytes())) {
-			icc_profile_buf = new byte[length - 14];
-		    IOUtils.readFully(is, icc_profile_buf);
+		if (Arrays.equals(temp, ICC_PROFILE_ID.getBytes())) {
+			temp = new byte[length - len - 2];
+		    IOUtils.readFully(is, temp);
 		    if(iccProfileStream == null)
 				iccProfileStream = new ByteArrayOutputStream();
-			iccProfileStream.write(ArrayUtils.subArray(icc_profile_buf, 2, length - 16));
+			iccProfileStream.write(ArrayUtils.subArray(temp, 2, length - len - 4));
 		} else {
-  			IOUtils.skipFully(is, length - 14);
+  			IOUtils.skipFully(is, length - len - 2);
+  		}
+	}
+	
+	private void readAPP13(InputStream is) throws IOException {
+		int len = PHOTOSHOP_IRB_ID.length();
+		byte[] temp = new byte[len];
+		int length = IOUtils.readUnsignedShortMM(is);
+		IOUtils.readFully(is, temp);
+		if (Arrays.equals(temp, PHOTOSHOP_IRB_ID.getBytes())) {
+			temp = new byte[length - len - 2];
+			IOUtils.readFully(is, temp);
+			if(eightBIMStream == null)
+				eightBIMStream = new ByteArrayOutputStream();
+			eightBIMStream.write(temp);
+		} else {
+  			IOUtils.skipFully(is, length - len - 2);
   		}
 	}
 	
@@ -199,7 +238,7 @@ public class JPGReader extends ImageReader {
 			IOUtils.readFully(is, data, 0, length - 2);
 			byte[] buf = ArrayUtils.subArray(data, 0, 5);
 			
-			if(Arrays.equals(buf, ADOBE_ID)) {
+			if(Arrays.equals(buf, ADOBE_ID.getBytes())) {
 				for (int i = 0, j = 5; i < 3; i++, j += 2) {
 					LOGGER.info("{}{}", app14Info[i], StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
 				}
@@ -420,6 +459,11 @@ public class JPGReader extends ImageReader {
 		if(Marker.fromShort(marker) == Marker.UNKNOWN) return Marker.EOI.getValue();
 
 		return marker;
+	}
+	
+	// Returns all the metadata as a map
+	public Map<MetadataType, Metadata> getMetadata() {
+		return metadataMap;
 	}
 	   
 	@Override
