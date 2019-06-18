@@ -144,7 +144,6 @@ public class JPGReader extends ImageReader {
 				    case SOS:
 				    	SOFReader reader = readers.get(readers.size() - 1);
 						marker = readSOS(is, reader);
-						LOGGER.info("\n{}", sofToString(reader));
 						break;
 				    case SOF0:
 	                case SOF1:
@@ -295,7 +294,7 @@ public class JPGReader extends ImageReader {
 				for (int i = 0, j = 5; i < 3; i++, j += 2) {
 					LOGGER.info("{}{}", app14Info[i], StringUtils.shortToHexStringMM(IOUtils.readShortMM(data, j)));
 				}
-				LOGGER.info("{}{}", app14Info[3], (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
+				LOGGER.debug("{}{}", app14Info[3], (((data[11]&0xff) == 0)? "Unknown (RGB or CMYK)":
 					((data[11]&0xff) == 1)? "YCbCr":"YCCK" ));
 			}
 		}
@@ -434,7 +433,7 @@ public class JPGReader extends ImageReader {
 		Segment segment = new Segment(marker, len, buf);		
 		SOFReader reader = new SOFReader(segment);
 		
-		LOGGER.debug("\n", sofToString(reader));
+		LOGGER.debug("\n{}", sofToString(reader));
 		
 		return reader;
 	}
