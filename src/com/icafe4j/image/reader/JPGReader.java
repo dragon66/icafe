@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  =================================================
+ * WY    18Jun2019  Added code to read APP1
  * WY    18Jun2019  Added code to read APP2/APP13
  * WY    12Jan2016  Cleaned up stale code
  */
@@ -58,16 +59,18 @@ import com.icafe4j.image.meta.adobe.ImageResourceID;
 import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.meta.iptc.IPTC;
+import com.icafe4j.image.meta.jpeg.JpegExif;
+import com.icafe4j.image.meta.jpeg.JpegXMP;
+import com.icafe4j.image.meta.xmp.XMP;
 import com.icafe4j.image.jpeg.Component;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.string.StringUtils;
+import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
 
+import static com.icafe4j.image.jpeg.JPGConsts.*;
+
 public class JPGReader extends ImageReader {
-	//"Adobe" no trailing NULL
-	public static final String ADOBE_ID = "Adobe";
-	public static final String ICC_PROFILE_ID = "ICC_PROFILE\0";
-	public static final String PHOTOSHOP_IRB_ID = "Photoshop 3.0\0";
 	
 	// Create a map to hold all the metadata and thumbnails
 	private Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
@@ -77,6 +80,10 @@ public class JPGReader extends ImageReader {
 	
 	// Used to read multiple segment Adobe APP13
 	private ByteArrayOutputStream eightBIMStream = null;
+	
+	// Used to read multiple segment XMP
+	private byte[] extendedXMP = null;
+	private String xmpGUID = ""; // 32 byte ASCII hex string
 	
 	// Tables definition
 	// For JFIF there are normally two quantization tables, but for
@@ -102,7 +109,7 @@ public class JPGReader extends ImageReader {
 		 * JPEG, there could be more than one SOF
 		 */
 		List<SOFReader> readers = new ArrayList<SOFReader>();
-				
+		
 		// The very first marker should be the start_of_image marker!	
 		if(Marker.fromShort(IOUtils.readShortMM(is)) != Marker.SOI)
 			throw new IllegalArgumentException("Invalid JPEG image, expected SOI marker not found!");
@@ -154,6 +161,10 @@ public class JPGReader extends ImageReader {
 	                case SOF10:
 	                case SOF11:
 	                    throw new Exception("Arithmetic encoded Jpeg is not supported yet");
+	                case APP1:
+	                	readAPP1(is);
+	                	marker = IOUtils.readShortMM(is);
+	                	break;
 				    case APP2:
 				    	readAPP2(is);
 						marker = IOUtils.readShortMM(is);
@@ -175,11 +186,17 @@ public class JPGReader extends ImageReader {
 			}				
 		}
 		
+		// Add extendedXMP to XMP if any
+		if(extendedXMP != null) {
+			XMP xmp = ((XMP)metadataMap.get(MetadataType.XMP));
+			if(xmp != null)
+				xmp.setExtendedXMPData(extendedXMP);
+		}
+		
 		// Now it's time to join multiple segments ICC_PROFILE and/or XMP		
 		if(iccProfileStream != null) { // We have ICCProfile data
 			ICCProfile icc_profile = new ICCProfile(iccProfileStream.toByteArray());
 			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
-			ICCProfile.showProfile(iccProfileStream.toByteArray());
 		}
 		
 		if(eightBIMStream != null) {
@@ -190,11 +207,47 @@ public class JPGReader extends ImageReader {
 			if(iptc != null) {
 				metadataMap.put(MetadataType.IPTC, new IPTC(iptc.getData()));
 			}
-			IRB.showIRB(eightBIMStream.toByteArray());
 		}
 		
 		return null;
    	}
+	
+	private void readAPP1(InputStream is) throws IOException {
+		int length = IOUtils.readUnsignedShortMM(is);
+		byte[] temp = new byte[length - 2];
+		IOUtils.readFully(is, temp);
+		
+		// Check for EXIF
+		if(temp.length >= EXIF_ID.length() && new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID)) {
+			// We found EXIF
+			JpegExif exif = new JpegExif(ArrayUtils.subArray(temp, EXIF_ID.length(), length - EXIF_ID.length() - 2));
+			metadataMap.put(MetadataType.EXIF, exif);
+		} else if(temp.length >= XMP_ID.length() && new String(temp, 0, XMP_ID.length()).equals(XMP_ID) ||
+				temp.length >= NON_STANDARD_XMP_ID.length() && new String(temp, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID)) {
+			// We found XMP, add it to metadata list (We may later revise it if we have ExtendedXMP)
+			XMP xmp = new JpegXMP(ArrayUtils.subArray(temp, XMP_ID.length(), length - XMP_ID.length() - 2));
+			metadataMap.put(MetadataType.XMP, xmp);
+			// Retrieve XMP GUID if available
+			xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
+		} else if(temp.length >= XMP_EXT_ID.length() && new String(temp, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
+			// We found ExtendedXMP, add the data to ExtendedXMP memory buffer				
+			int i = XMP_EXT_ID.length();
+			// 128-bit MD5 digest of the full ExtendedXMP serialization
+			byte[] guid = ArrayUtils.subArray(temp, i, 32);
+			if(Arrays.equals(guid, xmpGUID.getBytes())) { // We have matched the GUID, copy it
+				i += 32;
+				long extendedXMPLength = IOUtils.readUnsignedIntMM(temp, i);
+				i += 4;
+				if(extendedXMP == null)
+					extendedXMP = new byte[(int)extendedXMPLength];
+				// Offset for the current segment
+				long offset = IOUtils.readUnsignedIntMM(temp, i);
+				i += 4;
+				byte[] xmpBytes = ArrayUtils.subArray(temp, i, length - XMP_EXT_ID.length() - 42);
+				System.arraycopy(xmpBytes, 0, extendedXMP, (int)offset, xmpBytes.length);
+			}
+		}
+	}
 	
 	private void readAPP2(InputStream is) throws IOException {
 		int len = ICC_PROFILE_ID.length();

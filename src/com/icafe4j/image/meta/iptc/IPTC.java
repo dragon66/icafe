@@ -71,6 +71,7 @@ public class IPTC extends Metadata {
 			}
 		}
 	}
+
 	public static void showIPTC(InputStream is) {
 		try {
 			showIPTC(IOUtils.inputStreamToByteArray(is));
