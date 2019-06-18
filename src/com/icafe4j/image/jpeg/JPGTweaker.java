@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =======    =====================================================================
+ * WY    18Jun2019  Move all constants to JPGConsts class
  * WY    06Apr2018  Added extractThumbnails(InputStream)
  * WY    02Mar2017  Added insertMetadata(Collection<Metadata>, InputStream, OutputStream)
  * WY    13Feb2017  Fixed bug with APP1 segment length too small
@@ -137,6 +138,8 @@ import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
 
+import static com.icafe4j.image.jpeg.JPGConsts.*;
+
 /**
  * JPEG image tweaking tool
  * 
@@ -144,23 +147,7 @@ import com.icafe4j.util.ArrayUtils;
  * @version 1.0 01/25/2013
  */
 public class JPGTweaker {
-	// Constants
-	public static final String XMP_ID = "http://ns.adobe.com/xap/1.0/\0";
-	// This is a non_standard XMP identifier which sometimes found in images from GettyImages
-	public static final String NON_STANDARD_XMP_ID = "XMP\0://ns.adobe.com/xap/1.0/\0";
-	public static final String XMP_EXT_ID = "http://ns.adobe.com/xmp/extension/\0";
-	// Photoshop IRB identifier with trailing byte [0x00].
-	public static final String PHOTOSHOP_IRB_ID = "Photoshop 3.0\0";
-	// EXIF identifier with trailing bytes [0x00, 0x00].
-	public static final String EXIF_ID = "Exif\0\0";
-	// ICC_PROFILE identifier with trailing byte [0x00].
-	public static final String ICC_PROFILE_ID = "ICC_PROFILE\0";
-	public static final String JFIF_ID = "JFIF\0";
-	public static final String JFXX_ID = "JFXX\0";
-	public static final String DUCKY_ID = "Ducky"; // no trailing NULL
-	public static final String PICTURE_INFO_ID = "[picture info]"; // no trailing NULL
-	public static final String ADOBE_ID = "Adobe"; // no trailing NULL
-		
+			
 	@SuppressWarnings("unused")
 	private static final EnumSet<Marker> APPnMarkers = EnumSet.range(Marker.APP0, Marker.APP15);
 	

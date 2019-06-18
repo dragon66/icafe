@@ -16,6 +16,23 @@ package com.icafe4j.image.jpeg;
  * @version 1.0 03/16/2012
  */
 public class JPGConsts {
+	// Constants related to metada
+	public static final String XMP_ID = "http://ns.adobe.com/xap/1.0/\0";
+	// This is a non_standard XMP identifier which sometimes found in images from GettyImages
+	public static final String NON_STANDARD_XMP_ID = "XMP\0://ns.adobe.com/xap/1.0/\0";
+	public static final String XMP_EXT_ID = "http://ns.adobe.com/xmp/extension/\0";
+	// Photoshop IRB identifier with trailing byte [0x00].
+	public static final String PHOTOSHOP_IRB_ID = "Photoshop 3.0\0";
+	// EXIF identifier with trailing bytes [0x00, 0x00].
+	public static final String EXIF_ID = "Exif\0\0";
+	// ICC_PROFILE identifier with trailing byte [0x00].
+	public static final String ICC_PROFILE_ID = "ICC_PROFILE\0";
+	public static final String JFIF_ID = "JFIF\0";
+	public static final String JFXX_ID = "JFXX\0";
+	public static final String DUCKY_ID = "Ducky"; // no trailing NULL
+	public static final String PICTURE_INFO_ID = "[picture info]"; // no trailing NULL
+	public static final String ADOBE_ID = "Adobe"; // no trailing NULL
+	
 	public static final int SUBSAMPLING_NONE = 0; // aka 1x1 (4:4:4)
 	public static final int SUBSAMPLING_422  = 1; // aka 2x1
 	public static final int SUBSAMPLING_420  = 2; // aka 2x2
