@@ -16,7 +16,7 @@ package com.icafe4j.image.jpeg;
  * @version 1.0 03/16/2012
  */
 public class JPGConsts {
-	// Constants related to metada
+	// Constants related to metadata
 	public static final String XMP_ID = "http://ns.adobe.com/xap/1.0/\0";
 	// This is a non_standard XMP identifier which sometimes found in images from GettyImages
 	public static final String NON_STANDARD_XMP_ID = "XMP\0://ns.adobe.com/xap/1.0/\0";
