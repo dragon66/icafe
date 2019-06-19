@@ -33,22 +33,22 @@ public enum Marker {
 	     * length are always included in that count.
 	     */
 	    TEM ("Temporary private use by arithmetic encoders", (short)0xff01),
-	    SOF0("Baseline DCT", (short)0xffc0),
+	    SOF0("Baseline DCT, Huffman coding", (short)0xffc0),
 	    SOF1("Extended sequential DCT, Huffman coding", (short)0xffc1),
 	    SOF2("Progressive DCT, Huffman coding", (short)0xffc2),
 	    SOF3("Lossless, Huffman coding", (short)0xffc3),
 	    DHT("Define Huffman table", (short)0xffc4),
-	    SOF5("Differential sequential DCT, Huffman coding", (short)0xffc5),
-	    SOF6("Differential progressive DCT, Huffman coding", (short)0xffc6),
-	    SOF7("Differential lossless, Huffman coding", (short)0xffc7),
+	    SOF5("Sequential DCT, Differential Huffman coding", (short)0xffc5),
+	    SOF6("Progressive DCT, Differential Huffman coding", (short)0xffc6),
+	    SOF7("Lossless, Differentia Huffman coding", (short)0xffc7),
 	    JPG("Reserved", (short)0xffc8), 
-	    SOF9("Sequential DCT, arithmetic coding", (short)0xffc9), 
-	    SOF10("Progressive DCT, arithmetic coding", (short)0xffca), 
-	    SOF11("Lossless, arithmetic coding", (short)0xffcb),
+	    SOF9("Extended Sequential DCT, Arithmetic coding", (short)0xffc9), 
+	    SOF10("Progressive DCT, Arithmetic coding", (short)0xffca), 
+	    SOF11("Lossless, Arithmetic coding", (short)0xffcb),
 	    DAC("Define Arithmetic Table ", (short)0xffcc), 
-	    SOF13("Differential sequential DCT, arithmetic coding", (short)0xffcd), 
-	    SOF14("Differential progressive DCT, arithmetic coding", (short)0xffce), 
-	    SOF15("Differential lossless, arithmetic coding", (short)0xffcf),
+	    SOF13("Sequential DCT, Differential Arithmetic coding", (short)0xffcd), 
+	    SOF14("Progressive DCT, Differential Arithmetic coding", (short)0xffce), 
+	    SOF15("Lossless, Differential Arithmetic coding", (short)0xffcf),
 	    /**
 	     * RSTn are used for resync, may be ignored, no length and other contents are
 	     * associated with these markers. 
@@ -127,8 +127,7 @@ public enum Marker {
 	   
 	    private static final Map<Short, Marker> markerMap = new HashMap<Short, Marker>();
 	    
-	    static
-	    {
+	    static {
 	      for(Marker marker : values()) {
 	          markerMap.put(marker.getValue(), marker);
 	      }
