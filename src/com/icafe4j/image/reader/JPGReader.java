@@ -43,6 +43,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.icafe4j.image.compression.UnsupportedCompressionException;
 import com.icafe4j.image.compression.huffman.HuffmanTbl;
 import com.icafe4j.image.jpeg.DHTReader;
 import com.icafe4j.image.jpeg.DQTReader;
@@ -152,14 +153,16 @@ public class JPGReader extends ImageReader {
 						marker = IOUtils.readShortMM(is);
 			           	break;
 				    case SOF3:
-	                case SOF5:
+			        case SOF5:
 	                case SOF6:
 	                case SOF7:
-	                    throw new Exception("Lossless Jpeg is not supported yet");
 	                case SOF9:
 	                case SOF10:
 	                case SOF11:
-	                    throw new Exception("Arithmetic encoded Jpeg is not supported yet");
+	                case SOF13:
+	                case SOF14:
+	                case SOF15:	                	
+	                    throw new UnsupportedCompressionException(emarker.getDescription() + " is not supported by this decoder!");
 	                case APP1:
 	                	readAPP1(is);
 	                	marker = IOUtils.readShortMM(is);
@@ -457,7 +460,7 @@ public class JPGReader extends ImageReader {
 			sof.append("AC table number: " + component.getACTableNumber() + "\n");
 		}
 		
-		sof.append("<= End of SOF information");
+		sof.append("<= End of SOF information\n");
 		
 		return sof.toString();
 	}
