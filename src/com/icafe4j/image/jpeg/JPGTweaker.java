@@ -14,6 +14,8 @@
  *
  * Who   Date       Description
  * ====  =======    =====================================================================
+ * WY    21Jun2019  Added code for removeMetadata to return the removed metadata as a map 
+ * WY    21Jun2019  Re-factored APPn related code to extractMetadataFromAPPn()
  * WY    18Jun2019  Move all constants to JPGConsts class
  * WY    06Apr2018  Added extractThumbnails(InputStream)
  * WY    02Mar2017  Added insertMetadata(Collection<Metadata>, InputStream, OutputStream)
@@ -346,6 +348,127 @@ public class JPGTweaker {
 				}		
 			}
 		}	
+	}
+	
+	private static void extractMetadataFromAPPn(Collection<Segment> appnSegments, Map<MetadataType, Metadata> metadataMap) throws IOException {
+		// Used to read multiple segment ICCProfile
+		ByteArrayOutputStream iccProfileStream = null;
+		
+		// Used to read multiple segment Adobe APP13
+		ByteArrayOutputStream eightBIMStream = null;
+		
+		// Used to read multiple segment XMP
+		byte[] extendedXMP = null;
+		String xmpGUID = ""; // 32 byte ASCII hex string
+		
+		Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
+		
+		for(Segment segment : appnSegments) {
+			byte[] data = segment.getData();
+			int length = segment.getLength();
+			if(segment.getMarker() == Marker.APP0) {
+				if (data.length >= JFIF_ID.length() && new String(data, 0, JFIF_ID.length()).equals(JFIF_ID)) {
+					metadataMap.put(MetadataType.JPG_JFIF, new JFIF(ArrayUtils.subArray(data, JFIF_ID.length(), length - JFIF_ID.length() - 2)));
+				}
+			} else if(segment.getMarker() == Marker.APP1) {
+				// Check for EXIF
+				if(data.length >= EXIF_ID.length() && new String(data, 0, EXIF_ID.length()).equals(EXIF_ID)) {
+					// We found EXIF
+					JpegExif exif = new JpegExif(ArrayUtils.subArray(data, EXIF_ID.length(), length - EXIF_ID.length() - 2));
+					metadataMap.put(MetadataType.EXIF, exif);
+				} else if(data.length >= XMP_ID.length() && new String(data, 0, XMP_ID.length()).equals(XMP_ID) ||
+						data.length >= NON_STANDARD_XMP_ID.length() && new String(data, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID)) {
+					// We found XMP, add it to metadata list (We may later revise it if we have ExtendedXMP)
+					XMP xmp = new JpegXMP(ArrayUtils.subArray(data, XMP_ID.length(), length - XMP_ID.length() - 2));
+					metadataMap.put(MetadataType.XMP, xmp);
+					// Retrieve XMP GUID if available
+					xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
+				} else if(data.length >= XMP_EXT_ID.length() && new String(data, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
+					// We found ExtendedXMP, add the data to ExtendedXMP memory buffer				
+					int i = XMP_EXT_ID.length();
+					// 128-bit MD5 digest of the full ExtendedXMP serialization
+					byte[] guid = ArrayUtils.subArray(data, i, 32);
+					if(Arrays.equals(guid, xmpGUID.getBytes())) { // We have matched the GUID, copy it
+						i += 32;
+						long extendedXMPLength = IOUtils.readUnsignedIntMM(data, i);
+						i += 4;
+						if(extendedXMP == null)
+							extendedXMP = new byte[(int)extendedXMPLength];
+						// Offset for the current segment
+						long offset = IOUtils.readUnsignedIntMM(data, i);
+						i += 4;
+						byte[] xmpBytes = ArrayUtils.subArray(data, i, length - XMP_EXT_ID.length() - 42);
+						System.arraycopy(xmpBytes, 0, extendedXMP, (int)offset, xmpBytes.length);
+					}
+				}
+			} else if(segment.getMarker() == Marker.APP2) {
+				// We're only interested in ICC_Profile
+				if (data.length >= ICC_PROFILE_ID.length() && new String(data, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
+					if(iccProfileStream == null)
+						iccProfileStream = new ByteArrayOutputStream();
+					iccProfileStream.write(ArrayUtils.subArray(data, ICC_PROFILE_ID.length() + 2, length - ICC_PROFILE_ID.length() - 4));
+				}
+			} else if(segment.getMarker() == Marker.APP12) {
+				if (data.length >= DUCKY_ID.length() && new String(data, 0, DUCKY_ID.length()).equals(DUCKY_ID)) {
+					metadataMap.put(MetadataType.JPG_DUCKY, new Ducky(ArrayUtils.subArray(data, DUCKY_ID.length(), length - DUCKY_ID.length() - 2)));
+				}
+			} else if(segment.getMarker() == Marker.APP13) {
+				if (data.length >= PHOTOSHOP_IRB_ID.length() && new String(data, 0, PHOTOSHOP_IRB_ID.length()).equals(PHOTOSHOP_IRB_ID)) {
+					if(eightBIMStream == null)
+						eightBIMStream = new ByteArrayOutputStream();
+					eightBIMStream.write(ArrayUtils.subArray(data, PHOTOSHOP_IRB_ID.length(), length - PHOTOSHOP_IRB_ID.length() - 2));
+				}
+			} else if(segment.getMarker() == Marker.APP14) {
+				if (data.length >= ADOBE_ID.length() && new String(data, 0, ADOBE_ID.length()).equals(ADOBE_ID)) {
+					metadataMap.put(MetadataType.JPG_ADOBE, new Adobe(ArrayUtils.subArray(data, ADOBE_ID.length(), length - ADOBE_ID.length() - 2)));
+				}
+			}
+		}
+		
+		// Now it's time to join multiple segments ICC_PROFILE and/or XMP		
+		if(iccProfileStream != null) { // We have ICCProfile data
+			ICCProfile icc_profile = new ICCProfile(iccProfileStream.toByteArray());
+			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
+		}
+		
+		if(eightBIMStream != null) {
+			IRB irb = new IRB(eightBIMStream.toByteArray());	
+			metadataMap.put(MetadataType.PHOTOSHOP_IRB, irb);
+			_8BIM iptc = irb.get8BIM(ImageResourceID.IPTC_NAA.getValue());
+			// Extract IPTC as stand-alone meta
+			if(iptc != null) {
+				metadataMap.put(MetadataType.IPTC, new IPTC(iptc.getData()));
+			}
+		}
+		
+		if(extendedXMP != null) {
+			XMP xmp = ((XMP)metadataMap.get(MetadataType.XMP));
+			if(xmp != null)
+				xmp.setExtendedXMPData(extendedXMP);
+		}
+		
+		// Extract thumbnails to ImageMetadata
+		Metadata meta = metadataMap.get(MetadataType.EXIF);
+		if(meta != null) {
+			Exif exif = (Exif)meta;
+			if(!exif.isDataRead())
+				exif.read();
+			if(exif.containsThumbnail()) {
+				thumbnails.put("EXIF", exif.getThumbnail());
+			}
+		}
+		
+		meta = metadataMap.get(MetadataType.PHOTOSHOP_IRB);
+		if(meta != null) {
+			IRB irb = (IRB)meta;
+			if(!irb.isDataRead())
+				irb.read();
+			if(irb.containsThumbnail()) {
+				thumbnails.put("PHOTOSHOP_IRB", irb.getThumbnail());
+			}
+		}
+		
+		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(thumbnails));
 	}
 	
 	/**
@@ -1659,10 +1782,16 @@ public class JPGTweaker {
 		m_qTables.addAll(qTables);		
 	}
 	
+	/**
+	 * Reads metadata from the input image stream.
+	 * 
+	 * @param is InputStream for the image.
+	 * @throws IOException
+	 * @return A map of metadata read
+	 */	
 	public static Map<MetadataType, Metadata> readMetadata(InputStream is) throws IOException {
 		// Create a map to hold all the metadata and thumbnails
 		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
-		Map<String, Thumbnail> thumbnails = new HashMap<String, Thumbnail>();
 		// Need to wrap the input stream with a BufferedInputStream to
 		// speed up reading SOS
 		if(!(is instanceof BufferedInputStream))
@@ -1678,16 +1807,6 @@ public class JPGTweaker {
 		 * JPEG, there could be more than one SOF
 		 */
 		List<SOFReader> readers = new ArrayList<SOFReader>();
-		
-		// Used to read multiple segment ICCProfile
-		ByteArrayOutputStream iccProfileStream = null;
-		
-		// Used to read multiple segment Adobe APP13
-		ByteArrayOutputStream eightBIMStream = null;
-		
-		// Used to read multiple segment XMP
-		byte[] extendedXMP = null;
-		String xmpGUID = ""; // 32 byte ASCII hex string
 		
 		Comments comments = null;
 		
@@ -1791,115 +1910,10 @@ public class JPGTweaker {
 		LOGGER.debug("\n{}", hTablesToString(m_acTables));	
 		LOGGER.debug("\n{}", hTablesToString(m_dcTables));
 		
-		for(Segment segment : appnSegments) {
-			byte[] data = segment.getData();
-			length = segment.getLength();
-			if(segment.getMarker() == Marker.APP0) {
-				if (data.length >= JFIF_ID.length() && new String(data, 0, JFIF_ID.length()).equals(JFIF_ID)) {
-					metadataMap.put(MetadataType.JPG_JFIF, new JFIF(ArrayUtils.subArray(data, JFIF_ID.length(), length - JFIF_ID.length() - 2)));
-				}
-			} else if(segment.getMarker() == Marker.APP1) {
-				// Check for EXIF
-				if(data.length >= EXIF_ID.length() && new String(data, 0, EXIF_ID.length()).equals(EXIF_ID)) {
-					// We found EXIF
-					JpegExif exif = new JpegExif(ArrayUtils.subArray(data, EXIF_ID.length(), length - EXIF_ID.length() - 2));
-					metadataMap.put(MetadataType.EXIF, exif);
-				} else if(data.length >= XMP_ID.length() && new String(data, 0, XMP_ID.length()).equals(XMP_ID) ||
-						data.length >= NON_STANDARD_XMP_ID.length() && new String(data, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID)) {
-					// We found XMP, add it to metadata list (We may later revise it if we have ExtendedXMP)
-					XMP xmp = new JpegXMP(ArrayUtils.subArray(data, XMP_ID.length(), length - XMP_ID.length() - 2));
-					metadataMap.put(MetadataType.XMP, xmp);
-					// Retrieve XMP GUID if available
-					xmpGUID = XMLUtils.getAttribute(xmp.getXmpDocument(), "rdf:Description", "xmpNote:HasExtendedXMP");
-				} else if(data.length >= XMP_EXT_ID.length() && new String(data, 0, XMP_EXT_ID.length()).equals(XMP_EXT_ID)) {
-					// We found ExtendedXMP, add the data to ExtendedXMP memory buffer				
-					int i = XMP_EXT_ID.length();
-					// 128-bit MD5 digest of the full ExtendedXMP serialization
-					byte[] guid = ArrayUtils.subArray(data, i, 32);
-					if(Arrays.equals(guid, xmpGUID.getBytes())) { // We have matched the GUID, copy it
-						i += 32;
-						long extendedXMPLength = IOUtils.readUnsignedIntMM(data, i);
-						i += 4;
-						if(extendedXMP == null)
-							extendedXMP = new byte[(int)extendedXMPLength];
-						// Offset for the current segment
-						long offset = IOUtils.readUnsignedIntMM(data, i);
-						i += 4;
-						byte[] xmpBytes = ArrayUtils.subArray(data, i, length - XMP_EXT_ID.length() - 42);
-						System.arraycopy(xmpBytes, 0, extendedXMP, (int)offset, xmpBytes.length);
-					}
-				}
-			} else if(segment.getMarker() == Marker.APP2) {
-				// We're only interested in ICC_Profile
-				if (data.length >= ICC_PROFILE_ID.length() && new String(data, 0, ICC_PROFILE_ID.length()).equals(ICC_PROFILE_ID)) {
-					if(iccProfileStream == null)
-						iccProfileStream = new ByteArrayOutputStream();
-					iccProfileStream.write(ArrayUtils.subArray(data, ICC_PROFILE_ID.length() + 2, length - ICC_PROFILE_ID.length() - 4));
-				}
-			} else if(segment.getMarker() == Marker.APP12) {
-				if (data.length >= DUCKY_ID.length() && new String(data, 0, DUCKY_ID.length()).equals(DUCKY_ID)) {
-					metadataMap.put(MetadataType.JPG_DUCKY, new Ducky(ArrayUtils.subArray(data, DUCKY_ID.length(), length - DUCKY_ID.length() - 2)));
-				}
-			} else if(segment.getMarker() == Marker.APP13) {
-				if (data.length >= PHOTOSHOP_IRB_ID.length() && new String(data, 0, PHOTOSHOP_IRB_ID.length()).equals(PHOTOSHOP_IRB_ID)) {
-					if(eightBIMStream == null)
-						eightBIMStream = new ByteArrayOutputStream();
-					eightBIMStream.write(ArrayUtils.subArray(data, PHOTOSHOP_IRB_ID.length(), length - PHOTOSHOP_IRB_ID.length() - 2));
-				}
-			} else if(segment.getMarker() == Marker.APP14) {
-				if (data.length >= ADOBE_ID.length() && new String(data, 0, ADOBE_ID.length()).equals(ADOBE_ID)) {
-					metadataMap.put(MetadataType.JPG_ADOBE, new Adobe(ArrayUtils.subArray(data, ADOBE_ID.length(), length - ADOBE_ID.length() - 2)));
-				}
-			}
-		}
-		
-		// Now it's time to join multiple segments ICC_PROFILE and/or XMP		
-		if(iccProfileStream != null) { // We have ICCProfile data
-			ICCProfile icc_profile = new ICCProfile(iccProfileStream.toByteArray());
-			metadataMap.put(MetadataType.ICC_PROFILE, icc_profile);
-		}
-		
-		if(eightBIMStream != null) {
-			IRB irb = new IRB(eightBIMStream.toByteArray());	
-			metadataMap.put(MetadataType.PHOTOSHOP_IRB, irb);
-			_8BIM iptc = irb.get8BIM(ImageResourceID.IPTC_NAA.getValue());
-			// Extract IPTC as stand-alone meta
-			if(iptc != null) {
-				metadataMap.put(MetadataType.IPTC, new IPTC(iptc.getData()));
-			}
-		}
-		
-		if(extendedXMP != null) {
-			XMP xmp = ((XMP)metadataMap.get(MetadataType.XMP));
-			if(xmp != null)
-				xmp.setExtendedXMPData(extendedXMP);
-		}
+		extractMetadataFromAPPn(appnSegments, metadataMap);
 		
 		if(comments != null)
 			metadataMap.put(MetadataType.COMMENT, comments);
-		
-		// Extract thumbnails to ImageMetadata
-		Metadata meta = metadataMap.get(MetadataType.EXIF);
-		if(meta != null) {
-			Exif exif = (Exif)meta;
-			if(!exif.isDataRead())
-				exif.read();
-			if(exif.containsThumbnail()) {
-				thumbnails.put("EXIF", exif.getThumbnail());
-			}
-		}
-		
-		meta = metadataMap.get(MetadataType.PHOTOSHOP_IRB);
-		if(meta != null) {
-			IRB irb = (IRB)meta;
-			if(!irb.isDataRead())
-				irb.read();
-			if(irb.containsThumbnail()) {
-				thumbnails.put("PHOTOSHOP_IRB", irb.getThumbnail());
-			}
-		}
-		
-		metadataMap.put(MetadataType.IMAGE, new ImageMetadata(thumbnails));
 		
 		return metadataMap;
 	}
@@ -2039,12 +2053,36 @@ public class JPGTweaker {
 	    }
 	}
 	
-	public static void removeMetadata(InputStream is, OutputStream os, MetadataType ... metadataTypes) throws IOException {
-		removeMetadata(new HashSet<MetadataType>(Arrays.asList(metadataTypes)), is, os);
+	/**
+	 * Removes metadata specified by the input MetadataType set.
+	 * 
+	 * @param metadataTypes a set containing all the MetadataTypes to be removed.
+	 * @param is InputStream for the original image.
+	 * @param os OutputStream for the image with metadata removed.
+	 * @throws IOException
+	 * @return A map of the removed metadata
+	 */	
+	public static Map<MetadataType, Metadata> removeMetadata(InputStream is, OutputStream os, MetadataType ... metadataTypes) throws IOException {
+		return removeMetadata(new HashSet<MetadataType>(Arrays.asList(metadataTypes)), is, os);
 	}
 	
-	// Remove meta data segments
-	public static void removeMetadata(Set<MetadataType> metadataTypes, InputStream is, OutputStream os) throws IOException {
+	/**
+	 * Removes metadata specified by the input MetadataType set.
+	 * 
+	 * @param metadataTypes a set containing all the MetadataTypes to be removed.
+	 * @param is InputStream for the original image.
+	 * @param os OutputStream for the image with metadata removed.
+	 * @throws IOException
+	 * @return A map of the removed metadata
+	 */
+	public static Map<MetadataType, Metadata> removeMetadata(Set<MetadataType> metadataTypes, InputStream is, OutputStream os) throws IOException {
+		// Create a map to hold all the metadata and thumbnails
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
+	
+		Comments comments = null;
+		
+		List<Segment> appnSegments = new ArrayList<Segment>();			
+		
 		// Flag when we are done
 		boolean finished = false;
 		int length = 0;
@@ -2089,9 +2127,9 @@ public class JPGTweaker {
 						break;
 					case COM:
 						if(metadataTypes.contains(MetadataType.COMMENT)) {
-							length = IOUtils.readUnsignedShortMM(is);
-							IOUtils.skipFully(is, length - 2);
-							marker = IOUtils.readShortMM(is);
+							if(comments == null) comments = new Comments();
+							comments.addComment(readSegmentData(is));
+						 	marker = IOUtils.readShortMM(is);
 						} else
 							marker = copySegment(marker, is, os);
 						break;						
@@ -2105,6 +2143,8 @@ public class JPGTweaker {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp);
+							} else { // We put it into the Segment map for further use
+								appnSegments.add(new Segment(emarker, length, temp));
 							}
 							marker = IOUtils.readShortMM(is);
 						} else
@@ -2121,7 +2161,8 @@ public class JPGTweaker {
 								|| (metadataTypes.contains(MetadataType.XMP) && temp.length >= XMP_ID.length() && new String(temp, 0, XMP_ID.length()).equals(XMP_ID))
 								|| (metadataTypes.contains(MetadataType.XMP) && temp.length >= NON_STANDARD_XMP_ID.length() && new String(temp, 0, NON_STANDARD_XMP_ID.length()).equals(NON_STANDARD_XMP_ID))
 								|| (metadataTypes.contains(MetadataType.EXIF) && temp.length >= EXIF_ID.length() && new String(temp, 0, EXIF_ID.length()).equals(EXIF_ID))) { // EXIF
-								// We don't need to do anything
+								// We put it into the Segment map for further use
+								appnSegments.add(new Segment(emarker, length, temp));
 							} else { // We don't want to remove any of them
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
@@ -2141,6 +2182,8 @@ public class JPGTweaker {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp);
+							} else { // We put it into the Segment map for further use
+								appnSegments.add(new Segment(emarker, length, temp));
 							}
 							marker = IOUtils.readShortMM(is);
 						} else
@@ -2156,12 +2199,15 @@ public class JPGTweaker {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp);
+							} else { // We put it into the Segment map for further use
+								appnSegments.add(new Segment(emarker, length, temp));
 							}
 							marker = IOUtils.readShortMM(is);
 						} else
 							marker = copySegment(marker, is, os);
 						break;
-					case APP13:
+					case APP13: // Currently unless the whole IRB is removed, it won't be added to metadataMap.
+						// TODO: add removed metadata inside IRB to metadataMap
 						if(metadataTypes.contains(MetadataType.PHOTOSHOP_IRB) || metadataTypes.contains(MetadataType.IPTC)
 							|| metadataTypes.contains(MetadataType.XMP) || metadataTypes.contains(MetadataType.EXIF)) {
 							length = IOUtils.readUnsignedShortMM(is);
@@ -2188,6 +2234,8 @@ public class JPGTweaker {
 									}
 									// Write back the IRB
 									writeIRB(os, bimMap.values());
+								} else { // We put it into the Segment map for further use
+									appnSegments.add(new Segment(emarker, length, temp));
 								}							
 							} else {
 								IOUtils.writeShortMM(os, marker);
@@ -2208,6 +2256,8 @@ public class JPGTweaker {
 								IOUtils.writeShortMM(os, marker);
 								IOUtils.writeShortMM(os, (short) length);
 								IOUtils.write(os, temp);
+							} else { // We put it into the Segment map for further use
+								appnSegments.add(new Segment(emarker, length, temp));
 							}
 							marker = IOUtils.readShortMM(is);
 						} else
@@ -2218,6 +2268,13 @@ public class JPGTweaker {
 				}
 			}
 		}
+		
+		extractMetadataFromAPPn(appnSegments, metadataMap);
+		
+		if(comments != null)
+			metadataMap.put(MetadataType.COMMENT, comments);
+		
+		return metadataMap;
 	}
 	
 	@SuppressWarnings("unused")

@@ -1,6 +1,7 @@
 ***************************
-Last modified on 05/04/2019
+Last modified on 06/21/2019
 ***************************
+21Jun2019  Changed JPGTweaker for removeMetadata to return the removed metadata 
 04May2019  Write IPTC to normal TIFF IPTC tag instead of PhotoShop IRB block
 09Aug2018  Add prepareForWrite(RandomAccessOutputStream, ByteOrder) to TIFFTweaker
 09Aug2018  Add ByteOrder support to TIFFTweaker.writeMultipageTIFF
