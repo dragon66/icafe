@@ -14,6 +14,7 @@
  *
  * Who   Date       Description
  * ====  =========  ===================================================================
+ * WY    21Jun2019  Added code for removeMetadata to return the removed metadata as a map
  * WY    04May2019  Write IPTC to normal TIFF IPTC tag instead of PhotoShop IRB block
  * WY    09Aug2018  Add prepareForWrite(RandomAccessOutputStream, ByteOrder)
  * WY    09Aug2018  Add ByteOrder support to writeMultipageTIFF
@@ -2836,12 +2837,12 @@ public class TIFFTweaker {
 		return metadataMap;
 	}
 	
-	public static void removeMetadata(int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout, MetadataType ... metadataTypes) throws IOException {
-		removeMetadata(new HashSet<MetadataType>(Arrays.asList(metadataTypes)), pageNumber, rin, rout);
+	public static Map<MetadataType, Metadata> removeMetadata(int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout, MetadataType ... metadataTypes) throws IOException {
+		return removeMetadata(new HashSet<MetadataType>(Arrays.asList(metadataTypes)), pageNumber, rin, rout);
 	}
 	
-	public static void removeMetadata(RandomAccessInputStream rin, RandomAccessOutputStream rout, MetadataType ... metadataTypes) throws IOException {
-		removeMetadata(0, rin, rout, metadataTypes);
+	public static Map<MetadataType, Metadata> removeMetadata(RandomAccessInputStream rin, RandomAccessOutputStream rout, MetadataType ... metadataTypes) throws IOException {
+		return removeMetadata(0, rin, rout, metadataTypes);
 	}
 	
 	/**
@@ -2852,11 +2853,14 @@ public class TIFFTweaker {
 	 * @param rout RandomAccessOutputStream for the output image
 	 * @throws IOException
 	 */
-	public static void removeMetadata(Set<MetadataType> metadataTypes, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+	public static Map<MetadataType, Metadata> removeMetadata(Set<MetadataType> metadataTypes, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
 		int offset = copyHeader(rin, rout);
 		// Read the IFDs into a list first
 		List<IFD> ifds = new ArrayList<IFD>();
 		readIFDs(ifds, offset, rin);
+		
+		// Create a map to hold all the metadata and thumbnails
+		Map<MetadataType, Metadata> metadataMap = new HashMap<MetadataType, Metadata>();
 	
 		if(pageNumber < 0 || pageNumber >= ifds.size())
 			throw new IllegalArgumentException("pageNumber " + pageNumber + " out of bounds: 0 - " + (ifds.size() - 1));
@@ -2868,37 +2872,45 @@ public class TIFFTweaker {
 		for(MetadataType metaType : metadataTypes) {
 			switch(metaType) {
 				case XMP:
-					workingPage.removeField(TiffTag.XMP);
+					TiffField<?> xmpField = workingPage.removeField(TiffTag.XMP);
+					if(xmpField != null) metadataMap.put(MetadataType.XMP, new TiffXMP((byte[])xmpField.getData()));
 					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove XMP and keep the other IRB data untouched.
-						removeMetadataFromIRB(workingPage, data, ImageResourceID.XMP_METADATA);
+						List<_8BIM> bims = removeMetadataFromIRB(workingPage, data, ImageResourceID.XMP_METADATA);
+						if(bims.size() > 0 && xmpField == null) metadataMap.put(MetadataType.XMP, new TiffXMP(bims.get(0).getData()));
 					}
 					break;
 				case IPTC:
-					workingPage.removeField(TiffTag.IPTC);
+					TiffField<?> iptcField = workingPage.removeField(TiffTag.IPTC);
+					if(iptcField != null) metadataMap.put(MetadataType.IPTC, new IPTC((byte[])iptcField.getData()));
 					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove IPTC_NAA and keep the other IRB data untouched.
-						removeMetadataFromIRB(workingPage, data, ImageResourceID.IPTC_NAA);
+						List<_8BIM> bims = removeMetadataFromIRB(workingPage, data, ImageResourceID.IPTC_NAA);
+						if(bims.size() > 0 && iptcField == null) metadataMap.put(MetadataType.IPTC, new IPTC(bims.get(0).getData()));
 					}
 					break;
 				case ICC_PROFILE:
-					workingPage.removeField(TiffTag.ICC_PROFILE);
+					TiffField<?>  iccField = workingPage.removeField(TiffTag.ICC_PROFILE);
+					if(iccField != null) metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile((byte[])iccField.getData()));
 					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove ICC_PROFILE and keep the other IRB data untouched.
-						removeMetadataFromIRB(workingPage, data, ImageResourceID.ICC_PROFILE);
+						List<_8BIM> bims = removeMetadataFromIRB(workingPage, data, ImageResourceID.ICC_PROFILE);
+						if(bims.size() > 0 && iccField == null) metadataMap.put(MetadataType.ICC_PROFILE, new ICCProfile(bims.get(0).getData()));
 					}
 					break;
 				case PHOTOSHOP_IRB:
-					workingPage.removeField(TiffTag.PHOTOSHOP);
+					TiffField<?> irbField = workingPage.removeField(TiffTag.PHOTOSHOP);
+					if(irbField != null) metadataMap.put(MetadataType.PHOTOSHOP_IRB, new IRB((byte[])irbField.getData()));
 					break;
 				case EXIF:
-					workingPage.removeField(TiffTag.EXIF_SUB_IFD);
+					TiffField<?> exifField = workingPage.removeField(TiffTag.EXIF_SUB_IFD);
+					if(exifField != null) metadataMap.put(MetadataType.EXIF, new TiffExif(workingPage));
 					workingPage.removeField(TiffTag.GPS_SUB_IFD);
 					metadata = workingPage.removeField(TiffTag.PHOTOSHOP);
 					if(metadata != null) {
@@ -2914,20 +2926,25 @@ public class TIFFTweaker {
 		offset = copyPages(ifds, offset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
-		writeToStream(rout, firstIFDOffset);		
+		writeToStream(rout, firstIFDOffset);
+		
+		return metadataMap;
 	}
 	
-	public static void removeMetadata(Set<MetadataType> metadataTypes, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
-		removeMetadata(metadataTypes, 0, rin, rout);
+	public static Map<MetadataType, Metadata> removeMetadata(Set<MetadataType> metadataTypes, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
+		return removeMetadata(metadataTypes, 0, rin, rout);
 	}
 	
-	private static void removeMetadataFromIRB(IFD workingPage, byte[] data, ImageResourceID ... ids) throws IOException {
+	private static List<_8BIM> removeMetadataFromIRB(IFD workingPage, byte[] data, ImageResourceID ... ids) throws IOException {
 		IRB irb = new IRB(data);
 		// Shallow copy the map.
-		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());								
+		Map<Short, _8BIM> bimMap = new HashMap<Short, _8BIM>(irb.get8BIM());
+		List<_8BIM> bimList = new ArrayList<_8BIM>();
 		// We only remove XMP and keep the other IRB data untouched.
-		for(ImageResourceID id : ids)
-			bimMap.remove(id.getValue());
+		for(ImageResourceID id : ids) {
+			_8BIM bim = bimMap.remove(id.getValue());
+			if(bim != null) bimList.add(bim);
+		}
 		if(bimMap.size() > 0) {
 		   	// Write back the IRB
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -2935,7 +2952,9 @@ public class TIFFTweaker {
 				bim.write(bout);
 			// Add new PHOTOSHOP field
 			workingPage.addField(new ByteField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
-		}		
+		}
+		
+		return bimList;
 	}
 		
 	/**

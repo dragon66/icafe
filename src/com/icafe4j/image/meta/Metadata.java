@@ -551,20 +551,23 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataEntry
 	 * @param is InputStream for the input image
 	 * @param os OutputStream for the output image
 	 * @throws IOException
+	 * @return A map of the removed metadata
 	 */
-	public static void removeMetadata(InputStream is, OutputStream os, MetadataType ...metadataTypes) throws IOException {
+	public static Map<MetadataType, Metadata> removeMetadata(InputStream is, OutputStream os, MetadataType ...metadataTypes) throws IOException {
 		// ImageIO.IMAGE_MAGIC_NUMBER_LEN bytes as image magic number
 		PeekHeadInputStream peekHeadInputStream = new PeekHeadInputStream(is, ImageIO.IMAGE_MAGIC_NUMBER_LEN);
-		ImageType imageType = IMGUtils.guessImageType(peekHeadInputStream);		
+		ImageType imageType = IMGUtils.guessImageType(peekHeadInputStream);
+		// The map of removed metadata
+		Map<MetadataType, Metadata> metadataMap = Collections.emptyMap();
 		// Delegate meta data removing to corresponding image tweaker.
 		switch(imageType) {
 			case JPG:
-				JPGTweaker.removeMetadata(peekHeadInputStream, os, metadataTypes);
+				metadataMap = JPGTweaker.removeMetadata(peekHeadInputStream, os, metadataTypes);
 				break;
 			case TIFF:
 				RandomAccessInputStream randIS = new FileCacheRandomAccessInputStream(peekHeadInputStream);
 				RandomAccessOutputStream randOS = new FileCacheRandomAccessOutputStream(os);
-				TIFFTweaker.removeMetadata(randIS, randOS, metadataTypes);
+				metadataMap = TIFFTweaker.removeMetadata(randIS, randOS, metadataTypes);
 				randIS.shallowClose();
 				randOS.shallowClose();
 				break;
@@ -575,9 +578,12 @@ public abstract class Metadata implements MetadataReader, Iterable<MetadataEntry
 				break;
 			default:
 				peekHeadInputStream.close();
-				throw new IllegalArgumentException("Metadata removing is not supported for " + imageType + " image");				
+				throw new UnsupportedOperationException("Metadata removing is not supported for " + imageType + " image");				
 		}
+		
 		peekHeadInputStream.shallowClose();
+		
+		return metadataMap;
 	}
 	
 	public Metadata(MetadataType type) {
