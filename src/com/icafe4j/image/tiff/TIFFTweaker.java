@@ -2919,6 +2919,14 @@ public class TIFFTweaker {
 						removeMetadataFromIRB(workingPage, data, ImageResourceID.EXIF_DATA1, ImageResourceID.EXIF_DATA3);
 					}
 					break;
+				case COMMENT:
+					TiffField<?> commentField = workingPage.removeField(TiffTag.IMAGE_DESCRIPTION);				
+					if(commentField != null) {
+						Comments comments = new Comments();
+						comments.addComment(commentField.getDataAsString());
+						metadataMap.put(MetadataType.COMMENT, comments);
+					}
+					break;
 				default:
 			}
 		}
