@@ -87,6 +87,7 @@ package com.icafe4j.image.tiff;
 
 import java.awt.color.ICC_Profile;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.File;
@@ -2837,10 +2838,29 @@ public class TIFFTweaker {
 		return metadataMap;
 	}
 	
+	/**
+	 * Remove meta data from TIFF image
+	 * 
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @param pageNumber working page from which to remove metadata
+	 * @param metadataTypes a variable length array of MetadataType to be removed
+	 * @throws IOException
+	 * @return A map of the removed metadata
+	 */
 	public static Map<MetadataType, Metadata> removeMetadata(int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout, MetadataType ... metadataTypes) throws IOException {
 		return removeMetadata(new HashSet<MetadataType>(Arrays.asList(metadataTypes)), pageNumber, rin, rout);
 	}
 	
+	/**
+	 * Remove meta data from TIFF image
+	 * 
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image
+	 * @param metadataTypes a variable length array of MetadataType to be removed
+	 * @throws IOException
+	 * @return A map of the removed metadata
+	 */
 	public static Map<MetadataType, Metadata> removeMetadata(RandomAccessInputStream rin, RandomAccessOutputStream rout, MetadataType ... metadataTypes) throws IOException {
 		return removeMetadata(0, rin, rout, metadataTypes);
 	}
@@ -2848,10 +2868,11 @@ public class TIFFTweaker {
 	/**
 	 * Remove meta data from TIFF image
 	 * 
-	 * @param pageNumber working page from which to remove EXIF and GPS data
+	 * @param pageNumber working page from which to remove metadata
 	 * @param rin RandomAccessInputStream for the input image
 	 * @param rout RandomAccessOutputStream for the output image
 	 * @throws IOException
+	 * @return A map of the removed metadata
 	 */
 	public static Map<MetadataType, Metadata> removeMetadata(Set<MetadataType> metadataTypes, int pageNumber, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
 		int offset = copyHeader(rin, rout);
@@ -2890,7 +2911,16 @@ public class TIFFTweaker {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove IPTC_NAA and keep the other IRB data untouched.
 						List<_8BIM> bims = removeMetadataFromIRB(workingPage, data, ImageResourceID.IPTC_NAA);
-						if(bims.size() > 0 && iptcField == null) metadataMap.put(MetadataType.IPTC, new IPTC(bims.get(0).getData()));
+						if(bims.size() > 0) {
+							// See if we already have IPTC data
+							IPTC iptc = (IPTC)(metadataMap.remove(MetadataType.IPTC));
+							if(iptc != null) { // Consolidate them together
+								byte[] iptcData = ArrayUtils.concat(iptc.getData(), bims.get(0).getData());
+								metadataMap.put(MetadataType.IPTC, new IPTC(iptcData));
+							} else { // Otherwise, add the data from IRB
+								metadataMap.put(MetadataType.IPTC, new IPTC(bims.get(0).getData()));
+							}
+						}							
 					}
 					break;
 				case ICC_PROFILE:
@@ -2916,7 +2946,16 @@ public class TIFFTweaker {
 					if(metadata != null) {
 						byte[] data = (byte[])metadata.getData();
 						// We only remove EXIF and keep the other IRB data untouched.
-						removeMetadataFromIRB(workingPage, data, ImageResourceID.EXIF_DATA1, ImageResourceID.EXIF_DATA3);
+						List<_8BIM> bims = removeMetadataFromIRB(workingPage, data, ImageResourceID.EXIF_DATA1, ImageResourceID.EXIF_DATA3);
+						if(exifField == null && bims.size() > 0) {
+							// Read the EXIF data
+							RandomAccessInputStream exif = new MemoryCacheRandomAccessInputStream(new ByteArrayInputStream(bims.get(0).getData()));
+							List<IFD> exifIFDs = new ArrayList<IFD>();
+							readIFDs(exifIFDs, 0, exif);
+							exif.close();
+							// put the data into metadataMap
+							if(exifIFDs.size() > 0) metadataMap.put(MetadataType.EXIF, new TiffExif(exifIFDs.get(0)));
+						}
 					}
 					break;
 				case COMMENT:
@@ -2939,6 +2978,15 @@ public class TIFFTweaker {
 		return metadataMap;
 	}
 	
+	/**
+	 * Remove meta data from TIFF image
+	 * 
+	 * @param metadataTypes a set of MetadataType to be removed
+	 * @param rin RandomAccessInputStream for the input image
+	 * @param rout RandomAccessOutputStream for the output image	 
+	 * @throws IOException
+	 * @return A map of the removed metadata
+	 */
 	public static Map<MetadataType, Metadata> removeMetadata(Set<MetadataType> metadataTypes, RandomAccessInputStream rin, RandomAccessOutputStream rout) throws IOException {
 		return removeMetadata(metadataTypes, 0, rin, rout);
 	}
