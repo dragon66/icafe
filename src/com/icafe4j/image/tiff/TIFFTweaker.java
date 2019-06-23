@@ -2951,7 +2951,7 @@ public class TIFFTweaker {
 							// Read the EXIF data
 							RandomAccessInputStream exif = new MemoryCacheRandomAccessInputStream(new ByteArrayInputStream(bims.get(0).getData()));
 							List<IFD> exifIFDs = new ArrayList<IFD>();
-							readIFDs(exifIFDs, 0, exif);
+							readIFDs(exifIFDs, exif);
 							exif.close();
 							// put the data into metadataMap
 							if(exifIFDs.size() > 0) metadataMap.put(MetadataType.EXIF, new TiffExif(exifIFDs.get(0)));
