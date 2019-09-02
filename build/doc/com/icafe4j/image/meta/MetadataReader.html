@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6};
+var methods = {"i0":6,"i1":6,"i2":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/icafe4j/image/meta/MetadataEntry.html" title="class in com.icafe4j.image.meta"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -128,12 +128,16 @@ extends <a href="../../../../com/icafe4j/util/Reader.html" title="interface in c
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/MetadataReader.html#isDataRead--">isDataRead</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/MetadataReader.html#ensureDataRead--">ensureDataRead</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/MetadataReader.html#showMetadata--">showMetadata</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/MetadataReader.html#getType--">getType</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/MetadataReader.html#isDataRead--">isDataRead</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -157,13 +161,22 @@ extends <a href="../../../../com/icafe4j/util/Reader.html" title="interface in c
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="showMetadata--">
+<a name="getType--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>showMetadata</h4>
-<pre>void&nbsp;showMetadata()</pre>
+<h4>getType</h4>
+<pre><a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta">MetadataType</a>&nbsp;getType()</pre>
+</li>
+</ul>
+<a name="ensureDataRead--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureDataRead</h4>
+<pre>void&nbsp;ensureDataRead()</pre>
 </li>
 </ul>
 <a name="isDataRead--">
@@ -202,7 +215,7 @@ extends <a href="../../../../com/icafe4j/util/Reader.html" title="interface in c
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/icafe4j/image/meta/Metadata.html" title="class in com.icafe4j.image.meta"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/icafe4j/image/meta/MetadataEntry.html" title="class in com.icafe4j.image.meta"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/icafe4j/image/meta/MetadataType.html" title="enum in com.icafe4j.image.meta"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

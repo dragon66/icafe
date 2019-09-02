@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":6};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -213,45 +213,49 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#containsImage--">containsImage</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#getAsBufferedImage--">getAsBufferedImage</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#getCompressedImage--">getCompressedImage</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#getDataType--">getDataType</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#getDataTypeAsString--">getDataTypeAsString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#getHeight--">getHeight</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#getRawImage--">getRawImage</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#getWidth--">getWidth</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#setImage-java.awt.image.BufferedImage-">setImage</a></span>(java.awt.image.BufferedImage&nbsp;thumbnail)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#setImage-int-int-int-byte:A-">setImage</a></span>(int&nbsp;width,
         int&nbsp;height,
         int&nbsp;dataType,
         byte[]&nbsp;compressedThumbnail)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#setWriteQuality-int-">setWriteQuality</a></span>(int&nbsp;quality)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/meta/Thumbnail.html#write-java.io.OutputStream-">write</a></span>(java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
 </tr>
@@ -423,6 +427,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>containsImage</h4>
 <pre>public&nbsp;boolean&nbsp;containsImage()</pre>
+</li>
+</ul>
+<a name="getAsBufferedImage--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAsBufferedImage</h4>
+<pre>public&nbsp;java.awt.image.BufferedImage&nbsp;getAsBufferedImage()</pre>
 </li>
 </ul>
 <a name="getCompressedImage--">

@@ -181,19 +181,19 @@ extends <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/IPTC_NAA.html#getDataSet-java.lang.String-">getDataSet</a></span>(java.lang.String&nbsp;key)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/IPTC_NAA.html#getDataSet-com.icafe4j.image.meta.iptc.IPTCTag-">getDataSet</a></span>(<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCTag.html" title="interface in com.icafe4j.image.meta.iptc">IPTCTag</a>&nbsp;key)</code>
 <div class="block">Get a list of IPTCDataSet associated with a key</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;&gt;</code></td>
+<td class="colFirst"><code>java.util.Map&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCTag.html" title="interface in com.icafe4j.image.meta.iptc">IPTCTag</a>,java.util.List&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/IPTC_NAA.html#getDataSets--">getDataSets</a></span>()</code>
 <div class="block">Get all the IPTCDataSet as a map for this IPTC data</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/IPTC_NAA.html#print--">print</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected <a href="../../../../../com/icafe4j/image/meta/MetadataEntry.html" title="class in com.icafe4j.image.meta">MetadataEntry</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/IPTC_NAA.html#getMetadataEntry--">getMetadataEntry</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -205,7 +205,7 @@ extends <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.icafe4j.image.meta.adobe.<a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</a></h3>
-<code><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getData--">getData</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getID--">getID</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getName--">getName</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getSize--">getSize</a></code></li>
+<code><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getData--">getData</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getID--">getID</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getName--">getName</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getSize--">getSize</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#print--">print</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -288,7 +288,7 @@ extends <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="
 <ul class="blockList">
 <li class="blockList">
 <h4>getDataSets</h4>
-<pre>public&nbsp;java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;&gt;&nbsp;getDataSets()</pre>
+<pre>public&nbsp;java.util.Map&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCTag.html" title="interface in com.icafe4j.image.meta.iptc">IPTCTag</a>,java.util.List&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;&gt;&nbsp;getDataSets()</pre>
 <div class="block">Get all the IPTCDataSet as a map for this IPTC data</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -296,13 +296,13 @@ extends <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="
 </dl>
 </li>
 </ul>
-<a name="getDataSet-java.lang.String-">
+<a name="getDataSet-com.icafe4j.image.meta.iptc.IPTCTag-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDataSet</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;&nbsp;getDataSet(java.lang.String&nbsp;key)</pre>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;&nbsp;getDataSet(<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCTag.html" title="interface in com.icafe4j.image.meta.iptc">IPTCTag</a>&nbsp;key)</pre>
 <div class="block">Get a list of IPTCDataSet associated with a key</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -312,16 +312,16 @@ extends <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="
 </dl>
 </li>
 </ul>
-<a name="print--">
+<a name="getMetadataEntry--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>print</h4>
-<pre>public&nbsp;void&nbsp;print()</pre>
+<h4>getMetadataEntry</h4>
+<pre>protected&nbsp;<a href="../../../../../com/icafe4j/image/meta/MetadataEntry.html" title="class in com.icafe4j.image.meta">MetadataEntry</a>&nbsp;getMetadataEntry()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#print--">print</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</a></code></dd>
+<dd><code><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getMetadataEntry--">getMetadataEntry</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</a></code></dd>
 </dl>
 </li>
 </ul>

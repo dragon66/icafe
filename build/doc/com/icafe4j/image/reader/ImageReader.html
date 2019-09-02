@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":6};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -195,18 +195,22 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/ImageReader.html#getFrame-int-">getFrame</a></span>(int&nbsp;i)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/ImageReader.html#getFrameCount--">getFrameCount</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.awt.image.BufferedImage&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/ImageReader.html#getFrames--">getFrames</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/icafe4j/image/ImageParam.html" title="class in com.icafe4j.image">ImageParam</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/ImageReader.html#getImageParam--">getImageParam</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>abstract java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/ImageReader.html#read-java.io.InputStream-">read</a></span>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
@@ -318,6 +322,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getFrameCount</h4>
 <pre>public&nbsp;int&nbsp;getFrameCount()</pre>
+</li>
+</ul>
+<a name="getFrame-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFrame</h4>
+<pre>public&nbsp;java.awt.image.BufferedImage&nbsp;getFrame(int&nbsp;i)</pre>
 </li>
 </ul>
 <a name="getFrames--">

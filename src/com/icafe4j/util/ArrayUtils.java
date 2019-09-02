@@ -298,7 +298,7 @@ public class ArrayUtils {
      * @param a the array to be searched
      * @param key the value to be searched for
      * @return index of the search key or index of the element which is closest to but less than the search key or
-     * -1 is the search key is less than the first element of the array.
+     * -1 if the search key is less than the first element of the array.
      */
     
     public static int findEqualOrLess(int[] a, int fromIndex, int toIndex, int key) {

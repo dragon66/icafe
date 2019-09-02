@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -191,46 +191,50 @@ extends <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#getFileVersion--">getFileVersion</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../com/icafe4j/image/meta/MetadataEntry.html" title="class in com.icafe4j.image.meta">MetadataEntry</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#getMetadataEntry--">getMetadataEntry</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#getReaderName--">getReaderName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#getVersion--">getVersion</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#getWriterName--">getWriterName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#hasRealMergedData--">hasRealMergedData</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#print--">print</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#setFileVersion-int-">setFileVersion</a></span>(int&nbsp;fileVersion)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#setHasRealMergedData-boolean-">setHasRealMergedData</a></span>(boolean&nbsp;hasRealMergedData)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#setReaderName-java.lang.String-">setReaderName</a></span>(java.lang.String&nbsp;readerName)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#setVersion-int-">setVersion</a></span>(int&nbsp;version)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#setWriterName-java.lang.String-">setWriterName</a></span>(java.lang.String&nbsp;writerName)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html#write-java.io.OutputStream-">write</a></span>(java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
 </tr>
@@ -351,6 +355,19 @@ extends <a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="
 <li class="blockList">
 <h4>hasRealMergedData</h4>
 <pre>public&nbsp;boolean&nbsp;hasRealMergedData()</pre>
+</li>
+</ul>
+<a name="getMetadataEntry--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMetadataEntry</h4>
+<pre>protected&nbsp;<a href="../../../../../com/icafe4j/image/meta/MetadataEntry.html" title="class in com.icafe4j.image.meta">MetadataEntry</a>&nbsp;getMetadataEntry()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getMetadataEntry--">getMetadataEntry</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html" title="class in com.icafe4j.image.meta.adobe">_8BIM</a></code></dd>
+</dl>
 </li>
 </ul>
 <a name="getReaderName--">

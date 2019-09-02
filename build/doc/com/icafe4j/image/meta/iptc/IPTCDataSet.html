@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -105,10 +105,15 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd>java.lang.Comparable&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;</dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">IPTCDataSet</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements java.lang.Comparable&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;</pre>
 <div class="block">International Press Telecommunications Council (IPTC) data set</div>
 <dl>
 <dt><span class="simpleTagLabel">Version:</span></dt>
@@ -186,46 +191,50 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#allowMultiple--">allowMultiple</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#compareTo-com.icafe4j.image.meta.iptc.IPTCDataSet-">compareTo</a></span>(<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&nbsp;other)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#getData--">getData</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#getDataAsString--">getDataAsString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#getName--">getName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#getRecordNumber--">getRecordNumber</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#getRecordType--">getRecordType</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#getSize--">getSize</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#getTag--">getTag</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCTag.html" title="interface in com.icafe4j.image.meta.iptc">IPTCTag</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#getTagEnum--">getTagEnum</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#print--">print</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html#write-java.io.OutputStream-">write</a></span>(java.io.OutputStream&nbsp;out)</code>
 <div class="block">Write the current IPTCDataSet to the OutputStream</div>
@@ -345,6 +354,19 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;boolean&nbsp;allowMultiple()</pre>
 </li>
 </ul>
+<a name="compareTo-com.icafe4j.image.meta.iptc.IPTCDataSet-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>compareTo</h4>
+<pre>public&nbsp;int&nbsp;compareTo(<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&nbsp;other)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../../../../com/icafe4j/image/meta/iptc/IPTCDataSet.html" title="class in com.icafe4j.image.meta.iptc">IPTCDataSet</a>&gt;</code></dd>
+</dl>
+</li>
+</ul>
 <a name="equals-java.lang.Object-">
 <!--   -->
 </a>
@@ -383,6 +405,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getName</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getName()</pre>
+</li>
+</ul>
+<a name="getRecordType--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRecordType</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getRecordType()</pre>
 </li>
 </ul>
 <a name="getRecordNumber--">
@@ -432,15 +463,6 @@ extends java.lang.Object</pre>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 </dl>
-</li>
-</ul>
-<a name="print--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>print</h4>
-<pre>public&nbsp;void&nbsp;print()</pre>
 </li>
 </ul>
 <a name="write-java.io.OutputStream-">

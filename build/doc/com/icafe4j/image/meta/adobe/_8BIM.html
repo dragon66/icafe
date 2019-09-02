@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -107,7 +107,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../com/icafe4j/image/meta/adobe/IPTC_NAA.html" title="class in com.icafe4j.image.meta.adobe">IPTC_NAA</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/JPEGQuality.html" title="class in com.icafe4j.image.meta.adobe">JPEGQuality</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/Slices.html" title="class in com.icafe4j.image.meta.adobe">Slices</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/ThumbnailResource.html" title="class in com.icafe4j.image.meta.adobe">ThumbnailResource</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html" title="class in com.icafe4j.image.meta.adobe">VersionInfo</a></dd>
+<dd><a href="../../../../../com/icafe4j/image/meta/adobe/IPTC_NAA.html" title="class in com.icafe4j.image.meta.adobe">IPTC_NAA</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/JPGQuality.html" title="class in com.icafe4j.image.meta.adobe">JPGQuality</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/Slices.html" title="class in com.icafe4j.image.meta.adobe">Slices</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/ThumbnailResource.html" title="class in com.icafe4j.image.meta.adobe">ThumbnailResource</a>, <a href="../../../../../com/icafe4j/image/meta/adobe/VersionInfo.html" title="class in com.icafe4j.image.meta.adobe">VersionInfo</a></dd>
 </dl>
 <hr>
 <br>
@@ -193,18 +193,22 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getID--">getID</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../../com/icafe4j/image/meta/MetadataEntry.html" title="class in com.icafe4j.image.meta">MetadataEntry</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getMetadataEntry--">getMetadataEntry</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getName--">getName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#getSize--">getSize</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#print--">print</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/icafe4j/image/meta/adobe/_8BIM.html#write-java.io.OutputStream-">write</a></span>(java.io.OutputStream&nbsp;os)</code>&nbsp;</td>
 </tr>
@@ -305,6 +309,15 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getData</h4>
 <pre>public&nbsp;byte[]&nbsp;getData()</pre>
+</li>
+</ul>
+<a name="getMetadataEntry--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMetadataEntry</h4>
+<pre>protected&nbsp;<a href="../../../../../com/icafe4j/image/meta/MetadataEntry.html" title="class in com.icafe4j.image.meta">MetadataEntry</a>&nbsp;getMetadataEntry()</pre>
 </li>
 </ul>
 <a name="getName--">

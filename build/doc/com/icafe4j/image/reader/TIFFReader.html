@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.icafe4j.image.reader.ImageReader">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -110,6 +110,10 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../../../com/icafe4j/image/tiff/PageReader.html" title="class in com.icafe4j.image.tiff">PageReader</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">TIFFReader</span>
@@ -133,6 +137,17 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <!--   -->
 </a>
 <h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/TIFFReader.html#ifds">ifds</a></span></code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="fields.inherited.from.class.com.icafe4j.image.reader.ImageReader">
 <!--   -->
@@ -172,16 +187,28 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>protected java.awt.image.BufferedImage</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/TIFFReader.html#decode-com.icafe4j.image.tiff.IFD-">decode</a></span>(<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&nbsp;ifd)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/TIFFReader.html#getFrame-int-">getFrame</a></span>(int&nbsp;i)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/TIFFReader.html#getFrameCount--">getFrameCount</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.awt.image.BufferedImage&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/TIFFReader.html#getFrames--">getFrames</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/TIFFReader.html#read-java.io.InputStream-">read</a></span>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/icafe4j/image/reader/TIFFReader.html#readIFDs-java.io.InputStream-">readIFDs</a></span>(java.io.InputStream&nbsp;is)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -206,6 +233,23 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="ifds">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ifds</h4>
+<pre>protected&nbsp;java.util.List&lt;<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&gt; ifds</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -229,17 +273,15 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="read-java.io.InputStream-">
+<a name="decode-com.icafe4j.image.tiff.IFD-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>read</h4>
-<pre>public&nbsp;java.awt.image.BufferedImage&nbsp;read(java.io.InputStream&nbsp;is)
-                                  throws java.lang.Exception</pre>
+<h4>decode</h4>
+<pre>protected&nbsp;java.awt.image.BufferedImage&nbsp;decode(<a href="../../../../com/icafe4j/image/tiff/IFD.html" title="class in com.icafe4j.image.tiff">IFD</a>&nbsp;ifd)
+                                       throws java.lang.Exception</pre>
 <dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../com/icafe4j/image/reader/ImageReader.html#read-java.io.InputStream-">read</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
@@ -258,16 +300,59 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 </dl>
 </li>
 </ul>
+<a name="getFrame-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFrame</h4>
+<pre>public&nbsp;java.awt.image.BufferedImage&nbsp;getFrame(int&nbsp;i)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../com/icafe4j/image/reader/ImageReader.html#getFrame-int-">getFrame</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getFrames--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getFrames</h4>
 <pre>public&nbsp;java.util.List&lt;java.awt.image.BufferedImage&gt;&nbsp;getFrames()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../../../com/icafe4j/image/reader/ImageReader.html#getFrames--">getFrames</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="read-java.io.InputStream-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;java.awt.image.BufferedImage&nbsp;read(java.io.InputStream&nbsp;is)
+                                  throws java.lang.Exception</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/icafe4j/image/reader/ImageReader.html#read-java.io.InputStream-">read</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="class in com.icafe4j.image.reader">ImageReader</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
+</dl>
+</li>
+</ul>
+<a name="readIFDs-java.io.InputStream-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>readIFDs</h4>
+<pre>protected&nbsp;boolean&nbsp;readIFDs(java.io.InputStream&nbsp;is)
+                    throws java.lang.Exception</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
 </dl>
 </li>
 </ul>
@@ -324,13 +409,13 @@ extends <a href="../../../../com/icafe4j/image/reader/ImageReader.html" title="c
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#fields.inherited.from.class.com.icafe4j.image.reader.ImageReader">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
