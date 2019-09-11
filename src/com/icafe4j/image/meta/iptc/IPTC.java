@@ -1,5 +1,5 @@
 /**
- * COPYRIGHT (C) 2014-2017 WEN YU (YUWEN_66@YAHOO.COM) ALL RIGHTS RESERVED.
+ * COPYRIGHT (C) 2014-2019 WEN YU (YUWEN_66@YAHOO.COM) ALL RIGHTS RESERVED.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
