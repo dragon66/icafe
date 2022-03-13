@@ -93,10 +93,10 @@ public class ThumbnailResource extends _8BIM {
 		// paddedRowBytes = (width * bitsPerPixel + 31) / 32 * 4.
 		// totalSize = paddedRowBytes * height * numOfPlanes
 		this.paddedRowBytes = (width * 24 + 31)/32 * 4;
+		this.numOfPlanes = 1;
 		this.totalSize = paddedRowBytes * height * numOfPlanes;
 		this.compressedSize = thumbnailData.length;
 		this.bitsPerPixel = 24;
-		this.numOfPlanes = 1;
 		setThumbnailImage(id, dataType, width, height, totalSize, thumbnailData);
 	}
 	
