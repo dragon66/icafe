@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 
 /**
  * Implements a file cached random access input stream to ease the 
@@ -65,7 +66,7 @@ public class FileCacheRandomAccessInputStream extends RandomAccessInputStream {
     	super(src);
         this.bufLen = bufLen;
         buf = new byte[bufLen];
-    	this.cacheFile = File.createTempFile("cafe-FCRAIS-", ".tmp");
+    	this.cacheFile = Files.createTempFile("cafe-FCRAIS-", ".tmp").toFile();
         cacheFile.deleteOnExit();
         this.cache = new RandomAccessFile(cacheFile, "rw");
     }
