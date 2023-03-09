@@ -27,6 +27,7 @@ import java.util.Date;
 
 import com.icafe4j.image.jpeg.Marker;
 import com.icafe4j.image.meta.exif.Exif;
+import com.icafe4j.image.meta.exif.ExifTag;
 import com.icafe4j.image.tiff.ASCIIField;
 import com.icafe4j.image.tiff.IFD;
 import com.icafe4j.image.tiff.LongField;
@@ -89,7 +90,11 @@ public class JpegExif extends Exif {
 		// Attach EXIIF and/or GPS SubIFD to main image IFD
 		if(exifSubIFD != null) {
 			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD.getValue(), new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exifSubIFD);			
+			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exifSubIFD);
+			if(interopSubIFD != null) {
+				exifSubIFD.addField(new LongField(ExifTag.EXIF_INTEROPERABILITY_OFFSET.getValue(), new int[]{0})); // Place holder
+				exifSubIFD.addChild(ExifTag.EXIF_INTEROPERABILITY_OFFSET, interopSubIFD);			
+			}
 		}
 		if(gpsSubIFD != null) {
 			imageIFD.addField(new LongField(TiffTag.GPS_SUB_IFD.getValue(), new int[]{0})); // Place holder
