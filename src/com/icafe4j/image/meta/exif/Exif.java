@@ -73,6 +73,7 @@ public abstract class Exif extends Metadata {
 	protected IFD imageIFD;
 	protected IFD exifSubIFD;
 	protected IFD gpsSubIFD;
+	protected IFD interopSubIFD;
 	protected ExifThumbnail thumbnail;
 	
 	private boolean containsThumbnail;
@@ -122,6 +123,16 @@ public abstract class Exif extends Metadata {
 			throw new IllegalArgumentException("Cannot create required GPS TIFF field");
 	}
 	
+	public void addInteropField(InteropTag tag, FieldType type, Object data) {
+		if(interopSubIFD == null)
+			interopSubIFD = new IFD();
+		TiffField<?> field = FieldType.createField(tag, type, data);
+		if(field != null)
+			interopSubIFD.addField(field);
+		else
+			throw new IllegalArgumentException("Cannot create required interop TIFF field");
+	}
+	
 	public void addImageField(TiffTag tag, FieldType type, Object data) {
 		if(imageIFD == null)
 			imageIFD = new IFD();
@@ -151,7 +162,7 @@ public abstract class Exif extends Metadata {
 		} else if(tag instanceof GPSTag) {
 			ifd = getGPSIFD();
 		} else if(tag instanceof InteropTag) {
-			throw new UnsupportedOperationException("InteropTag is not supported by Exif");
+			ifd = getInteropIFD();
 		}
 		
 		if(ifd != null) return ifd.getFieldAsString(tag);
@@ -170,6 +181,14 @@ public abstract class Exif extends Metadata {
 	public IFD getGPSIFD() {
 		if(gpsSubIFD != null) {
 			return new IFD(gpsSubIFD);
+		} 
+
+		return null;
+	}
+	
+	public IFD getInteropIFD() {
+		if(interopSubIFD != null) {
+			return new IFD(interopSubIFD);
 		} 
 
 		return null;
@@ -229,6 +248,8 @@ public abstract class Exif extends Metadata {
 			entry = new MetadataEntry("EXIF SubIFD", "EXIF Info", true);
 		} else if(tagClass.equals(GPSTag.class)) {
 			entry = new MetadataEntry("GPS SubIFD", "GPS Info", true);
+		} else if(tagClass.equals(InteropTag.class)) {
+			entry = new MetadataEntry("Interoperability SubIFD", "Interoperability Info", true);
 		} else
 			entry = new MetadataEntry("UNKNOWN", "UNKNOWN SubIFD", true);
 		
@@ -237,6 +258,8 @@ public abstract class Exif extends Metadata {
 			Tag ftag = TiffTag.UNKNOWN;
 			if(tag == ExifTag.PADDING.getValue()) {
 				ftag = ExifTag.PADDING;
+			} else if(tag == ExifTag.EXIF_INTEROPERABILITY_OFFSET.getValue()) {
+				ftag = ExifTag.EXIF_INTEROPERABILITY_OFFSET;
 			} else {
 				try {
 					ftag = (Tag)method.invoke(null, tag);
@@ -272,6 +295,10 @@ public abstract class Exif extends Metadata {
 			getMetadataEntries(children.get(TiffTag.EXIF_SUB_IFD), ExifTag.class, items);
 		}
 		
+		if(children.get(ExifTag.EXIF_INTEROPERABILITY_OFFSET) != null) {
+			getMetadataEntries(children.get(ExifTag.EXIF_INTEROPERABILITY_OFFSET), InteropTag.class, items);
+		}
+		
 		if(children.get(TiffTag.GPS_SUB_IFD) != null) {
 			getMetadataEntries(children.get(TiffTag.GPS_SUB_IFD), GPSTag.class, items);
 		}		
@@ -285,6 +312,8 @@ public abstract class Exif extends Metadata {
 			if(ifds.size() > 0) {
 				imageIFD = ifds.get(0);
 				exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
+				if(exifSubIFD != null)
+					interopSubIFD = exifSubIFD.getChild(ExifTag.EXIF_INTEROPERABILITY_OFFSET);
 				gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
 			}
 		    // We have thumbnail IFD
@@ -336,6 +365,10 @@ public abstract class Exif extends Metadata {
 	
 	public void setGPSIFD(IFD gpsSubIFD) {
 		this.gpsSubIFD = gpsSubIFD;
+	}
+	
+	public void setInteropIFD(IFD interopSubIFD) {
+		this.interopSubIFD = interopSubIFD;
 	}
 	
 	public void setImageIFD(IFD imageIFD) {
