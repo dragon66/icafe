@@ -115,6 +115,7 @@ import com.icafe4j.image.meta.adobe.ImageResourceID;
 import com.icafe4j.image.meta.adobe.ThumbnailResource;
 import com.icafe4j.image.meta.adobe._8BIM;
 import com.icafe4j.image.meta.exif.Exif;
+import com.icafe4j.image.meta.exif.ExifTag;
 import com.icafe4j.image.meta.exif.ExifThumbnail;
 import com.icafe4j.image.meta.icc.ICCProfile;
 import com.icafe4j.image.meta.image.Comments;
@@ -855,16 +856,20 @@ public class JPGTweaker {
 		    	IFD newExifSubIFD = exif.getExifIFD();
 		    	IFD newGpsSubIFD = exif.getGPSIFD();
 		    	IFD newImageIFD = exif.getImageIFD();
+		    	IFD newInteropSubIFD = exif.getInteropIFD();
 		    	ExifThumbnail newThumbnail = exif.getThumbnail();  
 		    	// Define new IFDs
 		    	IFD exifSubIFD = null;
 		    	IFD gpsSubIFD = null;
+		    	IFD interopSubIFD = null;
 		    	IFD imageIFD = null;
 		    	// Got to do something to keep the old data
 		    	if(update && oldExif != null) {
 		    		IFD oldImageIFD = oldExif.getImageIFD();
 			    	IFD oldExifSubIFD = oldExif.getExifIFD();
 			    	IFD oldGpsSubIFD = oldExif.getGPSIFD();
+			    	IFD oldInteropSubIFD = oldExif.getInteropIFD();
+			    	
 			    	ExifThumbnail thumbnail = oldExif.getThumbnail();
 			    	
 			    	if(oldImageIFD != null) {
@@ -878,6 +883,10 @@ public class JPGTweaker {
 			    	if(oldExifSubIFD != null) {
 			    		exifSubIFD = new IFD();
 			    		exifSubIFD.addFields(oldExifSubIFD.getFields());
+			    	}
+			    	if(oldInteropSubIFD != null) {
+			    		interopSubIFD = new IFD();
+			    		interopSubIFD.addFields(oldInteropSubIFD.getFields());
 			    	}
 			    	if(oldGpsSubIFD != null) {
 			    		gpsSubIFD = new IFD();
@@ -894,6 +903,11 @@ public class JPGTweaker {
 		    			exifSubIFD.addFields(newExifSubIFD.getFields());
 		    	} else
 		    		exifSubIFD = newExifSubIFD;
+		    	if(interopSubIFD != null) {
+		    		if(newInteropSubIFD != null)
+		    			interopSubIFD.addFields(newInteropSubIFD.getFields());
+		    	} else
+		    		interopSubIFD = newInteropSubIFD;
 		    	if(gpsSubIFD != null) {
 		    		if(newGpsSubIFD != null)
 		    			gpsSubIFD.addFields(newGpsSubIFD.getFields());
@@ -901,14 +915,19 @@ public class JPGTweaker {
 		    		gpsSubIFD = newGpsSubIFD;
 		    	// If we have ImageIFD, set Image IFD attached with EXIF and GPS
 		     	if(imageIFD != null) {
-		    		if(exifSubIFD != null)
+		    		if(exifSubIFD != null) {
 			    		imageIFD.addChild(TiffTag.EXIF_SUB_IFD, exifSubIFD);
+			    		if(interopSubIFD != null) {
+				    		exifSubIFD.addChild(ExifTag.EXIF_INTEROPERABILITY_OFFSET, interopSubIFD);
+			    		}
+		    		}
 		    		if(gpsSubIFD != null)
 			    		imageIFD.addChild(TiffTag.GPS_SUB_IFD, gpsSubIFD);
 		    		exif.setImageIFD(imageIFD);
 		    	} else { // Otherwise, set EXIF and GPS IFD separately
 		    		exif.setExifIFD(exifSubIFD);
 		    		exif.setGPSIFD(gpsSubIFD);
+		    		exif.setInteropIFD(interopSubIFD);
 		    	}
 		   		exif.setThumbnail(newThumbnail);
 		   		// Now insert the new EXIF to the JPEG
