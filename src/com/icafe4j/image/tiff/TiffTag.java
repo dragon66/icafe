@@ -160,11 +160,17 @@ public enum TiffTag implements Tag {
 		public FieldType getFieldType() {
 			return FieldType.ASCII;
 		}
+		public boolean isCritical() {
+			return false;
+		}
 	},
 	
 	MAKE("Make", (short)0x010F, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.ASCII;
+		}
+		public boolean isCritical() {
+			return false;
 		}
 	},
 	
@@ -378,6 +384,9 @@ public enum TiffTag implements Tag {
 	SOFTWARE("Software", (short)0x0131, Attribute.BASELINE) {
 		public FieldType getFieldType() {
 			return FieldType.ASCII;
+		}
+		public boolean isCritical() {
+			return false;
 		}
 	},
 	
