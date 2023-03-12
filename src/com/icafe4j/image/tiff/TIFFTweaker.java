@@ -155,6 +155,9 @@ import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
 
+import pixy.image.tiff.IFD;
+import pixy.image.tiff.LongField;
+
 import static com.icafe4j.image.writer.TIFFWriter.*;
 
 /**
@@ -1045,9 +1048,11 @@ public class TIFFTweaker {
 		IFD imageIFD = ifds.get(pageNumber);
 		IFD exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);
 		IFD gpsSubIFD = imageIFD.getChild(TiffTag.GPS_SUB_IFD);
+		IFD interopSubIFD = (exifSubIFD != null)? exifSubIFD.getChild(ExifTag.EXIF_INTEROPERABILITY_OFFSET) : null;
 		IFD newImageIFD = exif.getImageIFD();
 		IFD newExifSubIFD = exif.getExifIFD();
 		IFD newGpsSubIFD = exif.getGPSIFD();
+		IFD newInteropSubIFD = exif.getInteropIFD();
 		
 		if(newImageIFD != null) {
 			Collection<TiffField<?>> fields = newImageIFD.getFields();
@@ -1066,7 +1071,15 @@ public class TIFFTweaker {
 		
 		if(newExifSubIFD != null) {
 			imageIFD.addField(new LongField(TiffTag.EXIF_SUB_IFD.getValue(), new int[]{0})); // Place holder
-			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);		
+			imageIFD.addChild(TiffTag.EXIF_SUB_IFD, newExifSubIFD);
+			if(update && interopSubIFD != null && newInteropSubIFD != null) {
+				interopSubIFD.addFields(newInteropSubIFD.getFields());
+				newInteropSubIFD = interopSubIFD;
+			}
+			if(newInteropSubIFD != null) {
+				newExifSubIFD.addField(new LongField(ExifTag.EXIF_INTEROPERABILITY_OFFSET.getValue(), new int[]{0})); // Place holder
+				newExifSubIFD.addChild(ExifTag.EXIF_INTEROPERABILITY_OFFSET, newInteropSubIFD);		
+			}
 		}
 		
 		if(update && gpsSubIFD != null && newGpsSubIFD != null) {
