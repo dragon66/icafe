@@ -75,6 +75,7 @@ public abstract class Exif extends Metadata {
 	protected IFD gpsSubIFD;
 	protected IFD interopSubIFD;
 	protected ExifThumbnail thumbnail;
+	protected short preferedEndian = IOUtils.BIG_ENDIAN;
 	
 	private boolean containsThumbnail;
 	private boolean isThumbnailRequired;
@@ -309,6 +310,9 @@ public abstract class Exif extends Metadata {
 			RandomAccessInputStream exifIn = new FileCacheRandomAccessInputStream(new ByteArrayInputStream(data));
 			List<IFD> ifds = new ArrayList<IFD>(3);
 			TIFFTweaker.readIFDs(ifds, exifIn);
+			
+			preferedEndian = exifIn.getEndian();
+			
 			if(ifds.size() > 0) {
 				imageIFD = ifds.get(0);
 				exifSubIFD = imageIFD.getChild(TiffTag.EXIF_SUB_IFD);

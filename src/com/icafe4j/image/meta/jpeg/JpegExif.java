@@ -36,6 +36,7 @@ import com.icafe4j.image.tiff.TiffTag;
 import com.icafe4j.io.IOUtils;
 import com.icafe4j.io.MemoryCacheRandomAccessOutputStream;
 import com.icafe4j.io.RandomAccessOutputStream;
+import com.icafe4j.io.WriteStrategyII;
 import com.icafe4j.io.WriteStrategyMM;
 
 public class JpegExif extends Exif {
@@ -76,10 +77,9 @@ public class JpegExif extends Exif {
 		// Writes APP1 marker
 		IOUtils.writeShortMM(os, Marker.APP1.getValue());		
 		// TIFF structure starts here
-		short endian = IOUtils.BIG_ENDIAN;
 		short tiffID = 0x2a; //'*'
-		randOS.setWriteStrategy(WriteStrategyMM.getInstance());
-		randOS.writeShort(endian);
+		randOS.setWriteStrategy((preferedEndian == IOUtils.BIG_ENDIAN)? WriteStrategyMM.getInstance():WriteStrategyII.getInstance());
+		randOS.writeShort(preferedEndian);
 		randOS.writeShort(tiffID);
 		// First IFD offset relative to TIFF structure
 		randOS.seek(0x04);
