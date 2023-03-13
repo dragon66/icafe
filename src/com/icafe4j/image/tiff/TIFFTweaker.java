@@ -155,9 +155,6 @@ import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
 
-import pixy.image.tiff.IFD;
-import pixy.image.tiff.LongField;
-
 import static com.icafe4j.image.writer.TIFFWriter.*;
 
 /**
