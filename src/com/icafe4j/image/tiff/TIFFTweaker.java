@@ -2571,8 +2571,12 @@ public class TIFFTweaker {
 					TiffField<byte[]> byteField = null;
 					if(ftype == FieldType.BYTE)
 						byteField = new ByteField(tag, data);
-					else
-						byteField = new UndefinedField(tag, data);
+					else {
+						if(ftag == ExifTag.MAKER_NOTE)
+							byteField = new MakerNoteField(tag, data);
+						else
+							byteField = new UndefinedField(tag, data);
+					}
 					tiffIFD.addField(byteField);
 					offset += 4;					
 					break;
