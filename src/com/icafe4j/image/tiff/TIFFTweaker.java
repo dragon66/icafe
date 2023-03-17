@@ -2520,7 +2520,12 @@ public class TIFFTweaker {
 		return offset;
 	}
 	
-	private static int readIFD(RandomAccessInputStream rin, List<IFD> list, int offset, Class<? extends Tag> tagClass, IFD parent, Tag parentTag) throws IOException	{	
+	// Read IFD without header
+	public static int readIFD(RandomAccessInputStream rin, List<IFD> list, int offset, Class<? extends Tag> tagClass) throws IOException {
+		return readIFD(rin, list, offset, tagClass);
+	}
+	
+	private static int readIFD(RandomAccessInputStream rin, List<IFD> list, int offset, Class<? extends Tag> tagClass, IFD parent, Tag parentTag) throws IOException {	
 		// Use reflection to invoke fromShort(short) method
 		Method method = null;
 		try {
