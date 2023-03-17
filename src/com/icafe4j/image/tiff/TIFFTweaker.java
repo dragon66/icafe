@@ -2522,7 +2522,7 @@ public class TIFFTweaker {
 	
 	// Read IFD without header
 	public static int readIFD(RandomAccessInputStream rin, List<IFD> list, int offset, Class<? extends Tag> tagClass) throws IOException {
-		return readIFD(rin, list, offset, tagClass);
+		return readIFD(rin, list, offset, tagClass, null, null);
 	}
 	
 	private static int readIFD(RandomAccessInputStream rin, List<IFD> list, int offset, Class<? extends Tag> tagClass, IFD parent, Tag parentTag) throws IOException {	
