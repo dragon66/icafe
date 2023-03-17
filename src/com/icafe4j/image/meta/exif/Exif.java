@@ -405,10 +405,10 @@ public abstract class Exif extends Metadata {
 		this.isThumbnailRequired = isThumbnailRequired;
 	}
 	
-	public void setPreferredEndian(short preferedEndian) {
-		if(preferedEndian != IOUtils.BIG_ENDIAN && preferedEndian != IOUtils.LITTLE_ENDIAN)
+	public void setPreferredEndian(short preferredEndian) {
+		if(preferredEndian != IOUtils.BIG_ENDIAN && preferredEndian != IOUtils.LITTLE_ENDIAN)
 			throw new IllegalArgumentException("Invalid Exif endian!");
-		this.preferredEndian = preferedEndian;
+		this.preferredEndian = preferredEndian;
 	}
 		
 	public abstract void write(OutputStream os) throws IOException;
