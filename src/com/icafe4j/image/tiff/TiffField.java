@@ -57,7 +57,7 @@ public abstract class TiffField<T> implements Comparable<TiffField<?>> {
 	}
 	
 	public IFD getParent() {
-		return parent;
+		return new IFD(parent);
 	}
 	
 	/** Return an integer array representing TIFF long field */
