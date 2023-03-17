@@ -78,8 +78,8 @@ public class JpegExif extends Exif {
 		IOUtils.writeShortMM(os, Marker.APP1.getValue());		
 		// TIFF structure starts here
 		short tiffID = 0x2a; //'*'
-		randOS.setWriteStrategy((preferedEndian == IOUtils.BIG_ENDIAN)? WriteStrategyMM.getInstance():WriteStrategyII.getInstance());
-		randOS.writeShort(preferedEndian);
+		randOS.setWriteStrategy((preferredEndian == IOUtils.BIG_ENDIAN)? WriteStrategyMM.getInstance():WriteStrategyII.getInstance());
+		randOS.writeShort(preferredEndian);
 		randOS.writeShort(tiffID);
 		// First IFD offset relative to TIFF structure
 		randOS.seek(0x04);

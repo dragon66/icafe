@@ -865,7 +865,7 @@ public class JPGTweaker {
 		    	IFD imageIFD = null;
 		    	// Got to do something to keep the old data
 		    	if(update && oldExif != null) {
-		    		exif.setPreferedEndian(oldExif.getPreferedEndian());
+		    		exif.setPreferredEndian(oldExif.getPreferredEndian());
 		    		IFD oldImageIFD = oldExif.getImageIFD();
 			    	IFD oldExifSubIFD = oldExif.getExifIFD();
 			    	IFD oldGpsSubIFD = oldExif.getGPSIFD();
