@@ -124,7 +124,7 @@ public enum FieldType {
     	
 		return retValue;
 	}
-	
+
 	
 	
 	public String getName() {
