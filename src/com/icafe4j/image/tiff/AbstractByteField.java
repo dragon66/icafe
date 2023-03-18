@@ -28,7 +28,7 @@ public abstract class AbstractByteField extends TiffField<byte[]> {
 	}
 	
 	public String getDataAsString() {
-		return StringUtils.byteArrayToHexString(data, 0, TiffField.MAX_STRING_REPR_LEN);
+		return StringUtils.byteArrayToHexString(data, 0, MAX_STRING_REPR_LEN);
 	}
 
 	protected int writeData(RandomAccessOutputStream os, int toOffset) throws IOException {
