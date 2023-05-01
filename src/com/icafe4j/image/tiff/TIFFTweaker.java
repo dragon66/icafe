@@ -2564,6 +2564,7 @@ public class TIFFTweaker {
 			////// Try to read actual data.
 			switch (ftype) {
 				case BYTE:
+				case SBYTE:
 				case UNDEFINED:
 					byte[] data = new byte[field_length];
 					rin.seek(offset);
@@ -2574,9 +2575,11 @@ public class TIFFTweaker {
 						rin.readFully(data, 0, field_length);
 					}					
 					TiffField<byte[]> byteField = null;
-					if(ftype == FieldType.BYTE)
+					if(ftype == FieldType.BYTE) {
 						byteField = new ByteField(tag, data);
-					else {
+					} else if(ftype == FieldType.SBYTE) {
+						byteField = new SByteField(tag, data);
+					} else {
 						if(ftag == ExifTag.MAKER_NOTE)
 							byteField = new MakerNoteField(tiffIFD, data);
 						else
@@ -2601,6 +2604,7 @@ public class TIFFTweaker {
 					offset += 4;	
 					break;
 				case SHORT:
+				case SSHORT:
 					short[] sdata = new short[field_length];
 					if(field_length == 1) {
 					  rin.seek(offset);
@@ -2623,10 +2627,16 @@ public class TIFFTweaker {
 							toOffset += 2;
 						}
 					}
-					TiffField<short[]> shortField = new ShortField(tag, sdata);
+					TiffField<short[]> shortField = null;
+					if(ftype == FieldType.SSHORT) {
+						shortField = new SShortField(tag, sdata);
+					} else {
+						shortField = new ShortField(tag, sdata);
+					}
 					tiffIFD.addField(shortField);
 					break;
 				case LONG:
+				case SLONG:
 					int[] ldata = new int[field_length];
 					if(field_length == 1) {
 					  rin.seek(offset);
@@ -2642,7 +2652,12 @@ public class TIFFTweaker {
 							toOffset += 4;
 						}
 					}
-					TiffField<int[]> longField = new LongField(tag, ldata);
+					TiffField<int[]> longField = null;
+					if(ftype == FieldType.SLONG) {
+						longField = new SLongField(tag, ldata);
+					} else {
+						longField = new LongField(tag, ldata);
+					}
 					tiffIFD.addField(longField);
 					
 					if ((ftag == TiffTag.EXIF_SUB_IFD) && (ldata[0]!= 0)) {
@@ -2675,7 +2690,7 @@ public class TIFFTweaker {
 								LOGGER.error("Unable to read TiffTag.SUB_IFDS", e);
 							}
 						}
-					}				
+					}
 					break;
 				case FLOAT:
 					float[] fdata = new float[field_length];
@@ -2759,6 +2774,7 @@ public class TIFFTweaker {
 								
 					break;
 				default:
+					LOGGER.info("Unknown field type: value " + type);
 					offset += 4;
 					break;					
 			}
