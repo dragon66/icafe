@@ -119,4 +119,4 @@ Go to the [wiki] page to see this library in action or grab the "icafe.jar" from
 [wiki]:https://github.com/dragon66/icafe/wiki
 [Open]:https://github.com/dragon66/icafe/issues/new
 
-Just in case you want to show your support and appreciation, herebis a Paypal link: https://www.paypal.com/donate/?hosted_button_id=S8JZDYYMQQWCC
+Just in case you want to show your support and appreciation, here is a Paypal link: https://www.paypal.com/donate/?hosted_button_id=S8JZDYYMQQWCC
