@@ -1013,7 +1013,8 @@ public class TIFFTweaker {
 		
 		workingPage.addField(new ASCIIField(TiffTag.IMAGE_DESCRIPTION.getValue(), commentsBuilder.toString()));
 		
-		offset = copyPages(ifds, offset, rin, rout);
+		int writeOffset = FIRST_WRITE_OFFSET;
+		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
 		writeToStream(rout, firstIFDOffset);	
@@ -1117,8 +1118,9 @@ public class TIFFTweaker {
 		
 		IFD workingPage = ifds.get(pageNumber);
 		workingPage.addField(new UndefinedField(TiffTag.ICC_PROFILE.getValue(), icc_profile));
-		
-		offset = copyPages(ifds, offset, rin, rout);
+
+		int writeOffset = FIRST_WRITE_OFFSET;
+		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
 		writeToStream(rout, firstIFDOffset);	
@@ -1229,8 +1231,9 @@ public class TIFFTweaker {
 		}
 		// Add IPTC to regular IPTC tag field
 		workingPage.addField(new UndefinedField(TiffTag.IPTC.getValue(), bout.toByteArray()));
-		
-		offset = copyPages(ifds, offset, rin, rout);
+
+		int writeOffset = FIRST_WRITE_OFFSET;
+		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
 		writeToStream(rout, firstIFDOffset);	
@@ -1273,8 +1276,9 @@ public class TIFFTweaker {
 			bim.write(bout);
 		
 		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
-		
-		offset = copyPages(ifds, offset, rin, rout);
+
+		int writeOffset = FIRST_WRITE_OFFSET
+		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
 		writeToStream(rout, firstIFDOffset);	
@@ -1975,8 +1979,9 @@ public class TIFFTweaker {
 		
 		IFD workingPage = ifds.get(pageNumber);
 		workingPage.addField(new UndefinedField(TiffTag.XMP.getValue(), xmp));
-		
-		offset = copyPages(ifds, offset, rin, rout);
+
+		int writeOffset = FIRST_WRITE_OFFSET
+		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
 		writeToStream(rout, firstIFDOffset);	
@@ -3004,8 +3009,9 @@ public class TIFFTweaker {
 				default:
 			}
 		}
-		
-		offset = copyPages(ifds, offset, rin, rout);
+
+		int writeOffset = FIRST_WRITE_OFFSET
+		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
 		writeToStream(rout, firstIFDOffset);
