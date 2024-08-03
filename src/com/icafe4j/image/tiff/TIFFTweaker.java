@@ -1277,7 +1277,7 @@ public class TIFFTweaker {
 		
 		workingPage.addField(new UndefinedField(TiffTag.PHOTOSHOP.getValue(), bout.toByteArray()));
 
-		int writeOffset = FIRST_WRITE_OFFSET
+		int writeOffset = FIRST_WRITE_OFFSET;
 		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
@@ -1980,7 +1980,7 @@ public class TIFFTweaker {
 		IFD workingPage = ifds.get(pageNumber);
 		workingPage.addField(new UndefinedField(TiffTag.XMP.getValue(), xmp));
 
-		int writeOffset = FIRST_WRITE_OFFSET
+		int writeOffset = FIRST_WRITE_OFFSET;
 		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
@@ -3010,7 +3010,7 @@ public class TIFFTweaker {
 			}
 		}
 
-		int writeOffset = FIRST_WRITE_OFFSET
+		int writeOffset = FIRST_WRITE_OFFSET;
 		writeOffset = copyPages(ifds, writeOffset, rin, rout);
 		int firstIFDOffset = ifds.get(0).getStartOffset();	
 
