@@ -497,7 +497,7 @@ public class PNGTweaker {
 			for (Map.Entry<String, String> entry : keyValMap.entrySet()) {
 				if(entry.getKey().equals("XML:com.adobe.xmp"))
 					metadataMap.put(MetadataType.XMP, new PngXMP(entry.getValue()));
-				else if (entry.getKey().equals("Raw profile IPTC")) {
+				else if (entry.getKey().equals("Raw profile type iptc")) {
 					// Experimental implementation due to limited information
 					String[] iptc = entry.getValue().trim().split("\n");
                                         if(iptc.length >= 3) {
