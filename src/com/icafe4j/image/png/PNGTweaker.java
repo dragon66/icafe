@@ -504,10 +504,32 @@ public class PNGTweaker {
 						try {
 							String name = iptc[0].trim();
 							int length = Integer.parseInt(iptc[1].trim());
-							byte[] data = StringUtils.hexStringToByteArray(iptc[2]);
+							StringBuffer sb = new StringBuffer();
+							for(int i = 2; i < iptc.length; i++) {
+								sb.appen(iptc[i]);
+							}
+							byte[] data = StringUtils.hexStringToByteArray(sb.toString());
 							metadataMap.put(MetadataType.PHOTOSHOP_IRB, new IRB(data));
 						} catch (Exception e) {
 							LOGGER.error("Error while converting IPTC from zTXT {}", e.getMessage());
+						}
+					}
+				} else if (entry.getKey().equals("Raw profile type exif")) {
+					// Experimental implementation due to limited information
+					String[] exif = entry.getValue().trim().split("\n");
+                                        if(exif.length >= 3) {
+						try {
+							String name = exif[0].trim();
+							int length = Integer.parseInt(exif[1].trim());
+							StringBuffer sb = new StringBuffer();
+							for(int i = 2; i < exif.length; i++) {
+								sb.appen(exif[i]);
+							}
+							// Need to strip out exif header before passing to JpegExif constructor
+							byte[] data = StringUtils.hexStringToByteArray(sb.toString().substring(12));
+							metadataMap.put(MetadataType.EXIF, new JpegExif(data));
+						} catch (Exception e) {
+							LOGGER.error("Error while converting EXIF from zTXT {}", e.getMessage());
 						}
 					}
 				}
