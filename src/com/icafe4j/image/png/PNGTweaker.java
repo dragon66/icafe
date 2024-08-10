@@ -67,6 +67,7 @@ import com.icafe4j.string.StringUtils;
 import com.icafe4j.string.XMLUtils;
 import com.icafe4j.util.ArrayUtils;
 import com.icafe4j.image.meta.adobe.IRB;
+import com.icafe4j.image.meta.jpeg.JpegExif;
 
 /**
  * PNG image tweaking tool
