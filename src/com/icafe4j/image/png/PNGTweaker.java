@@ -484,6 +484,8 @@ public class PNGTweaker {
 				textualChunk.addChunk(chunk);			
 			} else if(type == ChunkType.TIME) {
 				metadataMap.put(MetadataType.PNG_TIME, new TIMEChunk(chunk));
+			} else if(type == ChunkType.EXIF) {
+				metadataMap.put(MetadataType.EXIF, new JpegExif(chunk.getData()));
 			}
 			
 			LOGGER.info("{} ({}) | {} bytes | 0x{} (CRC)", type.getName(), type.getAttribute(), length, Long.toHexString(chunk.getCRC()));
