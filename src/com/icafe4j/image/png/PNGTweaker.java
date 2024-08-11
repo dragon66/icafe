@@ -509,7 +509,7 @@ public class PNGTweaker {
 							int length = Integer.parseInt(iptc[1].trim());
 							StringBuffer sb = new StringBuffer();
 							for(int i = 2; i < iptc.length; i++) {
-								sb.appen(iptc[i]);
+								sb.append(iptc[i]);
 							}
 							byte[] data = StringUtils.hexStringToByteArray(sb.toString());
 							metadataMap.put(MetadataType.PHOTOSHOP_IRB, new IRB(data));
@@ -526,7 +526,7 @@ public class PNGTweaker {
 							int length = Integer.parseInt(exif[1].trim());
 							StringBuffer sb = new StringBuffer();
 							for(int i = 2; i < exif.length; i++) {
-								sb.appen(exif[i]);
+								sb.append(exif[i]);
 							}
 							// Need to strip out exif header before passing to JpegExif constructor
 							byte[] data = StringUtils.hexStringToByteArray(sb.toString().substring(12));
