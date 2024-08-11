@@ -30,6 +30,7 @@ public enum ChunkType {
 	TEXT("tEXt", 0x74455874, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
 	ZTXT("zTXt", 0x7A545874, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
 	ITXT("iTXt", 0x69545874, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
+	EXIF("eXIf", 0x65584966, Attribute.ANCILLARY, 20), // Anywhere between IHDR and IEND
 	TRNS("tRNS", 0x74524E53, Attribute.ANCILLARY, 50), // Must precede the first IDAT chunk and must follow the PLTE chunk
 	GAMA("gAMA", 0x67414D41, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk and the PLTE chunk if present
 	CHRM("cHRM", 0x6348524D, Attribute.ANCILLARY, 30), // Must precede the first IDAT chunk and the PLTE chunk if present
@@ -75,12 +76,12 @@ public enum ChunkType {
     	
     	private static final String[] CRITICAL_NAMES = {"IHDR","IDAT","IEND","PLTE"}; 
     	private static final String[] ANCILLARY_NAMES = {
-    		                             "tEXt","zTXt","iTXt","tRNS","gAMA","cHRM","sRGB",
+    		                             "tEXt","zTXt","iTXt","eXIf","tRNS","gAMA","cHRM","sRGB",
     		                             "iCCP","bKGD","pHYs","sBIT","sPLT","hIST","tIME"
     		                            };
     	private static final int[] CRITICAL_VALUES = {0x49484452,0x49444154,0x49454E44,0x504C5445};
     	private static final int[] ANCILLARY_VALUES = {
-    		                             0x74455874,0x7A545874,0x69545874,0x74524E53,0x67414D41,0x6348524D,0x73524742,
+    		                             0x74455874,0x7A545874,0x69545874,0x65584966,0x74524E53,0x67414D41,0x6348524D,0x73524742,
     		                             0x69434350,0x624B4744,0x70485973,0x73424954,0x73504C54,0x68495354,0x74494D45
     		                            };
     } // End of Attribute definition
