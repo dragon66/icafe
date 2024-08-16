@@ -54,19 +54,20 @@ Image convertion and management:
  
 Image metadata manipulation:
 ----------------------------------------
-- JPEG and TIFF EXIF data manipulation
+- JPEG, TIFF, PNG EXIF data manipulation
    * Insert EXIF data into JPEG.
    * Extract EXIF data from JPEG.
    * Remove EXIF data and other insignificant APPn segments from JPEG.
    * Insert EXIF data into TIFF.
    * Read EXIF data embedded in TIFF.
-- JPEG and TIFF ICC Profile support
+   * Read EXIF embedded in zTXt chunk as well as stand alone eXIf chunk.
+- JPEG, TIFF, PNG ICC Profile support
    * Insert ICC profile to JPEG and TIFF.
-   * Extract ICC profile from JPEG and TIFF.
-- JPEG and TIFF IPTC metadata support
+   * Extract ICC profile from JPEG, TIFF and PNG.
+- JPEG, TIFF, PNG IPTC metadata support
    * Insert IPTC directly to TIFF via RichTiffIPTC tag.
    * Insert IPTC to JPEG via APP13 Photoshop IRB
-   * Extract IPTC from both TIFF and JPEG
+   * Extract IPTC from JPEG, TIFF and PNG zTXt chunk.
 - JPEG and TIFF Photoshop IRB metadata support
    * Insert IRB into JPEG via APP13 segment
    * Insert IRB into TIFF via tag PHOTOSHOP.
