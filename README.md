@@ -60,7 +60,7 @@ Image metadata manipulation:
    * Remove EXIF data and other insignificant APPn segments from JPEG.
    * Insert EXIF data into TIFF.
    * Read EXIF data embedded in TIFF.
-   * Read EXIF embedded in zTXt chunk as well as stand alone eXIf chunk.
+   * Read EXIF embedded in PNG zTXt chunk as well as stand alone eXIf chunk.
 - JPEG, TIFF, PNG ICC Profile support
    * Insert ICC profile to JPEG and TIFF.
    * Extract ICC profile from JPEG, TIFF and PNG.
