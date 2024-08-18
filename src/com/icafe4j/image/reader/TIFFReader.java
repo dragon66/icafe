@@ -761,11 +761,14 @@ public class TIFFReader extends ImageReader {
 					}
 					
 					if(floatSample) { // Floating point sample data type
-						if(bitsPerSample == 16 || bitsPerSample == 32) {
+						if(bitsPerSample == 16 || bitsPerSample == 24 || bitsPerSample == 32) {
 							float[][] floats = new float[samplesPerPixel][];
 							if(bitsPerSample == 16) {
 								for(int i = 0; i < samplesPerPixel; i++)
 									floats[i] = ArrayUtils.to16BitFloatArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
+							} else if(bitsPerSample == 24) {
+								for(int i = 0; i < samplesPerPixel; i++)
+									floats[i] = ArrayUtils.to24BitFloatArray(rgb[i], endian == IOUtils.BIG_ENDIAN);
 							} else {
 								for(int i = 0; i < samplesPerPixel; i++)
 									floats[i] = ArrayUtils.toFloatArray(rgb[i], endian == IOUtils.BIG_ENDIAN);				
