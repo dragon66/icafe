@@ -51,7 +51,7 @@ public class Int32ComponentColorModel extends ComponentColorModel {
 			case DataBuffer.TYPE_INT:
 				int[] ipixel = (int[]) pixel;
 				for (int c = 0, nc = normOffset; c < numComponents; c++, nc++) {
-					normComponents[nc] = ipixel[c] / ((float) ((1L << getComponentSize(c)) - 1));
+					normComponents[nc] = ((float)(ipixel[c]&0xffffffffL)) / ((float) ((1L << getComponentSize(c)) - 1));
 				}
 				break;
 			default: // I don't think we can ever come this far. Just in case!!!
