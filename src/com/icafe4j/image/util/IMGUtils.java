@@ -1385,17 +1385,15 @@ public class IMGUtils {
 	public static byte[] rgb2bilevel(int[] rgb) {
 		// RGB to gray-scale
 		byte[] pixels = new byte[rgb.length];
-		long sum = 0;
 		
 		for(int i = 0; i < rgb.length; i++) {
 			if((rgb[i] >>> 24) < 0x80) pixels[i] = (byte)0xff; // Dealing with transparency color
 			else
 				pixels[i] = (byte)(((rgb[i]>>16)&0xff)*0.2126 + ((rgb[i]>>8)&0xff)*0.7152 + (rgb[i]&0xff)*0.0722);
-			sum += (pixels[i]&0xff);
 		}
 		
 		// Calculate threshold
-		int threshold = (int)(sum/pixels.length);
+		int threshold = calculateThreshold(pixels);
 		
 		// Reduce gray-scale to BW - we assume PhotoMetric.WHITE_IS_ZERO
 		for(int l = 0; l < pixels.length; l++) {
@@ -1441,7 +1439,6 @@ public class IMGUtils {
 		// RGB to gray-scale
 		byte[] pixels = new byte[rgb.length];
 		byte[] mask = new byte[rgb.length];
-		long sum = 0;
 		
 		Arrays.fill(mask, (byte)0x01);
 		
@@ -1451,11 +1448,10 @@ public class IMGUtils {
 				mask[i] = 0x00;
 			} else
 				pixels[i] = (byte)(((rgb[i]>>16)&0xff)*0.2126 + ((rgb[i]>>8)&0xff)*0.7152 + (rgb[i]&0xff)*0.0722);
-			sum += (pixels[i]&0xff);
 		}
 		
 		// Calculate threshold
-		int threshold = (int)(sum/pixels.length);
+		int threshold = calculateThreshold(pixels);
 		
 		IMGUtils.dither_FloydSteinberg(pixels, mask, imageWidth, imageHeight, threshold);
 		
@@ -1669,6 +1665,16 @@ public class IMGUtils {
 		g2.dispose();
 		
 		return tmp;
+	}
+
+	/**
+	 * Calculate Otsu's threshold for a grayscale image
+	 * @param pixels 1D array of grayscale pixel intensities (0-255)
+	 * @return the optimal threshold value (0-255)
+	 */
+	public static int calculateThreshold(byte[] pixels) {
+		Otsu otsu = new Otsu(pixels);
+		return otsu.getThreshold();
 	}
 	
 	// Prevent from instantiation
