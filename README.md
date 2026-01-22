@@ -15,8 +15,8 @@ Read format support:
 - ZSoft's PCX - Hard to find decoder for this dinosaur type of image.
 - Truevision TGA - Support all kinds of scan line mode, bit depth, and even transparency (alpha channel)
 - Portable Network Graphics (PNG) - Support both 8 bit and 16 bit, all color depth; single color transparency and alpha channel support; gamma support, ICC_Profile support.
-- Adobe  TIFF - Support for RGB, Palette, CMYK, YCbCr Color image with LZW, Deflate, and Packbits, CCITT GROUP3 1D&2D, and Group4 2D compression. Support for both stripped and tiled format TIFF (From 1 bitPerPixel up to 64 bitPerPixel). Floating point samples are also supported (Half precision - 16 bit, single precision - 32 bit, double precision - 64 bit), JPEG old style compression is still under development.
-- IJG JPEG - Currently support baseline sequential grayscale, RGB/YCbCr, CMYK, YCCK, Up sampling, ICC Profile for color correction - arithmetic, progressive images are not supported.
+- Adobe  TIFF - Support for RGB, Palette, CMYK, YCbCr Color image with LZW, Deflate, and Packbits, CCITT GROUP3 1D&2D, and Group4 2D compression. Support for both stripped and tiled format TIFF (From 1 bitPerPixel up to 64 bitPerPixel). Floating point samples are also supported (Half precision - 16 bit, single precision - 32 bit, double precision - 64 bit), JPEG new style and old style compressions are mostly done.
+- IJG JPEG - Currently support baseline sequential and progressive grayscale, RGB/YCbCr, CMYK, YCCK, Up sampling, exif orientation auto correction, ICC Profile for color correction. Lossless and arithmetic encoding are not supported.
 
 Write format support:
 -----------------------
