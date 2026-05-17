@@ -22,7 +22,7 @@ import com.icafe4j.util.Updatable;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 01/02/2014
  */
-public class G32DEncoder extends G31DEncoder implements ImageEncoder {
+public class G32DEncoder extends CCITTEncoder implements ImageEncoder {
 
 	private int k;
 	

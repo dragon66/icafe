@@ -37,7 +37,7 @@ import static com.icafe4j.image.compression.ccitt.T4Code.runLenArray;
  * @author Wen Yu, yuwen_66@yahoo.com
  * @version 1.0 12/20/2013
  */
-public class G31DEncoder implements ImageEncoder {
+public class CCITTEncoder implements ImageEncoder {
 
 	private int empty_bits;
 	private byte[] bytes_buf;
@@ -53,7 +53,7 @@ public class G31DEncoder implements ImageEncoder {
 		0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff, 0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff
 	};
 	
-	public G31DEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable<Integer> writer) {	
+	public CCITTEncoder(OutputStream os, int scanLineWidth, int buf_length, Updatable<Integer> writer) {	
 		this.scanLineWidth = scanLineWidth;
 		bytes_buf = new byte[buf_length];		
 		this.buf_length = buf_length;
