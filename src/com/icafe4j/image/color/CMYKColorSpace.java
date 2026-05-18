@@ -14,11 +14,11 @@
  *
  * Who   Date       Description
  * ====  =======    =================================================
+ * WY    16Feb2026  Added getInstance(int numcomponents) method to support extra components.
  * WY    22Oct2014  Initial creation to read CMYK TIFF image
  */
 
 package com.icafe4j.image.color;
-
 
 import java.awt.color.ColorSpace;
 
@@ -30,27 +30,28 @@ import java.awt.color.ColorSpace;
  * @version 1.0 10/22/2014
  */
 public class CMYKColorSpace extends ColorSpace {
-	// TODO add ICC_Profile support - ICC_ColorSpace.toRGB() is way too slow
+	// ICC_ColorSpace.toRGB() is way too slow
 	// to make it feasible to add ICC_Profile to this class. If we have embedded
 	// ICC_Profile, we would do a color conversion to RGB elsewhere instead
    	private static final long serialVersionUID = -4823887516599874355L;
-	private static CMYKColorSpace instance;
 
     /**
      * Returns an instance of CMYKColorSpace.
      * @return an instance of CMYKColorSpace
      */
     public static CMYKColorSpace getInstance() {
-        if (instance == null) {
-            instance = new CMYKColorSpace(TYPE_CMYK, 4);
-        }
-        return instance;
+        return getInstance(4);
+    }
+
+    public static CMYKColorSpace getInstance(int numcomponents) {
+        if (numcomponents < 4) throw new IllegalArgumentException("numcomponents can not be less than 4.");
+        return new CMYKColorSpace(TYPE_CMYK, numcomponents);
     }
 
     /**
      * @see java.awt.color.ColorSpace#ColorSpace(int, int)
      */
-    protected CMYKColorSpace(int type, int numcomponents) {
+    private CMYKColorSpace(int type, int numcomponents) {
         super(type, numcomponents);
     }
 
@@ -65,6 +66,8 @@ public class CMYKColorSpace extends ColorSpace {
      * @see java.awt.color.ColorSpace#fromRGB(float[])
      */
     public float[] fromRGB(float[] rgb) {
+        float[] bands = new float[getNumComponents()];
+
     	float r = rgb[0];
     	float g = rgb[1];
     	float b = rgb[2];
@@ -86,7 +89,12 @@ public class CMYKColorSpace extends ColorSpace {
 	    	y = (y - tempK)/(1 - tempK);
 	    }
 	    
-	    return new float[] {c, m, y, tempK};
+        bands[0] = c;
+        bands[1] = m;
+        bands[2] = y;
+        bands[3] = tempK;
+
+        return bands;
     }
 
     /**

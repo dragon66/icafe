@@ -29,12 +29,11 @@ package com.icafe4j.image.util;
  * @version 1.0 10/21/2013
  */
 public class DCT {
-	// Constants //Ck=cos(k*pi/16)
-	private static final float BETA1 = 1.41421356f;//( 2*C4)
+	// Constants for AAN DCT/IDCT algorithm
+	private static final float BETA1 = 1.41421356f;//( 2*C4) = sqrt(2)
 	private static final float BETA2 = 2.61312587f;//(2*(C2+C6))
-	private static final float BETA3 = 1.41421356f;//(2*C4)
+	private static final float BETA3 = 1.84775907f;//(2*C4) - used in IDCT
 	private static final float BETA4 = 1.08239220f;//(2*(C2-C6))
-	private static final float BETA5 = 0.76536686f;//(2*C6)
 	
 	/* AAN IDCT scale factor definition:
 	 * AANscaleFactor[0] = 1
@@ -43,7 +42,9 @@ public class DCT {
 	// The scale factor is the same as those from the IJG's
 	private static final  float[] AANscaleFactor = { 1.0f, 1.387039845f, 1.306562965f, 1.175875602f,
                                    1.0f, 0.785694958f, 0.541196100f, 0.275899379f};
-	// Multiplier factors
+	// Multiplier factors for DCT scaling: 1/(AANscaleFactor[i]*AANscaleFactor[j]*8)
+	// Forward DCT applies these multipliers in column pass to normalize output
+	// Inverse DCT undoes this by multiplying by AANscaleFactor and dividing by 8
 	private static final float[][] MULTIPLIER = new float[8][8];
 	
 	static {
@@ -150,112 +151,154 @@ public class DCT {
     }
     
     public static float[][] inverseDCT(float input[][])	{
-		for (int i=0 ; i<8 ; i++) {
-			inverseDCT_col(input, i*8);
+		for (int i = 0 ; i < 8 ; i++) {
+			inverseDCT_col(input, i);
 		}
 		
-		for (int i=0 ; i<8 ; i++) {
-			inverseDCT_row(input, i++);
+		for (int i = 0 ; i < 8 ; i++) {
+			inverseDCT_row(input, i);
 		}
 		
 		return input;
 	}
    
-	//perform column transform
-	private static void inverseDCT_col(float input[][], int offset)	{
+	// Perform column transform (Pass 1)
+	// Implements AAN IDCT algorithm (Arai, Agui, Nakajima)
+	private static void inverseDCT_col(float input[][], int col) {
+		// Check for DC-only column (all AC terms zero) - optimization
+		if (input[1][col] == 0 && input[2][col] == 0 && input[3][col] == 0 &&
+			input[4][col] == 0 && input[5][col] == 0 && input[6][col] == 0 &&
+			input[7][col] == 0) {
+				// AC terms all zero - just replicate DC value
+				float dcval = input[0][col];
+				input[0][col] = dcval;
+				input[1][col] = dcval;
+				input[2][col] = dcval;
+				input[3][col] = dcval;
+				input[4][col] = dcval;
+				input[5][col] = dcval;
+				input[6][col] = dcval;
+				input[7][col] = dcval;
+				return;
+			}
+
 		float tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
-		float temp0, temp1, temp2, temp3, temp5;
-		float temp;
+		float tmp10, tmp11, tmp12, tmp13;
+		float z5, z10, z11, z12, z13;
 
-		// Transform the even part of the input
-		// Stages 1-4 
-		
-		tmp0 = input[0][offset] + input[4][offset];
-		tmp1 = input[0][offset] - input[4][offset];
-       
-	    tmp3 = input[2][offset] + input[6][offset];//stage 1-4
-	    tmp2 = (input[2][offset] - input[6][offset])*BETA1 - tmp3;//stage 1-4
+		// Pre-scale to undo forward DCT normalization (multiply by AANscaleFactor[row])
+		// Even part
+		tmp0 = input[0][col] * AANscaleFactor[0];
+		tmp1 = input[2][col] * AANscaleFactor[2];
+		tmp2 = input[4][col] * AANscaleFactor[4];
+		tmp3 = input[6][col] * AANscaleFactor[6];
 
-		// Transform the odd part of the input
-		// Stage 1
-		tmp4 = input[5][offset] - input[3][offset];
-		tmp5 = input[1][offset] + input[7][offset];
-		tmp6 = input[1][offset] - input[7][offset];
-		tmp7 = input[5][offset] + input[3][offset];
-		// Stage 2
-		temp5 = tmp5 - tmp7;
-		tmp7 = tmp5 + tmp7;
-		// Stages 3-4
-		temp = (tmp4 - tmp6)*BETA5;
-		tmp4 = - tmp4*BETA2 + temp;
-		tmp6 = tmp6*BETA4 - temp;
-		tmp5 = temp5*BETA3;
-		// Stage 5, even part
-		temp0 = tmp0 + tmp3;
-		temp3 = tmp0 - tmp3;
-		temp1 = tmp1 + tmp2;
-		temp2 = tmp1 - tmp2;
-		// Stage 5, odd part
-		tmp6 = tmp6 - tmp7;
-		tmp5 = tmp5 - tmp6;
-		tmp4 = -(tmp4 + tmp5);
-		// Stage 6, final stage
-		input[0][offset] = temp0 + tmp7;
-		input[7][offset] = temp0 - tmp7;
-		input[1][offset] = temp1 + tmp6;
-		input[6][offset] = temp1 - tmp6;
-		input[2][offset] = temp2 + tmp5;
-		input[5][offset] = temp2 - tmp5;
-		input[3][offset] = temp3 + tmp4; 
-		input[4][offset] = temp3 - tmp4;
+		tmp10 = tmp0 + tmp2;
+		tmp11 = tmp0 - tmp2;
+
+		tmp13 = tmp1 + tmp3;
+		tmp12 = (tmp1 - tmp3) * BETA1 - tmp13;
+
+		tmp0 = tmp10 + tmp13;
+		tmp3 = tmp10 - tmp13;
+		tmp1 = tmp11 + tmp12;
+		tmp2 = tmp11 - tmp12;
+
+		// Odd part
+		tmp4 = input[1][col] * AANscaleFactor[1];
+		tmp5 = input[3][col] * AANscaleFactor[3];
+		tmp6 = input[5][col] * AANscaleFactor[5];
+		tmp7 = input[7][col] * AANscaleFactor[7];
+
+		z13 = tmp6 + tmp5;
+		z10 = tmp6 - tmp5;
+		z11 = tmp4 + tmp7;
+		z12 = tmp4 - tmp7;
+
+		tmp7 = z11 + z13;
+		tmp11 = (z11 - z13) * BETA1;
+
+		z5 = (z10 + z12) * BETA3;
+		tmp10 = z12 * BETA4 - z5;
+		tmp12 = z10 * (-BETA2) + z5;
+
+		tmp6 = tmp12 - tmp7;
+		tmp5 = tmp11 - tmp6;
+		tmp4 = tmp10 + tmp5;
+
+		// Final output stage
+		input[0][col] = tmp0 + tmp7;
+		input[7][col] = tmp0 - tmp7;
+		input[1][col] = tmp1 + tmp6;
+		input[6][col] = tmp1 - tmp6;
+		input[2][col] = tmp2 + tmp5;
+		input[5][col] = tmp2 - tmp5;
+		input[4][col] = tmp3 + tmp4;
+		input[3][col] = tmp3 - tmp4;
 	}
-	
-	// Perform row transform
-	private static void inverseDCT_row(float input[][], int offset)	{
+
+	// Perform row transform (Pass 2)
+	// Implements AAN IDCT algorithm (Arai, Agui, Nakajima)
+	private static void inverseDCT_row(float input[][], int row){
+		// Check for DC-only row (all AC terms zero) - optimization
+		if (input[row][1] == 0 && input[row][2] == 0 && input[row][3] == 0 &&
+			input[row][4] == 0 && input[row][5] == 0 && input[row][6] == 0 &&
+			input[row][7] == 0) {
+			// AC terms all zero - just replicate DC value (divide by 8 to undo forward DCT scaling)
+			float dcval = input[row][0] / 8.0f;
+			input[row][0] = dcval;
+			input[row][1] = dcval;
+			input[row][2] = dcval;
+			input[row][3] = dcval;
+			input[row][4] = dcval;
+			input[row][5] = dcval;
+			input[row][6] = dcval;
+			input[row][7] = dcval;
+			return;
+		}
+
 		float tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, tmp7;
-		float temp0, temp1, temp2, temp3, temp5;
-		float temp;
+		float tmp10, tmp11, tmp12, tmp13;
+		float z5, z10, z11, z12, z13;
 
-		// Transform the even part of the input
-		// Stages 1-4 
+		// Pre-scale to undo forward DCT normalization (multiply by AANscaleFactor[col])
+		// Even part
+		tmp10 = input[row][0] * AANscaleFactor[0] + input[row][4] * AANscaleFactor[4];
+		tmp11 = input[row][0] * AANscaleFactor[0] - input[row][4] * AANscaleFactor[4];
 		
-		tmp0 = input[offset][0] + input[offset][4];
-		tmp1 = input[offset][0] - input[offset][4];
-       
-	    tmp3 = input[offset][2] + input[offset][6];// Stages 1-4
-	    tmp2 = (input[offset][2] - input[offset][6])*BETA1 - tmp3;// Stages 1-4
+		tmp13 = input[row][2] * AANscaleFactor[2] + input[row][6] * AANscaleFactor[6];
+		tmp12 = (input[row][2] * AANscaleFactor[2] - input[row][6] * AANscaleFactor[6]) * BETA1 - tmp13;
 
-		// Transform the odd part of the input
-		// Stage 1
-		tmp4 = input[offset][5] - input[offset][3];
-		tmp5 = input[offset][1] + input[offset][7];
-		tmp6 = input[offset][1] - input[offset][7];
-		tmp7 = input[offset][5] + input[offset][3];
-		// Stage 2
-		temp5 = tmp5 - tmp7;
-		tmp7 = tmp5 + tmp7;
-		// Stages 3-4
-		temp = (tmp4 - tmp6)*BETA5;
-		tmp4 = - tmp4*BETA2 + temp;
-		tmp6 = tmp6*BETA4 - temp;
-		tmp5 = temp5*BETA3;
-		// Stage 5, even part
-		temp0 = tmp0 + tmp3;
-		temp3 = tmp0 - tmp3;
-		temp1 = tmp1 + tmp2;
-		temp2 = tmp1 - tmp2;
-		// Stage 5, odd part
-		tmp6 = tmp6 - tmp7;
-		tmp5 = tmp5 - tmp6;
-		tmp4 = -(tmp4 + tmp5);
-		// Stage 6, final stage
-		input[offset][0] = (temp0 + tmp7)*MULTIPLIER[offset][0];
-		input[offset][7] = (temp0 - tmp7)*MULTIPLIER[offset][7];
-		input[offset][1] = (temp1 + tmp6)*MULTIPLIER[offset][1];
-		input[offset][6] = (temp1 - tmp6)*MULTIPLIER[offset][6];
-		input[offset][2] = (temp2 + tmp5)*MULTIPLIER[offset][2];
-		input[offset][5] = (temp2 - tmp5)*MULTIPLIER[offset][5];
-		input[offset][3] = (temp3 + tmp4)*MULTIPLIER[offset][3]; 
-		input[offset][4] = (temp3 - tmp4)*MULTIPLIER[offset][4];
+		tmp0 = tmp10 + tmp13;
+		tmp3 = tmp10 - tmp13;
+		tmp1 = tmp11 + tmp12;
+		tmp2 = tmp11 - tmp12;
+
+		// Odd part
+		z13 = input[row][5] * AANscaleFactor[5] + input[row][3] * AANscaleFactor[3];
+		z10 = input[row][5] * AANscaleFactor[5] - input[row][3] * AANscaleFactor[3];
+		z11 = input[row][1] * AANscaleFactor[1] + input[row][7] * AANscaleFactor[7];
+		z12 = input[row][1] * AANscaleFactor[1] - input[row][7] * AANscaleFactor[7];
+
+		tmp7 = z11 + z13;
+		tmp11 = (z11 - z13) * BETA1;
+
+		z5 = (z10 + z12) * BETA3;
+		tmp10 = z12 * BETA4 - z5;
+		tmp12 = z10 * (-BETA2) + z5;
+
+		tmp6 = tmp12 - tmp7;
+		tmp5 = tmp11 - tmp6;
+		tmp4 = tmp10 + tmp5;
+
+		// Final output stage (divide all by 8 to undo forward DCT scaling)
+		input[row][0] = (tmp0 + tmp7) / 8.0f;
+		input[row][7] = (tmp0 - tmp7) / 8.0f;
+		input[row][1] = (tmp1 + tmp6) / 8.0f;
+		input[row][6] = (tmp1 - tmp6) / 8.0f;
+		input[row][2] = (tmp2 + tmp5) / 8.0f;
+		input[row][5] = (tmp2 - tmp5) / 8.0f;
+		input[row][4] = (tmp3 + tmp4) / 8.0f;
+		input[row][3] = (tmp3 - tmp4) / 8.0f;
 	}
 }

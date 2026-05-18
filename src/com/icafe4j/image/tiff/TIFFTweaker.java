@@ -827,6 +827,107 @@ public class TIFFTweaker {
 			
 		return rowWidth;
 	}
+
+	/**
+	 * Detect the actual bits per sample by examining StripByteCounts for uncompressed data.
+	 * This handles cases where the BitsPerSample tag is incorrect.
+	 * 
+	 * @param ifd the IFD to examine
+	 * @param compression the compression type
+	 * @return the corrected bits per sample value
+	 */
+
+	public static int detectActualBitsPerSample(IFD ifd, TiffFieldEnum.Compression compression) {
+		int taggedBits = 1;
+		TiffField<?> f_bitsPerSample = ifd.getField(TiffTag.BITS_PER_SAMPLE);
+		if (f_bitsPerSample != null) {
+			taggedBits = f_bitsPerSample.getDataAsLong()[0];
+		}
+
+		// Only verify for uncompressed data
+		if (compression != TiffFieldEnum.Compression.NONE) {
+			return taggedBits;
+		}
+
+		// Check if this is a tiled image
+		TiffField<?> f_tileWidth = ifd.getField(TiffTag.TILE_WIDTH);
+		TiffField<?> f_tileLength = ifd.getField(TiffTag.TILE_LENGTH);
+		boolean isTiled = (f_tileWidth != null && f_tileLength != null);
+
+		// Get byte counts - try tile counts first, fall back to strip counts
+		TiffField<?> f_byteCounts = null;
+		int chunkWidth = 0;
+		int chunkHeight = 0;
+
+		if (isTiled) {
+			// For tiled images, prefer TILE_BYTE_COUNTS but fall back to STRIP_BYTE_COUNTS
+			f_byteCounts = ifd.getField(TiffTag.TILE_BYTE_COUNTS);
+			if (f_byteCounts == null) {
+				f_byteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS);
+			}
+			chunkWidth = f_tileWidth.getDataAsLong()[0];
+			chunkHeight = f_tileLength.getDataAsLong()[0];
+		} else {
+			// For stripped images, use STRIP_BYTE_COUNTS
+			f_byteCounts = ifd.getField(TiffTag.STRIP_BYTE_COUNTS);
+			TiffField<?> f_imageWidth = ifd.getField(TiffTag.IMAGE_WIDTH);
+			TiffField<?> f_imageHeight = ifd.getField(TiffTag.IMAGE_LENGTH);
+			TiffField<?> f_rowsPerStrip = ifd.getField(TiffTag.ROWS_PER_STRIP);
+
+			if (f_imageWidth == null || f_imageHeight == null) {
+				return taggedBits;
+			}
+
+			int imageHeight = f_imageHeight.getDataAsLong()[0];
+			chunkWidth = f_imageWidth.getDataAsLong()[0];
+			chunkHeight = (f_rowsPerStrip != null) ? (int) f_rowsPerStrip.getDataAsLong()[0] : imageHeight;
+			if (chunkHeight <= 0 || chunkHeight > imageHeight) {
+				chunkHeight = imageHeight; // Invalid value, use image height as chunk height
+			}
+		}
+
+		if (f_byteCounts == null) {
+			return taggedBits;
+		}
+
+		int[] byteCounts = f_byteCounts.getDataAsLong();
+		if (byteCounts.length == 0) {
+			return taggedBits;
+		}
+
+		// Find first non-zero byte count
+		int first = 0;
+		while (first < byteCounts.length && byteCounts[first] == 0) first ++;
+		if (first >= byteCounts.length) {
+			return taggedBits;
+		}
+
+		TiffField<?> f_samplesPerPixel = ifd.getField(TiffTag.SAMPLES_PER_PIXEL);
+		int samplesPerPixel = (f_samplesPerPixel != null) ? f_samplesPerPixel.getDataAsLong()[0] : 1;
+
+		// Check planar configuration - planar images store each sample in separate strips/tiles
+		TiffField<?> f_planarConfig = ifd.getField(TiffTag.PLANAR_CONFIGURATTION);
+		boolean isPlanar = (f_planarConfig != null && f_planarConfig.getDataAsLong()[0] == 2);
+
+		// For planar images, each strip/tile contains only one sample, not all samples
+		int samplesPerChunk = isPlanar ? 1 : samplesPerPixel;
+
+		long actual = byteCounts[first] & 0xffffffffL;
+		long denom = (long) chunkHeight * (long) chunkWidth * (long) Math.max(1, samplesPerChunk);
+		if (denom <= 0) {
+			return taggedBits;
+		}
+
+		long guessedBits = (actual * 8L) / denom;
+		// Only trust common bit depths
+		if ((guessedBits == 1L || guessedBits == 2L || guessedBits == 4L ||
+			guessedBits == 8L || guessedBits == 16L || guessedBits == 24L || guessedBits == 32L)
+			&& guessedBits != taggedBits) {
+			return (int) guessedBits;
+		}
+
+		return taggedBits;
+	}
 	
 	// Calculate the expected StripByteCounts values for uncompressed image
 	public static int[] getUncompressedStripByteCounts(IFD ifd, int strips) {

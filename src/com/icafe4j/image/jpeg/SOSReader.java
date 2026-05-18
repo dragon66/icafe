@@ -78,4 +78,24 @@ public class SOSReader implements Reader {
 	public void setSOFReader(SOFReader reader) {
 		this.reader = reader;
 	}
+
+	public int getSs() {
+		return Ss;
+	}
+
+	public int getSe() {
+		return Se;
+	}
+
+	public int getAh() {
+		return Ah;
+	}
+
+	public int getAl() {
+		return Al;
+	}
+
+	public Segment getSegment() {
+		return segment;
+	}
 }

@@ -323,10 +323,14 @@ public enum TiffTag implements Tag {
 			String description = "Warning: unknown T4 options value: " + intValue;
 			
 			switch(intValue) {
-				case 0: description = "Basic 1-dimensional coding"; break; 
-				case 1:	description = "2-dimensional coding"; break;
-				case 2: description = "Uncompressed mode";	break;
-				case 4: description = "Fill bits have been added as necessary before EOL codes such that EOL always ends on a byte boundary";	break;
+				case 0: description = "1D compression, no EOL padding."; break; 
+				case 1:	description = "2D compression, no EOL padding."; break;
+				case 2: description = "1D compression, no EOL padding, uncompressed."; break;
+				case 3: description = "2D compression, no EOL padding, uncompressed."; break;
+				case 4: description = "1D compression, with EOL padding."; break;
+				case 5: description = "2D compression, with EOL padding."; break;
+				case 6: description = "1D compression, with EOL padding, uncompressed."; break;
+				case 7: description = "2D compression, with EOL padding, uncompressed."; break;
 			}
 			
 			return description;

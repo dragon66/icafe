@@ -14,7 +14,7 @@ package com.icafe4j.image.compression.ccitt;
 public enum T42DCodingMode {
 	//
 	PASS(T42DCode.P),
-	HHORIZONTAL(T42DCode.H),
+	HORIZONTAL(T42DCode.H),
 	VERTICAL0(T42DCode.V0),
 	VERTICAL_RIGHT1(T42DCode.VR1),
 	VERTICAL_RIGHT2(T42DCode.VR2),

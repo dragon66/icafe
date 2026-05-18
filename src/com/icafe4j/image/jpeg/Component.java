@@ -27,7 +27,7 @@ public class Component {
 	private byte acTableNumber;
 	private byte dcTableNumber;
 	
-	Component(byte id, byte hSampleFactor, byte vSampleFactor, byte qTableNumber) {
+	public Component(byte id, byte hSampleFactor, byte vSampleFactor, byte qTableNumber) {
 		this.id = id;
 		this.hSampleFactor = hSampleFactor;
 		this.vSampleFactor = vSampleFactor;

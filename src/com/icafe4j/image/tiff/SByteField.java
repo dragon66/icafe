@@ -22,4 +22,15 @@ public final class SByteField extends AbstractByteField {
 	public SByteField(short tag, byte[] data) {
 		super(tag, FieldType.SBYTE, data);
 	}	
+
+	public int[] getDataAsLong() {
+		
+		int[] temp = new int[data.length];
+
+		for (int i = 0; i < data.length; i++) {
+			temp[i] = data[i];
+		}
+
+		return temp;
+	}
 }

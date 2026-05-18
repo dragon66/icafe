@@ -15,6 +15,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.icafe4j.image.tiff.TiffFieldEnum.ResolutionUnit;
+
 /**
  * TiffFieldEnum.java
  * <p>
@@ -38,6 +40,8 @@ public class TiffFieldEnum {
 		CIE_LAB("CIE L*a*b*", 8),
 		ICC_LAB("ICC L*a*b*", 9),
 		ITU_LAB("ITU L*a*b*", 10),
+		LOGL("CIE Log2(L) (grayscale logarithmic luminance)", 32844),
+		LOGLUV("CIE Log2(L) (u',v') (color logarithmic luminance and chromaticity)", 32845),
 		CFA("CFA (Color Filter Array)", 32803),
 		LINEAR__RAW("LinearRaw", 34892),
 		
@@ -92,8 +96,13 @@ public class TiffFieldEnum {
 	    DEFLATE_ADOBE("Deflate ('Adobe-style')", 8),
 	    JBIG_ON_BW("JBIG on black and white", 9),
 		JBIG_ON_COLOR("JBIG on color", 10),
+		JBIG("JBIG", 34661),
+		JPEG2000("JPEG 2000", 34712),
+		SGILOG("SGI Log Luminance RLE (SGILog)", 34676),
+		SGILOG24("SGI Log 24-bit packed (SGILog24)", 34677),
 		PACKBITS("PackBits compression, aka Macintosh RLE", 32773),
-		DEFLATE("Deflate", 32946),	
+		DEFLATE("Deflate", 32946),
+		THUNDERSCAN("ThunderScan", 32809),
 		
 		UNKNOWN("Unknown", 9999);
 		
@@ -230,6 +239,55 @@ public class TiffFieldEnum {
 	    	  typeMap.put(resolutionUnit.getValue(), resolutionUnit);
 	    } 
 		
+		private final String description;
+		private final int value;
+	}
+
+	public enum T4Options {
+		ZERO("1D compression, no EOL padding.", 0),
+		ONE("2D compression, no EOL padding.", 1),
+		TWO("1D compression, no EOL padding, uncompressed.", 2),
+		THREE("2D compression, no EOL padding, uncompressed.", 3),
+		FOUR("1D compression, with EOL padding.", 4),
+		FIVE("2D compression, with EOL padding.", 5),
+		SIX("1D	compression, with EOL padding, uncompressed.", 6),
+		SEVEN("2D compression, with EOL padding, uncompressed.", 7),
+		
+		UNKNOWN("Unknown", 9999);
+
+		private T4Options(String description, int value) {
+			this.description = description;
+			this.value = value;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public int getValue() {
+			return value;
+		}
+
+		@Override
+		public String toString() {
+			return description;
+		}
+
+		public static T4Options fromValue(int value) {
+			T4Options t4Options = typeMap.get(value);
+			if (t4Options == null)
+				return UNKNOWN;
+			return t4Options;
+		}
+
+		private static final Map<Integer, T4Options> typeMap = new HashMap<Integer, T4Options>();
+
+		static
+		{
+			for (T4Options t4Options : values())
+				typeMap.put(t4Options.getValue(), t4Options);
+		}
+
 		private final String description;
 		private final int value;
 	}

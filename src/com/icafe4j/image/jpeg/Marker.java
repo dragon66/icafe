@@ -113,7 +113,22 @@ public enum Marker {
 	    public short getValue() {
 		   return value;
 	    }
-	    
+
+		/**
+		 * Check if marker is a restart marker (RST0-RST7) using Marker enum
+		 */
+
+		public static boolean isRestartMarker(int marker) {
+			return marker == (RST0.getValue() & 0xFFFF) ||
+				marker == (RST1.getValue() & 0xFFFF) ||
+				marker == (RST2.getValue() & 0xFFFF) ||
+				marker == (RST3.getValue() & 0xFFFF) ||
+				marker == (RST4.getValue() & 0xFFFF) ||
+				marker == (RST5.getValue() & 0xFFFF) ||
+				marker == (RST6.getValue() & 0xFFFF) ||
+				marker == (RST7.getValue() & 0xFFFF);
+		}
+		
 	    public static Marker fromShort(short value) {
 	       	Marker marker = markerMap.get(value);
 	    	if (marker == null)

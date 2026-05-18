@@ -64,6 +64,22 @@ public class JPGConsts {
       21, 34, 37, 47, 50, 56, 59, 61,
       35, 36, 48, 49, 57, 58, 62, 63
    };
+
+   /**
+    * Maps zigzag position to 2D [x, y] coordinates in an 8x8 block
+    * Pre-calculated from ZIGZAG_TRAVERSE_ORDER for efficient decoding
+    * zigzag[i][0] = x coordinate, zigzag[i][1] = y coordinate
+    */
+   private static final int[][] ZIGZAG_INVERSE_2D = {
+      {0,0}, {1,0}, {0,1}, {0,2}, {1,1}, {2,0}, {3,0}, {2,1},
+      {1,2}, {0,3}, {0,4}, {1,3}, {2,2}, {3,1}, {4,0}, {5,0},
+      {4,1}, {3,2}, {2,3}, {1,4}, {0,5}, {0,6}, {1,5}, {2,4},
+      {3,3}, {4,2}, {5,1}, {6,0}, {7,0}, {6,1}, {5,2}, {4,3},
+      {3,4}, {2,5}, {1,6}, {0,7}, {1,7}, {2,6}, {3,5}, {4,4},
+      {5,3}, {6,2}, {7,1}, {7,2}, {6,3}, {5,4}, {4,5}, {3,6},
+      {2,7}, {3,7}, {4,6}, {5,5}, {6,4}, {7,3}, {7,4}, {6,5},
+      {5,6}, {4,7}, {5,7}, {6,6}, {7,5}, {7,6}, {6,7}, {7,7}
+   };
    
    /**
     *  This is the default quantization table for luminance
@@ -228,6 +244,10 @@ public class JPGConsts {
    
    public static final int[] getZigzagMatrix() {
 	   return ZIGZAG_TRAVERSE_ORDER.clone();
+   }
+
+   public static final int[][] getZigzagInverse2D() {
+      return ZIGZAG_INVERSE_2D.clone();
    }
    
    private JPGConsts() {}

@@ -523,7 +523,6 @@ public class JPGReader extends ImageReader {
 	   
 	@Override
 	public BufferedImage read(InputStream is) throws Exception {
-		return javax.imageio.ImageIO.read(is);
-		//return read1(is);
+		return new HuffmanJPGReader().read(is);
 	}
 }
