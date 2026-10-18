@@ -25,6 +25,7 @@ package com.icafe4j.image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -120,7 +121,10 @@ public final class ImageIO {
 		if(is instanceof RandomAccessInputStream) {
 			imageType = IMGUtils.guessImageType((RandomAccessInputStream)is);
 		} else {
-			is = new PeekHeadInputStream(is, IMAGE_MAGIC_NUMBER_LEN); 
+			is = new PeekHeadInputStream(new FilterInputStream(is) {
+				@Override
+				public void close() {}
+			}, IMAGE_MAGIC_NUMBER_LEN);
 			imageType = IMGUtils.guessImageType((PeekHeadInputStream)is);
 			closeStream = true;
 		}		
